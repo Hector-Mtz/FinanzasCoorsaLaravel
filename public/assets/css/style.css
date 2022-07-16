@@ -1,0 +1,82 @@
+:root{
+    --blanco: #fff;
+    --letrasLogin:gray;
+    --aqua: #40BB6E;
+    --fuentePrincipal: 'Montserrat'!important;
+}
+
+.fondo_menu{
+    background-image: url('../img/LOGIN.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    
+}
+
+.fondo_general{
+    background-color: #010E1D ;
+}
+
+.fondo_item{
+    background-color: #111F2E;
+}
+
+.card{
+    margin-left: 38rem;
+    background: transparent;
+}
+
+.logoinicio{
+    margin-left: 37rem;
+}
+
+.text-input{
+    color: var(--blanco);
+    font-size:40px ;
+    font-weight: bold;
+}
+
+.ingresarLogin{
+    border: var(--aqua) 5px solid ;
+    border-radius:45%;
+    text-align: center;
+}
+
+.labelLogin{
+    color:var(--blanco)
+}
+
+.dashboard_texts{
+ float: left;
+ margin: 10px;
+}
+
+.dashboard_text{
+    font-family: var(--fuentePrincipal);
+    font-size: 20px;
+    font-weight: bold;
+    float: left;
+}
+.dashboard_text2{
+  color: var(--aqua);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.cliente_module{
+    background: transparent;
+}
+
+.inputLogin {
+  border-radius: 50%;
+}
+
+
+.datepicker{
+    float: left;
+}
+
+.datetexts{
+    display: flex;
+    justify-items: center;
+    justify-content: center;
+}
