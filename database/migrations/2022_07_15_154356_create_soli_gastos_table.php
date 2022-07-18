@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('soli_gastos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
+            $table->foreignId('tipo_movimiento_id')->constrained('tipo_movimientos');
+            $table->foreignId('autorizacion_id')->constrained('autorizacions');
+            $table->foreignId('soli_gastos_id')->constrained('soli_gastos');
             $table->timestamps();
         });
     }

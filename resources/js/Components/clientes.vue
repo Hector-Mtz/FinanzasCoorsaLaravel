@@ -60,7 +60,7 @@ var xRenderer = am5xy.AxisRendererX.new(root, {
   visible: false,
   minGridDistance: 30,
   inversed: false,
-  opposite:true
+  opposite:true,
 });
 
 xRenderer.grid.template.set("visible", false, );
@@ -123,7 +123,7 @@ series.bullets.push(function () {
       populateText: true,
       centerX: am5.p50,
       centerY: am5.p50,
-      fontSize: 10,
+      fontSize: 15,
       text: "{value}"
     })
   });

@@ -17,9 +17,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('ceco_id')->constrained('cecos');
             $table->foreignId('concepto_id')->constrained('conceptos');
-            $table->foreignId('tipo_movimiento_id')->constrained('tipo_movimientos');
-            $table->foreignId('autorizacion_id')->constrained('autorizacions');
-            $table->foreignId('soli_gastos_id')->constrained('soli_gastos');
             $table->timestamps();
         });
     }
