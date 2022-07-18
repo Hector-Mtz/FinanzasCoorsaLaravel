@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->date('fechaInicial');
             $table->date('fechaFinal');
+            $table->smallInteger('periodos')->default(1);
             $table->foreignId('tipo_id')->constrained('tipos');
             $table->foreignId('status_id')->constrained('status');
             $table->foreignId('ceco_id')->constrained('cecos');
