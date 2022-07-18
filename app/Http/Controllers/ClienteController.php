@@ -27,7 +27,8 @@ class ClienteController extends Controller
                       ->select(DB::raw(
                         'SUM(productos.cantidad) AS Cantidad,
                         clientes.nombre AS Cliente,
-                        grupo_conceptos.nombre AS GrupoConcepto'
+                        grupo_conceptos.nombre AS GrupoConcepto,
+                        tipo_movimientos.nombre AS TipoGasto'
                       ))
                       ->join('soli_gastos', 'soli_gastos.id','=','productos.soli_gastos_id')
                       ->leftJoin('ceco_conceptos', 'ceco_conceptos.soli_gastos_id','=','soli_gastos.id')
@@ -35,8 +36,10 @@ class ClienteController extends Controller
                       ->leftJoin('clientes', 'cecos.cliente_id','=','clientes.id')
                       ->leftJoin('conceptos', 'ceco_conceptos.concepto_id','=','conceptos.id')
                       ->leftJoin('grupo_conceptos','conceptos.grupo_concepto_id','=','grupo_conceptos.id')
+                      ->leftJoin('tipo_movimientos','ceco_conceptos.tipo_movimiento_id','=','tipo_movimientos.id')
                       ->groupBy('clientes.nombre')
                       ->groupBy('grupo_conceptos.nombre')
+                      ->groupBy('tipo_movimientos.nombre')
                       ->get();
 
         return Inertia::render('Main',[
