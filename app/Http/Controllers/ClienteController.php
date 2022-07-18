@@ -24,6 +24,7 @@ class ClienteController extends Controller
         $grupo_conceptos = GrupoConcepto::all();
 
 /*
+hola h
         $cantidades = DB::table(DB::raw('productos'))
         ->select(DB::raw(
           'SUM(productos.cantidad) AS Cantidad,
