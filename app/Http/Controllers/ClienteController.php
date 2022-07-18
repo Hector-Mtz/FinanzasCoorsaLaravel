@@ -14,16 +14,16 @@ class ClienteController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     *Hola Hector
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
-        //
+
         $clientes = Cliente::all();
         $grupo_conceptos = GrupoConcepto::all();
 
-/*
+        /*
         $cantidades = DB::table(DB::raw('productos'))
         ->select(DB::raw(
           'SUM(productos.cantidad) AS Cantidad,
@@ -44,7 +44,7 @@ class ClienteController extends Controller
         ->get();
 */
 
-        return Inertia::render('Main',[
+        return Inertia::render('Main', [
             'clientes' => $clientes,
             'grupo_conceptos' => $grupo_conceptos,
             //'cantidades' => $cantidades
