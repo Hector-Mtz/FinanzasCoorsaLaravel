@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->integer('cantidad');
-            $table->foreignId('soli_gastos_id')->constrained('soli_gastos');
+            $table->foreignId('soli_movimiento_id')->constrained('soli_movimientos');
             $table->timestamps();
         });
     }

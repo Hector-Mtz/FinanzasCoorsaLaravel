@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SoliGastos;
+use App\Models\SoliMovimiento;
 use Illuminate\Http\Request;
 
-class SoliGastosController extends Controller
+class SoliMovimientoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class SoliGastosController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\SoliGastos  $soliGastos
+     * @param  \App\Models\SoliMovimiento  $soliMovimiento
      * @return \Illuminate\Http\Response
      */
-    public function show(SoliGastos $soliGastos)
+    public function show(SoliMovimiento $soliMovimiento)
     {
         //
     }
@@ -52,10 +52,10 @@ class SoliGastosController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\SoliGastos  $soliGastos
+     * @param  \App\Models\SoliMovimiento  $soliMovimiento
      * @return \Illuminate\Http\Response
      */
-    public function edit(SoliGastos $soliGastos)
+    public function edit(SoliMovimiento $soliMovimiento)
     {
         //
     }
@@ -64,10 +64,10 @@ class SoliGastosController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\SoliGastos  $soliGastos
+     * @param  \App\Models\SoliMovimiento  $soliMovimiento
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SoliGastos $soliGastos)
+    public function update(Request $request, SoliMovimiento $soliMovimiento)
     {
         //
     }
@@ -75,10 +75,10 @@ class SoliGastosController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\SoliGastos  $soliGastos
+     * @param  \App\Models\SoliMovimiento  $soliMovimiento
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SoliGastos $soliGastos)
+    public function destroy(SoliMovimiento $soliMovimiento)
     {
         //
     }
