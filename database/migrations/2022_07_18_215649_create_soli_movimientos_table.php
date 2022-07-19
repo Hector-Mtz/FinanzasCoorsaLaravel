@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('soli_movimientos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
+            $table->foreignId('ceco_concepto_id')->constrained('ceco_conceptos');
             $table->foreignId('tipo_movimiento_id')->constrained('tipo_movimientos');
             $table->foreignId('autorizacion_id')->constrained('autorizacions');
             $table->timestamps();
