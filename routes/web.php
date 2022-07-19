@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\VentaController;
 use App\Models\Ceco;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -36,7 +37,13 @@ Route::middleware([
 ])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
-    })->name('dashboard');  
-});
+    })->name('dashboard');
 
-Route::apiResource('/clientes', ClienteController::class);  
+    Route::controller(VentaController::class)
+        ->prefix('ventas')
+        ->name('ventas.')
+        ->group(function () {
+            Route::get('', 'index')->name('index');
+        });
+});
+Route::apiResource('/clientes', ClienteController::class);

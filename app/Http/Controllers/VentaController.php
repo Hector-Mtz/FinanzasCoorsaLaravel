@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Venta;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class VentaController extends Controller
 {
@@ -14,7 +15,7 @@ class VentaController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Finanzas/VentasIndex');
     }
 
     /**
