@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Cliente extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+    ];
+
+    public function ceco(){
+        return $this->belongsTo(Ceco::class,'ceco_id', 'id');
+    }
 }

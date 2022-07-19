@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('productos', function (Blueprint $table) {
+        Schema::create('soli_movimientos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->integer('cantidad');
-            $table->foreignId('soli_gastos_id')->constrained('soli_gastos');
+            $table->foreignId('ceco_concepto_id')->constrained('ceco_conceptos');
+            $table->foreignId('tipo_movimiento_id')->constrained('tipo_movimientos');
+            $table->foreignId('autorizacion_id')->constrained('autorizacions');
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('productos');
+        Schema::dropIfExists('soli_movimientos');
     }
 };
