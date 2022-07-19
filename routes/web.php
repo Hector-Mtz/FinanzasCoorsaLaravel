@@ -2,11 +2,9 @@
 
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\VentaController;
-use App\Models\Ceco;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\Cliente;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,5 +43,6 @@ Route::middleware([
         ->group(function () {
             Route::get('', 'index')->name('index');
         });
+    Route::get('/clientes/catalogo', [ClienteController::class, 'catalogo'])->name('clientes.catalogo');
 });
 Route::apiResource('/clientes', ClienteController::class);

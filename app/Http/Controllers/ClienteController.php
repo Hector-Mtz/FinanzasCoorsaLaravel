@@ -23,7 +23,7 @@ class ClienteController extends Controller
         $clientes = Cliente::all();
         $grupo_conceptos = GrupoConcepto::all();
 
-/*
+        /*
 hola hhhh
         /*
         $cantidades = DB::table(DB::raw('productos'))
@@ -117,5 +117,16 @@ hola hhhh
     public function destroy(Cliente $cliente)
     {
         //
+    }
+
+
+    /**
+     * Catalogo Clientes
+     */
+    public function catalogo()
+    {
+        $clientes = Cliente::select("id", "nombre")
+            ->get();
+        return response()->json($clientes);
     }
 }

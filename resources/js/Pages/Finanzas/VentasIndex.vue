@@ -6,16 +6,25 @@ import Calendar from '../../Components/Calendar.vue';
 import { ref } from '@vue/reactivity';
 import CalendarHeader from '../../Components/CalendarHeader.vue';
 import Ventas from './Partials/Ventas.vue';
+import VentasModal from './Partials/VentasModal.vue';
+import FormVentaModal from './Partials/FormVentaModal.vue';
 
 const date = new Date();
 const year = ref(date.getFullYear());
+const showingVentas = ref(false);
+const showingFormVenta = ref(false);
 const month = ref(date.getMonth());
 
 const changeDate = (newDate) => {
     year.value = newDate.year;
     month.value = newDate.month;
 }
+// FUNCIONES MODAL
+const closeModalVentas = () => {
+    showingVentas.value = false;
+}
 
+// END FUNCIONES MODAL
 
 </script>
 
@@ -30,7 +39,7 @@ const changeDate = (newDate) => {
         <div class="px-3 py-3 fondo_general">
             <div class="grid-ventas">
                 <Card class="h-full">
-                    <Ventas />
+                    <Ventas @show-ventas="showingVentas = true" />
                 </Card>
                 <Card>
                     <div class="mx-4">
@@ -44,8 +53,12 @@ const changeDate = (newDate) => {
                     <h1>Por pagar</h1>
                 </Card>
             </div>
-
         </div>
+        <!-- Modals -->
+        <VentasModal :show="showingVentas" @show-add-venta="showingFormVenta = true" @close="closeModalVentas" />
+        <FormVentaModal :show="showingFormVenta" @close="showingFormVenta = false" />
+
+        <!-- END Modals -->
     </AppLayout>
 
 </template>

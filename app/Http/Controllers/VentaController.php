@@ -15,7 +15,20 @@ class VentaController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Finanzas/VentasIndex');
+        $ventas = Venta::select("vantas.*")
+            ->with('ceco', function ($query) {
+                $query->select(
+                    "cecos.id",
+                    "cecos.nombre",
+                    "cecos.cliente_id",
+                    "clientes.nombre as cliente"
+                )
+                    ->join('clientes', 'cecos.cliente_id', "=", "clientes.id");
+            });
+
+        return Inertia::render('Finanzas/VentasIndex', [
+            'ventas' => Inertia::lazy(fn () => $ventas::get()),
+        ]);
     }
 
     /**

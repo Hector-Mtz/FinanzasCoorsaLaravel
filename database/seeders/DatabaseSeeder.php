@@ -26,8 +26,9 @@ class DatabaseSeeder extends Seeder
             AutorizacionesSeeder::class,
             CecoConceptosSeeder::class,
             SolicitudMovimientosSeeder::class,
-            ProductosSeeder::class
-            
+            ProductosSeeder::class,
+            StatusSeeder::class,
+
         ]);
         // \App\Models\User::factory(10)->create();
 
