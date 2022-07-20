@@ -1,6 +1,7 @@
 <script setup>
 import DialogModal from '../../../Components/DialogModal.vue';
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
+import TableComponent from '../../../Components/Table.vue';
 
 const emit = defineEmits(["close", "showAddVenta"])
 const props = defineProps({
@@ -19,9 +20,9 @@ const close = () => {
 <template>
     <DialogModal :show="show" @close="close()">
         <template #title>
-            <div class="flex border-b-4 border-gray-600">
-                <div class="px-4 py-1 border-r-4 border-gray-600">
-                    <span>
+            <div class="flex flex-row">
+                <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
+                    <span class="block font-bold text-center text-white">
                         Ventas
                     </span>
                 </div>
@@ -34,7 +35,21 @@ const close = () => {
                 </div>
             </div>
         </template>
-        <template #body>
+        <template #content>
+            <TableComponent>
+                <template #thead>
+                    <tr>
+                        <th>CLIENTE</th>
+                        <th>IVA</th>
+                        <th>TOTAL IVA</th>
+                        <th>SUBTOTAL</th>
+                        <th>TOTAL</th>
+                    </tr>
+                </template>
+                <template #tbody>
+
+                </template>
+            </TableComponent>
         </template>
     </DialogModal>
 </template>
