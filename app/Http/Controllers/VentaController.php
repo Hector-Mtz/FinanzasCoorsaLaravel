@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Venta;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class VentaController extends Controller
 {
@@ -14,7 +15,20 @@ class VentaController extends Controller
      */
     public function index()
     {
-        //
+        $ventas = Venta::select("vantas.*")
+            ->with('ceco', function ($query) {
+                $query->select(
+                    "cecos.id",
+                    "cecos.nombre",
+                    "cecos.cliente_id",
+                    "clientes.nombre as cliente"
+                )
+                    ->join('clientes', 'cecos.cliente_id', "=", "clientes.id");
+            });
+
+        return Inertia::render('Finanzas/VentasIndex', [
+            'ventas' => Inertia::lazy(fn () => $ventas::get()),
+        ]);
     }
 
     /**

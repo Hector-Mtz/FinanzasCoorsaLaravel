@@ -14,7 +14,6 @@ class ClienteController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *Hola Hector
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -22,7 +21,6 @@ class ClienteController extends Controller
 
         $clientes = Cliente::all();
         $grupo_conceptos = GrupoConcepto::all();
-
         
         $cantidades = DB::table(DB::raw('soli_movimientos'))
         ->select(DB::raw(
@@ -116,5 +114,16 @@ class ClienteController extends Controller
     public function destroy(Cliente $cliente)
     {
         //
+    }
+
+
+    /**
+     * Catalogo Clientes
+     */
+    public function catalogo()
+    {
+        $clientes = Cliente::select("id", "nombre")
+            ->get();
+        return response()->json($clientes);
     }
 }

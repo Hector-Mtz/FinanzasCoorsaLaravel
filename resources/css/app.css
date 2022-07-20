@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.tabs-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tab {
+    padding: 3px;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+.tab:hover {
+    border-color: #010E1D;
+}
+
+.active {
+    border-color: #010E1D;
+}
