@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ServicioController;
+use App\Http\Controllers\TipoController;
 use App\Http\Controllers\VentaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -37,13 +39,12 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::controller(VentaController::class)
-        ->prefix('ventas')
-        ->name('ventas.')
-        ->group(function () {
-            Route::get('', 'index')->name('index');
-        });
+    Route::apiResource('/ventas', VentaController::class)->only('index', 'store');
+
+
     Route::get('/clientes/catalogo', [ClienteController::class, 'catalogo'])->name('clientes.catalogo');
     Route::get('/clientes/${cliente}/cecos', [ClienteController::class, 'cecos'])->name('clientes.cecos');
+    Route::get('/servicios/catalogo', [ServicioController::class, 'catalogo'])->name('servicios.catalogo');
+    Route::get('/tipos/catalogo', [TipoController::class, 'catalogo'])->name('tipos.catalogo');
 });
 Route::apiResource('/clientes', ClienteController::class);

@@ -15,6 +15,6 @@ class Servicio extends Model
 
     public function montos()
     {
-        $this->hasMany(Monto::class, 'servicio_id', 'id');
+        return $this->hasMany(Monto::class, 'servicio_id', 'id');
     }
 }

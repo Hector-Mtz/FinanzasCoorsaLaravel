@@ -49,16 +49,6 @@ class ServicioController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Servicio  $servicio
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Servicio $servicio)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -81,5 +71,16 @@ class ServicioController extends Controller
     public function destroy(Servicio $servicio)
     {
         //
+    }
+
+    /**
+     * Obtiene los servicios con sus montos correspondientes
+     */
+    public function catalogo()
+    {
+        $servicios = Servicio::select("id", "nombre")
+            ->with('montos:id,cantidad,servicio_id')
+            ->get();
+        return response()->json($servicios);
     }
 }

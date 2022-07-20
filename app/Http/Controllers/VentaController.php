@@ -15,30 +15,24 @@ class VentaController extends Controller
      */
     public function index()
     {
-        $ventas = Venta::select("vantas.*")
-            ->with('ceco', function ($query) {
-                $query->select(
-                    "cecos.id",
-                    "cecos.nombre",
-                    "cecos.cliente_id",
-                    "clientes.nombre as cliente"
-                )
-                    ->join('clientes', 'cecos.cliente_id', "=", "clientes.id");
+        $ventas = Venta::select("ventas.*", "cecos.nombre as ceco", "clientes.nombre as cliente")
+            ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
+            ->join('clientes', 'cecos.cliente_id', "=", "clientes.id");
+        if (request()->has("status_id") && request("status_id") != "") {
+            $ventas->where("ventas.status_id", "=", request("status_id"));
+        }
+
+        if (request()->has("search")) {
+            $search = strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
+            $ventas->where(function ($query) use ($search) {
+                $query->where("cecos.nombre", "like", "%" . $search . "%")
+                    ->orWhere("clientes.nombre", "like", "%" . $search . "%");
             });
+        }
 
         return Inertia::render('Finanzas/VentasIndex', [
-            'ventas' => Inertia::lazy(fn () => $ventas::get()),
+            'ventas' => fn () => $ventas->get(),
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -49,7 +43,22 @@ class VentaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $newVenta = $request->validate([
+            "monto_id" =>  ["required", "exists:montos,id"],
+            "nombre" =>  ["required", "max:100"],
+            "fechaInicial" =>  ["required", "date"],
+            "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
+            "periodos" =>  ["required", "numeric", "min:1"],
+            "tipo_id" =>  ["required", "exists:tipos,id"],
+            "ceco_id" =>  ["required", "exists:cecos,id"],
+        ]);
+
+        // por falta de default value
+        $newVenta["status_id"] = 1;
+
+        Venta::create($newVenta);
+
+        return redirect()->back();
     }
 
     /**

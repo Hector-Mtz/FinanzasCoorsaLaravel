@@ -40,7 +40,7 @@ const setValuekey = (text) => {
 
     if (text !== "") {
         const selectOpcion = props.options.find(opcion => {
-            return opcion[props.nameOption] === text
+            return opcion[props.nameOption] == text
         });
         if (selectOpcion !== undefined) {
             emit('update:modelValue', selectOpcion[props.keyOption]);

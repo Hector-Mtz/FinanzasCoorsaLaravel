@@ -24,7 +24,7 @@ class ServicioFactory extends Factory
     public function definition()
     {
         return [
-            //
+            "nombre" =>  $this->faker->unique()->name()
         ];
     }
 }

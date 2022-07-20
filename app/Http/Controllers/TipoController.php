@@ -82,4 +82,11 @@ class TipoController extends Controller
     {
         //
     }
+
+
+    public function catalogo()
+    {
+        $tipos = Tipo::select("id", "nombre")->get();
+        return response()->json($tipos);
+    }
 }

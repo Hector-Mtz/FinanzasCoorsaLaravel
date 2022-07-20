@@ -15,6 +15,14 @@ const showingVentas = ref(false);
 const showingFormVenta = ref(false);
 const month = ref(date.getMonth());
 
+
+const props = defineProps({
+    ventas: {
+        type: Object,
+        required: true,
+    }
+});
+
 const changeDate = (newDate) => {
     year.value = newDate.year;
     month.value = newDate.month;
@@ -39,7 +47,7 @@ const closeModalVentas = () => {
         <div class="px-3 py-3 fondo_general">
             <div class="grid-ventas">
                 <Card class="h-full">
-                    <Ventas @show-ventas="showingVentas = true" />
+                    <Ventas :ventas="props.ventas" @show-ventas="showingVentas = true" />
                 </Card>
                 <Card>
                     <div class="mx-4">

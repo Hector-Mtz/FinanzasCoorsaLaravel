@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             SolicitudMovimientosSeeder::class,
             ProductosSeeder::class,
             StatusSeeder::class,
+            TiposSeeder::class,
 
         ]);
         // \App\Models\User::factory(10)->create();

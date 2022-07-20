@@ -1,4 +1,9 @@
 <script setup>
+import { ref, watch, watchEffect } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
+
+import { pickBy } from 'lodash'
+
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import InputSearch from '../../../Components/InputSearch.vue';
 import ItemCliente from './ItemCliente.vue';
@@ -7,24 +12,77 @@ import ItemCliente from './ItemCliente.vue';
 const emit = defineEmits(['showVentas'])
 
 
+const tab = ref("") // Referencia al id
+const searchText = ref("") // Referencia al id
+const props = defineProps({
+    "ventas": {
+        type: Object
+    }
+})
+
+const changeTab = (status_id) => {
+    tab.value = status_id
+    if (searchText.value !== "") {
+        searchText.value = ""
+    } else {
+        const params = pickBy({ status_id })
+        Inertia.visit(route('ventas.index'), {
+            data: params,
+            preserveState: true,
+            preserveScroll: true,
+            only: ['ventas'],
+        })
+    }
+}
+const search = (newSearch) => {
+    console.log("Realiza la busqueda");
+    const params = pickBy({ status_id: tab.value, search: newSearch })
+    Inertia.visit(route('ventas.index'), {
+        data: params,
+        preserveState: true,
+        preserveScroll: true,
+        only: ['ventas'],
+    })
+}
+
+let timeout;
+watch(searchText, (newSearch) => {
+    if (timeout !== undefined) {
+        clearTimeout(timeout);
+    }
+    //Bounce de busqueda
+    timeout = setTimeout(() => {
+        search(newSearch)
+    }, 300);
+
+});
+
+
 </script>
 <template>
     <div class="text-white">
         <h1>Ventas</h1>
         <div class="flex justify-around">
-            <InputSearch />
+            <InputSearch v-model="searchText" />
             <ButtonAdd class="h-7" @click="emit('showVentas')" />
         </div>
         <div class="w-full">
             <!-- Header Tabs -->
             <div class="tabs-header">
-                <span class="tab active">TODAS</span>
-                <span class="tab">ABIERTAS</span>
-                <span class="tab">CERRADAS</span>
+                <span :class="{ 'active': tab === '' }" class="tab" @click="changeTab('')">
+                    TODAS
+                </span>
+                <span :class="{ 'active': tab === '1' }" class="tab" @click="changeTab('1')">
+                    ABIERTAS
+                </span>
+                <span :class="{ 'active': tab === '2' }" class="tab" @click="changeTab('2')">
+                    CERRADAS
+                </span>
             </div>
             <!-- Lista de clientes -->
             <div>
-                <ItemCliente />
+
+                <ItemCliente v-for="venta in props.ventas" :key="venta.id" :venta="venta" />
             </div>
         </div>
     </div>
