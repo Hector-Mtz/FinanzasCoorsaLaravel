@@ -13,7 +13,13 @@ class Cliente extends Model
         'name',
     ];
 
-    public function ceco(){
-        return $this->belongsTo(Ceco::class,'ceco_id', 'id');
+    public function ceco()
+    {
+        return $this->belongsTo(Ceco::class, 'ceco_id', 'id');
+    }
+
+    public function cecos()
+    {
+        return $this->hasMany(Ceco::class, 'cliente_id', 'id');
     }
 }

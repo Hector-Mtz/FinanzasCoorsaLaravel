@@ -129,4 +129,11 @@ hola hhhh
             ->get();
         return response()->json($clientes);
     }
+
+    public function cecos(Cliente $cliente)
+    {
+        $cecos = $cliente->cecos()->select("id", "nombre")
+            ->get();
+        return response()->json($cecos);
+    }
 }

@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Servicio extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        "nombre"
+    ];
+
+    public function montos()
+    {
+        $this->hasMany(Monto::class, 'servicio_id', 'id');
+    }
 }

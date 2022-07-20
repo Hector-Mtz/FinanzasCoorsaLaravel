@@ -44,5 +44,6 @@ Route::middleware([
             Route::get('', 'index')->name('index');
         });
     Route::get('/clientes/catalogo', [ClienteController::class, 'catalogo'])->name('clientes.catalogo');
+    Route::get('/clientes/${cliente}/cecos', [ClienteController::class, 'cecos'])->name('clientes.cecos');
 });
 Route::apiResource('/clientes', ClienteController::class);
