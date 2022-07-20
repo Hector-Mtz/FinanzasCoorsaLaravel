@@ -23,33 +23,32 @@ class ClienteController extends Controller
         $clientes = Cliente::all();
         $grupo_conceptos = GrupoConcepto::all();
 
-/*
-hola hhhh
-        /*
-        $cantidades = DB::table(DB::raw('productos'))
+        
+        $cantidades = DB::table(DB::raw('soli_movimientos'))
         ->select(DB::raw(
-          'SUM(productos.cantidad) AS Cantidad,
-          clientes.nombre AS Cliente,
+          'clientes.nombre AS Cliente,
           grupo_conceptos.nombre AS GrupoConcepto,
-          tipo_movimientos.nombre AS TipoGasto'
+          SUM(productos.cantidad) AS Cantidad,
+          tipo_movimientos.nombre AS Movimiento'
         ))
-        ->join('soli_gastos', 'soli_gastos.id','=','productos.soli_gastos_id')
-        ->leftJoin('ceco_conceptos', 'ceco_conceptos.soli_gastos_id','=','soli_gastos.id')
-        ->leftJoin('cecos', 'ceco_conceptos.ceco_id','=', 'cecos.id')
-        ->leftJoin('clientes', 'cecos.cliente_id','=','clientes.id')
-        ->leftJoin('conceptos', 'ceco_conceptos.concepto_id','=','conceptos.id')
-        ->leftJoin('grupo_conceptos','conceptos.grupo_concepto_id','=','grupo_conceptos.id')
-        ->leftJoin('tipo_movimientos','ceco_conceptos.tipo_movimiento_id','=','tipo_movimientos.id')
-        ->groupBy('clientes.nombre')
+        ->join('productos', 'productos.soli_movimiento_id','=','soli_movimientos.id')
+        ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id','=','tipo_movimientos.id')
+        ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id','=','ceco_conceptos.id')
+        ->join('cecos', 'ceco_conceptos.ceco_id','=','cecos.id')
+        ->join('clientes', 'cecos.cliente_id','=','clientes.id')
+        ->join('conceptos', 'ceco_conceptos.concepto_id','=','conceptos.id')
+        ->join('grupo_conceptos', 'conceptos.grupo_concepto_id','=','grupo_conceptos.id')
         ->groupBy('grupo_conceptos.nombre')
+        ->groupBy('clientes.nombre')
         ->groupBy('tipo_movimientos.nombre')
+        ->groupBy('soli_movimientos.nombre')
         ->get();
-*/
+
 
         return Inertia::render('Main', [
             'clientes' => $clientes,
             'grupo_conceptos' => $grupo_conceptos,
-            //'cantidades' => $cantidades
+            'cantidades' => $cantidades
         ]);
     }
 

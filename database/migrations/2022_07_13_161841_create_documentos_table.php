@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->foreignId('oc_id')->constrained('ocs');
+            $table->foreignId('status_id')->constrained('status');
             $table->timestamps();
         });
     }

@@ -8,7 +8,8 @@ export default {
   
 props: {
    clientes:Object,
-   grupo_conceptos:Object
+   grupo_conceptos:Object,
+   cantidades:Object
   },
 
 name: 'Graph',
@@ -24,6 +25,9 @@ mounted() {
     let grupo_conceptos = vm.grupo_conceptos;
 
     console.log(grupo_conceptos);
+
+    let datos = vm.cantidades;
+    console.log(datos);
     
     let root = am5.Root.new(this.$refs.chartdiv);
 
@@ -139,44 +143,33 @@ var colors = {
 
 // Set data
 // https://www.amcharts.com/docs/v5/charts/xy-chart/#Setting_data
-var data = [
 
-   {
-    y: "UNILEVER",
-    x: "1000",
-    columnSettings: {
-      fill: colors.good
-    },
-    value: 50
-  },
-  {
-    y: "WALMART",
-    x: "1000",
-    columnSettings: {
-      fill: colors.good
-    },
-    value: 50
-  },
-  {
-    y: "PURINA",
-    x: "1000",
-    columnSettings: {
-      fill: colors.good
-    },
-    value: 50
-  },
-  {
-    y: "COLGATE",
-    x: "1000",
-    columnSettings: {
-      fill: colors.good
-    },
-    value: 50
-  },
 
-];
+
+var data = [];
+var movimientos = [];
+for (let el = 0; el < datos.length; el++) {
+
+   data.push({
+     y: datos[el].Cliente,
+     x: datos[el].GrupoConcepto,
+     columnSettings: {
+       fill: colors.good
+     },
+     value: datos[el].Cantidad 
+    })
+
+  if (datos[el].Cliente == "WALMART") {
+      movimientos.push(datos[el].Movimiento);
+  }
+
+}
+
+console.log(data);
 
 series.data.setAll(data);
+
+
 
 //Siteamos los datos que aparecen en el eje y
 let ejey = []
@@ -184,7 +177,7 @@ let ejey = []
 for (let index = 0; index < clients.length; index++) {
     const element = clients[index];
 
-    console.log(element.nombre);
+    //console.log(element.nombre);
     ejey.push({category: element.nombre});
 
 }
@@ -195,7 +188,7 @@ yAxis.data.setAll(ejey);
 let ejex = [];
 for (let i = 0; i < grupo_conceptos.length; i++) {
     const e = grupo_conceptos[i];
-    console.log(e.nombre);
+   // console.log(e.nombre);
     ejex.push({category: e.nombre});
 }
 
@@ -214,6 +207,10 @@ chart.appear(1000, 100);
 
 }}
 
+
+let disponible = 0;
+let total = 0;
+let porcentaje = 0;
 
 
 </script>

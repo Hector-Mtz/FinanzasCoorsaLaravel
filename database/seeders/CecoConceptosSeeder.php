@@ -41,8 +41,8 @@ class CecoConceptosSeeder extends Seeder
         );
 
         DB::table('ceco_conceptos')->insert(
-            ['ceco_id' => "4",
-            'concepto_id' => "4",
+            ['ceco_id' => "3",
+            'concepto_id' => "2",
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
             ]
