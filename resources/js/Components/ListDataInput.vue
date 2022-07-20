@@ -30,16 +30,10 @@ const props = defineProps({
     }
 })
 
-let timeout;
 const changeText = (text) => {
-    valueText.value = text
     error.value = false;
-    if (timeout !== undefined) {
-        clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => {
-        setValuekey(text);
-    }, 500);
+    setValuekey(text);
+    valueText.value = text
 }
 
 const setValuekey = (text) => {
@@ -75,7 +69,7 @@ defineExpose({ focus: () => inputlist.value.focus() });
 <template>
     <div class="text-gray-600">
         <input type="text" :list="list"
-            class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 disabled:bg-gray-300"
+            class="w-full py-1 text-sm text-white bg-gray-800 border-gray-300 rounded-md shadow-sm focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50 disabled:bg-gray-300"
             :class="{ 'border-red-400': error, 'text-red-400': error }" :value="valueText"
             @keyup="emit('value', valueText)" @input="changeText($event.target.value)" ref="inputlist"
             :disabled="disabled">

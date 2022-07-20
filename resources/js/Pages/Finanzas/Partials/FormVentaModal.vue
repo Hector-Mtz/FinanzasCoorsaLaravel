@@ -1,5 +1,5 @@
 <script setup>
-import { watch, computed, ref } from 'vue';
+import { watch, computed, ref, nextTick } from 'vue';
 import { useForm } from '@inertiajs/inertia-vue3';
 
 import axios from 'axios';
@@ -34,11 +34,12 @@ const form = useForm({
     "fechaFinal": "",
     "periodos": 0,
     "tipo_id": -1,
-    "ceco_id": -1,
-    "cliente_id": -1,
+    "ceco_id": "",
+    "cliente_id": "",
 })
 
 const listClientes = ref([]);
+const listCecos = ref([]);
 
 const titleModal = computed(() => {
     if (props.typeForm === 'create') {
@@ -57,6 +58,12 @@ const getClientes = async () => {
     const resp = await axios.get(route('clientes.catalogo'))
     listClientes.value = resp.data
 }
+
+const getCecos = async (clente_id) => {
+    const resp = await axios.get(route('clientes.cecos', form.cliente_id));
+    listCecos.value = resp.data
+}
+
 
 watch(props, () => {
     if (props.show == true) {
@@ -77,14 +84,15 @@ watch(props, () => {
             </div>
         </template>
         <template #content>
-            <div class="grid grid-cols-2 px-4 py-2">
+            <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
                 <div>
-                    <JetLabel for="name" value="Tipo de Servicio" />
-                    <Input id="name" name="name" v-model="form.nombre" required maxlength="30" />
+                    <JetLabel for="nombre" value="Nombre" />
+                    <Input id="nombre" name="nombre" type="text" v-model="form.nombre" required maxlength="30" />
                 </div>
                 <div>
                     <JetLabel for="cliente" value="Cliente" />
-                    <ListDataInput v-model="form.cliente_id" list="clientes" :options="listClientes" />
+                    <ListDataInput v-model="form.cliente_id" list="clientes" :options="listClientes"
+                        @change="getCecos()" />
                     <!-- <SelectComponent id="cliente" name="cliente" v-model="form.cliente_id"
                         @change="getClientes($event.target.value)">
                         <option value="-1" disabled selected>Seleciona un Cliente</option>
@@ -93,13 +101,10 @@ watch(props, () => {
                         </option>
                     </SelectComponent> -->
                 </div>
-
                 <div>
-                    <JetLabel value="Tipo de Servicio" />
-                    <SelectComponent id="tipo_servicio" v-model="form.tipo_id">
-                        <option value="-1" disabled selected>Seleciona un Cliente</option>
-
-                    </SelectComponent>
+                    <JetLabel value="Ceco:" />
+                    <ListDataInput v-model="form.ceco_id" list="cecos" :options="listCecos"
+                        :disabled="form.cliente_id == ''" />
                 </div>
             </div>
         </template>
