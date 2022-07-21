@@ -18,16 +18,16 @@ mounted() {
 
     let vm=this;
         
-    console.log(vm.clientes); //comprobamos si imprime todos los los clientes
+   // console.log(vm.clientes); //comprobamos si imprime todos los los clientes
  
     let clients = vm.clientes; //guardamos en una varibale los cliente spara iterarlos
 
     let grupo_conceptos = vm.grupo_conceptos;
 
-    console.log(grupo_conceptos);
+    //console.log(grupo_conceptos);
 
     let datos = vm.cantidades;
-    console.log(datos);
+    //console.log(datos);
     
     let root = am5.Root.new(this.$refs.chartdiv);
 
@@ -146,30 +146,29 @@ var colors = {
 
 
 
-var data = [];
-var movimientos = [];
-for (let el = 0; el < datos.length; el++) {
 
+var data = [];
+/*
+for (let el = 0; el < datos.length; el++) {
+  
    data.push({
      y: datos[el].Cliente,
      x: datos[el].GrupoConcepto,
      columnSettings: {
        fill: colors.good
      },
-     value: datos[el].Cantidad 
+     value: 0,
+     movimientos,
+     disponible : 0,
+     total : 0,
+     porcentaje : 0
     })
-
-  if (datos[el].Cliente == "WALMART") {
-      movimientos.push(datos[el].Movimiento);
-  }
-
 }
 
 console.log(data);
+*/
 
 series.data.setAll(data);
-
-
 
 //Siteamos los datos que aparecen en el eje y
 let ejey = []
@@ -208,11 +207,6 @@ chart.appear(1000, 100);
 }}
 
 
-let disponible = 0;
-let total = 0;
-let porcentaje = 0;
-
-
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -226,5 +220,4 @@ let porcentaje = 0;
 
 <template>
   <div class="graph" ref="chartdiv">  </div>
-
 </template>

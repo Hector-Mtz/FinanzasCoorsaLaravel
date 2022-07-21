@@ -14,6 +14,8 @@
 
         <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+
         <!-- Scripts -->
         @routes
         @vite('resources/js/app.js')
