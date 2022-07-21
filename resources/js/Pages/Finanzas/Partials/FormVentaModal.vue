@@ -48,6 +48,15 @@ const listTipos = ref([]);
 
 const titleModal = computed(() => {
     if (props.typeForm === 'create') {
+        form.monto_id = "";
+        form.nombre = "";
+        form.fechaInicial = "";
+        form.fechaFinal = "";
+        form.periodos = "";
+        form.tipo_id = "";
+        form.cantidad = "";
+        form.ceco_id = "";
+        form.servicio_id = "";
         return "Nueva Venta"
     } else {
         form.monto_id = props.venta.monto_id
