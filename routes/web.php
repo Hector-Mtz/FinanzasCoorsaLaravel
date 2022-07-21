@@ -40,7 +40,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::apiResource('/ventas', VentaController::class)->only('index', 'store');
+    Route::apiResource('/ventas', VentaController::class)->except('destroy');
 
 
     Route::get('/cecos/catalogo', [CecoController::class, 'catalogo'])->name('cecos.catalogo');

@@ -1,10 +1,13 @@
 <script setup>
-import DialogModal from '../../../Components/DialogModal.vue';
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import TableComponent from '../../../Components/Table.vue';
-import ItemVenta from './itemVenta.vue';
+import { ref } from 'vue';
 
-const emit = defineEmits(["close", "showAddVenta"])
+import ButtonAdd from '../../../Components/ButtonAdd.vue';
+import DialogModal from '../../../Components/DialogModal.vue';
+import ItemVenta from './itemVenta.vue';
+import TableComponent from '../../../Components/Table.vue';
+import FormVentaModal from './FormVentaModal.vue';
+
+const emit = defineEmits(["close",])
 const props = defineProps({
     show: {
         type: Boolean,
@@ -12,10 +15,24 @@ const props = defineProps({
     },
     ventas: {
         type: Object,
-        required: true
+        required: true,
     }
-})
+});
+const showingFormVenta = ref(false);
+const venta = ref({});
+const typeForm = ref("create");
 
+// MODALS FUNCITON
+const showFormVentas = (ventaSelect) => {
+    if (ventaSelect === undefined) {
+        typeForm.value = "create"
+    } else {
+        typeForm.value = "update"
+        venta.value = ventaSelect
+    }
+    showingFormVenta.value = true
+}
+// EN MODALS FUNCTION
 
 const close = () => {
     emit('close');
@@ -33,7 +50,7 @@ const close = () => {
                 </div>
                 <div class="flex-1 px-2 py-1">
                     <div class="flex justify-center">
-                        <ButtonAdd @click="emit('showAddVenta')" class="text-sm text-white h-7">
+                        <ButtonAdd @click="showFormVentas()" class="text-sm text-white h-7">
                             Agregar
                         </ButtonAdd>
                     </div>
@@ -53,9 +70,14 @@ const close = () => {
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemVenta v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta" />
+                    <ItemVenta v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta"
+                        @edit="showFormVentas($event)" />
                 </template>
             </TableComponent>
+            <!-- MODALS -->
+            <FormVentaModal :show="showingFormVenta" :type-form="typeForm" :venta="venta"
+                @close="showingFormVenta = false" />
+            <!-- ENDS MODALS -->
         </template>
     </DialogModal>
 </template>

@@ -104,6 +104,7 @@ watch(searchText, (newSearch) => {
         </div>
         <!--Modals -->
         <OcsModal :show="showingOcs" :venta="ventaSelect" @close="closeOcs" />
+
         <!--Ends Modals-->
     </div>
 </template>

@@ -1,11 +1,9 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 
 const emit = defineEmits(['update:modelValue', 'value']);
 
-const valueText = ref("");
-const error = ref(false);
 
 const props = defineProps({
     'modelValue': {
@@ -30,29 +28,40 @@ const props = defineProps({
     }
 })
 
+
+const valueText = ref("");
+
 const changeText = (text) => {
-    error.value = false;
-    setValuekey(text);
     valueText.value = text
 }
 
-const setValuekey = (text) => {
 
-    if (text !== "") {
-        const selectOpcion = props.options.find(opcion => {
-            return opcion[props.nameOption] == text
-        });
-        if (selectOpcion !== undefined) {
-            emit('update:modelValue', selectOpcion[props.keyOption]);
+
+const error = computed(() => {
+    if (valueText.value !== "" || props.modelValue != "") {
+        if (valueText.value !== "") {
+            const selectOpcion = props.options.find(opcion => {
+                return opcion[props.nameOption] == valueText.value
+            });
+            if (selectOpcion !== undefined) {
+                emit('update:modelValue', selectOpcion[props.keyOption]);
+            } else {
+                emit('update:modelValue', "");
+                return true;
+            }
         } else {
-            error.value = true;
-            emit('update:modelValue', "");
+            const selectOpcion = props.options.find(opcion => {
+                return opcion[props.keyOption] == props.modelValue
+            });
+            if (selectOpcion !== undefined) {
+                valueText.value = selectOpcion[props.nameOption]
+            }
         }
     } else {
         emit('update:modelValue', '');
     }
-
-}
+    return false
+})
 
 
 const inputlist = ref(null);

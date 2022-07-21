@@ -44,13 +44,21 @@ const form = useForm({
 
 const listServicios = ref([]);
 const listCecos = ref([]);
-const listMontos = ref([]);
 const listTipos = ref([]);
 
 const titleModal = computed(() => {
     if (props.typeForm === 'create') {
         return "Nueva Venta"
     } else {
+        form.monto_id = props.venta.monto_id
+        form.nombre = props.venta.nombre
+        form.fechaInicial = props.venta.fechaInicial
+        form.fechaFinal = props.venta.fechaFinal
+        form.periodos = props.venta.periodos
+        form.tipo_id = props.venta.tipo_id
+        form.cantidad = props.venta.cantidad
+        form.ceco_id = props.venta.ceco_id
+        form.servicio_id = props.venta.servicio_id
         return "Actualizar Venta"
     }
 })
@@ -76,16 +84,35 @@ const getCatalogos = async () => {
 }
 
 
-const setMontos = () => {
+const listMontos = computed(() => {
     const servicio = listServicios.value.find(serv => {
         return serv.id === form.servicio_id
     });
     if (servicio !== undefined)
-        listMontos.value = servicio.montos
+        return servicio.montos
+    return []
+});
+
+const createOrUpdate = () => {
+    if (props.typeForm === "create") {
+        create();
+    } else {
+        update();
+    }
 }
 
 const create = () => {
     form.post(route('ventas.store'), {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => {
+            form.reset();
+            close();
+        },
+    })
+}
+const update = () => {
+    form.put(route('ventas.update', props.venta.id), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {
@@ -116,7 +143,7 @@ watch(props, () => {
             </div>
         </template>
         <template #content>
-            <form @submit.prevent="create()">
+            <form @submit.prevent="createOrUpdate()">
                 <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
                     <div>
                         <JetLabel for="nombre" value="Nombre:" />
@@ -132,8 +159,7 @@ watch(props, () => {
                     </div>
                     <div>
                         <JetLabel value="Servicio:" />
-                        <ListDataInput v-model="form.servicio_id" list="servicios" @change="setMontos()"
-                            :options="listServicios" />
+                        <ListDataInput v-model="form.servicio_id" list="servicios" :options="listServicios" />
                     </div>
                     <div>
                         <JetLabel value="Monto:" />
@@ -178,8 +204,8 @@ watch(props, () => {
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">
-                    <SpinProgress :inprogress="form.processing" />
                     <JetButton type="submit" :disabled="form.processing">
+                        <SpinProgress :inprogress="form.processing" />
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-6 h-5 "
                             viewBox="0 0 16 16">
                             <path

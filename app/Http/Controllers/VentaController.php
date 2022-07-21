@@ -20,6 +20,7 @@ class VentaController extends Controller
             "cecos.nombre as ceco",
             "clientes.nombre as cliente",
             "montos.cantidad as total",
+            "montos.servicio_id"
         )
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
@@ -68,27 +69,7 @@ class VentaController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Venta  $venta
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Venta $venta)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Venta  $venta
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Venta $venta)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -99,7 +80,19 @@ class VentaController extends Controller
      */
     public function update(Request $request, Venta $venta)
     {
-        //
+        $newVenta = $request->validate([
+            "monto_id" =>  ["required", "exists:montos,id"],
+            "nombre" =>  ["required", "max:100"],
+            "fechaInicial" =>  ["required", "date"],
+            "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
+            "periodos" =>  ["required", "numeric", "min:1"],
+            "cantidad" =>  ["required", "numeric", "min:1"],
+            "tipo_id" =>  ["required", "exists:tipos,id"],
+            "ceco_id" =>  ["required", "exists:cecos,id"],
+        ]);
+
+        $venta->update($newVenta);
+        return redirect()->back();
     }
 
     /**

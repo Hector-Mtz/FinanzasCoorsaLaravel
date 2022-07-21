@@ -6,15 +6,14 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Card from '../../Components/Card.vue';
 import Calendar from '../../Components/Calendar.vue';
 import CalendarHeader from '../../Components/CalendarHeader.vue';
-import FormVentaModal from './Partials/FormVentaModal.vue';
 import Ventas from './Partials/Ventas.vue';
 import VentasModal from './Partials/VentasModal.vue';
 
 const date = new Date();
 const year = ref(date.getFullYear());
 const showingVentas = ref(false);
-const showingFormVenta = ref(false);
 const month = ref(date.getMonth());
+
 
 
 const props = defineProps({
@@ -39,7 +38,6 @@ const changeDate = (newDate) => {
 const closeModalVentas = () => {
     showingVentas.value = false;
 }
-
 // END FUNCIONES MODAL
 
 </script>
@@ -71,10 +69,7 @@ const closeModalVentas = () => {
             </div>
         </div>
         <!-- Modals -->
-        <VentasModal :show="showingVentas" :ventas="ventas" @show-add-venta="showingFormVenta = true"
-            @close="closeModalVentas" />
-        <FormVentaModal :show="showingFormVenta" @close="showingFormVenta = false" />
-
+        <VentasModal :show="showingVentas" :ventas="ventas" @close="closeModalVentas" />
         <!-- END Modals -->
     </AppLayout>
 
