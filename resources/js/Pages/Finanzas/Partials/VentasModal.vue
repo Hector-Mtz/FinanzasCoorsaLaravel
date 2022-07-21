@@ -2,6 +2,7 @@
 import DialogModal from '../../../Components/DialogModal.vue';
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import TableComponent from '../../../Components/Table.vue';
+import ItemVenta from './itemVenta.vue';
 
 const emit = defineEmits(["close", "showAddVenta"])
 const props = defineProps({
@@ -9,6 +10,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    ventas: {
+        type: Object,
+        required: true
+    }
 })
 
 
@@ -47,7 +52,7 @@ const close = () => {
                     </tr>
                 </template>
                 <template #tbody>
-
+                    <ItemVenta v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta" />
                 </template>
             </TableComponent>
         </template>

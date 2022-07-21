@@ -30,7 +30,7 @@ const close = () => {
                 <slot name="title" />
             </div>
 
-            <div class="mb-4">
+            <div>
                 <slot name="content" />
             </div>
         </div>

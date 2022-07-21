@@ -1,13 +1,14 @@
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
+import { ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia'
+import AppLayout from '@/Layouts/AppLayout.vue';
+
 import Card from '../../Components/Card.vue';
 import Calendar from '../../Components/Calendar.vue';
-import { ref } from '@vue/reactivity';
 import CalendarHeader from '../../Components/CalendarHeader.vue';
+import FormVentaModal from './Partials/FormVentaModal.vue';
 import Ventas from './Partials/Ventas.vue';
 import VentasModal from './Partials/VentasModal.vue';
-import FormVentaModal from './Partials/FormVentaModal.vue';
 
 const date = new Date();
 const year = ref(date.getFullYear());
@@ -63,7 +64,8 @@ const closeModalVentas = () => {
             </div>
         </div>
         <!-- Modals -->
-        <VentasModal :show="showingVentas" @show-add-venta="showingFormVenta = true" @close="closeModalVentas" />
+        <VentasModal :show="showingVentas" :ventas="props.ventas" @show-add-venta="showingFormVenta = true"
+            @close="closeModalVentas" />
         <FormVentaModal :show="showingFormVenta" @close="showingFormVenta = false" />
 
         <!-- END Modals -->

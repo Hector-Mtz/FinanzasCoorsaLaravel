@@ -15,7 +15,13 @@ class VentaController extends Controller
      */
     public function index()
     {
-        $ventas = Venta::select("ventas.*", "cecos.nombre as ceco", "clientes.nombre as cliente")
+        $ventas = Venta::select(
+            "ventas.*",
+            "cecos.nombre as ceco",
+            "clientes.nombre as cliente",
+            "montos.cantidad"
+        )
+            ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
             ->join('clientes', 'cecos.cliente_id', "=", "clientes.id");
         if (request()->has("status_id") && request("status_id") != "") {
