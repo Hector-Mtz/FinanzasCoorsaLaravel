@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CecoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TipoController;
@@ -42,8 +43,7 @@ Route::middleware([
     Route::apiResource('/ventas', VentaController::class)->only('index', 'store');
 
 
-    Route::get('/clientes/catalogo', [ClienteController::class, 'catalogo'])->name('clientes.catalogo');
-    Route::get('/clientes/${cliente}/cecos', [ClienteController::class, 'cecos'])->name('clientes.cecos');
+    Route::get('/cecos/catalogo', [CecoController::class, 'catalogo'])->name('cecos.catalogo');
     Route::get('/servicios/catalogo', [ServicioController::class, 'catalogo'])->name('servicios.catalogo');
     Route::get('/tipos/catalogo', [TipoController::class, 'catalogo'])->name('tipos.catalogo');
 });

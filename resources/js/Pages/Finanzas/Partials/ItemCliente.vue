@@ -1,6 +1,7 @@
 <script setup>
 import DangerButton from '../../../Components/DangerButton.vue';
 
+const emit = defineEmits(['onShow'])
 
 const props = defineProps({
     venta: {
@@ -17,7 +18,7 @@ const props = defineProps({
         <div
             class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden bg-gray-900 shadow-xl sm:rounded-lg">
             <span class="text-sm">{{ props.venta.ceco }}</span>
-            <DangerButton class="h-5">
+            <DangerButton class="h-5" @click="emit('onShow', props.venta)">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4" viewBox="0 0 16 16">
                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
                     <path

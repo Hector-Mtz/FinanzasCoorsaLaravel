@@ -35,18 +35,17 @@ const form = useForm({
     "nombre": "",
     "fechaInicial": "",
     "fechaFinal": "",
-    "periodos": "0",
+    "periodos": "",
     "tipo_id": "",
+    "cantidad": "",
     "ceco_id": "",
-    "cliente_id": "",
     "servicio_id": "",
 })
 
-const listClientes = ref([]);
 const listServicios = ref([]);
+const listCecos = ref([]);
 const listMontos = ref([]);
 const listTipos = ref([]);
-const listCecos = ref([]);
 
 const titleModal = computed(() => {
     if (props.typeForm === 'create') {
@@ -62,27 +61,20 @@ const close = () => {
 };
 
 const getCatalogos = async () => {
-    const respClientes = axios.get(route('clientes.catalogo'))
+    const respCecos = axios.get(route('cecos.catalogo'))
     const respServicios = axios.get(route('servicios.catalogo'))
     const respTipos = axios.get(route('tipos.catalogo'))
     const resps = await Promise.all([
-        respClientes,
+        respCecos,
         respServicios,
         respTipos,
     ]);
 
-    listClientes.value = resps[0].data;
+    listCecos.value = resps[0].data;
     listServicios.value = resps[1].data;
     listTipos.value = resps[2].data;
 }
 
-const getCecos = async () => {
-    if (form.cliente_id !== "") {
-
-        const resp = await axios.get(route('clientes.cecos', form.cliente_id));
-        listCecos.value = resp.data
-    }
-}
 
 const setMontos = () => {
     const servicio = listServicios.value.find(serv => {
@@ -131,21 +123,10 @@ watch(props, () => {
                         <Input id="nombre" name="nombre" type="text" v-model="form.nombre" required maxlength="30" />
                         <JetInputError :message="form.errors.nombre" class="mt-2" />
                     </div>
-                    <div>
-                        <JetLabel for="periodos" value="Periodos:" />
-                        <Input id="periodos" name="periodos" type="number" v-model="form.periodos" required
-                            maxlength="30" />
-                        <JetInputError :message="form.errors.periodos" class="mt-2" />
-                    </div>
-                    <div>
-                        <JetLabel for="cliente" value="Cliente" />
-                        <ListDataInput v-model="form.cliente_id" list="clientes" :options="listClientes"
-                            @change="getCecos()" />
-                    </div>
+
                     <div>
                         <JetLabel value="Ceco:" />
-                        <ListDataInput v-model="form.ceco_id" list="cecos" :options="listCecos"
-                            :disabled="form.cliente_id == ''" />
+                        <ListDataInput v-model="form.ceco_id" list="cecos" :options="listCecos" />
 
                         <JetInputError :message="form.errors.ceco_id" class="mt-2" />
                     </div>
@@ -160,6 +141,12 @@ watch(props, () => {
                             :options="listMontos" :disabled="form.servicio_id == ''" />
 
                         <JetInputError :message="form.errors.monto_id" class="mt-2" />
+                    </div>
+                    <div>
+                        <JetLabel for="cantidad" value="Cantidad:" />
+                        <Input id="cantidad" name="cantidad" type="number" v-model="form.cantidad" required
+                            maxlength="30" />
+                        <JetInputError :message="form.errors.cantidad" class="mt-2" />
                     </div>
                     <div>
                         <JetLabel for="fechaInicio" value="Fecha Inicial:" />
@@ -182,6 +169,12 @@ watch(props, () => {
                             </option>
                         </SelectComponent>
                         <JetInputError :message="form.errors.tipo_id" class="mt-2" />
+                    </div>
+                    <div>
+                        <JetLabel for="periodos" value="Periodos:" />
+                        <Input id="periodos" name="periodos" type="number" v-model="form.periodos" required
+                            maxlength="30" />
+                        <JetInputError :message="form.errors.periodos" class="mt-2" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">

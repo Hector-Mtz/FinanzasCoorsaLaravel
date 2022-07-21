@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia'
 import AppLayout from '@/Layouts/AppLayout.vue';
 
@@ -21,8 +21,15 @@ const props = defineProps({
     ventas: {
         type: Object,
         required: true,
-    }
+    },
 });
+
+const ventas = computed(() => {
+    return props.ventas.map(venta => {
+        venta.total = venta.total * venta.periodos * venta.cantidad
+        return venta;
+    })
+})
 
 const changeDate = (newDate) => {
     year.value = newDate.year;
@@ -48,7 +55,7 @@ const closeModalVentas = () => {
         <div class="px-3 py-3 fondo_general">
             <div class="grid-ventas">
                 <Card class="h-full">
-                    <Ventas :ventas="props.ventas" @show-ventas="showingVentas = true" />
+                    <Ventas :ventas="ventas" @show-ventas="showingVentas = true" />
                 </Card>
                 <Card>
                     <div class="mx-4">
@@ -64,7 +71,7 @@ const closeModalVentas = () => {
             </div>
         </div>
         <!-- Modals -->
-        <VentasModal :show="showingVentas" :ventas="props.ventas" @show-add-venta="showingFormVenta = true"
+        <VentasModal :show="showingVentas" :ventas="ventas" @show-add-venta="showingFormVenta = true"
             @close="closeModalVentas" />
         <FormVentaModal :show="showingFormVenta" @close="showingFormVenta = false" />
 

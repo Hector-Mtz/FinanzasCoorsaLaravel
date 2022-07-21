@@ -1,8 +1,10 @@
 <script setup>
-import DialogModal from '../../../Components/DialogModal.vue';
+import { computed } from 'vue';
+
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import TableComponent from '../../../Components/Table.vue';
+import DialogModal from '../../../Components/DialogModal.vue';
 import ItemVenta from './itemVenta.vue';
+import TableComponent from '../../../Components/Table.vue';
 
 const emit = defineEmits(["close", "showAddVenta"])
 const props = defineProps({
@@ -10,12 +12,22 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-    ventas: {
+    venta: {
         type: Object,
         required: true
-    }
+    },
 })
 
+const title = computed(() => {
+    switch (props.venta) {
+        case "1":
+            return "Por Pagar"
+        case "2":
+            return "Cerrado"
+        default:
+            return "Por Pagar"
+    }
+})
 
 const close = () => {
     emit('close');
@@ -28,14 +40,14 @@ const close = () => {
             <div class="flex flex-row">
                 <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
                     <span class="block font-bold text-center text-white">
-                        Ventas
+                        {{ title }}
                     </span>
                 </div>
                 <div class="flex-1 px-2 py-1">
                     <div class="flex justify-center">
-                        <ButtonAdd @click="emit('showAddVenta')" class="text-sm text-white h-7">
+                        <span class="block font-bold text-center text-gray-300">
                             Agregar
-                        </ButtonAdd>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -44,16 +56,16 @@ const close = () => {
             <TableComponent>
                 <template #thead>
                     <tr>
-                        <th>CLIENTE</th>
-                        <th>IVA</th>
-                        <th>TOTAL IVA</th>
-                        <th>SUBTOTAL</th>
-                        <th>TOTAL</th>
-                        <th></th>
+                        <th>
+                            <h3 class="mb-1">FACTURA</h3>
+                            <ButtonAdd class="h-5" />
+                        </th>
+                        <th>OC</th>
+                        <th>FECHA</th>
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemVenta v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta" />
+
                 </template>
             </TableComponent>
         </template>

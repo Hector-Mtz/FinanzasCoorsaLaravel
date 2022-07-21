@@ -19,7 +19,7 @@ class VentaController extends Controller
             "ventas.*",
             "cecos.nombre as ceco",
             "clientes.nombre as cliente",
-            "montos.cantidad"
+            "montos.cantidad as total",
         )
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
@@ -55,6 +55,7 @@ class VentaController extends Controller
             "fechaInicial" =>  ["required", "date"],
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],
+            "cantidad" =>  ["required", "numeric", "min:1"],
             "tipo_id" =>  ["required", "exists:tipos,id"],
             "ceco_id" =>  ["required", "exists:cecos,id"],
         ]);
