@@ -30,7 +30,7 @@ const ventaShow = computed(() => {
 </script>
 <template>
     <tr>
-        <td>{{ ventaShow.ceco }}</td>
+        <td>{{ ventaShow.ceco + "-" + ventaShow.nombre }}</td>
         <td>
             <div @click="ivaChecked = !ivaChecked"
                 class="w-10 h-5 px-2 mx-2 bg-yellow-600 hover:bg-yellow-500 rounded-xl">

@@ -22,4 +22,9 @@ class Cliente extends Model
     {
         return $this->hasMany(Ceco::class, 'cliente_id', 'id');
     }
+
+    public function ventas()
+    {
+        return $this->hasManyThrough(Venta::class, Ceco::class);
+    }
 }

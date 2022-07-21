@@ -1,5 +1,5 @@
 <script setup>
-import { watch, computed, ref, nextTick } from 'vue';
+import { watch, computed, ref } from 'vue';
 import { useForm } from '@inertiajs/inertia-vue3';
 
 import axios from 'axios';
@@ -10,7 +10,6 @@ import DialogModal from '../../../Components/DialogModal.vue';
 import SelectComponent from '../../../Components/SelectComponent.vue';
 import Input from '../../../Components/Input.vue';
 import ListDataInput from '../../../Components/ListDataInput.vue';
-import { fromJSON } from 'postcss';
 import SpinProgress from '../../../Components/SpinProgress.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 
@@ -219,7 +218,7 @@ watch(props, () => {
                             viewBox="0 0 16 16">
                             <path
                                 d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                        </svg>Guardad
+                        </svg>Guardar
                     </JetButton>
                 </div>
 

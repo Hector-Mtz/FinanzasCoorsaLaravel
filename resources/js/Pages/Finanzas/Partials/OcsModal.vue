@@ -1,10 +1,12 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import DialogModal from '../../../Components/DialogModal.vue';
 import ItemVenta from './itemVenta.vue';
 import TableComponent from '../../../Components/Table.vue';
+import FormOcModal from './FormOcModal.vue';
+import ItemOc from './itemOc.vue';
 
 const emit = defineEmits(["close", "showAddVenta"])
 const props = defineProps({
@@ -18,6 +20,11 @@ const props = defineProps({
     },
 })
 
+const ocs = ref([])
+const showingFormOc = ref(false)
+const oc = ref({ id: -1 });
+const typeForm = ref("create");
+
 const title = computed(() => {
     switch (props.venta) {
         case "1":
@@ -29,9 +36,52 @@ const title = computed(() => {
     }
 })
 
+
+const getOcs = async () => {
+    const resp = await axios.get(route('ocs.index') + `?venta_id=${props.venta.id}`);
+    ocs.value = resp.data;
+}
+
+// Methos Modal
+const showFormOc = (ocSelected) => {
+
+    if (ocSelected != undefined) {
+        oc.value = ocSelected;
+        typeForm.value = "update";
+    } else {
+        oc.value = { id: -1 };
+        typeForm.value = "create";
+    }
+    showingFormOc.value = true;
+}
+
+const addOc = (newOc) => {
+    ocs.value.unshift(newOc);
+}
+
+
+const editOc = (newOc) => {
+    const findIndex = ocs.value.findIndex(ocFind => {
+        return newOc.id == ocFind.id;
+    })
+    if (findIndex !== -1) {
+
+        ocs.value[findIndex] = newOc;
+    }
+}
+
+// End Methos Modal
+
 const close = () => {
+    ocs.value = [];
     emit('close');
 };
+
+watch(props, () => {
+    if (props.show == true) {
+        getOcs();
+    }
+})
 
 </script>
 <template>
@@ -57,17 +107,22 @@ const close = () => {
                 <template #thead>
                     <tr>
                         <th>
-                            <h3 class="mb-1">FACTURA</h3>
-                            <ButtonAdd class="h-5" />
+                            <h3 class="mb-1">OC</h3>
+                            <ButtonAdd class="h-5" @click="showFormOc()" />
                         </th>
-                        <th>OC</th>
+                        <th>CANTIDAD</th>
                         <th>FECHA</th>
+                        <th></th>
                     </tr>
                 </template>
                 <template #tbody>
-
+                    <ItemOc v-for="oc in ocs" :key="oc.id" :oc="oc" @edit="showFormOc($event)" />
                 </template>
             </TableComponent>
+            <!--Modals-->
+            <FormOcModal :show="showingFormOc" :type-form="typeForm" :venta="props.venta" :oc="oc"
+                @add-oc="addOc($event)" @edit-oc="editOc($event)" @close="showingFormOc = false" />
+            <!-- Ends Mondals -->
         </template>
     </DialogModal>
 </template>

@@ -17,17 +17,23 @@ const month = ref(date.getMonth());
 
 
 const props = defineProps({
-    ventas: {
+    clientes: {
         type: Object,
         required: true,
     },
 });
 
 const ventas = computed(() => {
-    return props.ventas.map(venta => {
-        venta.total = venta.total * venta.periodos * venta.cantidad
-        return venta;
+    let auxVentas = [];
+    props.clientes.forEach(cliente => {
+        let ventas = cliente.ventas
+        ventas = ventas.map(venta => {
+            venta.total = venta.total * venta.periodos * venta.cantidad
+            return venta;
+        });
+        auxVentas = auxVentas.concat(ventas);
     })
+    return auxVentas;
 })
 
 const changeDate = (newDate) => {
@@ -45,7 +51,7 @@ const closeModalVentas = () => {
 <template>
     <AppLayout title="Finanzas">
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
+            <h2 class="text-xl font-semibold leading-tight text-white">
                 Finanzas
             </h2>
         </template>
@@ -53,7 +59,7 @@ const closeModalVentas = () => {
         <div class="px-3 py-3 fondo_general">
             <div class="grid-ventas">
                 <Card class="h-full">
-                    <Ventas :ventas="ventas" @show-ventas="showingVentas = true" />
+                    <Ventas :clientes="props.clientes" @show-ventas="showingVentas = true" />
                 </Card>
                 <Card>
                     <div class="mx-4">
@@ -81,6 +87,6 @@ const closeModalVentas = () => {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     gap: 20px;
-    height: 100vh;
+    height: 95vh;
 }
 </style>

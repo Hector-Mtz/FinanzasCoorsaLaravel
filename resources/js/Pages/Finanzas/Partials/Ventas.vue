@@ -14,7 +14,7 @@ const emit = defineEmits(['showVentas'])
 
 
 const props = defineProps({
-    "ventas": {
+    "clientes": {
         type: Object
     }
 })
@@ -51,13 +51,12 @@ const changeTab = (status_id) => {
     }
 }
 const search = (newSearch) => {
-    console.log("Realiza la busqueda");
     const params = pickBy({ status_id: tab.value, search: newSearch })
     Inertia.visit(route('ventas.index'), {
         data: params,
         preserveState: true,
         preserveScroll: true,
-        only: ['ventas'],
+        only: ['clientes'],
     })
 }
 
@@ -99,7 +98,8 @@ watch(searchText, (newSearch) => {
             <!-- Lista de clientes -->
             <div>
 
-                <ItemCliente v-for="venta in props.ventas" :key="venta.id" :venta="venta" @on-show="showOcs($event)" />
+                <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
+                    @on-show="showOcs($event)" />
             </div>
         </div>
         <!--Modals -->
