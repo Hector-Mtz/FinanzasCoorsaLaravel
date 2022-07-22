@@ -1,5 +1,5 @@
 <script setup>
-import { watch, computed, ref, nextTick } from 'vue';
+import { watch, computed, ref } from 'vue';
 import { useForm } from '@inertiajs/inertia-vue3';
 
 import axios from 'axios';
@@ -10,7 +10,6 @@ import DialogModal from '../../../Components/DialogModal.vue';
 import SelectComponent from '../../../Components/SelectComponent.vue';
 import Input from '../../../Components/Input.vue';
 import ListDataInput from '../../../Components/ListDataInput.vue';
-import { fromJSON } from 'postcss';
 import SpinProgress from '../../../Components/SpinProgress.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 
@@ -35,23 +34,39 @@ const form = useForm({
     "nombre": "",
     "fechaInicial": "",
     "fechaFinal": "",
-    "periodos": "0",
+    "periodos": "",
     "tipo_id": "",
+    "cantidad": "",
     "ceco_id": "",
-    "cliente_id": "",
     "servicio_id": "",
 })
 
-const listClientes = ref([]);
 const listServicios = ref([]);
-const listMontos = ref([]);
-const listTipos = ref([]);
 const listCecos = ref([]);
+const listTipos = ref([]);
 
 const titleModal = computed(() => {
     if (props.typeForm === 'create') {
+        form.monto_id = "";
+        form.nombre = "";
+        form.fechaInicial = "";
+        form.fechaFinal = "";
+        form.periodos = "";
+        form.tipo_id = "";
+        form.cantidad = "";
+        form.ceco_id = "";
+        form.servicio_id = "";
         return "Nueva Venta"
     } else {
+        form.monto_id = props.venta.monto_id
+        form.nombre = props.venta.nombre
+        form.fechaInicial = props.venta.fechaInicial
+        form.fechaFinal = props.venta.fechaFinal
+        form.periodos = props.venta.periodos
+        form.tipo_id = props.venta.tipo_id
+        form.cantidad = props.venta.cantidad
+        form.ceco_id = props.venta.ceco_id
+        form.servicio_id = props.venta.servicio_id
         return "Actualizar Venta"
     }
 })
@@ -62,38 +77,50 @@ const close = () => {
 };
 
 const getCatalogos = async () => {
-    const respClientes = axios.get(route('clientes.catalogo'))
+    const respCecos = axios.get(route('cecos.catalogo'))
     const respServicios = axios.get(route('servicios.catalogo'))
     const respTipos = axios.get(route('tipos.catalogo'))
     const resps = await Promise.all([
-        respClientes,
+        respCecos,
         respServicios,
         respTipos,
     ]);
 
-    listClientes.value = resps[0].data;
+    listCecos.value = resps[0].data;
     listServicios.value = resps[1].data;
     listTipos.value = resps[2].data;
 }
 
-const getCecos = async () => {
-    if (form.cliente_id !== "") {
 
-        const resp = await axios.get(route('clientes.cecos', form.cliente_id));
-        listCecos.value = resp.data
-    }
-}
-
-const setMontos = () => {
+const listMontos = computed(() => {
     const servicio = listServicios.value.find(serv => {
         return serv.id === form.servicio_id
     });
     if (servicio !== undefined)
-        listMontos.value = servicio.montos
+        return servicio.montos
+    return []
+});
+
+const createOrUpdate = () => {
+    if (props.typeForm === "create") {
+        create();
+    } else {
+        update();
+    }
 }
 
 const create = () => {
     form.post(route('ventas.store'), {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => {
+            form.reset();
+            close();
+        },
+    })
+}
+const update = () => {
+    form.put(route('ventas.update', props.venta.id), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {
@@ -124,35 +151,23 @@ watch(props, () => {
             </div>
         </template>
         <template #content>
-            <form @submit.prevent="create()">
+            <form @submit.prevent="createOrUpdate()">
                 <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
                     <div>
                         <JetLabel for="nombre" value="Nombre:" />
                         <Input id="nombre" name="nombre" type="text" v-model="form.nombre" required maxlength="30" />
                         <JetInputError :message="form.errors.nombre" class="mt-2" />
                     </div>
-                    <div>
-                        <JetLabel for="periodos" value="Periodos:" />
-                        <Input id="periodos" name="periodos" type="number" v-model="form.periodos" required
-                            maxlength="30" />
-                        <JetInputError :message="form.errors.periodos" class="mt-2" />
-                    </div>
-                    <div>
-                        <JetLabel for="cliente" value="Cliente" />
-                        <ListDataInput v-model="form.cliente_id" list="clientes" :options="listClientes"
-                            @change="getCecos()" />
-                    </div>
+
                     <div>
                         <JetLabel value="Ceco:" />
-                        <ListDataInput v-model="form.ceco_id" list="cecos" :options="listCecos"
-                            :disabled="form.cliente_id == ''" />
+                        <ListDataInput v-model="form.ceco_id" list="cecos" :options="listCecos" />
 
                         <JetInputError :message="form.errors.ceco_id" class="mt-2" />
                     </div>
                     <div>
                         <JetLabel value="Servicio:" />
-                        <ListDataInput v-model="form.servicio_id" list="servicios" @change="setMontos()"
-                            :options="listServicios" />
+                        <ListDataInput v-model="form.servicio_id" list="servicios" :options="listServicios" />
                     </div>
                     <div>
                         <JetLabel value="Monto:" />
@@ -160,6 +175,12 @@ watch(props, () => {
                             :options="listMontos" :disabled="form.servicio_id == ''" />
 
                         <JetInputError :message="form.errors.monto_id" class="mt-2" />
+                    </div>
+                    <div>
+                        <JetLabel for="cantidad" value="Cantidad:" />
+                        <Input id="cantidad" name="cantidad" type="number" v-model="form.cantidad" required
+                            maxlength="30" />
+                        <JetInputError :message="form.errors.cantidad" class="mt-2" />
                     </div>
                     <div>
                         <JetLabel for="fechaInicio" value="Fecha Inicial:" />
@@ -183,15 +204,21 @@ watch(props, () => {
                         </SelectComponent>
                         <JetInputError :message="form.errors.tipo_id" class="mt-2" />
                     </div>
+                    <div>
+                        <JetLabel for="periodos" value="Periodos:" />
+                        <Input id="periodos" name="periodos" type="number" v-model="form.periodos" required
+                            maxlength="30" />
+                        <JetInputError :message="form.errors.periodos" class="mt-2" />
+                    </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">
-                    <SpinProgress :inprogress="form.processing" />
                     <JetButton type="submit" :disabled="form.processing">
+                        <SpinProgress :inprogress="form.processing" />
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-6 h-5 "
                             viewBox="0 0 16 16">
                             <path
                                 d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                        </svg>Guardad
+                        </svg>Guardar
                     </JetButton>
                 </div>
 

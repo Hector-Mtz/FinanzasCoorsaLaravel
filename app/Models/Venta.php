@@ -13,6 +13,7 @@ class Venta extends Model
     protected $fillable = [
         'monto_id',
         'nombre',
+        'cantidad',
         'fechaInicial',
         'fechaFinal',
         'periodos',

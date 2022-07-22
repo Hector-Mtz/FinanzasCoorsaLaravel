@@ -14,18 +14,17 @@ class OcController extends Controller
      */
     public function index()
     {
-        //
+        request()->validate([
+            'venta_id' => ['required', 'exists:ventas,id']
+        ]);
+
+        $ocs = Oc::select("ocs.*", "facturas.referencia")
+            ->leftJoin("facturas", 'ocs.factura_id', "=", "facturas.id")
+            ->where('ocs.venta_id', request('venta_id'));
+
+        return response()->json($ocs->get());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -35,30 +34,16 @@ class OcController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $newOc = $request->validate([
+            'nombre' => ["required", "string"],
+            'cantidad' => ["required", "numeric"],
+            'venta_id' => ["required", "exists:ventas,id"],
+        ]);
+
+        $oc = Oc::create($newOc);
+        return response()->json($oc);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Oc  $oc
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Oc $oc)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Oc  $oc
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Oc $oc)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -69,17 +54,12 @@ class OcController extends Controller
      */
     public function update(Request $request, Oc $oc)
     {
-        //
-    }
+        $newOc = $request->validate([
+            'nombre' => ["required", "string"],
+            'cantidad' => ["required", "numeric"],
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Oc  $oc
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Oc $oc)
-    {
-        //
+        $oc->update($newOc);
+        return response()->json($oc);
     }
 }

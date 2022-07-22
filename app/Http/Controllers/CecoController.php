@@ -20,16 +20,6 @@ class CecoController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -40,27 +30,8 @@ class CecoController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Ceco  $ceco
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Ceco $ceco)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Ceco  $ceco
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Ceco $ceco)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -83,5 +54,15 @@ class CecoController extends Controller
     public function destroy(Ceco $ceco)
     {
         //
+    }
+
+    /**
+     * Obtiene los servicios con sus montos correspondientes
+     */
+    public function catalogo()
+    {
+        $cecos = Ceco::select("id", "nombre")
+            ->get();
+        return response()->json($cecos);
     }
 }

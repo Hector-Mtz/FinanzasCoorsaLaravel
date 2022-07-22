@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CecoController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\OcController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TipoController;
 use App\Http\Controllers\VentaController;
@@ -39,11 +41,11 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::apiResource('/ventas', VentaController::class)->only('index', 'store');
+    Route::apiResource('/ventas', VentaController::class)->except('destroy', 'show');
+    Route::apiResource('/ocs', OcController::class)->except('destroy', 'show');
 
 
-    Route::get('/clientes/catalogo', [ClienteController::class, 'catalogo'])->name('clientes.catalogo');
-    Route::get('/clientes/${cliente}/cecos', [ClienteController::class, 'cecos'])->name('clientes.cecos');
+    Route::get('/cecos/catalogo', [CecoController::class, 'catalogo'])->name('cecos.catalogo');
     Route::get('/servicios/catalogo', [ServicioController::class, 'catalogo'])->name('servicios.catalogo');
     Route::get('/tipos/catalogo', [TipoController::class, 'catalogo'])->name('tipos.catalogo');
 });

@@ -7,18 +7,34 @@ import { pickBy } from 'lodash'
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import InputSearch from '../../../Components/InputSearch.vue';
 import ItemCliente from './ItemCliente.vue';
+import OcsModal from './OcsModal.vue';
 
 
 const emit = defineEmits(['showVentas'])
 
 
-const tab = ref("") // Referencia al id
-const searchText = ref("") // Referencia al id
 const props = defineProps({
-    "ventas": {
+    "clientes": {
         type: Object
     }
 })
+
+const tab = ref("") // Referencia al id
+const searchText = ref("")
+const showingOcs = ref(false);
+const ventaSelect = ref({ id: -1 });
+
+
+// Modal Methods
+const showOcs = (venta) => {
+    ventaSelect.value = venta
+    showingOcs.value = true
+}
+const closeOcs = () => {
+    ventaSelect.value = { id: -1 }
+    showingOcs.value = false
+}
+// End Methos Modal
 
 const changeTab = (status_id) => {
     tab.value = status_id
@@ -35,15 +51,15 @@ const changeTab = (status_id) => {
     }
 }
 const search = (newSearch) => {
-    console.log("Realiza la busqueda");
     const params = pickBy({ status_id: tab.value, search: newSearch })
     Inertia.visit(route('ventas.index'), {
         data: params,
         preserveState: true,
         preserveScroll: true,
-        only: ['ventas'],
+        only: ['clientes'],
     })
 }
+
 
 let timeout;
 watch(searchText, (newSearch) => {
@@ -82,9 +98,14 @@ watch(searchText, (newSearch) => {
             <!-- Lista de clientes -->
             <div>
 
-                <ItemCliente v-for="venta in props.ventas" :key="venta.id" :venta="venta" />
+                <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
+                    @on-show="showOcs($event)" />
             </div>
         </div>
+        <!--Modals -->
+        <OcsModal :show="showingOcs" :venta="ventaSelect" @close="closeOcs" />
+
+        <!--Ends Modals-->
     </div>
 </template>
 
