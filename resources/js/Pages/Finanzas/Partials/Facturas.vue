@@ -6,58 +6,67 @@ import { pickBy } from 'lodash'
 
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import InputSearch from '../../../Components/InputSearch.vue';
+import ItemObjectShow from './ItemObjectShow.vue';
+import FacturasModal from './FacturasModal.vue';
 
 
 
 const emit = defineEmits([''])
 
-
-const props = defineProps({
-
-})
-
+const facturas = ref([])
 const tab = ref("") // Referencia al id
 const searchText = ref("")
-const showingOcs = ref(false);
-const ventaSelect = ref({ id: -1 });
+const showingFacturas = ref(false);
+const facturaSelect = ref({ id: -1 });
 
 
 // Modal Methods
-const showOcs = (venta) => {
-    ventaSelect.value = venta
-    showingOcs.value = true
+const showFacturas = (factura) => {
+    facturaSelect.value = factura
+    showingFacturas.value = true
 }
-const closeOcs = () => {
-    ventaSelect.value = { id: -1 }
-    showingOcs.value = false
+const closeFacturas = () => {
+    showingFacturas.value = false
 }
+const addFactura = (newFactura) => {
+    facturas.value.unshift(newFactura);
+}
+const addOc = (form) => {
+    const finIndexFactura = facturas.value.findIndex((fact) => {
+        return fact.id == form.factura_id
+    })
+    axios.post(route('facturas.ocs.store', form.factura_id), form)
+        .then((resp) => {
+            facturas.value[finIndexFactura] = resp.data
+        }).catch(error => {
+            if (error.response.data.hasOwnProperty('errors')) {
+
+                facturas.value[finIndexFactura].error = error.response.data.message
+            } else {
+                facturas.value[finIndexFactura].error = "Error add OC"
+            };
+        });
+}
+
+
 // End Methos Modal
 
 const changeTab = (status_id) => {
     tab.value = status_id
     if (searchText.value !== "") {
         searchText.value = ""
+        search()
     } else {
-        const params = pickBy({ status_id })
-        Inertia.visit(route('ventas.index'), {
-            data: params,
-            preserveState: true,
-            preserveScroll: true,
-            only: ['clientes'],
-        })
+        search(searchText.value)
     }
 }
-const search = (newSearch) => {
+const search = async (newSearch) => {
     const params = pickBy({ status_id: tab.value, search: newSearch })
-    Inertia.visit(route('ventas.index'), {
-        data: params,
-        preserveState: true,
-        preserveScroll: true,
-        only: ['clientes'],
-    })
+    const resp = await axios.get(route('facturas.index'), { params })
+    facturas.value = resp.data;
 }
 
-
+search();
 let timeout;
 watch(searchText, (newSearch) => {
     if (timeout !== undefined) {
@@ -66,8 +75,7 @@ watch(searchText, (newSearch) => {
     //Bounce de busqueda
     timeout = setTimeout(() => {
         search(newSearch)
-    }, 300);
-
+    }, 500);
 });
 
 
@@ -75,7 +83,7 @@ watch(searchText, (newSearch) => {
 <template>
     <div class="text-white">
         <div class="flex flex-row items-center my-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="text-green-600 h-8 w-8 hover:text-green-800" fill="none"
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600 hover:text-green-800" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
             </svg>
@@ -83,7 +91,7 @@ watch(searchText, (newSearch) => {
         </div>
         <div class="flex justify-around">
             <InputSearch v-model="searchText" />
-            <ButtonAdd class="h-7" @click="emit('showVentas')" />
+            <ButtonAdd class="h-7" @click="showFacturas" />
         </div>
         <div class="w-full">
             <!-- Header Tabs -->
@@ -100,10 +108,15 @@ watch(searchText, (newSearch) => {
             </div>
             <!-- Lista de clientes -->
             <div>
-
+                <ItemObjectShow v-for="factura in facturas" :key="factura.id" :data="factura"
+                    @onShow="emit('onShow', $event)">
+                    #{{ factura.referencia }}
+                </ItemObjectShow>
             </div>
         </div>
         <!--Modals -->
+        <FacturasModal :show="showingFacturas" :facturas="facturas" @add-factura="addFactura($event)"
+            @add-oc="addOc($event)" @close="closeFacturas" />
         <!--Ends Modals-->
     </div>
 </template>

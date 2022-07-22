@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CecoController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\OcController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TipoController;
@@ -43,6 +44,11 @@ Route::middleware([
 
     Route::apiResource('/ventas', VentaController::class)->except('destroy', 'show');
     Route::apiResource('/ocs', OcController::class)->except('destroy', 'show');
+    Route::get('/ocs/catalogos', [OcController::class, "catalogos"])->name("ocs.catalogos");
+
+
+    Route::apiResource('/facturas', FacturaController::class)->except('destroy', 'show');
+    Route::post('/facturas/{factura}/ocs', [FacturaController::class, "storeOc"])->name("facturas.ocs.store");
 
 
     Route::get('/cecos/catalogo', [CecoController::class, 'catalogo'])->name('cecos.catalogo');

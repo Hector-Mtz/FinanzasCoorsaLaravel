@@ -62,4 +62,17 @@ class OcController extends Controller
         $oc->update($newOc);
         return response()->json($oc);
     }
+
+
+    public function catalogos()
+    {
+        $ocs = Oc::select("ocs.id", "ocs.nombre")
+            ->whereNull('factura_id');
+        if (request()->has("search")) {
+            $search = strtr(request("search"), array("'" => "\\'", "%" => "\\%"));
+            $ocs->where("ocs.nombre", "like", "%" . $search . "%");
+        }
+
+        return response()->json($ocs->limit(10)->get());
+    }
 }
