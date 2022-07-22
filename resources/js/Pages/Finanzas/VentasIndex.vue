@@ -22,17 +22,18 @@ const props = defineProps({
         required: true,
     },
 });
+console.log(props.clientes)
 
 const ventas = computed(() => {
     let auxVentas = [];
-    props.clientes.forEach(cliente => {
-        let ventas = cliente.ventas
-        ventas = ventas.map(venta => {
-            venta.total = venta.total * venta.periodos * venta.cantidad
-            return venta;
-        });
-        auxVentas = auxVentas.concat(ventas);
-    })
+    // props.clientes.forEach(cliente => {
+    //     let ventas = cliente.ventas
+    //     ventas = ventas.map(venta => {
+    //         venta.total = venta.total * venta.periodos * venta.cantidad
+    //         return venta;
+    //     });
+    //     auxVentas = auxVentas.concat(ventas);
+    // })
     return auxVentas;
 })
 

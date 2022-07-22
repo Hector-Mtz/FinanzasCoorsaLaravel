@@ -46,7 +46,7 @@ const changeTab = (status_id) => {
             data: params,
             preserveState: true,
             preserveScroll: true,
-            only: ['ventas'],
+            only: ['clientes'],
         })
     }
 }
