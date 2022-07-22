@@ -22,7 +22,7 @@ return new class extends Migration
             $table->smallInteger('periodos')->default(1);
             $table->smallInteger('cantidad');
             $table->foreignId('tipo_id')->constrained('tipos');
-            $table->foreignId('status_id')->constrained('status')->default(1);
+            $table->foreignId('status_id')->default(1)->constrained('status');
             $table->foreignId('ceco_id')->constrained('cecos');
             $table->timestamps();
         });

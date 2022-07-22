@@ -175,8 +175,8 @@ const update = () => {
                     </div>
                     <div>
                         <JetLabel for="cantidad" value="Cantidad:" />
-                        <Input id="cantidad" name="cantidad" type="number" v-model="form.cantidad" required
-                            maxlength="30" />
+                        <Input id="cantidad" name="cantidad" type="text" pattern="^\d*(\.\d{0,2})?$"
+                            v-model="form.cantidad" required maxlength="30" />
                         <JetInputError :message="form.errors.cantidad" class="mt-2" />
                     </div>
                 </div>

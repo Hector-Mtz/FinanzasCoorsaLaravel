@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre', 100)->unique();
             $table->float('cantidad', 10, 2);
-            $table->foreignId('status_id')->constrained('status')->default(1);
+            $table->foreignId('status_id')->default(1)->constrained('status');
             $table->foreignId('venta_id')->constrained('ventas');
             $table->foreignId('factura_id')->nullable()->constrained('facturas');
             $table->timestamps();

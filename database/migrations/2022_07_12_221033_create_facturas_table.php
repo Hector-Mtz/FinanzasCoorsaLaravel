@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('facturas', function (Blueprint $table) {
             $table->id();
             $table->float('cantidad', 10, 2);
-            $table->foreignId('status_id')->default(0)->constrained('status');
+            $table->foreignId('status_id')->default(1)->constrained('status');
             $table->string('referencia', 20);
             $table->date('fechaDePago');
             $table->foreignId('ingreso_id')->nullable()->constrained('ingresos');

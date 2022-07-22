@@ -14,7 +14,7 @@ const props = defineProps({
 </script>
 <template>
     <tr>
-        <td>{{ props.oc.nombre }}</td>
+        <td>#{{ props.oc.nombre }}</td>
         <td>${{ formatoMoney(props.oc.cantidad) }}</td>
         <td>{{ props.oc.created_at }}</td>
         <td>
