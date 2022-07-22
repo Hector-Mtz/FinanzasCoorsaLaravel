@@ -55,7 +55,7 @@ class OcController extends Controller
     public function update(Request $request, Oc $oc)
     {
         $newOc = $request->validate([
-            'nombre' => ["required", "string", "unique:ocs,nombre,except," . $oc->id],
+            'nombre' => ["required", "string", "unique:ocs,nombre," . $oc->id . ",id"],
             'cantidad' => ["required", "numeric"],
         ]);
 

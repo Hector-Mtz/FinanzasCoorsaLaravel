@@ -85,7 +85,7 @@ class VentaController extends Controller
     {
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
-            "nombre" =>  ["required", "max:100", "unique:ventas,nombre,except," . $venta->id],
+            "nombre" =>  ["required", "max:100", "unique:ventas,nombre," . $venta->id . ",id"],
             "fechaInicial" =>  ["required", "date"],
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],
