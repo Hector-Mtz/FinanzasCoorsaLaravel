@@ -8,6 +8,7 @@ import Calendar from '../../Components/Calendar.vue';
 import CalendarHeader from '../../Components/CalendarHeader.vue';
 import Ventas from './Partials/Ventas.vue';
 import VentasModal from './Partials/VentasModal.vue';
+import Facturas from './Partials/Facturas.vue';
 
 const date = new Date();
 const year = ref(date.getFullYear());
@@ -22,18 +23,17 @@ const props = defineProps({
         required: true,
     },
 });
-console.log(props.clientes)
 
 const ventas = computed(() => {
     let auxVentas = [];
-    // props.clientes.forEach(cliente => {
-    //     let ventas = cliente.ventas
-    //     ventas = ventas.map(venta => {
-    //         venta.total = venta.total * venta.periodos * venta.cantidad
-    //         return venta;
-    //     });
-    //     auxVentas = auxVentas.concat(ventas);
-    // })
+    props.clientes.forEach(cliente => {
+        let ventas = cliente.ventas
+        ventas = ventas.map(venta => {
+            venta.total = venta.total * venta.periodos * venta.cantidad
+            return venta;
+        });
+        auxVentas = auxVentas.concat(ventas);
+    })
     return auxVentas;
 })
 
@@ -71,7 +71,7 @@ const closeModalVentas = () => {
                     </div>
                 </Card>
                 <Card>
-                    <h1>Por pagar</h1>
+                    <Facturas />
                 </Card>
             </div>
         </div>

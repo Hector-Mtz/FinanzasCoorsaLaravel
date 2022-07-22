@@ -6,17 +6,14 @@ import { pickBy } from 'lodash'
 
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import InputSearch from '../../../Components/InputSearch.vue';
-import ItemClienteVenta from './ItemClienteVenta.vue';
-import OcsModal from './OcsModal.vue';
 
 
-const emit = defineEmits(['showVentas'])
+
+const emit = defineEmits([''])
 
 
 const props = defineProps({
-    "clientes": {
-        type: Object
-    }
+
 })
 
 const tab = ref("") // Referencia al id
@@ -77,7 +74,13 @@ watch(searchText, (newSearch) => {
 </script>
 <template>
     <div class="text-white">
-        <h1>Ventas</h1>
+        <div class="flex flex-row items-center my-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="text-green-600 h-8 w-8 hover:text-green-800" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+            </svg>
+            <h1 class="ml-2 text-lg">Por pagar</h1>
+        </div>
         <div class="flex justify-around">
             <InputSearch v-model="searchText" />
             <ButtonAdd class="h-7" @click="emit('showVentas')" />
@@ -98,13 +101,9 @@ watch(searchText, (newSearch) => {
             <!-- Lista de clientes -->
             <div>
 
-                <ItemClienteVenta v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
-                    @on-show="showOcs($event)" />
             </div>
         </div>
         <!--Modals -->
-        <OcsModal :show="showingOcs" :venta="ventaSelect" @close="closeOcs" />
-
         <!--Ends Modals-->
     </div>
 </template>
