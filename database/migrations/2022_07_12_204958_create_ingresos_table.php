@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('ingresos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->integer('cantidad');
+            $table->string('nombre', 100)->unique();
+            $table->float('cantidad', 10, 2);
             $table->foreignId('banco_id')->constrained('bancos');
             $table->timestamps();
         });

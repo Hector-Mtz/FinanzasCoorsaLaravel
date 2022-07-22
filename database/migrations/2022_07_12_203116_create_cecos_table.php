@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('cecos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('nombre', 60)->unique();
             $table->foreignId('cliente_id')->constrained('clientes');
             $table->timestamps();
         });

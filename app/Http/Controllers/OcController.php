@@ -35,7 +35,7 @@ class OcController extends Controller
     public function store(Request $request)
     {
         $newOc = $request->validate([
-            'nombre' => ["required", "string"],
+            'nombre' => ["required", "string", "unique:ocs,nombre"],
             'cantidad' => ["required", "numeric"],
             'venta_id' => ["required", "exists:ventas,id"],
         ]);
@@ -55,7 +55,7 @@ class OcController extends Controller
     public function update(Request $request, Oc $oc)
     {
         $newOc = $request->validate([
-            'nombre' => ["required", "string"],
+            'nombre' => ["required", "string", "unique:ocs,nombre,except," . $oc->id],
             'cantidad' => ["required", "numeric"],
         ]);
 

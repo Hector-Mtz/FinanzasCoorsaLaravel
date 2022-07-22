@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('ocs', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->integer('cantidad');
+            $table->string('nombre', 100)->unique();
+            $table->float('cantidad', 10, 2);
             $table->foreignId('status_id')->constrained('status')->default(1);
             $table->foreignId('venta_id')->constrained('ventas');
             $table->foreignId('factura_id')->nullable()->constrained('facturas');

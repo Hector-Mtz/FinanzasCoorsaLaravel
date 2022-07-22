@@ -57,7 +57,7 @@ class VentaController extends Controller
     {
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
-            "nombre" =>  ["required", "max:100"],
+            "nombre" =>  ["required", "max:100", "unique:ventas,nombre"],
             "fechaInicial" =>  ["required", "date"],
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],
@@ -66,8 +66,6 @@ class VentaController extends Controller
             "ceco_id" =>  ["required", "exists:cecos,id"],
         ]);
 
-        // por falta de default value
-        $newVenta["status_id"] = 1;
 
         Venta::create($newVenta);
 
@@ -87,7 +85,7 @@ class VentaController extends Controller
     {
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
-            "nombre" =>  ["required", "max:100"],
+            "nombre" =>  ["required", "max:100", "unique:ventas,nombre,except," . $venta->id],
             "fechaInicial" =>  ["required", "date"],
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],

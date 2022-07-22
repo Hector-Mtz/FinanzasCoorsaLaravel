@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->integer('cantidad');
-            $table->foreignId('soli_movimiento_id')->constrained('soli_movimientos');
+            $table->string('nombre', 100)->unique();
+            $table->float('cantidad', 10, 2);
+            $table->foreignId('soli_movimiento_id')->nullable()->constrained('soli_movimientos');
             $table->timestamps();
         });
     }

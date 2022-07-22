@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('grupo_conceptos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('nombre', 100)->unique();
             $table->timestamps();
         });
     }
