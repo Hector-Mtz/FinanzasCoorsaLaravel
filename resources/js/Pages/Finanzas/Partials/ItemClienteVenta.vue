@@ -1,6 +1,7 @@
 <script setup>
 import DangerButton from '../../../Components/DangerButton.vue';
-import ItemVentaCliente from './itemVentaCliente.vue';
+import ItemObjectShow from './ItemObjectShow.vue';
+
 
 const emit = defineEmits(['onShow'])
 
@@ -16,8 +17,10 @@ const props = defineProps({
     <div class="p-2 text-white">
         <!-- Header -->
         <h2 class="font-bold">{{ props.cliente.nombre }}</h2>
-        <ItemVentaCliente v-for="venta in props.cliente.ventas" :key="venta.id" :venta="venta"
-            @onShow="emit('onShow', $event)" />
+        <ItemObjectShow v-for="venta in props.cliente.ventas" :key="venta.id" :data="venta"
+            @onShow="emit('onShow', $event)">
+            {{ venta.ceco + "-" + venta.nombre }}
+        </ItemObjectShow>
     </div>
 </template>
 

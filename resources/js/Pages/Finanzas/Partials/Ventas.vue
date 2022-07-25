@@ -1,12 +1,12 @@
 <script setup>
-import { ref, watch, watchEffect } from 'vue';
+import { ref, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 
 import { pickBy } from 'lodash'
 
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import InputSearch from '../../../Components/InputSearch.vue';
-import ItemCliente from './ItemCliente.vue';
+import ItemClienteVenta from './ItemClienteVenta.vue';
 import OcsModal from './OcsModal.vue';
 
 
@@ -46,7 +46,7 @@ const changeTab = (status_id) => {
             data: params,
             preserveState: true,
             preserveScroll: true,
-            only: ['ventas'],
+            only: ['clientes'],
         })
     }
 }
@@ -98,7 +98,7 @@ watch(searchText, (newSearch) => {
             <!-- Lista de clientes -->
             <div>
 
-                <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
+                <ItemClienteVenta v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
                     @on-show="showOcs($event)" />
             </div>
         </div>

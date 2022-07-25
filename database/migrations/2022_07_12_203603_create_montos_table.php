@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('montos', function (Blueprint $table) {
             $table->id();
-            $table->integer('cantidad');
+            $table->float('cantidad', 10, 2);
             $table->foreignId('servicio_id')->constrained('servicios');
             $table->timestamps();
         });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use App\Models\Venta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class VentaController extends Controller
@@ -14,11 +15,12 @@ class VentaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+
         $clientes = Cliente::select('clientes.*')
             ->with([
-                'ventas' => function ($query) {
+                'ventas' => function ($query) use ($request) {
                     $query->select(
                         "ventas.*",
                         "cecos_ventas.nombre as ceco",
@@ -26,25 +28,22 @@ class VentaController extends Controller
                         "montos.servicio_id"
                     )
                         ->join('montos', 'ventas.monto_id', '=', 'montos.id')
-                        ->join('cecos as cecos_ventas', 'ventas.ceco_id', '=', 'cecos_ventas.id')
-                        ->offset(1)
-                        ->limit(2)
-                        ->orderBy("ventas.id", "asc");
-                    if (request()->has("status_id") && request("status_id") != "") {
-                        $query->where("ventas.status_id", "=", request("status_id"));
+                        ->join('cecos as cecos_ventas', 'ventas.ceco_id', '=', 'cecos_ventas.id');
+
+                    if ($request->status_id != "") {
+                        $query->where("ventas.status_id", "=", $request->status_id);
                     }
                 }
             ]);
 
 
-        if (request()->has("search")) {
-            $search = strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
+        if ($request->has("search")) {
+            $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
             $clientes->where("clientes.nombre", "like", "%" . $search . "%");
         }
 
-
         return Inertia::render('Finanzas/VentasIndex', [
-            'clientes' => fn () => $clientes->get(),
+            'clientes' =>  fn () =>  $clientes->get(),
         ]);
     }
 
@@ -58,7 +57,7 @@ class VentaController extends Controller
     {
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
-            "nombre" =>  ["required", "max:100"],
+            "nombre" =>  ["required", "max:100", "unique:ventas,nombre"],
             "fechaInicial" =>  ["required", "date"],
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],
@@ -67,8 +66,6 @@ class VentaController extends Controller
             "ceco_id" =>  ["required", "exists:cecos,id"],
         ]);
 
-        // por falta de default value
-        $newVenta["status_id"] = 1;
 
         Venta::create($newVenta);
 
@@ -88,7 +85,7 @@ class VentaController extends Controller
     {
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
-            "nombre" =>  ["required", "max:100"],
+            "nombre" =>  ["required", "max:100", "unique:ventas,nombre," . $venta->id . ",id"],
             "fechaInicial" =>  ["required", "date"],
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],

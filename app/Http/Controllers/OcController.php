@@ -35,7 +35,7 @@ class OcController extends Controller
     public function store(Request $request)
     {
         $newOc = $request->validate([
-            'nombre' => ["required", "string"],
+            'nombre' => ["required", "string", "unique:ocs,nombre"],
             'cantidad' => ["required", "numeric"],
             'venta_id' => ["required", "exists:ventas,id"],
         ]);
@@ -55,11 +55,24 @@ class OcController extends Controller
     public function update(Request $request, Oc $oc)
     {
         $newOc = $request->validate([
-            'nombre' => ["required", "string"],
+            'nombre' => ["required", "string", "unique:ocs,nombre," . $oc->id . ",id"],
             'cantidad' => ["required", "numeric"],
         ]);
 
         $oc->update($newOc);
         return response()->json($oc);
+    }
+
+
+    public function catalogos()
+    {
+        $ocs = Oc::select("ocs.id", "ocs.nombre")
+            ->whereNull('factura_id');
+        if (request()->has("search")) {
+            $search = strtr(request("search"), array("'" => "\\'", "%" => "\\%"));
+            $ocs->where("ocs.nombre", "like", "%" . $search . "%");
+        }
+
+        return response()->json($ocs->limit(10)->get());
     }
 }

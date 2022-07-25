@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('facturas', function (Blueprint $table) {
             $table->id();
-            $table->integer('cantidad');
-            $table->foreignId('status_id')->constrained('status');
-            $table->integer('referencia');
+            $table->float('cantidad', 10, 2);
+            $table->foreignId('status_id')->default(1)->constrained('status');
+            $table->string('referencia', 20);
             $table->date('fechaDePago');
-            $table->foreignId('ingreso_id')->constrained('ingresos');
+            $table->foreignId('ingreso_id')->nullable()->constrained('ingresos');
             $table->timestamps();
         });
     }

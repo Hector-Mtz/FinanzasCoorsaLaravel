@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tipo_movimientos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('nombre', 100)->unique();
             $table->boolean('negativo');
             $table->timestamps();
         });

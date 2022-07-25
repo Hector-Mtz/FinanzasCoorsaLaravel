@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('status_activos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('nombre', 60)->unique();
             $table->timestamps();
         });
     }

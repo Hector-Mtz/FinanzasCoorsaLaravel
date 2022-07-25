@@ -16,13 +16,13 @@ return new class extends Migration
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('monto_id')->constrained('montos');
-            $table->string('nombre');
+            $table->string('nombre')->unique();
             $table->date('fechaInicial');
             $table->date('fechaFinal');
             $table->smallInteger('periodos')->default(1);
             $table->smallInteger('cantidad');
             $table->foreignId('tipo_id')->constrained('tipos');
-            $table->foreignId('status_id')->constrained('status');
+            $table->foreignId('status_id')->default(1)->constrained('status');
             $table->foreignId('ceco_id')->constrained('cecos');
             $table->timestamps();
         });

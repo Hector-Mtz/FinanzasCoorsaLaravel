@@ -178,7 +178,7 @@ watch(props, () => {
                     </div>
                     <div>
                         <JetLabel for="cantidad" value="Cantidad:" />
-                        <Input id="cantidad" name="cantidad" type="number" v-model="form.cantidad" required
+                        <Input id="cantidad-1" name="cantidad-1" type="number" v-model="form.cantidad" required
                             maxlength="30" />
                         <JetInputError :message="form.errors.cantidad" class="mt-2" />
                     </div>

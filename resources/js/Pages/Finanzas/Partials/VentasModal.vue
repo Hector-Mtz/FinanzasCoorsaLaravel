@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import DialogModal from '../../../Components/DialogModal.vue';
-import ItemVenta from './itemVenta.vue';
+import ItemVentaDatials from './ItemVentaDatials.vue';
 import TableComponent from '../../../Components/Table.vue';
 import FormVentaModal from './FormVentaModal.vue';
 
@@ -70,7 +70,7 @@ const close = () => {
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemVenta v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta"
+                    <ItemVentaDatials v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta"
                         @edit="showFormVentas($event)" />
                 </template>
             </TableComponent>

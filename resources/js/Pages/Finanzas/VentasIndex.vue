@@ -8,6 +8,7 @@ import Calendar from '../../Components/Calendar.vue';
 import CalendarHeader from '../../Components/CalendarHeader.vue';
 import Ventas from './Partials/Ventas.vue';
 import VentasModal from './Partials/VentasModal.vue';
+import Facturas from './Partials/Facturas.vue';
 
 const date = new Date();
 const year = ref(date.getFullYear());
@@ -70,7 +71,7 @@ const closeModalVentas = () => {
                     </div>
                 </Card>
                 <Card>
-                    <h1>Por pagar</h1>
+                    <Facturas />
                 </Card>
             </div>
         </div>
