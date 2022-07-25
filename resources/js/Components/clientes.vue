@@ -4,10 +4,13 @@ import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import { watch } from '@vue/runtime-core';
 import ButtonPres from './ButtonPres.vue';
+import { Inertia } from '@inertiajs/inertia';
 
+//variables GLOBALES
 let data =[];
 let nuevoArreglo=[];
 let series =[];
+let nuevosValores;
 
 export default {
     props: {
@@ -302,6 +305,10 @@ export default {
             ejex.push({ category: e.nombre });
         }
         xAxis.data.setAll(ejex);
+        //click
+        series.columns.template.events.on("click", this.click);
+
+        //AGREGAR LEGEND
         var legend = chart.children.push(am5.Legend.new(root, {
             centerX: am5.p50,
             x: am5.p50
@@ -339,6 +346,11 @@ export default {
             }    
             series.data.setAll(data);
             //console.log(data);
+        } ,
+        click:function(ev){
+           nuevosValores = ev.target._dataItem.dataContext;
+           console.log(nuevosValores);
+           Inertia.get();
         }
     },
     components: { ButtonPres }
@@ -353,19 +365,19 @@ export default {
  }
 </style>
 <template>
+<div class="group">
     <ButtonPres class="buttonCECO" style="background-color:#111F2E">CECO</ButtonPres>
-        <div class="group">
          <ButtonPres class="buttonCON" style="background-color:#111F2E">CON.</ButtonPres> 
-            <div class="dropdown" style="margin:50px">
+            <div class="dropdown" >
                 <button onclick="myFunction()" class="dropbtn">$</button>
                 <div id="myDropdown" class="dropdown-content">
                     <button id="PRESUPUESTO" @click="cambiar('PRESUPUESTO')">Presupuesto</button>
-                    <button id="SUPLEMENTO" @click="cambiar('SUPLEMENTO')">Suplemento</button><br>
-                    <button id="TOTAL" @click="cambiar('TOTAL')">Total</button><br>
-                    <button id="GASTO" @click="cambiar('GASTO')">Gasto</button><br>
+                    <button id="SUPLEMENTO" @click="cambiar('SUPLEMENTO')">Suplemento</button>
+                    <button id="TOTAL" @click="cambiar('TOTAL')">Total</button>
+                    <button id="GASTO" @click="cambiar('GASTO')">Gasto</button>
                     <button id="DISPONIBLE" @click="cambiar('DISPONIBLE')">Disponible</button>     
                 </div>
             </div>
-        </div>
+</div>
   <div class="graph" ref="chartdiv">  </div>
 </template>
