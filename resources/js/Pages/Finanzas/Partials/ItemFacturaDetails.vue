@@ -46,8 +46,6 @@ const addOc = () => {
                 <ButtonAdd class="ml-1 h-7" @click="addOc()" />
             </div>
             <JetInputError :message="props.factura.error" class="mt-2" />
-
-
         </td>
         <td>{{ props.factura.fechaDePago }}</td>
     </tr>

@@ -37,10 +37,10 @@ const showFormFactura = (facturaSelect) => {
 
 
 // EN MODALS FUNCTION
-
+//ocs del catalogo disponible
 const getOcs = async () => {
     const resp = await axios.get(route('ocs.catalogos'));
-    listOcs.value = resp.data;
+    listOcs.value = resp.data;//ocs del catalogo disponible
 }
 const close = () => {
     emit('close');

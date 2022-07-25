@@ -49,6 +49,7 @@ Route::middleware([
 
     Route::apiResource('/facturas', FacturaController::class)->except('destroy', 'show');
     Route::post('/facturas/{factura}/ocs', [FacturaController::class, "storeOc"])->name("facturas.ocs.store");
+    Route::delete('/facturas/{factura}/ocs', [FacturaController::class, "destroyOc"])->name("facturas.ocs.destroy");
 
 
     Route::get('/cecos/catalogo', [CecoController::class, 'catalogo'])->name('cecos.catalogo');

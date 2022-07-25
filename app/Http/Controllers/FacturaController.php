@@ -22,7 +22,7 @@ class FacturaController extends Controller
 
         $facturas = Factura::select("facturas.*")
             ->selectRaw("ifnull(sum(ocs.cantidad),0) total_ocs")
-            ->with('ocs:id,nombre,cantidad,factura_id')
+            ->with('ocs:id,nombre,cantidad,factura_id,created_at')
             ->leftJoin('ocs', 'facturas.id', "=", "ocs.factura_id")
             ->groupBy(
                 "facturas.id",
@@ -122,7 +122,15 @@ class FacturaController extends Controller
                 'message' => "Factura Invalida"
             ]);
         }
+        $ultimoOc = Oc::firstWhere("ocs.factura_id", "=", $facturaFind->id);
         $oc = Oc::find($request->oc_id);
+
+        if ($ultimoOc !== null && $ultimoOc->venta_id !== $oc->venta_id) {
+            @throw ValidationException::withMessages([
+                'message' => "EL OC NO PERTENECE A LA VENTA"
+            ]);
+            return "Error";
+        }
 
         $nuevaCantidad = $facturaFind->total_ocs + $oc->cantidad;
         if ($nuevaCantidad > $facturaFind->cantidad) {
@@ -136,12 +144,13 @@ class FacturaController extends Controller
 
                 $oc->factura_id = $facturaFind->id;
                 $oc->save();
-                if ($nuevaCantidad = $facturaFind->cantidad) {
-                    $facturaFind->status_id = 1;
+                if ($nuevaCantidad === $facturaFind->cantidad) {
+                    $facturaFind->status_id = 2; // Cerrada
                     $facturaFind->save();
                 }
                 DB::commit();
-                $facturaFind->load("ocs:id,nombre,cantidad,factura_id");
+                $facturaFind->total_ocs = $nuevaCantidad; // no es un valor a almacenar
+                $facturaFind->load("ocs:id,nombre,cantidad,factura_id,created_at");
                 return response()->json($facturaFind);
             } catch (QueryException $e) {
                 DB::rollBack();
@@ -149,6 +158,32 @@ class FacturaController extends Controller
                     'message' => $e->getMessage(),
                 ]);
             }
+        }
+    }
+
+
+    public function destroyOc(Request $request, Factura $factura)
+    {
+        $request->validate([
+            'oc_id' => ["required", "exists:ocs,id"],
+        ]);
+
+
+        try {
+            $oc = Oc::find($request->oc_id);
+            DB::beginTransaction();
+            if ($factura->status_id == 2) {
+                $factura->status_id = 1;
+                $factura->save();
+            }
+            $oc->factura_id = NULL;
+            $oc->save();
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+            @throw ValidationException::withMessages([
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }

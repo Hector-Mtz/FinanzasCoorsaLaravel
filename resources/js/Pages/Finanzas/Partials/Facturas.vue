@@ -8,6 +8,7 @@ import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import InputSearch from '../../../Components/InputSearch.vue';
 import ItemObjectShow from './ItemObjectShow.vue';
 import FacturasModal from './FacturasModal.vue';
+import OcsFacturaModal from './OcsFacturaModal.vue';
 
 
 
@@ -17,16 +18,19 @@ const facturas = ref([])
 const tab = ref("") // Referencia al id
 const searchText = ref("")
 const showingFacturas = ref(false);
+const showingOcs = ref(false);
 const facturaSelect = ref({ id: -1 });
 
 
 // Modal Methods
-const showFacturas = (factura) => {
+
+const showOcsFactura = (factura) => {
     facturaSelect.value = factura
-    showingFacturas.value = true
+    showingOcs.value = true
 }
-const closeFacturas = () => {
-    showingFacturas.value = false
+const closeOcsFactura = () => {
+    showingOcs.value = false
+    facturaSelect.value = { id: -1 }
 }
 const addFactura = (newFactura) => {
     facturas.value.unshift(newFactura);
@@ -38,9 +42,11 @@ const addOc = (form) => {
     axios.post(route('facturas.ocs.store', form.factura_id), form)
         .then((resp) => {
             facturas.value[finIndexFactura] = resp.data
+            if (facturaSelect.value.id !== -1) { // lo actualimos ya que no lo realiza en el modal ocs
+                facturaSelect.value = facturas.value[finIndexFactura]
+            }
         }).catch(error => {
-            if (error.response.data.hasOwnProperty('errors')) {
-
+            if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
                 facturas.value[finIndexFactura].error = error.response.data.message
             } else {
                 facturas.value[finIndexFactura].error = "Error add OC"
@@ -91,7 +97,7 @@ watch(searchText, (newSearch) => {
         </div>
         <div class="flex justify-around">
             <InputSearch v-model="searchText" />
-            <ButtonAdd class="h-7" @click="showFacturas" />
+            <ButtonAdd class="h-7" @click="showingFacturas = true" />
         </div>
         <div class="w-full">
             <!-- Header Tabs -->
@@ -109,14 +115,15 @@ watch(searchText, (newSearch) => {
             <!-- Lista de clientes -->
             <div>
                 <ItemObjectShow v-for="factura in facturas" :key="factura.id" :data="factura"
-                    @onShow="emit('onShow', $event)">
+                    @onShow="showOcsFactura($event)">
                     #{{ factura.referencia }}
                 </ItemObjectShow>
             </div>
         </div>
         <!--Modals -->
         <FacturasModal :show="showingFacturas" :facturas="facturas" @add-factura="addFactura($event)"
-            @add-oc="addOc($event)" @close="closeFacturas" />
+            @add-oc="addOc($event)" @close="showingFacturas = false" />
+        <OcsFacturaModal :show="showingOcs" :factura="facturaSelect" @add-oc="addOc($event)" @close="closeOcsFactura" />
         <!--Ends Modals-->
     </div>
 </template>

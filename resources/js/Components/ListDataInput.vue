@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 
 const emit = defineEmits(['update:modelValue', 'value']);
@@ -25,6 +25,9 @@ const props = defineProps({
     'nameOption': {
         type: String,
         default: 'nombre'
+    },
+    'value': {
+        default: ''
     }
 })
 
@@ -65,6 +68,10 @@ const error = computed(() => {
 
 
 const inputlist = ref(null);
+
+watch((props), () => {
+    valueText.value = props.value
+})
 
 onMounted(() => {
     if (inputlist.value.hasAttribute('autofocus')) {
