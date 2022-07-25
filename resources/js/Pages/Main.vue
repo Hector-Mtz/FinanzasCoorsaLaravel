@@ -4,14 +4,21 @@ import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import { onMounted, reactive, ref, watch } from 'vue';
 import axios from 'axios';
-import ModuleCliente from '@/Components/clientes.vue';
-import DatePicker from '../Components/datePicker.vue';
+import ModuleCliente from '@/Components/clientes.vue'; //traemos la grafica
+import ButtonPres from '@/Components/ButtonPres.vue';
+import Dropdown from '@/Components/DropDownLink.vue';
 
 var props = defineProps({
     clientes:Object,
     grupo_conceptos: Object,
-    cantidades:Object
+    cantidades:Object,
 });
+
+
+let clientes = props.clientes;
+let grupo_conceptos = props.grupo_conceptos;
+let datos = props.cantidades;
+
 </script>
 
 <template>    
@@ -28,20 +35,20 @@ var props = defineProps({
                     <div class="datetexts">
                       <div class="dashboard_texts">
                         <div class="texts_dash">
-                           <H1 class="dashboard_text">Dashboard</H1>
+                           <h1 class="dashboard_text">Dashboard</h1>
                          </div>
                          <div class="texts_dash">
                            <h2 class="dashboard_text2">TABLA DE DATOS</h2>
                          </div>
                       </div>
                       <div class="datepicker">
-                        <DatePicker></DatePicker>
+                    
                       </div>
-                    </div>  
-                    <ModuleCliente 
-                     :clientes = clientes 
-                     :grupo_conceptos = grupo_conceptos
-                     :cantidades = cantidades
+                    </div> 
+                     <ModuleCliente 
+                      :clientes = clientes 
+                      :grupo_conceptos = grupo_conceptos
+                      :cantidades = cantidades
                      ></ModuleCliente> <!--Modulo amcharts-->
                 </div>
             </div>

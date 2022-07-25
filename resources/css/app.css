@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .tabs-header {
   display: flex;
   justify-content: space-between;
