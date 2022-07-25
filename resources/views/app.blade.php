@@ -13,8 +13,8 @@
         <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
 
         <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+        <script type="text/javascript" src="{{ asset('assets/js/dropdown.js')}}"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
 
         <!-- Scripts -->
         @routes
