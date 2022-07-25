@@ -122,12 +122,19 @@ class FacturaController extends Controller
                 'message' => "Factura Invalida"
             ]);
         }
-        $ultimoOc = Oc::firstWhere("ocs.factura_id", "=", $facturaFind->id);
-        $oc = Oc::find($request->oc_id);
+        $ultimoOc = Oc::select('ocs.*', 'clientes.id as cliente_id')
+            ->join('ventas', 'ventas.id', '=', 'ocs.venta_id')
+            ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
+            ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')
+            ->firstWhere("ocs.factura_id", "=", $facturaFind->id);
+        $oc = Oc::select('ocs.*', 'clientes.id as cliente_id')
+            ->join('ventas', 'ventas.id', '=', 'ocs.venta_id')
+            ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
+            ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')->find($request->oc_id);
 
-        if ($ultimoOc !== null && $ultimoOc->venta_id !== $oc->venta_id) {
+        if ($ultimoOc !== null && $ultimoOc->cliente_id !== $oc->cliente_id) {
             @throw ValidationException::withMessages([
-                'message' => "EL OC NO PERTENECE A LA VENTA"
+                'message' => "EL CLIENTE DEBE SER EL MISMO"
             ]);
             return "Error";
         }

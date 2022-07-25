@@ -127,22 +127,24 @@ const update = () => {
         .then((resp) => {
             emit("editOc", resp.data);
             form.recentlySuccessful = true
+
+            form.hasErrors = false;
+            form.errors = {};
             setTimeout(() => {
                 restForm();
                 close();
             }, 500);
         }).catch(error => {
             form.hasErrors = true;
-            console.log(error);
-            // if (error.response.data.hasOwnProperty('errors')) {
-            //     const errors = error.response.data.errors
-            //     for (let error in errors) {
-            //         form.errors[error] = errors[error][0]
-            //     }
-            //     form.error = error.response.data.message
-            // } else {
-            //     form.error = "ERROR UPDATE OC"
-            // };
+            if (error.response.data.hasOwnProperty('errors')) {
+                const errors = error.response.data.errors
+                for (let error in errors) {
+                    form.errors[error] = errors[error][0]
+                } e
+                form.error = error.response.data.message
+            } else {
+                form.error = "ERROR UPDATE OC"
+            };
         }).then(() => { // always
             form.processing = false;
             setTimeout(() => {

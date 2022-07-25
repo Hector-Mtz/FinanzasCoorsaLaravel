@@ -95,7 +95,7 @@ watch(props, () => {
                     </div>
                     <div class="flex justify-between">
                         <span class="font-bold text-center text-gray-300 ">
-                            Total Ocs: {{ props.factura.total_ocs }}
+                            Total: {{ props.factura.cantidad }}
                         </span>
                         <span class="font-bold text-center text-gray-300 ">
                             Fecha Pago: {{ props.factura.fechaDePago }}
@@ -117,7 +117,7 @@ watch(props, () => {
                             </div>
                             <JetInputError :message="props.factura.error" class="mt-2" />
                         </th>
-                        <th>CANTIDAD</th>
+                        <th>CANTIDAD <br /> {{ props.factura.total_ocs }}</th>
                         <th>FECHA</th>
                     </tr>
                 </template>
