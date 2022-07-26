@@ -112,39 +112,39 @@ const create = () => {
             }, 500);
         });
 }
-// const update = () => {
-//     axios.put(route('facturas.update', props.oc.id), form,
-//         {
-//             onUploadProgress: () => {
-//                 form.processing = true;
-//             },
-//         })
-//         .then((resp) => {
-//             emit("editDeposito", resp.data);
-//             form.recentlySuccessful = true
-//             setTimeout(() => {
-//                 restForm();
-//                 close();
-//             }, 500);
-//         }).catch(error => {
-//             form.hasErrors = true;
-//             console.log(error);
-//             // if (error.response.data.hasOwnProperty('errors')) {
-//             //     const errors = error.response.data.errors
-//             //     for (let error in errors) {
-//             //         form.errors[error] = errors[error][0]
-//             //     }
-//             //     form.error = error.response.data.message
-//             // } else {
-//             //     form.error = "ERROR UPDATE OC"
-//             // };
-//         }).then(() => { // always
-//             form.processing = false;
-//             setTimeout(() => {
-//                 form.recentlySuccessful = false;
-//             }, 500);
-//         });
-// }
+const update = () => {
+    axios.put(route('ingresos.update', props.deposito.id), form,
+        {
+            onUploadProgress: () => {
+                form.processing = true;
+            },
+        })
+        .then((resp) => {
+            // Es el mismo ya que reconsulta
+            emit("addDeposito", resp.data);
+            form.recentlySuccessful = true
+            setTimeout(() => {
+                restForm();
+                close();
+            }, 500);
+        }).catch(error => {
+            form.hasErrors = true;
+            if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('errors')) {
+                const errors = error.response.data.errors
+                for (let error in errors) {
+                    form.errors[error] = errors[error][0]
+                }
+                form.error = error.response.data.message
+            } else {
+                form.error = "ERROR UPDATE DEPOSITO"
+            };
+        }).then(() => { // always
+            form.processing = false;
+            setTimeout(() => {
+                form.recentlySuccessful = false;
+            }, 500);
+        });
+}
 
 
 const getBancos = async () => {

@@ -83,12 +83,13 @@ watch(props, () => {
                         <th>CANTIDAD</th>
                         <th>FACTURA</th>
                         <th>BANCO</th>
-                        <!-- <th></th> -->
+                        <th></th>
                     </tr>
                 </template>
                 <template #tbody>
                     <ItemDepositoDetails v-for="deposito in depositos" :key="deposito.nombre" :deposito="deposito"
-                        :facturas="listFacturas" @add-factura="emit('addFactura', $event)" />
+                        :facturas="listFacturas" @edit="showFormDeposito($event)"
+                        @add-factura="emit('addFactura', $event)" />
                 </template>
             </TableComponent>
             <!-- MODALS -->

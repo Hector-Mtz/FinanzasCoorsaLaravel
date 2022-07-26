@@ -110,7 +110,26 @@ class IngresoController extends Controller
      */
     public function update(Request $request, Ingreso $ingreso)
     {
-        //
+        $newIngreso = $request->validate([
+            'nombre' => ['required', 'unique:ingresos,nombre,' . $ingreso->id . ',id'],
+            'cantidad' => ['required', 'numeric'],
+            'banco_id' => ['required', 'exists:bancos,id']
+        ]);
+        $facturas = Factura::selectRaw("ifnull(sum(facturas.cantidad),0) as total")
+            ->where('ingreso_id', '=', $ingreso->id)
+            ->first();
+        //No esposible actualizar en caso de que la cantidad sea menor al total de facturas total
+        if ($newIngreso['cantidad']  < $facturas->total) {
+            @throw ValidationException::withMessages([
+                'cantidad' => 'Monto insuficiente. Deposito en uso',
+            ]);
+            return;
+        }
+        $ingreso->update($newIngreso);
+
+        return response()->json([
+            'message' => 'Actualizado.'
+        ]);
     }
 
 
