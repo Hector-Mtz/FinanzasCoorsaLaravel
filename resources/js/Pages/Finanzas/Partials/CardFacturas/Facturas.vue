@@ -3,9 +3,9 @@ import { ref, watch } from 'vue';
 
 import { pickBy } from 'lodash'
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import InputSearch from '../../../Components/InputSearch.vue';
-import ItemObjectShow from './ItemObjectShow.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import InputSearch from '@/Components/InputSearch.vue';
+import ItemObjectShow from '../ItemObjectShow.vue';
 import FacturasModal from './FacturasModal.vue';
 import OcsFacturaModal from './OcsFacturaModal.vue';
 

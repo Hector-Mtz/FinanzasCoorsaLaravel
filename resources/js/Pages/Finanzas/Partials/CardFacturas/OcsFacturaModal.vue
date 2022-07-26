@@ -1,11 +1,11 @@
 <script setup>
 import { ref, watch } from 'vue';
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import DialogModal from '../../../Components/DialogModal.vue';
-import TableComponent from '../../../Components/Table.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import TableComponent from '@/Components/Table.vue';
 import ItemOcFactura from './ItemOcFactura.vue';
-import ListDataInput from '../../../Components/ListDataInput.vue';
+import ListDataInput from '@/Components/ListDataInput.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 
 const emit = defineEmits(["close", "addOc"])

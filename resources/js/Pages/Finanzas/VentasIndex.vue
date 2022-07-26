@@ -6,10 +6,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Card from '../../Components/Card.vue';
 import Calendar from '../../Components/Calendar.vue';
 import CalendarHeader from '../../Components/CalendarHeader.vue';
-import Ventas from './Partials/Ventas.vue';
-import VentasModal from './Partials/VentasModal.vue';
-import Facturas from './Partials/Facturas.vue';
-import Depositos from './Partials/Depositos.vue';
+import Ventas from './Partials/CardVenta/Ventas.vue';
+import VentasModal from './Partials/CardVenta/VentasModal.vue';
+import Facturas from './Partials/CardFacturas/Facturas.vue';
+import Depositos from './Partials/CardDepositos/Depositos.vue';
 
 const date = new Date();
 const year = ref(date.getFullYear());

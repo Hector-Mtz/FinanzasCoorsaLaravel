@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive } from 'vue';
+import { computed, onBeforeMount, reactive, ref } from 'vue';
 
 import axios from 'axios';
 
@@ -7,13 +7,13 @@ import JetLabel from '@/Jetstream/Label.vue';
 import JetButton from '@/Jetstream/Button.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 
-import DialogModal from '../../../Components/DialogModal.vue';
-import Input from '../../../Components/Input.vue';
-import ListDataInput from '../../../Components/ListDataInput.vue';
-import SpinProgress from '../../../Components/SpinProgress.vue';
-import SelectComponent from '../../../Components/SelectComponent.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import Input from '@/Components/Input.vue';
+import ListDataInput from '@/Components/ListDataInput.vue';
+import SpinProgress from '@/Components/SpinProgress.vue';
+import SelectComponent from '@/Components/SelectComponent.vue';
 
-const emit = defineEmits(["close", "addFactura", "editFactura"])
+const emit = defineEmits(["close", "addDeposito", "editDeposito"])
 const props = defineProps({
     show: {
         type: Boolean,
@@ -23,19 +23,19 @@ const props = defineProps({
         type: String,
         default: 'create'
     },
-    factura: {
+    deposito: {
         type: Object,
         required: false
     }
 });
 
 
-
+const listBancos = ref([]);
 
 const form = reactive({
+    "nombre": "",
     "cantidad": "",
-    "referencia": "",
-    "fechaDePago": "",
+    "banco_id": "",
     'hasErrors': false,
     'errors': [],
     'error': "",
@@ -46,19 +46,22 @@ const form = reactive({
 const titleModal = computed(() => {
     if (props.typeForm === 'create') {
         restForm();
-        return "Nueva Factura"
+        return "Nuevo Deposito"
     } else {
-        form.cantidad = props.factura.cantidad;
-        form.referencia = props.factura.referencia;
-        form.fechaDePago = props.factura.fechaDePago;
-        return "Actualizar Factura"
+        form.nombre = props.deposito.nombre;
+        form.cantidad = props.deposito.cantidad;
+        form.banco_id = props.deposito.banco_id;
+        return "Actualizar Deposito"
     }
 })
 
 function restForm() {
     form.cantidad = "";
-    form.referencia = "";
-    form.fechaDePago = "";
+    form.nombre = "";
+    form.banco_id = "";
+    form.hasErrors = false;
+    form.errors = [];
+    form.error = ""
 }
 
 const close = () => {
@@ -78,14 +81,14 @@ const createOrUpdate = () => {
 
 
 const create = () => {
-    axios.post(route('facturas.store'), form,
+    axios.post(route('ingresos.store'), form,
         {
             onUploadProgress: () => {
                 form.processing = true;
             },
         })
         .then((resp) => {
-            emit("addFactura", resp.data);
+            emit("addDeposito", resp.data);
             form.recentlySuccessful = true;
             restForm();
             setTimeout(() => {
@@ -93,14 +96,14 @@ const create = () => {
             }, 500);
         }).catch(error => {
             form.hasErrors = true;
-            if (error.response.data.hasOwnProperty('errors')) {
+            if (error.hasOwnProperty("response") && error.response.data.hasOwnProperty('errors')) {
                 const errors = error.response.data.errors
                 for (let error in errors) {
                     form.errors[error] = errors[error][0]
                 }
                 form.error = error.response.data.message
             } else {
-                form.error = "Error CREATE FACTURA"
+                form.error = "Error CREATE DEPOSITO"
             };
         }).then(() => { // always
             form.processing = false;
@@ -109,40 +112,49 @@ const create = () => {
             }, 500);
         });
 }
-// const update = () => {
-//     axios.put(route('facturas.update', props.oc.id), form,
-//         {
-//             onUploadProgress: () => {
-//                 form.processing = true;
-//             },
-//         })
-//         .then((resp) => {
-//             emit("editFactura", resp.data);
-//             form.recentlySuccessful = true
-//             setTimeout(() => {
-//                 restForm();
-//                 close();
-//             }, 500);
-//         }).catch(error => {
-//             form.hasErrors = true;
-//             console.log(error);
-//             // if (error.response.data.hasOwnProperty('errors')) {
-//             //     const errors = error.response.data.errors
-//             //     for (let error in errors) {
-//             //         form.errors[error] = errors[error][0]
-//             //     }
-//             //     form.error = error.response.data.message
-//             // } else {
-//             //     form.error = "ERROR UPDATE OC"
-//             // };
-//         }).then(() => { // always
-//             form.processing = false;
-//             setTimeout(() => {
-//                 form.recentlySuccessful = false;
-//             }, 500);
-//         });
-// }
+const update = () => {
+    axios.put(route('ingresos.update', props.deposito.id), form,
+        {
+            onUploadProgress: () => {
+                form.processing = true;
+            },
+        })
+        .then((resp) => {
+            // Es el mismo ya que reconsulta
+            emit("addDeposito", resp.data);
+            form.recentlySuccessful = true
+            setTimeout(() => {
+                restForm();
+                close();
+            }, 500);
+        }).catch(error => {
+            form.hasErrors = true;
+            if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('errors')) {
+                const errors = error.response.data.errors
+                for (let error in errors) {
+                    form.errors[error] = errors[error][0]
+                }
+                form.error = error.response.data.message
+            } else {
+                form.error = "ERROR UPDATE DEPOSITO"
+            };
+        }).then(() => { // always
+            form.processing = false;
+            setTimeout(() => {
+                form.recentlySuccessful = false;
+            }, 500);
+        });
+}
 
+
+const getBancos = async () => {
+    const resp = await axios.get(route('bancos.index'));
+    listBancos.value = resp.data
+}
+
+onBeforeMount(() => {
+    getBancos();
+})
 
 </script>
 <template>
@@ -161,10 +173,9 @@ const create = () => {
             <form @submit.prevent="createOrUpdate()">
                 <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
                     <div>
-                        <JetLabel for="referencia" value="Referencia:" />
-                        <Input id="referencia" name="referencia" type="text" v-model="form.referencia" required
-                            maxlength="30" />
-                        <JetInputError :message="form.errors.referencia" class="mt-2" />
+                        <JetLabel for="nombre" value="Núm Deposito:" />
+                        <Input id="nombre" name="nombre" type="text" v-model="form.nombre" required maxlength="30" />
+                        <JetInputError :message="form.errors.nombre" class="mt-2" />
                     </div>
                     <div>
                         <JetLabel for="cantidad" value="Cantidad:" />
@@ -173,9 +184,12 @@ const create = () => {
                         <JetInputError :message="form.errors.cantidad" class="mt-2" />
                     </div>
                     <div>
-                        <JetLabel for="fechaDePago" value="Fecha De Pago:" />
-                        <Input id="fechaDePago" name="fecha_final" type="date" v-model="form.fechaDePago" required
-                            :min="form.fechaInicial" />
+                        <JetLabel for="banco_id" value="Banco:" />
+                        <SelectComponent v-model="form.banco_id">
+                            <option v-for="banco in listBancos" :key="banco.id" :value="banco.id">
+                                {{ banco.nombre }}
+                            </option>
+                        </SelectComponent>
                         <JetInputError :message="form.errors.fechaDePago" class="mt-2" />
                     </div>
                 </div>

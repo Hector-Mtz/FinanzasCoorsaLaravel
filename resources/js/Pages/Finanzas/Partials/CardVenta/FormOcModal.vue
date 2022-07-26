@@ -7,11 +7,11 @@ import JetLabel from '@/Jetstream/Label.vue';
 import JetButton from '@/Jetstream/Button.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 
-import DialogModal from '../../../Components/DialogModal.vue';
-import Input from '../../../Components/Input.vue';
-import ListDataInput from '../../../Components/ListDataInput.vue';
-import SpinProgress from '../../../Components/SpinProgress.vue';
-import SelectComponent from '../../../Components/SelectComponent.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import Input from '@/Components/Input.vue';
+import ListDataInput from '@/Components/ListDataInput.vue';
+import SpinProgress from '@/Components/SpinProgress.vue';
+import SelectComponent from '@/Components/SelectComponent.vue';
 
 const emit = defineEmits(["close", "addOc", "editOc"])
 const props = defineProps({

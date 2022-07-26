@@ -1,9 +1,9 @@
 <script setup>
 import { ref, watch } from 'vue';
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import DialogModal from '../../../Components/DialogModal.vue';
-import TableComponent from '../../../Components/Table.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import TableComponent from '@/Components/Table.vue';
 import FormDepositoModal from './FormDepositoModal.vue';
 import ItemDepositoDetails from './ItemDepositoDetails.vue';
 

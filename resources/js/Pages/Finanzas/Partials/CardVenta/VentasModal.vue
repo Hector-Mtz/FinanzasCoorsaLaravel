@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue';
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import DialogModal from '../../../Components/DialogModal.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import DialogModal from '@/Components/DialogModal.vue';
 import ItemVentaDatials from './ItemVentaDatials.vue';
-import TableComponent from '../../../Components/Table.vue';
+import TableComponent from '@/Components/Table.vue';
 import FormVentaModal from './FormVentaModal.vue';
 
 const emit = defineEmits(["close",])

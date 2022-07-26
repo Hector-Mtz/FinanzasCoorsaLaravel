@@ -1,5 +1,5 @@
 <script setup>
-import { formatoMoney } from "../../../utils/conversiones";
+import { formatoMoney } from "../../../../utils/conversiones";
 import DangerButton from "@/Components/DangerButton.vue";
 
 const emit = defineEmits(['remove'])

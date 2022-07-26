@@ -1,11 +1,11 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import DialogModal from '../../../Components/DialogModal.vue';
-import TableComponent from '../../../Components/Table.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import TableComponent from '@/Components/Table.vue';
 import FormOcModal from './FormOcModal.vue';
-import ItemOc from './itemOc.vue';
+import ItemOc from './ItemOc.vue';
 
 const emit = defineEmits(["close", "showAddVenta"])
 const props = defineProps({

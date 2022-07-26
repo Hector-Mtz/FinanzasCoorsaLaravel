@@ -1,11 +1,12 @@
 <script setup>
 import { ref, watch } from 'vue';
-import ListDataInput from "../../../Components/ListDataInput.vue";
-import { formatoMoney } from "../../../utils/conversiones";
-import ButtonAdd from "../../../Components/ButtonAdd.vue";
+
+import ListDataInput from "@/Components/ListDataInput.vue";
+import ButtonAdd from "@/Components/ButtonAdd.vue";
 import JetInputError from '@/Jetstream/InputError.vue';
 import SuccessButton from '@/Components/SuccessButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
+import { formatoMoney } from "../../../../utils/conversiones";
 
 const emit = defineEmits(['addFactura', 'edit', 'changeStatus']);
 

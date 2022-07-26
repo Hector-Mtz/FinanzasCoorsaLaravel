@@ -1,13 +1,14 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import DialogModal from '../../../Components/DialogModal.vue';
-import TableComponent from '../../../Components/Table.vue';
-import ListDataInput from '../../../Components/ListDataInput.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import TableComponent from '@/Components/Table.vue';
+import ListDataInput from '@/Components/ListDataInput.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 import ItemFacturaDeposito from './ItemFacturaDeposito.vue';
-import { formatoMoney } from '../../../utils/conversiones';
+import { formatoMoney } from '../../../../utils/conversiones';
+
 const emit = defineEmits(["close", "addFactura", "updateDepositos"])
 const props = defineProps({
     show: {

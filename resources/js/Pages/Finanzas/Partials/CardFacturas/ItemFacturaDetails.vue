@@ -1,9 +1,10 @@
 <script setup>
 import { ref, watch } from 'vue';
-import ListDataInput from "../../../Components/ListDataInput.vue";
-import { formatoMoney } from "../../../utils/conversiones";
-import ButtonAdd from "../../../Components/ButtonAdd.vue";
+
 import JetInputError from '@/Jetstream/InputError.vue';
+import ListDataInput from "@/Components/ListDataInput.vue";
+import ButtonAdd from "@/Components/ButtonAdd.vue";
+import { formatoMoney } from "../../../../utils/conversiones";
 
 const emit = defineEmits(['addOc']);
 

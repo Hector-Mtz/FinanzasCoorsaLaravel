@@ -3,14 +3,13 @@ import { computed, onBeforeMount, ref, watch } from 'vue';
 
 import { pickBy } from 'lodash'
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import InputSearch from '../../../Components/InputSearch.vue';
-import ItemObjectShow from './ItemObjectShow.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import InputSearch from '@/Components/InputSearch.vue';
+import ItemObjectShow from '../ItemObjectShow.vue';
 import DepositosModal from './DepositosModal.vue';
-import ItemCliente from './ItemCliente.vue';
+import ItemCliente from '../ItemCliente.vue';
 import ItemIngresoC from './ItemIngresoC.vue';
 import FacturasDepositoModal from './FacturasDepositoModal.vue';
-import { findIndex } from '@amcharts/amcharts5/.internal/core/util/Array';
 
 
 
