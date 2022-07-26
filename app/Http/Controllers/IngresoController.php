@@ -20,33 +20,36 @@ class IngresoController extends Controller
      */
     public function index()
     {
-        $clientes = Cliente::select('clientes.id', 'clientes.nombre')->get();
+        $clientes = Cliente::select('clientes.id', 'clientes.nombre')->orderBy('id')->get();
         $numClientes = $clientes->count();
+
+        $hasStatus = request('status_id') != "";
 
         if (request()->has('search')) {
             $search = strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
         }
 
         for ($i = 0; $i < $numClientes; $i++) {
-            $ingresos = Ingreso::select('ingresos.*', 'bancos.nombre as banco', 'facturas.referencia')
+            $ingresos = Ingreso::select('ingresos.*', 'bancos.nombre as banco')
                 ->join('bancos', 'ingresos.banco_id', '=', 'bancos.id')
-                ->join('facturas', 'ingresos.id', '=', 'facturas.ingreso_id')
                 ->join(
-                    'ocs',
-                    'ocs.id',
+                    'facturas',
+                    'facturas.id',
                     '=',
-                    DB::raw("(SELECT id FROM ocs as ocs_join WHERE ocs_join.factura_id = facturas.id LIMIT 1)")
+                    DB::raw("(SELECT id FROM facturas as fact_join WHERE fact_join.ingreso_id = ingresos.id LIMIT 1)")
                 )
-                ->join('ventas', 'ocs.venta_id', '=', 'ventas.id')
-                ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
-                ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')
+                ->join('clientes', 'facturas.cliente_id', '=', 'clientes.id')
+                ->with('facturas:id,referencia,ingreso_id')
                 ->where('clientes.id', '=', $clientes[$i]->id);
+            if ($hasStatus) {
+                $ingresos->where("ingresos.status_id", "=", request('status_id'));
+            }
             if (isset($search)) {
                 $ingresos->where('ingresos.nombre', 'like', '%' . $search . '%');
             }
 
 
-            $clientes[$i]->ingresos = $ingresos->get();
+            $clientes[$i]->ingresos = $ingresos->orderBy('id')->get();
         }
         //SIN CLIENTE
         $clientes->prepend(new Collection([
@@ -57,18 +60,20 @@ class IngresoController extends Controller
 
         $ingresos = Ingreso::select(
             'ingresos.*',
-            'bancos.nombre as banco',
-            'facturas.referencia'
+            'bancos.nombre as banco'
         )
             ->join('bancos', 'ingresos.banco_id', '=', 'bancos.id')
             ->leftJoin('facturas', 'ingresos.id', '=', 'facturas.ingreso_id')
+            ->with('facturas:id,referencia,ingreso_id')
             ->whereNull('facturas.referencia');
-
+        if ($hasStatus) {
+            $ingresos->where("ingresos.status_id", "=", request('status_id'));
+        }
         if (isset($search)) {
             $ingresos->where('ingresos.nombre', 'like', '%' . $search . '%');
         }
 
-        $clientes[0]['ingresos'] = $ingresos->get();
+        $clientes[0]['ingresos'] = $ingresos->orderBy('id')->get();
         return response()->json($clientes);
     }
 

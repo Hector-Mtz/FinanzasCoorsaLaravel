@@ -122,17 +122,13 @@ class FacturaController extends Controller
                 'message' => "Factura Invalida"
             ]);
         }
-        $ultimoOc = Oc::select('ocs.*', 'clientes.id as cliente_id')
-            ->join('ventas', 'ventas.id', '=', 'ocs.venta_id')
-            ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
-            ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')
-            ->firstWhere("ocs.factura_id", "=", $facturaFind->id);
+
         $oc = Oc::select('ocs.*', 'clientes.id as cliente_id')
             ->join('ventas', 'ventas.id', '=', 'ocs.venta_id')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
             ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')->find($request->oc_id);
 
-        if ($ultimoOc !== null && $ultimoOc->cliente_id !== $oc->cliente_id) {
+        if ($facturaFind->cliente_id !== null && $facturaFind->cliente_id !== $oc->cliente_id) {
             @throw ValidationException::withMessages([
                 'message' => "EL CLIENTE DEBE SER EL MISMO"
             ]);
@@ -155,6 +151,13 @@ class FacturaController extends Controller
                     $facturaFind->status_id = 2; // Cerrada
                     $facturaFind->save();
                 }
+                // Encaso de no tener cliente se lo agregamos
+                if ($facturaFind->cliente_id === null) {
+                    $facturaFind->cliente_id = $oc->cliente_id;
+                    $facturaFind->save();
+                }
+
+
                 DB::commit();
                 $facturaFind->total_ocs = $nuevaCantidad; // no es un valor a almacenar
                 $facturaFind->load("ocs:id,nombre,cantidad,factura_id,created_at");
@@ -174,7 +177,7 @@ class FacturaController extends Controller
         $request->validate([
             'oc_id' => ["required", "exists:ocs,id"],
         ]);
-        //:TODO CONSIDERAR NULL CLIENTE FACTURA
+
 
         try {
             $oc = Oc::find($request->oc_id);
@@ -185,6 +188,13 @@ class FacturaController extends Controller
             }
             $oc->factura_id = NULL;
             $oc->save();
+            //NO EXISTE OCS CON ESTA FACTURA CAMBIAR EL CLIENTE A NULL
+            $ocs = Oc::firstWhere('factura_id', '=', $factura->id);
+            if ($ocs === null) {
+                $factura->cliente_id = null;
+                $factura->save();
+            }
+
             DB::commit();
         } catch (QueryException $e) {
             DB::rollBack();

@@ -14,4 +14,10 @@ class Ingreso extends Model
         'cantidad',
         'banco_id',
     ];
+
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class, 'ingreso_id', 'id');
+    }
 }

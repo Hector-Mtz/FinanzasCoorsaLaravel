@@ -38,8 +38,8 @@ const addFactura = () => {
         <td>#{{ props.deposito.nombre }}</td>
         <td>${{ formatoMoney(props.deposito.cantidad) }}</td>
         <td>
-            <!-- <span v-for="factura  in props.deposito.facturas" :key="factura.referencia"> #{{ factura.referencia }}</span> -->
-            <span>{{ props.deposito.referencia }}</span>
+            <span v-for="factura  in props.deposito.facturas" :key="factura.referencia"> #{{ factura.referencia }}
+            </span>
             <div class="flex flex-row justify-center">
                 <ListDataInput class="w-50" v-model="facturaIdAdd" list="facturas-catalogo" name-option="referencia"
                     :options="props.facturas" />
