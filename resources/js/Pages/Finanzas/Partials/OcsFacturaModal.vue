@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import DialogModal from '../../../Components/DialogModal.vue';
@@ -117,7 +117,7 @@ watch(props, () => {
                             </div>
                             <JetInputError :message="props.factura.error" class="mt-2" />
                         </th>
-                        <th>CANTIDAD <br /> {{ props.factura.total_ocs }}</th>
+                        <th>CANTIDAD <br /> ${{ props.factura.total_ocs }}</th>
                         <th>FECHA</th>
                     </tr>
                 </template>

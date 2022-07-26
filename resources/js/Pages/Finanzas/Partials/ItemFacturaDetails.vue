@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import ListDataInput from "../../../Components/ListDataInput.vue";
-import { formatoMoney } from "../../../utils/coversiones";
+import { formatoMoney } from "../../../utils/conversiones";
 import ButtonAdd from "../../../Components/ButtonAdd.vue";
 import JetInputError from '@/Jetstream/InputError.vue';
 

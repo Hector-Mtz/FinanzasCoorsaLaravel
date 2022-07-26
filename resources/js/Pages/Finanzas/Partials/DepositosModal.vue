@@ -7,7 +7,7 @@ import TableComponent from '../../../Components/Table.vue';
 import FormDepositoModal from './FormDepositoModal.vue';
 import ItemDepositoDetails from './ItemDepositoDetails.vue';
 
-const emit = defineEmits(["close", "addDeposito", "addFactura"])
+const emit = defineEmits(["close", "updateDepositos", "addFactura"])
 const props = defineProps({
     show: {
         type: Boolean,
@@ -34,6 +34,22 @@ const showFormDeposito = (depositoSelect) => {
     showingFormDeposito.value = true
 }
 
+const changeStatus = (depositoChange) => {
+    axios.put(route('ingresos.status', depositoChange.id))
+        .then((resp) => {
+            // Es el mismo ya que reconsulta
+            emit("updateDepositos");
+
+        }).catch(error => {
+            let message;
+            if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
+                message = error.response.data.message
+            } else {
+                message = "Error DELETE OC"
+            };
+            alert(message);
+        })
+}
 
 
 // EN MODALS FUNCTION
@@ -89,12 +105,12 @@ watch(props, () => {
                 <template #tbody>
                     <ItemDepositoDetails v-for="deposito in depositos" :key="deposito.nombre" :deposito="deposito"
                         :facturas="listFacturas" @edit="showFormDeposito($event)"
-                        @add-factura="emit('addFactura', $event)" />
+                        @add-factura="emit('addFactura', $event)" @change-status="changeStatus($event)" />
                 </template>
             </TableComponent>
             <!-- MODALS -->
             <FormDepositoModal :show="showingFormDeposito" :type-form="typeForm" :deposito="deposito"
-                @add-deposito="emit('addDeposito', $event)" @close="showingFormDeposito = false" />
+                @add-deposito="emit('updateDepositos', $event)" @close="showingFormDeposito = false" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

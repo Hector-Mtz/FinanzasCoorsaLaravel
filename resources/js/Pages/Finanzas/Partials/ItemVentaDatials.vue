@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from "vue";
-import { formatoMoney, IVA } from "../../../utils/coversiones";
+import { formatoMoney, IVA } from "../../../utils/conversiones";
 import SuccessButton from "../../../Components/SuccessButton.vue";
 
 const emit = defineEmits(['edit'])

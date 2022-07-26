@@ -196,6 +196,9 @@ class FacturaController extends Controller
             }
 
             DB::commit();
+            return response()->json([
+                'message' => 'Eliminado'
+            ]);
         } catch (QueryException $e) {
             DB::rollBack();
             @throw ValidationException::withMessages([

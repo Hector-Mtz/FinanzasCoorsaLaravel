@@ -39,7 +39,7 @@ class IngresoController extends Controller
                     DB::raw("(SELECT id FROM facturas as fact_join WHERE fact_join.ingreso_id = ingresos.id LIMIT 1)")
                 )
                 ->join('clientes', 'facturas.cliente_id', '=', 'clientes.id')
-                ->with('facturas:id,referencia,ingreso_id')
+                ->with('facturas:id,referencia,ingreso_id,cantidad,fechaDePago')
                 ->where('clientes.id', '=', $clientes[$i]->id);
             if ($hasStatus) {
                 $ingresos->where("ingresos.status_id", "=", request('status_id'));
@@ -64,7 +64,7 @@ class IngresoController extends Controller
         )
             ->join('bancos', 'ingresos.banco_id', '=', 'bancos.id')
             ->leftJoin('facturas', 'ingresos.id', '=', 'facturas.ingreso_id')
-            ->with('facturas:id,referencia,ingreso_id')
+            ->with('facturas:id,referencia,ingreso_id,cantidad,fechaDePago')
             ->whereNull('facturas.referencia');
         if ($hasStatus) {
             $ingresos->where("ingresos.status_id", "=", request('status_id'));
@@ -132,6 +132,25 @@ class IngresoController extends Controller
         ]);
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Ingreso  $ingreso
+     * @return \Illuminate\Http\Response
+     */
+    public function changeStatus(Ingreso $ingreso)
+    {
+
+
+        $ingreso->status_id = $ingreso->status_id === 1 ? 2 : 1;
+        $ingreso->save();
+
+        return response()->json([
+            'message' => 'Actualizado.'
+        ]);
+    }
+
 
     public function storeFactura(Request $request, Ingreso $ingreso)
     {
@@ -172,5 +191,22 @@ class IngresoController extends Controller
                 return;
             }
         }
+    }
+
+    /**
+     * Desasocia una factura de un ingreso
+     */
+    public function destroyFactura(Request $request, Ingreso $ingreso)
+    {
+        $request->validate([
+            'factura_id' => ["required", "exists:ocs,id"],
+        ]);
+        $factura = Factura::find($request->factura_id);
+        $factura->ingreso_id = NULL;
+        $factura->save();
+
+        return response()->json([
+            'message' => 'Eliminado'
+        ]);
     }
 }

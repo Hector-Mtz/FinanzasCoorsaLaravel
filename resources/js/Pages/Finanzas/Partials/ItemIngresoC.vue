@@ -1,7 +1,7 @@
 <script setup>
 import DangerButton from '../../../Components/DangerButton.vue';
 import ItemObjectShow from './ItemObjectShow.vue';
-import { formatoMoney } from '../../../utils/coversiones';
+import { formatoMoney } from '../../../utils/conversiones';
 
 const emit = defineEmits(['onShow'])
 
@@ -22,7 +22,7 @@ const props = defineProps({
             ${{ formatoMoney(ingreso.cantidad) }}
         </td>
         <td>
-            <DangerButton class="h-5" @click="emit('onShow', props.data)">
+            <DangerButton class="h-5" @click="emit('onShow', props.ingreso)">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4" viewBox="0 0 16 16">
                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
                     <path

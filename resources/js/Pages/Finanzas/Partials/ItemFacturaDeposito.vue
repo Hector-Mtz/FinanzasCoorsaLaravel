@@ -4,7 +4,7 @@ import DangerButton from "@/Components/DangerButton.vue";
 
 const emit = defineEmits(['remove'])
 const props = defineProps({
-    oc: {
+    factura: {
         type: Object,
         required: true
     },
@@ -21,10 +21,10 @@ const props = defineProps({
                         d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
                 </svg>
             </DangerButton>
-            #{{ props.oc.nombre }}
+            #{{ props.factura.referencia }}
         </td>
-        <td>${{ formatoMoney(props.oc.cantidad) }}</td>
-        <td>{{ props.oc.created_at }}</td>
+        <td>${{ formatoMoney(props.factura.cantidad) }}</td>
+        <td>{{ props.factura.fechaDePago }}</td>
     </tr>
 </template>
 

@@ -9,6 +9,8 @@ import ItemObjectShow from './ItemObjectShow.vue';
 import DepositosModal from './DepositosModal.vue';
 import ItemCliente from './ItemCliente.vue';
 import ItemIngresoC from './ItemIngresoC.vue';
+import FacturasDepositoModal from './FacturasDepositoModal.vue';
+import { findIndex } from '@amcharts/amcharts5/.internal/core/util/Array';
 
 
 
@@ -19,31 +21,41 @@ const clientes = ref([])
 const tab = ref("1") // Referencia al id
 const searchText = ref("")
 const showingDepositos = ref(false);
-
+const showingFacturas = ref(false);
+const deposito = ref({});
 
 // Modal Methods
 
-const addDeposito = () => {
+const updateDepositos = () => {
     search(searchText.value)
 }
 const addFacturaToDeposito = (form) => {
     // esto es para el error
-    const finIndex = depositos.value.findIndex((dep) => {
+    const findedIndex = depositos.value.findIndex((dep) => {
         return dep.id == form.deposito_id
     })
     axios.post(route('ingresos.facturas.store', form.deposito_id), form)
         .then(() => {
             search(searchText.value)
+
         }).catch(error => {
             if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
-                depositos.value[finIndex].error = error.response.data.message
+                depositos.value[findedIndex].error = error.response.data.message
             } else {
-                depositos.value[finIndex].error = "Error SET FACTURA"
+                depositos.value[findedIndex].error = "Error SET FACTURA"
             };
         });
 }
 
+const showFacturas = (newDeposito) => {
+    deposito.value = newDeposito;
+    showingFacturas.value = true
+}
 
+const closeFacturasDeposito = () => {
+    deposito.value = {};
+    showingFacturas.value = false
+}
 // End Methos Modal
 
 const changeTab = (status_id) => {
@@ -70,7 +82,14 @@ const depositos = computed(() => {
     let auxDepositos = [];
     clientes.value.forEach(cliente => {
         auxDepositos = auxDepositos.concat(cliente.ingresos);
-    })
+    });
+    // DEBIDO A QUE NO ACTUALIZA LAS FACTURAS DENTRO DEL MODAL
+    if (showingFacturas.value) {
+        const findedIndex = auxDepositos.findIndex((dep) => {
+            return dep.id == deposito.value.id
+        });
+        deposito.value = auxDepositos[findedIndex];
+    }
     return auxDepositos;
 })
 
@@ -124,7 +143,8 @@ watch(searchText, (newSearch) => {
                             </thead>
                             <tbody>
                                 <ItemIngresoC v-for="(ingreso, index) in cliente.ingresos"
-                                    :key="ingreso.id + '-' + index" :ingreso="ingreso" />
+                                    :key="ingreso.id + '-' + index" :ingreso="ingreso"
+                                    @on-show="showFacturas($event)" />
                             </tbody>
                         </table>
                     </div>
@@ -132,8 +152,10 @@ watch(searchText, (newSearch) => {
             </div>
         </div>
         <!--Modals -->
-        <DepositosModal :show="showingDepositos" :depositos="depositos" @add-deposito="addDeposito($event)"
+        <DepositosModal :show="showingDepositos" :depositos="depositos" @update-depositos="updateDepositos($event)"
             @add-factura="addFacturaToDeposito($event)" @close="showingDepositos = false" />
+        <FacturasDepositoModal :show="showingFacturas" :deposito="deposito" @add-factura="addFacturaToDeposito($event)"
+            @update-depositos="updateDepositos()" @close="closeFacturasDeposito" />
         <!--Ends Modals-->
     </div>
 </template>

@@ -55,7 +55,9 @@ Route::middleware([
     Route::delete('/facturas/{factura}/ocs', [FacturaController::class, "destroyOc"])->name("facturas.ocs.destroy");
 
     Route::apiResource('/ingresos', IngresoController::class)->except('destroy', 'show');
+    Route::put('/ingresos/{ingreso}/status', [IngresoController::class, 'changeStatus'])->name('ingresos.status');
     Route::post('/ingresos/{ingreso}/facturas', [IngresoController::class, "storeFactura"])->name("ingresos.facturas.store");
+    Route::delete('/ingresos/{ingreso}/facturas', [IngresoController::class, "destroyFactura"])->name("ingresos.facturas.destroy");
 
     Route::apiResource('bancos', BancoController::class)->only('index');
 
