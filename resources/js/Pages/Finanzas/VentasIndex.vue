@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia'
 import AppLayout from '@/Layouts/AppLayout.vue';
 
@@ -9,11 +9,16 @@ import CalendarHeader from '../../Components/CalendarHeader.vue';
 import Ventas from './Partials/Ventas.vue';
 import VentasModal from './Partials/VentasModal.vue';
 import Facturas from './Partials/Facturas.vue';
+import Depositos from './Partials/Depositos.vue';
 
 const date = new Date();
 const year = ref(date.getFullYear());
 const showingVentas = ref(false);
 const month = ref(date.getMonth());
+const componentFactDep = reactive({
+    component: 'Facturas',
+    title: 'Por Pagar'
+});
 
 
 
@@ -47,6 +52,16 @@ const closeModalVentas = () => {
 }
 // END FUNCIONES MODAL
 
+const chageComponent = () => {
+    if (componentFactDep.title === 'Por Pagar') {
+        componentFactDep.component = 'Depositos'
+        componentFactDep.title = 'Depositos'
+    } else {
+        componentFactDep.component = 'Facturas'
+        componentFactDep.title = 'Por Pagar'
+    }
+}
+
 </script>
 
 <template>
@@ -71,7 +86,16 @@ const closeModalVentas = () => {
                     </div>
                 </Card>
                 <Card>
-                    <Facturas />
+                    <div class="flex flex-row items-center my-1 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" @click="chageComponent()"
+                            class="w-8 h-8 text-green-600 hover:text-green-800" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                        </svg>
+                        <h1 class="ml-2 text-lg">{{ componentFactDep.title }}</h1>
+                    </div>
+                    <Facturas v-if="componentFactDep.component === 'Facturas'" />
+                    <Depositos v-else />
                 </Card>
             </div>
         </div>

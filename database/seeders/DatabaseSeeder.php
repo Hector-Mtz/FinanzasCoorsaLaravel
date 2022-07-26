@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             ProductosSeeder::class,
             StatusSeeder::class,
             TiposSeeder::class,
+            BancosSeeder::class,
 
         ]);
         // \App\Models\User::factory(10)->create();

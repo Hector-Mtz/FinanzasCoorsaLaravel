@@ -1,55 +1,44 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
+import { computed, onBeforeMount, ref, watch } from 'vue';
 
 import { pickBy } from 'lodash'
 
 import ButtonAdd from '../../../Components/ButtonAdd.vue';
 import InputSearch from '../../../Components/InputSearch.vue';
 import ItemObjectShow from './ItemObjectShow.vue';
-import FacturasModal from './FacturasModal.vue';
-import OcsFacturaModal from './OcsFacturaModal.vue';
+import DepositosModal from './DepositosModal.vue';
+import ItemCliente from './ItemCliente.vue';
+import ItemIngresoC from './ItemIngresoC.vue';
+
 
 
 
 const emit = defineEmits([''])
 
-const facturas = ref([])
-const tab = ref("") // Referencia al id
+const clientes = ref([])
+const tab = ref("1") // Referencia al id
 const searchText = ref("")
-const showingFacturas = ref(false);
-const showingOcs = ref(false);
-const facturaSelect = ref({ id: -1 });
+const showingDepositos = ref(false);
 
 
 // Modal Methods
 
-const showOcsFactura = (factura) => {
-    facturaSelect.value = factura
-    showingOcs.value = true
+const addDeposito = () => {
+    search(searchText.value)
 }
-const closeOcsFactura = () => {
-    showingOcs.value = false
-    facturaSelect.value = { id: -1 }
-}
-const addFactura = (newFactura) => {
-    facturas.value.unshift(newFactura);
-}
-const addOc = (form) => {
-    const finIndexFactura = facturas.value.findIndex((fact) => {
-        return fact.id == form.factura_id
+const addFacturaToDeposito = (form) => {
+    // esto es para el error
+    const finIndex = depositos.value.findIndex((dep) => {
+        return dep.id == form.deposito_id
     })
-    axios.post(route('facturas.ocs.store', form.factura_id), form)
-        .then((resp) => {
-            facturas.value[finIndexFactura] = resp.data
-            if (facturaSelect.value.id !== -1) { // lo actualimos ya que no lo realiza en el modal ocs
-                facturaSelect.value = facturas.value[finIndexFactura]
-            }
+    axios.post(route('ingresos.facturas.store', form.deposito_id), form)
+        .then(() => {
+            search(searchText.value)
         }).catch(error => {
             if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
-                facturas.value[finIndexFactura].error = error.response.data.message
+                depositos.value[finIndex].error = error.response.data.message
             } else {
-                facturas.value[finIndexFactura].error = "Error add OC"
+                depositos.value[finIndex].error = "Error SET FACTURA"
             };
         });
 }
@@ -68,11 +57,23 @@ const changeTab = (status_id) => {
 }
 const search = async (newSearch) => {
     const params = pickBy({ status_id: tab.value, search: newSearch })
-    const resp = await axios.get(route('facturas.index'), { params })
-    facturas.value = resp.data;
+    const resp = await axios.get(route('ingresos.index'), { params })
+    clientes.value = resp.data;
 }
 
-search();
+onBeforeMount(() => {
+    search();
+})
+
+
+const depositos = computed(() => {
+    let auxDepositos = [];
+    clientes.value.forEach(cliente => {
+        auxDepositos = auxDepositos.concat(cliente.ingresos);
+    })
+    return auxDepositos;
+})
+
 let timeout;
 watch(searchText, (newSearch) => {
     if (timeout !== undefined) {
@@ -88,20 +89,13 @@ watch(searchText, (newSearch) => {
 </script>
 <template>
     <div class="text-white">
-        <div class="flex flex-row items-center my-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600 hover:text-green-800" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-            </svg>
-            <h1 class="ml-2 text-lg">Depositos</h1>
-        </div>
         <div class="flex justify-around">
             <InputSearch v-model="searchText" />
-            <ButtonAdd class="h-7" @click="showingFacturas = true" />
+            <ButtonAdd class="h-7" @click="showingDepositos = true" />
         </div>
         <div class="w-full">
             <!-- Header Tabs -->
-            <div class="tabs-header">
+            <div class="mx-5 tabs-header">
                 <span :class="{ 'active': tab === '1' }" class="tab" @click="changeTab('1')">
                     ABIERTAS
                 </span>
@@ -110,17 +104,36 @@ watch(searchText, (newSearch) => {
                 </span>
             </div>
             <!-- Lista de clientes -->
-            <div>
-                <!-- <ItemObjectShow v-for="factura in facturas" :key="factura.id" :data="factura"
-                    @onShow="showOcsFactura($event)">
-                    #{{ factura.referencia }}
-                </ItemObjectShow> -->
+            <div class="overflow-hidden overflow-y-auto  -mx-2" style="max-height: 65vh;">
+                <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente">
+                    <div
+                        class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden bg-gray-900 shadow-xl sm:rounded-lg">
+                        <table class="table-ingresos">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Núm. Deposito
+                                    </th>
+                                    <th>
+                                        Cantidad
+                                    </th>
+                                    <th>
+                                        Factura
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ItemIngresoC v-for="(ingreso, index) in cliente.ingresos"
+                                    :key="ingreso.id + '-' + index" :ingreso="ingreso" />
+                            </tbody>
+                        </table>
+                    </div>
+                </ItemCliente>
             </div>
         </div>
         <!--Modals -->
-        <!-- <FacturasModal :show="showingFacturas" :facturas="facturas" @add-factura="addFactura($event)"
-            @add-oc="addOc($event)" @close="showingFacturas = false" />
-        <OcsFacturaModal :show="showingOcs" :factura="facturaSelect" @add-oc="addOc($event)" @close="closeOcsFactura" /> -->
+        <DepositosModal :show="showingDepositos" :depositos="depositos" @add-deposito="addDeposito($event)"
+            @add-factura="addFacturaToDeposito($event)" @close="showingDepositos = false" />
         <!--Ends Modals-->
     </div>
 </template>

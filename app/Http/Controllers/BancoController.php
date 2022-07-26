@@ -14,7 +14,9 @@ class BancoController extends Controller
      */
     public function index()
     {
-        //
+        $bancos = Banco::select("id", "nombre")
+            ->get();
+        return response()->json($bancos);
     }
 
     /**

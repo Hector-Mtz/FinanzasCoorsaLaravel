@@ -174,7 +174,7 @@ class FacturaController extends Controller
         $request->validate([
             'oc_id' => ["required", "exists:ocs,id"],
         ]);
-
+        //:TODO CONSIDERAR NULL CLIENTE FACTURA
 
         try {
             $oc = Oc::find($request->oc_id);
@@ -192,5 +192,15 @@ class FacturaController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    /**
+     *
+     */
+    public function catalogos(Request $request)
+    {
+        $facturas = Factura::select('facturas.id', 'facturas.referencia')
+            ->whereNull('facturas.ingreso_id')->get();
+        return response()->json($facturas);
     }
 }

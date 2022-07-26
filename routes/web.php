@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\BancoController;
 use App\Http\Controllers\CecoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\IngresoController;
 use App\Http\Controllers\OcController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TipoController;
@@ -48,9 +50,14 @@ Route::middleware([
 
 
     Route::apiResource('/facturas', FacturaController::class)->except('destroy', 'show');
+    Route::get('/facturas/catalogos', [FacturaController::class, 'catalogos'])->name('facturas.catalogos');
     Route::post('/facturas/{factura}/ocs', [FacturaController::class, "storeOc"])->name("facturas.ocs.store");
     Route::delete('/facturas/{factura}/ocs', [FacturaController::class, "destroyOc"])->name("facturas.ocs.destroy");
 
+    Route::apiResource('/ingresos', IngresoController::class)->except('destroy', 'show');
+    Route::post('/ingresos/{ingreso}/facturas', [IngresoController::class, "storeFactura"])->name("ingresos.facturas.store");
+
+    Route::apiResource('bancos', BancoController::class)->only('index');
 
     Route::get('/cecos/catalogo', [CecoController::class, 'catalogo'])->name('cecos.catalogo');
     Route::get('/servicios/catalogo', [ServicioController::class, 'catalogo'])->name('servicios.catalogo');

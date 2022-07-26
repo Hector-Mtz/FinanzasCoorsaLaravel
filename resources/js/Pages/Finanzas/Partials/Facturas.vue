@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
 
 import { pickBy } from 'lodash'
 
@@ -88,13 +87,7 @@ watch(searchText, (newSearch) => {
 </script>
 <template>
     <div class="text-white">
-        <div class="flex flex-row items-center my-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600 hover:text-green-800" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-            </svg>
-            <h1 class="ml-2 text-lg">Por pagar</h1>
-        </div>
+
         <div class="flex justify-around">
             <InputSearch v-model="searchText" />
             <ButtonAdd class="h-7" @click="showingFacturas = true" />
