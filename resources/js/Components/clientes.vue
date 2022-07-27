@@ -2,6 +2,7 @@
 import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
+import * as am5hierarchy from  '@amcharts/amcharts5/hierarchy';
 import { watch } from '@vue/runtime-core';
 import ButtonPres from './ButtonPres.vue';
 import { Inertia } from '@inertiajs/inertia';
@@ -38,9 +39,9 @@ export default {
     mounted() {
         // console.log(vm.clientes); //comprobamos si imprime todos los los clientes
         let clients = this.clientes; //guardamos en una varibale los cliente spara iterarlos
-        console.log(clients);
+        //console.log(clients);
         let grupo_conceptos = this.grupo_conceptos;
-        console.log(grupo_conceptos);
+        //console.log(grupo_conceptos);
         let datos = this.cantidades;
         root = am5.Root.new(this.$refs.chartdiv);
         root.setThemes([am5themes_Animated.new(root)]);
@@ -130,7 +131,7 @@ export default {
         data = []; //declaramos la data principal vacia
         let a = {}; //declaramos el array temporal
         nuevoArreglo = []; //declaramos el array donde guardara todo
-        console.log(datos);
+        //console.log(datos);
         for (let c = 0; c < datos.length; c++) { //recorremos los datos
             var ele = datos[c]; //almacenamos en una variable el elemento actual
             let i = 0; //declara la bandera en 0 para ver si existe mas adelante
@@ -191,7 +192,7 @@ export default {
                     nuevoArreglo.push(a);
                 }
             }
-            //console.log(nuevoArreglo);
+           // console.log(nuevoArreglo);
         }
         let i = 0;
         let total = 0;
@@ -295,7 +296,7 @@ export default {
                 i++;
             }
         }
-        console.log(this.movimiento.state);
+        //console.log(this.movimiento.state);
         TipoMov(this.movimiento.state);
         //console.log(data);
         series.data.setAll(data);
@@ -314,7 +315,13 @@ export default {
         }
         xAxis.data.setAll(ejex);
         //click
-        series.columns.template.events.on("click", this.click);
+        series.columns.template.events.once("click", this.click);
+
+        root.container.children.moveValue(
+          am5hierarchy.BreadcrumbBar.new(root, {
+          series: series
+          }), 0
+         );
 
         //AGREGAR LEGEND
         var legend = chart.children.push(am5.Legend.new(root, {
@@ -328,26 +335,36 @@ export default {
     },
     methods: {
         cambiar: function (movimiento) {
-            this.movimiento.state = movimiento;
+            this.movimiento.state = movimiento; //reemplazamos la variable global por la que traemos del boton
             //console.log(this.movimiento.state);
-            let e = movimiento;
-            let i = 0;
-            let v = 0;
-            data = [];
-            while (i < nuevoArreglo.length) {
-                let j = nuevoArreglo[i];
-                let a = 0;
-                while (a < j.movimientos.length) {
-                    let k = j.movimientos[a];
-                    if (e === k.tipo) {
-                        v = k.cantidad;
+            let actualMov = movimiento;
+            let i = 0;//variable que se usara para recorrer el arreglo
+            let newValue; //declaramos el value que se usara en 0
+            //console.log(nuevoArreglo);
+            data = []; //declaramos la data que se enviara a la grafica vacia
+            while (i < nuevoArreglo.length)//recorremos el arreglo que tenemos actual
+             { 
+                let element = nuevoArreglo[i]; //almacenamos en una variable el objeto
+                console.log(element);
+                let a = 0;//declaramos una variable para iterar con esta
+                while (a < element.movimientos.length) //iteramos sobre los movimientos
+                {
+                    let movActual = element.movimientos[a];
+                    //console.log(movActual);
+                    if (actualMov === movActual.tipo)
+                     {
+                        newValue = movActual.cantidad;
+                     }
+                    else
+                    {
+                      
                     }
                     a++;
                 }
                 let x = {
-                    "y": j.x,
-                    "x": j.y,
-                    "value": v
+                    "y": element.x,
+                    "x": element.y,
+                    "value": newValue
                 };
                 data.push(x);
                 i++;
@@ -355,16 +372,17 @@ export default {
             series.data.setAll(data);
             console.log(data);
         } ,
+        
         click:function(ev)
         {
            nuevosValores = ev.target._dataItem.dataContext;
-           console.log(nuevosValores);
+           //console.log(nuevosValores);
            let x = nuevosValores.x;
            let y = nuevosValores.y;
            axios.get('api/ceco_concepto/'+x+'/'+y,{ob: x},{ob1: y}) //enviamos el dato a la ruta de la api
            .then((resp)=>{
               let datos = resp.data[0]; //la respuesta que obtenemos de BD es la que almacenamos
-              console.log(datos); //imprimimos la respuesta accediendo a la data
+              //console.log(datos); //imprimimos la respuesta accediendo a la data
               let objData = {};//declaramos un objeto vacio para almacenar los valores seccionados
               nuevoArreglo=[];//declaramos de nuevo la variable de nuevoarreglo vacia
               
@@ -377,26 +395,26 @@ export default {
                  {
                    objData =  //se almacena en el objeto
                    {
-                      x: ele.CECO,
-                      y: ele.Concepto,
-                      movimientos: [{
+                      x: ele.CECO, //seteamos x como el ceco al que va
+                      y: ele.Concepto, //seteamos y como el concepto al que va
+                      movimientos: [{ //seteamos el primer movimiento que tiene con su cantidad
                             tipo: ele.Movimiento,
                             cantidad: parseInt(ele.Cantidad)
                          }]
                     };
-                    nuevoArreglo.push(objData);
-                    //console.log(nuevoArreglo);
+                    nuevoArreglo.push(objData);//guardamos el objeto en el arreglo ya vacio
+                    console.log(nuevoArreglo);
                }
                else 
                {
                   let xy = ele.CECO + ele.Concepto; //concatenamos xy del objeto que traemos de inicio
-                 let i=0;
+                  let i=0;
                  while( i < nuevoArreglo.length)
                    {
                       let x = nuevoArreglo[i];
                       let newxy = x.x + x.y;
-                      console.log(nuevoArreglo)
-                      console.log(i,xy,newxy)
+                      //console.log(nuevoArreglo)
+                      //console.log(i,xy,newxy)
                       if (xy === newxy) {
                           let e = 0;
                           let k = 0;
@@ -441,15 +459,96 @@ export default {
                 }
              }
            }
-           //SECCIONAR 
-            //seteo de x y y
-            ejex=[];
-            let cecos = resp.data[1];
+           //SECCIONAR POR TIPO DE Movimientos
+            let i = 0;
+            //declaramos la cantidad de los tipo de movimiento en 0
+            let total = 0;
+            let disponible = 0;
+            let porcentaje = 0;
+            //console.log(nuevoArreglo.length);
+            while (i < nuevoArreglo.length) //recorremos el nuevoarreglo organizado por x y y
+             {
+              let h = nuevoArreglo[i]; //tomamos un elemento del array
+              let a = {
+                "tipo": "TOTAL",
+                "cantidad": total
+                 };
+              let b = {
+                "tipo": "PORCENTAJE",
+                "cantidad": porcentaje
+                };
+              let c = {
+                "tipo": "DISPONIBLE",
+                "cantidad": disponible
+               };
+            h.movimientos.push(a, b, c);
+            //console.log(total);
+            let j = 0;
+            while (j < h.movimientos.length) {
+                let k = h.movimientos[j];
+                //console.log(k.tipo);
+                if (k.tipo === "PRESUPUESTO") 
+                {
+                    let l = 0;
+                    while (l < h.movimientos.length) {
+                        let g = h.movimientos[l];
+                        if (g.tipo === "TOTAL") {
+                            g.cantidad = g.cantidad + k.cantidad;
+                        }
+                        l++;
+                    }
+                }
+                else if (k.tipo === "SUPLEMENTO") {
+                    //console.log("hola");
+                    let l = 0;
+                    while (l < h.movimientos.length) {
+                        let g = h.movimientos[l];
+                        if (g.tipo === "TOTAL") {
+                            g.cantidad = g.cantidad + k.cantidad;
+                        }
+                        l++;
+                    }
+                }
+                else if (k.tipo === "GASTO") {
+                    //console.log("hola");
+                    let l = 0;
+                    while (l < h.movimientos.length) {
+                        let g = h.movimientos[l];
+                        if (g.tipo === "PORCENTAJE") {
+                            g.cantidad = g.cantidad + (-k.cantidad);
+                        }
+                        else if (g.tipo === "DISPONIBLE") {
+                            g.cantidad = g.cantidad + k.cantidad;
+                        }
+                        l++;
+                    }
+                }
+                else if (k.tipo === "TOTAL") {
+                    //console.log("hola");
+                    let l = 0;
+                    while (l < h.movimientos.length) {
+                        let g = h.movimientos[l];
+                        if (g.tipo === "PORCENTAJE") {
+                            g.cantidad = Math.round(100 * (g.cantidad / k.cantidad));
+                        }
+                        else if (g.tipo === "DISPONIBLE") {
+                            g.cantidad = g.cantidad + k.cantidad;
+                        }
+                        l++;
+                    }
+                }
+                j++;
+            }
+            i++;
+        }
+            //seteo nuevo x y y
+            ejex=[]; //vaciamos el ejex
+            let cecos = resp.data[1]; //traemos el objeto donde contiene los cecos
             //console.log(cecos.length);
-            for (let index = 0; index < cecos.length; index++) 
+            for (let index = 0; index < cecos.length; index++) //recorremos cecos
             {
-              let nombreCeco = cecos[index].nombre;
-              ejex.push({ category: nombreCeco });
+              let nombreCeco = cecos[index].nombre; //guardamos en variables los cecos
+              ejex.push({ category: nombreCeco }); // lo metemos al objeto
             }
             //console.log(ejex);
             ejey = [];
@@ -458,7 +557,7 @@ export default {
                 let nombreConcepto = conceptos[f].nombre;
                 ejey.push({ category: nombreConcepto });
             }
-            console.log(nuevoArreglo);
+            //console.log(nuevoArreglo);
             yAxis.data.setAll(ejex);
             xAxis.data.setAll(ejey);
           })
