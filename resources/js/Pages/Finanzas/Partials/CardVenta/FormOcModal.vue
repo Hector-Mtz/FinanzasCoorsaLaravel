@@ -67,9 +67,15 @@ function restForm() {
     form.status_id = "";
     form.venta_id = "";
     form.venta_id = props.venta.id;
+    form.hasErrors = false;
+    form.errors = {};
+    form.error = "";
 }
 
 const close = () => {
+    form.hasErrors = false;
+    form.errors = {};
+    form.error = "";
     emit('close');
 };
 
@@ -128,8 +134,7 @@ const update = () => {
             emit("editOc", resp.data);
             form.recentlySuccessful = true
 
-            form.hasErrors = false;
-            form.errors = {};
+
             setTimeout(() => {
                 restForm();
                 close();
@@ -140,12 +145,13 @@ const update = () => {
                 const errors = error.response.data.errors
                 for (let error in errors) {
                     form.errors[error] = errors[error][0]
-                } e
+                }
                 form.error = error.response.data.message
             } else {
                 form.error = "ERROR UPDATE OC"
             };
         }).then(() => { // always
+            console.log("Cierra el formulario");
             form.processing = false;
             setTimeout(() => {
                 form.recentlySuccessful = false;

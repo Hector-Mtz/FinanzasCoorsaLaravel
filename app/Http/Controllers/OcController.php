@@ -72,12 +72,12 @@ class OcController extends Controller
                     "facturas.fechaDePago"
                 )
                 ->firstWhere("facturas.id", "=", $oc->factura_id);
-            $newTotalOcs = $factura->totals_ocs - $oc->cantidad + $newOc['cantidad'];
+            $newTotalOcs = $factura->total_ocs - $oc->cantidad + $newOc['cantidad'];
             if ($factura->cantidad < $newTotalOcs) {
                 @throw ValidationException::withMessages([
-                    'message' => "La cantidad supera a la factura",
                     'cantidad' => "La cantidad supera a la factura"
                 ]);
+                return;
             }
         }
 

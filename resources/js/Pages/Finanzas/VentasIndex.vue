@@ -10,6 +10,7 @@ import Ventas from './Partials/CardVenta/Ventas.vue';
 import VentasModal from './Partials/CardVenta/VentasModal.vue';
 import Facturas from './Partials/CardFacturas/Facturas.vue';
 import Depositos from './Partials/CardDepositos/Depositos.vue';
+import ButtonCalendar from '../../Components/ButtonCalendar.vue';
 
 const date = new Date();
 const year = ref(date.getFullYear());
@@ -28,6 +29,7 @@ const props = defineProps({
         required: true,
     },
 });
+
 
 const ventas = computed(() => {
     let auxVentas = [];
@@ -67,9 +69,12 @@ const chageComponent = () => {
 <template>
     <AppLayout title="Finanzas">
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-white">
-                Finanzas
-            </h2>
+            <div class="flex items-center justify-around">
+                <h2 class="text-xl font-bold leading-tight text-white">
+                    Finanzas
+                </h2>
+                <ButtonCalendar :month="month" :year="year" />
+            </div>
         </template>
 
         <div class="px-3 py-3 fondo_general">
