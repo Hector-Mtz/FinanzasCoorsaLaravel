@@ -24,10 +24,11 @@ class ClienteController extends Controller
 
         $cantidades = DB::table(DB::raw('soli_movimientos'))
             ->select(DB::raw(
-                'clientes.nombre AS Cliente,
-          grupo_conceptos.nombre AS GrupoConcepto,
-          SUM(productos.cantidad) AS Cantidad,
-          tipo_movimientos.nombre AS Movimiento'
+                '
+                 clientes.nombre AS Cliente,
+                 grupo_conceptos.nombre AS GrupoConcepto,
+                 SUM(productos.cantidad) AS Cantidad,
+                 tipo_movimientos.nombre AS Movimiento'
             ))
             ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
             ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')

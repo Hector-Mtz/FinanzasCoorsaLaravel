@@ -33,7 +33,7 @@
 }
 
 .fondo_menu{
-    background-image: url('../img/LOGIN.jpg');
+    background-image: url('../assets/img/LOGIN.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     
@@ -63,8 +63,8 @@
 }
 
 .ingresarLogin{
-    border: var(--aqua) 5px solid ;
-    border-radius:45%;
+    border: var(--aqua) 3px solid ;
+    border-radius:10%;
     text-align: center;
 }
 
@@ -94,7 +94,8 @@
 }
 
 .inputLogin {
-  border-radius: 50%;
+  border-radius: 5%;
+  color: var(--blanco);
 }
 
 

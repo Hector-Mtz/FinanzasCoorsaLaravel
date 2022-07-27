@@ -5,12 +5,21 @@ import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import { watch } from '@vue/runtime-core';
 import ButtonPres from './ButtonPres.vue';
 import { Inertia } from '@inertiajs/inertia';
+import axios from 'axios';
 
 //variables GLOBALES
 let data =[];
 let nuevoArreglo=[];
 let series =[];
 let nuevosValores;
+let ejey = [];
+let ejex = [];
+let yAxis;
+let xAxis;
+let root;
+let yRenderer;
+let xRenderer;
+let chart;
 
 export default {
     props: {
@@ -33,9 +42,9 @@ export default {
         let grupo_conceptos = this.grupo_conceptos;
         console.log(grupo_conceptos);
         let datos = this.cantidades;
-        let root = am5.Root.new(this.$refs.chartdiv);
+        root = am5.Root.new(this.$refs.chartdiv);
         root.setThemes([am5themes_Animated.new(root)]);
-        let chart = root.container.children.push(am5xy.XYChart.new(root, {
+        chart = root.container.children.push(am5xy.XYChart.new(root, {
             panX: false,
             panY: false,
             wheelX: "none",
@@ -43,24 +52,24 @@ export default {
             layout: root.verticalLayout
         }));
         // Create axes and their renderers
-        var yRenderer = am5xy.AxisRendererY.new(root, {
+         yRenderer = am5xy.AxisRendererY.new(root, { //este tenia var
             visible: false,
             minGridDistance: 20,
             inversed: true
         });
         yRenderer.grid.template.set("visible", false);
-        var yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
+        yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
             renderer: yRenderer,
             categoryField: "category"
         }));
-        var xRenderer = am5xy.AxisRendererX.new(root, {
+         xRenderer = am5xy.AxisRendererX.new(root, { //este tenia la var
             visible: false,
             minGridDistance: 30,
             inversed: false,
             opposite: true,
         });
         xRenderer.grid.template.set("visible", false);
-        var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+         xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
             renderer: xRenderer,
             categoryField: "category",
         }));
@@ -121,6 +130,7 @@ export default {
         data = []; //declaramos la data principal vacia
         let a = {}; //declaramos el array temporal
         nuevoArreglo = []; //declaramos el array donde guardara todo
+        console.log(datos);
         for (let c = 0; c < datos.length; c++) { //recorremos los datos
             var ele = datos[c]; //almacenamos en una variable el elemento actual
             let i = 0; //declara la bandera en 0 para ver si existe mas adelante
@@ -290,7 +300,6 @@ export default {
         //console.log(data);
         series.data.setAll(data);
         //Siteamos los datos que aparecen en el eje y
-        let ejey = [];
         for (let index = 0; index < clients.length; index++) {
             const element = clients[index];
             //console.log(element.nombre);
@@ -298,7 +307,6 @@ export default {
         }
         yAxis.data.setAll(ejey);
         //Siteamos los datos que aparecen en el eje x
-        let ejex = [];
         for (let i = 0; i < grupo_conceptos.length; i++) {
             const e = grupo_conceptos[i];
             // console.log(e.nombre);
@@ -345,12 +353,119 @@ export default {
                 i++;
             }    
             series.data.setAll(data);
-            //console.log(data);
+            console.log(data);
         } ,
-        click:function(ev){
+        click:function(ev)
+        {
            nuevosValores = ev.target._dataItem.dataContext;
            console.log(nuevosValores);
-           Inertia.get();
+           let x = nuevosValores.x;
+           let y = nuevosValores.y;
+           axios.get('api/ceco_concepto/'+x+'/'+y,{ob: x},{ob1: y}) //enviamos el dato a la ruta de la api
+           .then((resp)=>{
+              let datos = resp.data[0]; //la respuesta que obtenemos de BD es la que almacenamos
+              console.log(datos); //imprimimos la respuesta accediendo a la data
+              let objData = {};//declaramos un objeto vacio para almacenar los valores seccionados
+              nuevoArreglo=[];//declaramos de nuevo la variable de nuevoarreglo vacia
+              
+              for (let c = 0; c < datos.length; c++) //recorremos los datos
+               { 
+                 var ele = datos[c]; //almacenamos en una variable el elemento actual
+                 let i = 0; //declara la bandera en 0 para ver si existe mas adelante
+                 let r = 0;
+                 if (ele === datos[0]) //vemos si existe la primera posicion, si es la primera, la almacenamos
+                 {
+                   objData =  //se almacena en el objeto
+                   {
+                      x: ele.CECO,
+                      y: ele.Concepto,
+                      movimientos: [{
+                            tipo: ele.Movimiento,
+                            cantidad: parseInt(ele.Cantidad)
+                         }]
+                    };
+                    nuevoArreglo.push(objData);
+                    //console.log(nuevoArreglo);
+               }
+               else 
+               {
+                  let xy = ele.CECO + ele.Concepto; //concatenamos xy del objeto que traemos de inicio
+                 let i=0;
+                 while( i < nuevoArreglo.length)
+                   {
+                      let x = nuevoArreglo[i];
+                      let newxy = x.x + x.y;
+                      console.log(nuevoArreglo)
+                      console.log(i,xy,newxy)
+                      if (xy === newxy) {
+                          let e = 0;
+                          let k = 0;
+                          while (e < x.movimientos.length)
+                           {
+                             let z = x.movimientos[e];
+                            // console.log(z);
+                             let j = z.tipo;
+                             let h = ele.Movimiento;
+                             if (j === h)
+                              {
+                                z.cantidad = parseInt(z.cantidad) + parseInt(ele.Cantidad);
+                                let k = 1;
+                                break;
+                              }
+                            e++;
+                           }
+                        if (k === 0)
+                         {
+                            objData =
+                             {
+                                tipo: ele.Movimiento,
+                                cantidad: parseInt(ele.Cantidad)
+                             };
+                            x.movimientos.push(objData);
+                        }
+                        r = 1;
+                        break;
+                      }
+                      i++;
+                   }
+                   if (r === 0) {
+                    objData = {
+                        x: ele.CECO,
+                        y: ele.Concepto,
+                        movimientos: [{
+                                tipo: ele.Movimiento,
+                                cantidad: parseInt(ele.Cantidad)
+                            }]
+                    };
+                    nuevoArreglo.push(objData);
+                }
+             }
+           }
+           //SECCIONAR 
+            //seteo de x y y
+            ejex=[];
+            let cecos = resp.data[1];
+            //console.log(cecos.length);
+            for (let index = 0; index < cecos.length; index++) 
+            {
+              let nombreCeco = cecos[index].nombre;
+              ejex.push({ category: nombreCeco });
+            }
+            //console.log(ejex);
+            ejey = [];
+            let conceptos = resp.data[2];
+            for (let f = 0; f < conceptos.length; f++) {
+                let nombreConcepto = conceptos[f].nombre;
+                ejey.push({ category: nombreConcepto });
+            }
+            console.log(nuevoArreglo);
+            yAxis.data.setAll(ejex);
+            xAxis.data.setAll(ejey);
+          })
+         .catch(function (error)
+          {
+           console.log(error);
+          });    
         }
     },
     components: { ButtonPres }
