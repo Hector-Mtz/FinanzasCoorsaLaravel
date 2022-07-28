@@ -16,6 +16,7 @@ class Factura extends Model
         "status_id",
         "referencia",
         "fechaDePago",
+        "cliente_id",
     ];
 
 

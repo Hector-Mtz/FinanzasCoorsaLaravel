@@ -1,19 +1,25 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia'
 import AppLayout from '@/Layouts/AppLayout.vue';
 
 import Card from '../../Components/Card.vue';
 import Calendar from '../../Components/Calendar.vue';
 import CalendarHeader from '../../Components/CalendarHeader.vue';
-import Ventas from './Partials/Ventas.vue';
-import VentasModal from './Partials/VentasModal.vue';
-import Facturas from './Partials/Facturas.vue';
+import Ventas from './Partials/CardVenta/Ventas.vue';
+import VentasModal from './Partials/CardVenta/VentasModal.vue';
+import Facturas from './Partials/CardFacturas/Facturas.vue';
+import Depositos from './Partials/CardDepositos/Depositos.vue';
+import ButtonCalendar from '../../Components/ButtonCalendar.vue';
 
 const date = new Date();
 const year = ref(date.getFullYear());
 const showingVentas = ref(false);
 const month = ref(date.getMonth());
+const componentFactDep = reactive({
+    component: 'Facturas',
+    title: 'Por Pagar'
+});
 
 
 
@@ -23,6 +29,7 @@ const props = defineProps({
         required: true,
     },
 });
+
 
 const ventas = computed(() => {
     let auxVentas = [];
@@ -47,14 +54,27 @@ const closeModalVentas = () => {
 }
 // END FUNCIONES MODAL
 
+const chageComponent = () => {
+    if (componentFactDep.title === 'Por Pagar') {
+        componentFactDep.component = 'Depositos'
+        componentFactDep.title = 'Depositos'
+    } else {
+        componentFactDep.component = 'Facturas'
+        componentFactDep.title = 'Por Pagar'
+    }
+}
+
 </script>
 
 <template>
     <AppLayout title="Finanzas">
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-white">
-                Finanzas
-            </h2>
+            <div class="flex items-center justify-around">
+                <h2 class="text-xl font-bold leading-tight text-white">
+                    Finanzas
+                </h2>
+                <ButtonCalendar :month="month" :year="year" />
+            </div>
         </template>
 
         <div class="px-3 py-3 fondo_general">
@@ -71,7 +91,16 @@ const closeModalVentas = () => {
                     </div>
                 </Card>
                 <Card>
-                    <Facturas />
+                    <div class="flex flex-row items-center my-1 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" @click="chageComponent()"
+                            class="w-8 h-8 text-green-600 hover:text-green-800" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                        </svg>
+                        <h1 class="ml-2 text-lg">{{ componentFactDep.title }}</h1>
+                    </div>
+                    <Facturas v-if="componentFactDep.component === 'Facturas'" />
+                    <Depositos v-else />
                 </Card>
             </div>
         </div>

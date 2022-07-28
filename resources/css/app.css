@@ -31,6 +31,7 @@
 .active {
     border-color: #010E1D;
 }
+<<<<<<< HEAD
 
 .fondo_menu{
     background-image: url('../assets/img/LOGIN.jpg');
@@ -185,3 +186,18 @@
     display:inline-grid;
     z-index: 2;
 }
+=======
+.table-ingresos {
+    overflow: hidden;
+    margin-right: 0.5rem;
+}
+.table-ingresos thead tr th {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+.table-ingresos tbody tr td {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-top: 3px solid #010E1D;
+}
+>>>>>>> aa620e64d030d440ebac319fb0fdde6d9de25abb

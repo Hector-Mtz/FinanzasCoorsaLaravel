@@ -7,13 +7,13 @@ import JetLabel from '@/Jetstream/Label.vue';
 import JetButton from '@/Jetstream/Button.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 
-import DialogModal from '../../../Components/DialogModal.vue';
-import Input from '../../../Components/Input.vue';
-import ListDataInput from '../../../Components/ListDataInput.vue';
-import SpinProgress from '../../../Components/SpinProgress.vue';
-import SelectComponent from '../../../Components/SelectComponent.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import Input from '@/Components/Input.vue';
+import ListDataInput from '@/Components/ListDataInput.vue';
+import SpinProgress from '@/Components/SpinProgress.vue';
+import SelectComponent from '@/Components/SelectComponent.vue';
 
-const emit = defineEmits(["close", "addFactura", "editFactura"])
+const emit = defineEmits(["close", "addOc", "editOc"])
 const props = defineProps({
     show: {
         type: Boolean,
@@ -23,7 +23,11 @@ const props = defineProps({
         type: String,
         default: 'create'
     },
-    factura: {
+    oc: {
+        type: Object,
+        required: false
+    },
+    venta: {
         type: Object,
         required: false
     }
@@ -33,9 +37,10 @@ const props = defineProps({
 
 
 const form = reactive({
-    "cantidad": "",
-    "referencia": "",
-    "fechaDePago": "",
+    'nombre': "",
+    'cantidad': "",
+    'status_id': "",
+    'venta_id': "",
     'hasErrors': false,
     'errors': [],
     'error': "",
@@ -46,22 +51,31 @@ const form = reactive({
 const titleModal = computed(() => {
     if (props.typeForm === 'create') {
         restForm();
-        return "Nueva Factura"
+        return "Nueva Oc"
     } else {
-        form.cantidad = props.factura.cantidad;
-        form.referencia = props.factura.referencia;
-        form.fechaDePago = props.factura.fechaDePago;
-        return "Actualizar Factura"
+        form.nombre = props.oc.nombre;
+        form.cantidad = props.oc.cantidad;
+        form.status_id = props.oc.status_id;
+        form.venta_id = props.oc.venta_id;
+        return "Actualizar Oc"
     }
 })
 
 function restForm() {
+    form.nombre = "";
     form.cantidad = "";
-    form.referencia = "";
-    form.fechaDePago = "";
+    form.status_id = "";
+    form.venta_id = "";
+    form.venta_id = props.venta.id;
+    form.hasErrors = false;
+    form.errors = {};
+    form.error = "";
 }
 
 const close = () => {
+    form.hasErrors = false;
+    form.errors = {};
+    form.error = "";
     emit('close');
 };
 
@@ -78,14 +92,14 @@ const createOrUpdate = () => {
 
 
 const create = () => {
-    axios.post(route('facturas.store'), form,
+    axios.post(route('ocs.store'), form,
         {
             onUploadProgress: () => {
                 form.processing = true;
             },
         })
         .then((resp) => {
-            emit("addFactura", resp.data);
+            emit("addOc", resp.data);
             form.recentlySuccessful = true;
             restForm();
             setTimeout(() => {
@@ -100,7 +114,7 @@ const create = () => {
                 }
                 form.error = error.response.data.message
             } else {
-                form.error = "Error CREATE FACTURA"
+                form.error = "Error CREATE OC"
             };
         }).then(() => { // always
             form.processing = false;
@@ -109,39 +123,41 @@ const create = () => {
             }, 500);
         });
 }
-// const update = () => {
-//     axios.put(route('facturas.update', props.oc.id), form,
-//         {
-//             onUploadProgress: () => {
-//                 form.processing = true;
-//             },
-//         })
-//         .then((resp) => {
-//             emit("editFactura", resp.data);
-//             form.recentlySuccessful = true
-//             setTimeout(() => {
-//                 restForm();
-//                 close();
-//             }, 500);
-//         }).catch(error => {
-//             form.hasErrors = true;
-//             console.log(error);
-//             // if (error.response.data.hasOwnProperty('errors')) {
-//             //     const errors = error.response.data.errors
-//             //     for (let error in errors) {
-//             //         form.errors[error] = errors[error][0]
-//             //     }
-//             //     form.error = error.response.data.message
-//             // } else {
-//             //     form.error = "ERROR UPDATE OC"
-//             // };
-//         }).then(() => { // always
-//             form.processing = false;
-//             setTimeout(() => {
-//                 form.recentlySuccessful = false;
-//             }, 500);
-//         });
-// }
+const update = () => {
+    axios.put(route('ocs.update', props.oc.id), form,
+        {
+            onUploadProgress: () => {
+                form.processing = true;
+            },
+        })
+        .then((resp) => {
+            emit("editOc", resp.data);
+            form.recentlySuccessful = true
+
+
+            setTimeout(() => {
+                restForm();
+                close();
+            }, 500);
+        }).catch(error => {
+            form.hasErrors = true;
+            if (error.response.data.hasOwnProperty('errors')) {
+                const errors = error.response.data.errors
+                for (let error in errors) {
+                    form.errors[error] = errors[error][0]
+                }
+                form.error = error.response.data.message
+            } else {
+                form.error = "ERROR UPDATE OC"
+            };
+        }).then(() => { // always
+            console.log("Cierra el formulario");
+            form.processing = false;
+            setTimeout(() => {
+                form.recentlySuccessful = false;
+            }, 500);
+        });
+}
 
 
 </script>
@@ -161,22 +177,15 @@ const create = () => {
             <form @submit.prevent="createOrUpdate()">
                 <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
                     <div>
-                        <JetLabel for="referencia" value="Referencia:" />
-                        <Input id="referencia" name="referencia" type="text" v-model="form.referencia" required
-                            maxlength="30" />
-                        <JetInputError :message="form.errors.referencia" class="mt-2" />
+                        <JetLabel for="nombre" value="Nombre:" />
+                        <Input id="nombre" name="nombre" type="text" v-model="form.nombre" required maxlength="30" />
+                        <JetInputError :message="form.errors.nombre" class="mt-2" />
                     </div>
                     <div>
                         <JetLabel for="cantidad" value="Cantidad:" />
                         <Input id="cantidad" name="cantidad" type="text" pattern="^\d*(\.\d{0,2})?$"
                             v-model="form.cantidad" required maxlength="30" />
                         <JetInputError :message="form.errors.cantidad" class="mt-2" />
-                    </div>
-                    <div>
-                        <JetLabel for="fechaDePago" value="Fecha De Pago:" />
-                        <Input id="fechaDePago" name="fecha_final" type="date" v-model="form.fechaDePago" required
-                            :min="form.fechaInicial" />
-                        <JetInputError :message="form.errors.fechaDePago" class="mt-2" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">

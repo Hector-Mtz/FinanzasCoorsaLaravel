@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive } from 'vue';
+import { computed, onBeforeMount, reactive, ref } from 'vue';
 
 import axios from 'axios';
 
@@ -7,13 +7,13 @@ import JetLabel from '@/Jetstream/Label.vue';
 import JetButton from '@/Jetstream/Button.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 
-import DialogModal from '../../../Components/DialogModal.vue';
-import Input from '../../../Components/Input.vue';
-import ListDataInput from '../../../Components/ListDataInput.vue';
-import SpinProgress from '../../../Components/SpinProgress.vue';
-import SelectComponent from '../../../Components/SelectComponent.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import Input from '@/Components/Input.vue';
+import ListDataInput from '@/Components/ListDataInput.vue';
+import SpinProgress from '@/Components/SpinProgress.vue';
+import SelectComponent from '@/Components/SelectComponent.vue';
 
-const emit = defineEmits(["close", "addOc", "editOc"])
+const emit = defineEmits(["close", "addDeposito", "editDeposito"])
 const props = defineProps({
     show: {
         type: Boolean,
@@ -23,24 +23,19 @@ const props = defineProps({
         type: String,
         default: 'create'
     },
-    oc: {
-        type: Object,
-        required: false
-    },
-    venta: {
+    deposito: {
         type: Object,
         required: false
     }
 });
 
 
-
+const listBancos = ref([]);
 
 const form = reactive({
-    'nombre': "",
-    'cantidad': "",
-    'status_id': "",
-    'venta_id': "",
+    "nombre": "",
+    "cantidad": "",
+    "banco_id": "",
     'hasErrors': false,
     'errors': [],
     'error': "",
@@ -51,22 +46,22 @@ const form = reactive({
 const titleModal = computed(() => {
     if (props.typeForm === 'create') {
         restForm();
-        return "Nueva Oc"
+        return "Nuevo Deposito"
     } else {
-        form.nombre = props.oc.nombre;
-        form.cantidad = props.oc.cantidad;
-        form.status_id = props.oc.status_id;
-        form.venta_id = props.oc.venta_id;
-        return "Actualizar Oc"
+        form.nombre = props.deposito.nombre;
+        form.cantidad = props.deposito.cantidad;
+        form.banco_id = props.deposito.banco_id;
+        return "Actualizar Deposito"
     }
 })
 
 function restForm() {
-    form.nombre = "";
     form.cantidad = "";
-    form.status_id = "";
-    form.venta_id = "";
-    form.venta_id = props.venta.id;
+    form.nombre = "";
+    form.banco_id = "";
+    form.hasErrors = false;
+    form.errors = [];
+    form.error = ""
 }
 
 const close = () => {
@@ -86,14 +81,14 @@ const createOrUpdate = () => {
 
 
 const create = () => {
-    axios.post(route('ocs.store'), form,
+    axios.post(route('ingresos.store'), form,
         {
             onUploadProgress: () => {
                 form.processing = true;
             },
         })
         .then((resp) => {
-            emit("addOc", resp.data);
+            emit("addDeposito", resp.data);
             form.recentlySuccessful = true;
             restForm();
             setTimeout(() => {
@@ -101,14 +96,14 @@ const create = () => {
             }, 500);
         }).catch(error => {
             form.hasErrors = true;
-            if (error.response.data.hasOwnProperty('errors')) {
+            if (error.hasOwnProperty("response") && error.response.data.hasOwnProperty('errors')) {
                 const errors = error.response.data.errors
                 for (let error in errors) {
                     form.errors[error] = errors[error][0]
                 }
                 form.error = error.response.data.message
             } else {
-                form.error = "Error CREATE OC"
+                form.error = "Error CREATE DEPOSITO"
             };
         }).then(() => { // always
             form.processing = false;
@@ -118,14 +113,15 @@ const create = () => {
         });
 }
 const update = () => {
-    axios.put(route('ocs.update', props.oc.id), form,
+    axios.put(route('ingresos.update', props.deposito.id), form,
         {
             onUploadProgress: () => {
                 form.processing = true;
             },
         })
         .then((resp) => {
-            emit("editOc", resp.data);
+            // Es el mismo ya que reconsulta
+            emit("addDeposito", resp.data);
             form.recentlySuccessful = true
             setTimeout(() => {
                 restForm();
@@ -133,16 +129,15 @@ const update = () => {
             }, 500);
         }).catch(error => {
             form.hasErrors = true;
-            console.log(error);
-            // if (error.response.data.hasOwnProperty('errors')) {
-            //     const errors = error.response.data.errors
-            //     for (let error in errors) {
-            //         form.errors[error] = errors[error][0]
-            //     }
-            //     form.error = error.response.data.message
-            // } else {
-            //     form.error = "ERROR UPDATE OC"
-            // };
+            if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('errors')) {
+                const errors = error.response.data.errors
+                for (let error in errors) {
+                    form.errors[error] = errors[error][0]
+                }
+                form.error = error.response.data.message
+            } else {
+                form.error = "ERROR UPDATE DEPOSITO"
+            };
         }).then(() => { // always
             form.processing = false;
             setTimeout(() => {
@@ -151,6 +146,15 @@ const update = () => {
         });
 }
 
+
+const getBancos = async () => {
+    const resp = await axios.get(route('bancos.index'));
+    listBancos.value = resp.data
+}
+
+onBeforeMount(() => {
+    getBancos();
+})
 
 </script>
 <template>
@@ -169,7 +173,7 @@ const update = () => {
             <form @submit.prevent="createOrUpdate()">
                 <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
                     <div>
-                        <JetLabel for="nombre" value="Nombre:" />
+                        <JetLabel for="nombre" value="Núm Deposito:" />
                         <Input id="nombre" name="nombre" type="text" v-model="form.nombre" required maxlength="30" />
                         <JetInputError :message="form.errors.nombre" class="mt-2" />
                     </div>
@@ -178,6 +182,15 @@ const update = () => {
                         <Input id="cantidad" name="cantidad" type="text" pattern="^\d*(\.\d{0,2})?$"
                             v-model="form.cantidad" required maxlength="30" />
                         <JetInputError :message="form.errors.cantidad" class="mt-2" />
+                    </div>
+                    <div>
+                        <JetLabel for="banco_id" value="Banco:" />
+                        <SelectComponent v-model="form.banco_id">
+                            <option v-for="banco in listBancos" :key="banco.id" :value="banco.id">
+                                {{ banco.nombre }}
+                            </option>
+                        </SelectComponent>
+                        <JetInputError :message="form.errors.fechaDePago" class="mt-2" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">

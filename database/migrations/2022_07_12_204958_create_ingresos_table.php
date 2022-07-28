@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nombre', 100)->unique();
             $table->float('cantidad', 10, 2);
             $table->foreignId('banco_id')->constrained('bancos');
+            $table->foreignId('status_id')->default(1)->constrained('status');
             $table->timestamps();
         });
     }

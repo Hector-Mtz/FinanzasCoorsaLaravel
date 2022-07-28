@@ -4,10 +4,11 @@ import { Inertia } from '@inertiajs/inertia';
 
 import { pickBy } from 'lodash'
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import InputSearch from '../../../Components/InputSearch.vue';
-import ItemClienteVenta from './ItemClienteVenta.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import InputSearch from '@/Components/InputSearch.vue';
 import OcsModal from './OcsModal.vue';
+import ItemCliente from '../ItemCliente.vue';
+import ItemObjectShow from '../ItemObjectShow.vue';
 
 
 const emit = defineEmits(['showVentas'])
@@ -98,8 +99,12 @@ watch(searchText, (newSearch) => {
             <!-- Lista de clientes -->
             <div>
 
-                <ItemClienteVenta v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
-                    @on-show="showOcs($event)" />
+                <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente">
+                    <ItemObjectShow v-for="venta in cliente.ventas" :key="venta.id" :data="venta"
+                        @onShow="showOcs($event)">
+                        {{ venta.ceco + "-" + venta.nombre }}
+                    </ItemObjectShow>
+                </ItemCliente>
             </div>
         </div>
         <!--Modals -->

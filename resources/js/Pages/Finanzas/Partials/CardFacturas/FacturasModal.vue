@@ -1,10 +1,10 @@
 <script setup>
 import { ref, watch } from 'vue';
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import DialogModal from '../../../Components/DialogModal.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import TableComponent from '@/Components/Table.vue';
 import ItemFacturaDetails from './ItemFacturaDetails.vue';
-import TableComponent from '../../../Components/Table.vue';
 import FormFacturaModal from './FormFacturaModal.vue';
 
 const emit = defineEmits(["close", "addFactura", "addOc"])

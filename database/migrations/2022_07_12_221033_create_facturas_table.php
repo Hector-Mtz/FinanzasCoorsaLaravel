@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('referencia', 20);
             $table->date('fechaDePago');
             $table->foreignId('ingreso_id')->nullable()->constrained('ingresos');
+            $table->foreignId('cliente_id')->nullable()->constrained('clientes');
             $table->timestamps();
         });
     }

@@ -1,6 +1,6 @@
 <script setup>
-import { formatoMoney } from "../../../utils/coversiones";
-import SuccessButton from "../../../Components/SuccessButton.vue";
+import { formatoMoney } from "../../../../utils/conversiones";
+import SuccessButton from "@/Components/SuccessButton.vue";
 
 const emit = defineEmits(['edit'])
 const props = defineProps({

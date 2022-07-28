@@ -1,11 +1,11 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
-import ButtonAdd from '../../../Components/ButtonAdd.vue';
-import DialogModal from '../../../Components/DialogModal.vue';
-import TableComponent from '../../../Components/Table.vue';
+import ButtonAdd from '@/Components/ButtonAdd.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import TableComponent from '@/Components/Table.vue';
 import ItemOcFactura from './ItemOcFactura.vue';
-import ListDataInput from '../../../Components/ListDataInput.vue';
+import ListDataInput from '@/Components/ListDataInput.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 
 const emit = defineEmits(["close", "addOc"])
@@ -95,7 +95,7 @@ watch(props, () => {
                     </div>
                     <div class="flex justify-between">
                         <span class="font-bold text-center text-gray-300 ">
-                            Total Ocs: {{ props.factura.total_ocs }}
+                            Total: {{ props.factura.cantidad }}
                         </span>
                         <span class="font-bold text-center text-gray-300 ">
                             Fecha Pago: {{ props.factura.fechaDePago }}
@@ -117,7 +117,7 @@ watch(props, () => {
                             </div>
                             <JetInputError :message="props.factura.error" class="mt-2" />
                         </th>
-                        <th>CANTIDAD</th>
+                        <th>CANTIDAD <br /> ${{ props.factura.total_ocs }}</th>
                         <th>FECHA</th>
                     </tr>
                 </template>

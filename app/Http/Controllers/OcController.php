@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Factura;
 use App\Models\Oc;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class OcController extends Controller
 {
@@ -58,6 +60,26 @@ class OcController extends Controller
             'nombre' => ["required", "string", "unique:ocs,nombre," . $oc->id . ",id"],
             'cantidad' => ["required", "numeric"],
         ]);
+
+        if ($oc->factura_id !== null) {
+            $factura = Factura::select('facturas.*')->selectRaw("ifnull(sum(ocs.cantidad),0) total_ocs")
+                ->leftJoin('ocs', 'facturas.id', "=", "ocs.factura_id")
+                ->groupBy(
+                    "facturas.id",
+                    "facturas.cantidad",
+                    "facturas.status_id",
+                    "facturas.referencia",
+                    "facturas.fechaDePago"
+                )
+                ->firstWhere("facturas.id", "=", $oc->factura_id);
+            $newTotalOcs = $factura->total_ocs - $oc->cantidad + $newOc['cantidad'];
+            if ($factura->cantidad < $newTotalOcs) {
+                @throw ValidationException::withMessages([
+                    'cantidad' => "La cantidad supera a la factura"
+                ]);
+                return;
+            }
+        }
 
         $oc->update($newOc);
         return response()->json($oc);

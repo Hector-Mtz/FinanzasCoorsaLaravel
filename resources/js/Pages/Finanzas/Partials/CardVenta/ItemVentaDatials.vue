@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
-import { formatoMoney, IVA } from "../../../utils/coversiones";
-import SuccessButton from "../../../Components/SuccessButton.vue";
+import { formatoMoney, IVA } from "../../../../utils/conversiones";
+import SuccessButton from "@/Components/SuccessButton.vue";
 
 const emit = defineEmits(['edit'])
 const ivaChecked = ref(false);
@@ -17,7 +17,7 @@ const ventaShow = computed(() => {
     if (ivaChecked.value) {
         const totalIva = (auxVenta.total * IVA).toFixed(2);
         auxVenta.iva = formatoMoney(totalIva);
-        auxVenta.sub_total = formatoMoney(auxVenta.total - totalIva);
+        auxVenta.sub_total = formatoMoney((auxVenta.total - totalIva).toFixed(2));
     } else {
         auxVenta.iva = "";
         auxVenta.sub_total = "";
