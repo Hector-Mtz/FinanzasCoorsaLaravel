@@ -19,16 +19,24 @@ var props = defineProps({
 let clientes = props.clientes;
 let grupo_conceptos = props.grupo_conceptos;
 let datos = props.cantidades;
-let date = ref({month:1, year: 2022})
+let date = ref({month:new Date().getMonth(), year: new Date().getFullYear()})
 
+const changeDate = (newDate) => {
+    date.value = newDate
+    //
+}
 </script>
 
 <template>    
     <AppLayout title="Presupuestos">
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Presupuestos
-            </h2>
+              <div class="flex items-center justify-around">
+
+                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                        Presupuestos
+                    </h2>
+                    <ButtonCalendar :month="date.month" :year="date.year" @change-date="changeDate($event)"/> 
+              </div>
         </template>
  
         <div class="py-12 fondo_general" >
@@ -38,7 +46,6 @@ let date = ref({month:1, year: 2022})
                       <div class="dashboard_texts">
                         <div class="texts_dash">
                            <h1 class="dashboard_text">Dashboard</h1>    
-                            <ButtonCalendar :month="date.month" :year="date.year" /> 
                          </div>
                          <div class="texts_dash">
                            <h2 class="dashboard_text2">TABLA DE DATOS</h2>
