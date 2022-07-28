@@ -73,7 +73,7 @@ const chageComponent = () => {
                 <h2 class="text-xl font-bold leading-tight text-white">
                     Finanzas
                 </h2>
-                <ButtonCalendar :month="month" :year="year" />
+               <ButtonCalendar :month="month" :year="year" /> 
             </div>
         </template>
 
