@@ -55,12 +55,8 @@
     padding-right: 0.5rem;
     border-top: 3px solid #010E1D;
 }
-<<<<<<< HEAD
 .ring-button {
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;
     --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
     box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
 }
-=======
-
->>>>>>> e1be4caf151b5add7e284387efa6ca153b504955
