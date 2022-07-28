@@ -2,12 +2,25 @@
 import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
+import * as am5hierarchy from  '@amcharts/amcharts5/hierarchy';
 import { watch } from '@vue/runtime-core';
 import ButtonPres from './ButtonPres.vue';
+import { Inertia } from '@inertiajs/inertia';
+import axios from 'axios';
 
+//variables GLOBALES
 let data =[];
 let nuevoArreglo=[];
 let series =[];
+let nuevosValores;
+let ejey = [];
+let ejex = [];
+let yAxis;
+let xAxis;
+let root;
+let yRenderer;
+let xRenderer;
+let chart;
 
 export default {
     props: {
@@ -26,13 +39,13 @@ export default {
     mounted() {
         // console.log(vm.clientes); //comprobamos si imprime todos los los clientes
         let clients = this.clientes; //guardamos en una varibale los cliente spara iterarlos
-        console.log(clients);
+        //console.log(clients);
         let grupo_conceptos = this.grupo_conceptos;
-        console.log(grupo_conceptos);
+        //console.log(grupo_conceptos);
         let datos = this.cantidades;
-        let root = am5.Root.new(this.$refs.chartdiv);
+        root = am5.Root.new(this.$refs.chartdiv);
         root.setThemes([am5themes_Animated.new(root)]);
-        let chart = root.container.children.push(am5xy.XYChart.new(root, {
+        chart = root.container.children.push(am5xy.XYChart.new(root, {
             panX: false,
             panY: false,
             wheelX: "none",
@@ -40,24 +53,24 @@ export default {
             layout: root.verticalLayout
         }));
         // Create axes and their renderers
-        var yRenderer = am5xy.AxisRendererY.new(root, {
+         yRenderer = am5xy.AxisRendererY.new(root, { //este tenia var
             visible: false,
             minGridDistance: 20,
             inversed: true
         });
         yRenderer.grid.template.set("visible", false);
-        var yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
+        yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
             renderer: yRenderer,
             categoryField: "category"
         }));
-        var xRenderer = am5xy.AxisRendererX.new(root, {
+         xRenderer = am5xy.AxisRendererX.new(root, { //este tenia la var
             visible: false,
             minGridDistance: 30,
             inversed: false,
             opposite: true,
         });
         xRenderer.grid.template.set("visible", false);
-        var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+         xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
             renderer: xRenderer,
             categoryField: "category",
         }));
@@ -118,11 +131,14 @@ export default {
         data = []; //declaramos la data principal vacia
         let a = {}; //declaramos el array temporal
         nuevoArreglo = []; //declaramos el array donde guardara todo
+        //console.log(datos);
         for (let c = 0; c < datos.length; c++) { //recorremos los datos
             var ele = datos[c]; //almacenamos en una variable el elemento actual
             let i = 0; //declara la bandera en 0 para ver si existe mas adelante
             let r = 0;
-            if (ele === datos[0]) {
+            //console.log(ele);
+            if (ele === datos[0]) 
+            {
                 a = {
                     x: ele.Cliente,
                     y: ele.GrupoConcepto,
@@ -178,7 +194,7 @@ export default {
                     nuevoArreglo.push(a);
                 }
             }
-            //console.log(nuevoArreglo);
+           // console.log(nuevoArreglo);
         }
         let i = 0;
         let total = 0;
@@ -282,12 +298,11 @@ export default {
                 i++;
             }
         }
-        console.log(this.movimiento.state);
+        //console.log(this.movimiento.state);
         TipoMov(this.movimiento.state);
         //console.log(data);
         series.data.setAll(data);
         //Siteamos los datos que aparecen en el eje y
-        let ejey = [];
         for (let index = 0; index < clients.length; index++) {
             const element = clients[index];
             //console.log(element.nombre);
@@ -295,13 +310,22 @@ export default {
         }
         yAxis.data.setAll(ejey);
         //Siteamos los datos que aparecen en el eje x
-        let ejex = [];
         for (let i = 0; i < grupo_conceptos.length; i++) {
             const e = grupo_conceptos[i];
             // console.log(e.nombre);
             ejex.push({ category: e.nombre });
         }
         xAxis.data.setAll(ejex);
+        //click
+        series.columns.template.events.once("click", this.click);
+
+        root.container.children.moveValue(
+          am5hierarchy.BreadcrumbBar.new(root, {
+          series: series
+          }), 0
+         );
+
+        //AGREGAR LEGEND
         var legend = chart.children.push(am5.Legend.new(root, {
             centerX: am5.p50,
             x: am5.p50
@@ -313,32 +337,236 @@ export default {
     },
     methods: {
         cambiar: function (movimiento) {
-            this.movimiento.state = movimiento;
+            this.movimiento.state = movimiento; //reemplazamos la variable global por la que traemos del boton
             //console.log(this.movimiento.state);
-            let e = movimiento;
-            let i = 0;
-            let v = 0;
-            data = [];
-            while (i < nuevoArreglo.length) {
-                let j = nuevoArreglo[i];
-                let a = 0;
-                while (a < j.movimientos.length) {
-                    let k = j.movimientos[a];
-                    if (e === k.tipo) {
-                        v = k.cantidad;
+            let actualMov = movimiento;
+            let i = 0;//variable que se usara para recorrer el arreglo
+            let newValue; //declaramos el value que se usara en 0
+            //console.log(nuevoArreglo);
+            data = []; //declaramos la data que se enviara a la grafica vacia
+            while (i < nuevoArreglo.length)//recorremos el arreglo que tenemos actual
+             { 
+                let element = nuevoArreglo[i]; //almacenamos en una variable el objeto
+                console.log(element);
+                let a = 0;//declaramos una variable para iterar con esta
+                while (a < element.movimientos.length) //iteramos sobre los movimientos
+                {
+                    let movActual = element.movimientos[a];
+                    //console.log(movActual);
+                    if (actualMov === movActual.tipo)
+                     {
+                        newValue = movActual.cantidad;
+                     }
+                    else
+                    {
+                      
                     }
                     a++;
                 }
                 let x = {
-                    "y": j.x,
-                    "x": j.y,
-                    "value": v
+                    "y": element.x,
+                    "x": element.y,
+                    "value": newValue
                 };
                 data.push(x);
                 i++;
             }    
             series.data.setAll(data);
-            //console.log(data);
+            console.log(data);
+        } ,
+        
+        click:function(ev)
+        {
+           nuevosValores = ev.target._dataItem.dataContext;
+           //console.log(nuevosValores);
+           let x = nuevosValores.x;
+           let y = nuevosValores.y;
+           axios.get('api/ceco_concepto/'+x+'/'+y,{ob: x},{ob1: y}) //enviamos el dato a la ruta de la api
+           .then((resp)=>{
+              let datos = resp.data[0]; //la respuesta que obtenemos de BD es la que almacenamos
+              //console.log(datos); //imprimimos la respuesta accediendo a la data
+              let objData = {};//declaramos un objeto vacio para almacenar los valores seccionados
+              nuevoArreglo=[];//declaramos de nuevo la variable de nuevoarreglo vacia
+              
+              for (let c = 0; c < datos.length; c++) //recorremos los datos
+               { 
+                 var ele = datos[c]; //almacenamos en una variable el elemento actual
+                 let i = 0; //declara la bandera en 0 para ver si existe mas adelante
+                 let r = 0;
+                 if (ele === datos[0]) //vemos si existe la primera posicion, si es la primera, la almacenamos
+                 {
+                   objData =  //se almacena en el objeto
+                   {
+                      x: ele.CECO, //seteamos x como el ceco al que va
+                      y: ele.Concepto, //seteamos y como el concepto al que va
+                      movimientos: [{ //seteamos el primer movimiento que tiene con su cantidad
+                            tipo: ele.Movimiento,
+                            cantidad: parseInt(ele.Cantidad)
+                         }]
+                    };
+                    nuevoArreglo.push(objData);//guardamos el objeto en el arreglo ya vacio
+                    console.log(nuevoArreglo);
+               }
+               else 
+               {
+                  let xy = ele.CECO + ele.Concepto; //concatenamos xy del objeto que traemos de inicio
+                  let i=0;
+                 while( i < nuevoArreglo.length)
+                   {
+                      let x = nuevoArreglo[i];
+                      let newxy = x.x + x.y;
+                      //console.log(nuevoArreglo)
+                      //console.log(i,xy,newxy)
+                      if (xy === newxy) {
+                          let e = 0;
+                          let k = 0;
+                          while (e < x.movimientos.length)
+                           {
+                             let z = x.movimientos[e];
+                            // console.log(z);
+                             let j = z.tipo;
+                             let h = ele.Movimiento;
+                             if (j === h)
+                              {
+                                z.cantidad = parseInt(z.cantidad) + parseInt(ele.Cantidad);
+                                let k = 1;
+                                break;
+                              }
+                            e++;
+                           }
+                        if (k === 0)
+                         {
+                            objData =
+                             {
+                                tipo: ele.Movimiento,
+                                cantidad: parseInt(ele.Cantidad)
+                             };
+                            x.movimientos.push(objData);
+                        }
+                        r = 1;
+                        break;
+                      }
+                      i++;
+                   }
+                   if (r === 0) {
+                    objData = {
+                        x: ele.CECO,
+                        y: ele.Concepto,
+                        movimientos: [{
+                                tipo: ele.Movimiento,
+                                cantidad: parseInt(ele.Cantidad)
+                            }]
+                    };
+                    nuevoArreglo.push(objData);
+                }
+             }
+           }
+           //SECCIONAR POR TIPO DE Movimientos
+            let i = 0;
+            //declaramos la cantidad de los tipo de movimiento en 0
+            let total = 0;
+            let disponible = 0;
+            let porcentaje = 0;
+            //console.log(nuevoArreglo.length);
+            while (i < nuevoArreglo.length) //recorremos el nuevoarreglo organizado por x y y
+             {
+              let h = nuevoArreglo[i]; //tomamos un elemento del array
+              let a = {
+                "tipo": "TOTAL",
+                "cantidad": total
+                 };
+              let b = {
+                "tipo": "PORCENTAJE",
+                "cantidad": porcentaje
+                };
+              let c = {
+                "tipo": "DISPONIBLE",
+                "cantidad": disponible
+               };
+            h.movimientos.push(a, b, c);
+            //console.log(total);
+            let j = 0;
+            while (j < h.movimientos.length) {
+                let k = h.movimientos[j];
+                //console.log(k.tipo);
+                if (k.tipo === "PRESUPUESTO") 
+                {
+                    let l = 0;
+                    while (l < h.movimientos.length) {
+                        let g = h.movimientos[l];
+                        if (g.tipo === "TOTAL") {
+                            g.cantidad = g.cantidad + k.cantidad;
+                        }
+                        l++;
+                    }
+                }
+                else if (k.tipo === "SUPLEMENTO") {
+                    //console.log("hola");
+                    let l = 0;
+                    while (l < h.movimientos.length) {
+                        let g = h.movimientos[l];
+                        if (g.tipo === "TOTAL") {
+                            g.cantidad = g.cantidad + k.cantidad;
+                        }
+                        l++;
+                    }
+                }
+                else if (k.tipo === "GASTO") {
+                    //console.log("hola");
+                    let l = 0;
+                    while (l < h.movimientos.length) {
+                        let g = h.movimientos[l];
+                        if (g.tipo === "PORCENTAJE") {
+                            g.cantidad = g.cantidad + (-k.cantidad);
+                        }
+                        else if (g.tipo === "DISPONIBLE") {
+                            g.cantidad = g.cantidad + k.cantidad;
+                        }
+                        l++;
+                    }
+                }
+                else if (k.tipo === "TOTAL") {
+                    //console.log("hola");
+                    let l = 0;
+                    while (l < h.movimientos.length) {
+                        let g = h.movimientos[l];
+                        if (g.tipo === "PORCENTAJE") {
+                            g.cantidad = Math.round(100 * (g.cantidad / k.cantidad));
+                        }
+                        else if (g.tipo === "DISPONIBLE") {
+                            g.cantidad = g.cantidad + k.cantidad;
+                        }
+                        l++;
+                    }
+                }
+                j++;
+            }
+            i++;
+        }
+            //seteo nuevo x y y
+            ejex=[]; //vaciamos el ejex
+            let cecos = resp.data[1]; //traemos el objeto donde contiene los cecos
+            //console.log(cecos.length);
+            for (let index = 0; index < cecos.length; index++) //recorremos cecos
+            {
+              let nombreCeco = cecos[index].nombre; //guardamos en variables los cecos
+              ejex.push({ category: nombreCeco }); // lo metemos al objeto
+            }
+            //console.log(ejex);
+            ejey = [];
+            let conceptos = resp.data[2];
+            for (let f = 0; f < conceptos.length; f++) {
+                let nombreConcepto = conceptos[f].nombre;
+                ejey.push({ category: nombreConcepto });
+            }
+            //console.log(nuevoArreglo);
+            yAxis.data.setAll(ejex);
+            xAxis.data.setAll(ejey);
+          })
+         .catch(function (error)
+          {
+           console.log(error);
+          });    
         }
     },
     components: { ButtonPres }
@@ -353,19 +581,19 @@ export default {
  }
 </style>
 <template>
+<div class="group">
     <ButtonPres class="buttonCECO" style="background-color:#111F2E">CECO</ButtonPres>
-        <div class="group">
          <ButtonPres class="buttonCON" style="background-color:#111F2E">CON.</ButtonPres> 
-            <div class="dropdown" style="margin:50px">
+            <div class="dropdown" >
                 <button onclick="myFunction()" class="dropbtn">$</button>
                 <div id="myDropdown" class="dropdown-content">
                     <button id="PRESUPUESTO" @click="cambiar('PRESUPUESTO')">Presupuesto</button>
-                    <button id="SUPLEMENTO" @click="cambiar('SUPLEMENTO')">Suplemento</button><br>
-                    <button id="TOTAL" @click="cambiar('TOTAL')">Total</button><br>
-                    <button id="GASTO" @click="cambiar('GASTO')">Gasto</button><br>
+                    <button id="SUPLEMENTO" @click="cambiar('SUPLEMENTO')">Suplemento</button>
+                    <button id="TOTAL" @click="cambiar('TOTAL')">Total</button>
+                    <button id="GASTO" @click="cambiar('GASTO')">Gasto</button>
                     <button id="DISPONIBLE" @click="cambiar('DISPONIBLE')">Disponible</button>     
                 </div>
             </div>
-        </div>
+</div>
   <div class="graph" ref="chartdiv">  </div>
 </template>

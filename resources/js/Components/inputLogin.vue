@@ -22,9 +22,8 @@ defineExpose({ focus: () => input.value.focus() });
     <input
         style="background:transparent;"
         ref="input"
-        class="mt-1 block w-full inputLogin"
+        class="block w-full mt-1 inputLogin"
         :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
-        
+        @input="$emit('update:modelValue', $event.target.value)"  
     >
 </template>

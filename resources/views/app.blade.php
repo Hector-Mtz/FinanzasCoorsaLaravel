@@ -12,7 +12,6 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
         <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
 
-        <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
         <script type="text/javascript" src="{{ asset('assets/js/dropdown.js')}}"></script>
 
 

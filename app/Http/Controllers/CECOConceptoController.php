@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ceco;
 use App\Models\CECOConcepto;
+use App\Models\Concepto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CECOConceptoController extends Controller
 {
@@ -12,6 +15,50 @@ class CECOConceptoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function byCecoConcepto($x,$y){
+        //Consulta para generar matriz ceco/concepto
+    $object = DB::table(DB::raw('soli_movimientos'))
+      ->select(DB::raw(
+          'clientes.nombre AS Cliente,
+           cecos.nombre AS CECO,
+           grupo_conceptos.nombre AS GrupoConcepto,
+           conceptos.nombre AS Concepto,
+           SUM(productos.cantidad) AS Cantidad,
+           tipo_movimientos.nombre AS Movimiento'
+      ))
+      ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
+      ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
+      ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', '=', 'ceco_conceptos.id')
+      ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
+      ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')
+      ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
+      ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', '=', 'grupo_conceptos.id')
+      ->groupBy('grupo_conceptos.nombre')
+      ->groupBy('conceptos.nombre')
+      ->groupBy('clientes.nombre')
+      ->groupBy('cecos.nombre')
+      ->groupBy('tipo_movimientos.nombre')
+      ->where('grupo_conceptos.nombre','LIKE','%'.$x.'%',)
+      ->where('clientes.nombre','LIKE','%'.$y.'%',)
+      ->get();
+
+      $object2 = DB::table(DB::raw('cecos'))
+      ->select('cecos.nombre')
+      ->join('clientes','cecos.cliente_id','=','clientes.id')
+      ->where('clientes.nombre','LIKE','%'.$y.'%')
+      ->get();
+
+
+      $object3 = DB::table(DB::raw('conceptos'))
+      ->select('conceptos.nombre')
+      ->join('grupo_conceptos','conceptos.grupo_concepto_id','=','grupo_conceptos.id')
+      ->where('grupo_conceptos.nombre','LIKE','%'.$x.'%')
+      ->get();
+
+      $allObjects = [$object,$object2,$object3];
+      return $allObjects;
+    }
+
     public function index()
     {
         //
