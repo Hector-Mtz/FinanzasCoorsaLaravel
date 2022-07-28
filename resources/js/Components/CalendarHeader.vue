@@ -39,20 +39,20 @@ const changeIndexMes = (newMonth) => {
 
 </script>
 <template>
-    <div class="flex justify-between px-4">
-        <h1> Calendario</h1>
-        <div class="flex gap-2 ">
-            <button @click="changeIndexMes(month - 1)">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
-                    <path
-                        d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z" />
+    <div class="flex justify-around px-4 py-1">
+        <h1 class="text-xl tracking-widest">Calendario</h1>
+        <div class="flex gap-2 items-center ">
+            <button @click="changeIndexMes(month - 1)" class="hover:opacity-40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-900" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
             </button>
-            <h2>{{ mesTest[month] }}</h2>
-            <button @click="changeIndexMes(month + 1)">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-5 h-5" viewBox="0 0 16 16">
-                    <path
-                        d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z" />
+            <h2 class="text-xl">{{ mesTest[month] }}</h2>
+            <button @click="changeIndexMes(month + 1)" class="hover:opacity-40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-900" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
             </button>
         </div>
