@@ -72,16 +72,18 @@ const weeks = computed(() => {
 </template>
 
 <style lang="css" scoped>
-.grid-calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 20px;
-}
-
 .grid-calendar-week {
     display: grid;
-    grid-template-rows: repeat(7, 1fr);
-    gap: 20px;
+    grid-template-rows: repeat(7, auto);
+    row-gap: 5px;
+}
+
+.grid-calendar {
+
+    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    column-gap: 5px;
 }
 
 .col-start-1 {
