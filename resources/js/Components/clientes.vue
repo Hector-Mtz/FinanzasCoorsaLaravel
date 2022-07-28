@@ -136,7 +136,9 @@ export default {
             var ele = datos[c]; //almacenamos en una variable el elemento actual
             let i = 0; //declara la bandera en 0 para ver si existe mas adelante
             let r = 0;
-            if (ele === datos[0]) {
+            //console.log(ele);
+            if (ele === datos[0]) 
+            {
                 a = {
                     x: ele.Cliente,
                     y: ele.GrupoConcepto,
