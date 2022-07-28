@@ -7,6 +7,7 @@ import axios from 'axios';
 import ModuleCliente from '@/Components/clientes.vue'; //traemos la grafica
 import ButtonPres from '@/Components/ButtonPres.vue';
 import Dropdown from '@/Components/DropDownLink.vue';
+import ButtonCalendar from '../Components/ButtonCalendar.vue';
 
 var props = defineProps({
     clientes:Object,
@@ -18,6 +19,7 @@ var props = defineProps({
 let clientes = props.clientes;
 let grupo_conceptos = props.grupo_conceptos;
 let datos = props.cantidades;
+let date = ref({month:1, year: 2022})
 
 </script>
 
@@ -35,7 +37,8 @@ let datos = props.cantidades;
                     <div class="datetexts">
                       <div class="dashboard_texts">
                         <div class="texts_dash">
-                           <h1 class="dashboard_text">Dashboard</h1>
+                           <h1 class="dashboard_text">Dashboard</h1>    
+                            <ButtonCalendar :month="date.month" :year="date.year" /> 
                          </div>
                          <div class="texts_dash">
                            <h2 class="dashboard_text2">TABLA DE DATOS</h2>
