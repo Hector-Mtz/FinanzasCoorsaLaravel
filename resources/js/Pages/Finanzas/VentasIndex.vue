@@ -11,11 +11,16 @@ import VentasModal from './Partials/CardVenta/VentasModal.vue';
 import Facturas from './Partials/CardFacturas/Facturas.vue';
 import Depositos from './Partials/CardDepositos/Depositos.vue';
 import ButtonCalendar from '../../Components/ButtonCalendar.vue';
+import VentasCalendar from './Partials/CardCalendar/VentasCalendar.vue';
 
-const date = new Date();
-const year = ref(date.getFullYear());
+const dateNow = new Date();
 const showingVentas = ref(false);
-const month = ref(date.getMonth());
+const date = ref({
+    month: dateNow.getMonth(),
+    year: dateNow.getFullYear()
+})
+
+
 const componentFactDep = reactive({
     component: 'Facturas',
     title: 'Por Pagar'
@@ -45,8 +50,7 @@ const ventas = computed(() => {
 })
 
 const changeDate = (newDate) => {
-    year.value = newDate.year;
-    month.value = newDate.month;
+    date.value = newDate;
 }
 // FUNCIONES MODAL
 const closeModalVentas = () => {
@@ -73,7 +77,7 @@ const chageComponent = () => {
                 <h2 class="text-xl font-bold leading-tight text-white">
                     Finanzas
                 </h2>
-               <ButtonCalendar :month="month" :year="year" /> 
+                <ButtonCalendar :month="date.month" :year="date.year" @change-date="changeDate($event)" />
             </div>
         </template>
 
@@ -83,12 +87,7 @@ const chageComponent = () => {
                     <Ventas :clientes="props.clientes" @show-ventas="showingVentas = true" />
                 </Card>
                 <Card>
-                    <div class="mx-4">
-                        <CalendarHeader class="mb-4 text-white" :month="month" :year="year"
-                            @change-date="changeDate($event)" />
-                        <Calendar :month="month" :year="year" class="text-white">
-                        </Calendar>
-                    </div>
+                    <VentasCalendar :date="date" @change-date="changeDate($event)" />
                 </Card>
                 <Card>
                     <div class="flex flex-row items-center my-1 text-white">

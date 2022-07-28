@@ -31,160 +31,15 @@
 .active {
     border-color: #010E1D;
 }
-
-
-.fondo_menu{
-    background-image: url('../assets/img/LOGIN.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    
+.active-picker {
+    background-color: #687FA4;
 }
 
-.fondo_general{
-    background-color: #010E1D ;
-}
-
-.fondo_item{
-    background-color: #111F2E;
-}
-
-.card{
-    margin-left: 38rem;
-    background: transparent;
-}
-
-.logoinicio{
-    margin-left: 37rem;
-}
-
-.text-input{
-    color: var(--blanco);
-    font-size:40px ;
-    font-weight: bold;
-}
-
-.ingresarLogin{
-    border: var(--aqua) 3px solid ;
-    border-radius:10%;
+.item-picker {
+    padding: 0.25rem 0.5rem;
     text-align: center;
-}
-
-.labelLogin{
-    color:var(--blanco)
-}
-
-.dashboard_texts{
- float: left;
- margin: 10px;
-}
-
-.dashboard_text{
-    font-family: var(--fuentePrincipal);
-    font-size: 20px;
-    font-weight: bold;
-    float: left;
-}
-.dashboard_text2{
-  color: var(--aqua);
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.cliente_module{
-    background: transparent;
-}
-
-.inputLogin {
-  border-radius: 5%;
-  color: var(--blanco);
-}
-
-
-.datepicker{
-    float: left;
-}
-
-.group{
-    display: grid;
-    grid-template-columns: repeat(15,1fr);
-    grid-template-rows:repeat(2,1fr) ;
-}
-
-.datetexts{
-    display: flex;
-    justify-items: center;
-    justify-content: center;
-}
-
-.buttonCECO{
-    transform: rotate(270deg);
-    border: 5px solid  var(--borderColor) ;
-    align-items: center;
-    font-weight:bold;
-    color: var(--blanco);
-    font-size: 20px;
-    font-family: var(--fuentePrincipal);
-    border-radius: 10%;
-    grid-column: 2/3;
-    grid-row: 1/2;
-}
-
-.buttonCON{
-    border: 3px solid  var(--borderColor) ;
-    color: var(--blanco);
-    float: left;
-    grid-column: 3/4;
-    grid-row: 1/2;
-    padding: 0%;
-    border-radius: 10%;
-}
-
-.dropbtn {
-    background-color: var(--azul1);
-    border: 3px solid  var(--borderColor) ;
-    color: white;
-    padding: 15px;
-    font-size: 16px;
-    border: none;
     cursor: pointer;
-    border-radius: 10%;
-}
-
-.dropbtn:hover, .dropbtn:focus {
-    background-color: var(--azul1);
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-    grid-column: 3/4;
-    grid-row: 2/3;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: var(--vemergent);
-    color: white;
-    min-width: 110px;
-    overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    border-radius: 10%;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    z-index: 2;
-}
-
-.dropdown a:hover {background-color: #f1f1f1}
-
-.show {
-    display:inline-grid;
-    z-index: 2;
+    border-radius: 0.5rem;
 }
 
 .table-ingresos {
@@ -200,4 +55,8 @@
     padding-right: 0.5rem;
     border-top: 3px solid #010E1D;
 }
-
+.ring-button {
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
+}
