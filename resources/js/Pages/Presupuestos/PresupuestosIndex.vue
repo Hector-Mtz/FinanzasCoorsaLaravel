@@ -4,10 +4,10 @@ import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import { onMounted, reactive, ref, watch } from 'vue';
 import axios from 'axios';
-import ModuleCliente from '@/Components/clientes.vue'; //traemos la grafica
 import ButtonPres from '@/Components/ButtonPres.vue';
 import Dropdown from '@/Components/DropDownLink.vue';
-import ButtonCalendar from '../Components/ButtonCalendar.vue';
+import ButtonCalendar from '../../Components/ButtonCalendar.vue';
+import Graph from './Graph.vue';
 
 var props = defineProps({
     clientes:Object,
@@ -55,11 +55,11 @@ const changeDate = (newDate) => {
                     
                       </div>
                     </div> 
-                     <ModuleCliente 
-                      :clientes = clientes 
+                      <Graph 
+                      :clientes= clientes
                       :grupo_conceptos = grupo_conceptos
                       :cantidades = cantidades
-                     ></ModuleCliente> <!--Modulo amcharts-->
+                       ></Graph>
                 </div>
             </div>
         </div>

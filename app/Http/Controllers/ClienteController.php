@@ -44,7 +44,7 @@ class ClienteController extends Controller
             ->get();
 
 
-        return Inertia::render('Main', [
+        return Inertia::render('Presupuestos/PresupuestosIndex', [
             'clientes' => $clientes,
             'grupo_conceptos' => $grupo_conceptos,
             'cantidades' => $cantidades
