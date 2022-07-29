@@ -1,49 +1,180 @@
 <script setup>
+import { reactive, ref, watch, watchSyncEffect } from 'vue';
+
 import CalendarHeader from '@/Components/CalendarHeader.vue';
 import Calendar from '@/Components/Calendar.vue';
+import { formatoMoney } from '../../../../utils/conversiones';
 
 const emit = defineEmits(['changeDate'])
 
+const totalsVentas = ref({
+    ventas: 0,
+    pc: 0,
+    pp: 0,
+    c: 0
+});
 const props = defineProps({
     date: { month: Number, year: Number }
 });
+const showsStatus = reactive(['ventas']);// Ya que debe ser profundo el watch
+const specialDays = ref([]);
+const colorsStatus = ['#A16207', '#CA8A04', '#E4B308', '#FDE047'];
+const addStatus = (status) => {
+    if (showsStatus.length >= 1) {
+        // Determinamos si existe
+        const indexStatus = showsStatus.findIndex((st) => st === status);
+        if (indexStatus !== -1) {
+            showsStatus.splice(indexStatus, 1);
+        } else {
+            if (showsStatus.length > 1) {
+                showsStatus.shift();
+            }
+            showsStatus.push(status);
+        }
+    } else {
+        showsStatus.push(status);
+    }
+}
+
+const isActive = (status) => {
+    return showsStatus.includes(status)
+
+}
+
+const getVentasDays = async (date) => {
+    const resp = await axios.get(route('ventas.month'), {
+        params: date
+    });
+    specialDays.value.push({ data: resp.data, color: 'red' });
+}
+
+async function getDaysStatus() {
+    const date = {
+        month: props.date.month + 1,
+        year: props.date.year
+    }
+    const axiosDaysStatus = [];
+    // colores
+    let colors = [];
+    let titles = [];
+    showsStatus.forEach(st => {
+        titles.push(st)
+        if (st === 'ventas') {
+            const respVentas = axios.get(route('ventas.month'), {
+                params: date
+            });
+            axiosDaysStatus.push(respVentas);
+            colors.push(colorsStatus[0]);
+        } else {
+            const respVentas = axios.get(route('ocs.month'), {
+                params: { ...date, status: st }
+            });
+            axiosDaysStatus.push(respVentas);
+            //logica para establecer el color
+            switch (st) {
+                case 'pc':
+                    colors.push(colorsStatus[1]);
+                    break;
+                case 'pp':
+
+                    colors.push(colorsStatus[2]);
+                    break;
+                case 'c':
+                    colors.push(colorsStatus[3]);
+                    break;
+            }
+        }
+    })
+
+
+    const responses = await Promise.all(axiosDaysStatus);
+
+    const daysStatus = responses.map((resp, index) => {
+        return { data: resp.data, color: colors[index], title: titles[index] }
+    });
+    specialDays.value = daysStatus;
+}
+
+
+// show status months
+watch(showsStatus, async () => {
+    await getDaysStatus()
+});
+
+//Change totals months
+watchSyncEffect(async () => {
+    const date = {
+        month: props.date.month + 1,
+        year: props.date.year
+    }
+    const respOcs = axios.get(route('ocs.totals-status'), {
+        params: date
+    });
+    const respVentas = axios.get(route('ventas.totals'), {
+        params: date
+    });
+    const resp = await Promise.all([respOcs, respVentas]);
+    const auxResponse = {
+        'ventas': formatoMoney(resp[1].data.total.toFixed(2)),
+        'c': formatoMoney(resp[0].data.c.toFixed(2)),
+        'pc': formatoMoney(resp[0].data.pc.toFixed(2)),
+        'pp': formatoMoney(resp[0].data.pp.toFixed(2)),
+    }
+    totalsVentas.value = auxResponse;
+    await getDaysStatus();
+
+})
+
+
 </script>
 <template>
-    <div class="mx-8">
-        <CalendarHeader class=" text-white" :month="props.date.month" :year="props.date.year"
+    <div class="max-h-screen mx-8 overflow-x-auto">
+        <CalendarHeader class="text-white " :month="props.date.month" :year="props.date.year"
             @change-date="emit('changeDate', $event)" />
         <!-- Interacion -->
-        <div class="text-white py-2 border-b-2 border-gray-900">
+        <div class="py-2 text-white border-b-2 border-gray-900">
             <table class="w-full">
                 <thead>
                     <tr class="text-center">
                         <td class="w-3/12">
-                            VENTAS
+                            <span @click="addStatus('ventas')" class="action-ventas"
+                                :class="{ 'bg-yellow-700': isActive('ventas') }">
+                                VENTAS
+                            </span>
                         </td>
                         <td class="w-3/12">
-                            PC
+                            <span @click="addStatus('pc')" class="action-ventas"
+                                :class="{ 'bg-yellow-600': isActive('pc') }">
+                                PC
+                            </span>
                         </td>
                         <td class="w-3/12">
-                            PP
+                            <span @click="addStatus('pp')" class="action-ventas"
+                                :class="{ 'bg-yellow-500': isActive('pp') }">
+                                PP
+                            </span>
                         </td>
                         <td class="w-3/12">
-                            C
+                            <span @click="addStatus('c')" class="action-ventas"
+                                :class="{ 'bg-yellow-300': isActive('c') }">
+                                C
+                            </span>
                         </td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="text-center">
                         <td class="p-2">
-                            10,000
+                            ${{ totalsVentas.ventas }}
                         </td>
                         <td class="p-2">
-                            5,000
+                            ${{ totalsVentas.pc }}
                         </td>
                         <td class="p-2">
-                            2,000
+                            ${{ totalsVentas.pp }}
                         </td>
                         <td class="p-2">
-                            5,000
+                            ${{ totalsVentas.c }}
                         </td>
                     </tr>
                 </tbody>
@@ -51,10 +182,23 @@ const props = defineProps({
         </div>
         <!-- End Interacion -->
         <div class="px-4 py-2">
-            <Calendar :month="props.date.month" :year="props.date.year" class="text-white">
+            <Calendar :month="props.date.month" :special-days="specialDays" :year="props.date.year" class="text-white">
             </Calendar>
         </div>
     </div>
 </template>
-<style lang="scss" scoped>
+<style scoped>
+.action-ventas {
+    padding: 1px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.action-ventas:hover {
+    background-color: #CA8A04;
+}
+
+.active {
+    background-color: #CA8A04;
+}
 </style>

@@ -11,6 +11,10 @@ const props = defineProps({
     year: {
         type: Number,
         default: 2022
+    },
+    specialDays: {
+        type: Object,
+        default: [],
     }
 });
 
@@ -23,21 +27,40 @@ const weeks = computed(() => {
     let start = 0;
     const auxWeek = [];
     const lastDay = new Date(props.year, props.month + 1, 0).getDate();
-    for (let i = 1; i <= lastDay; i++) { // i reresenta el dia
-        fechaInicial.setDate(i)
+    for (let day = 1; day <= lastDay; day++) { // i reresenta el dia
+        fechaInicial.setDate(day)
         semanaDay = fechaInicial.getDay()
-        if (i == 1) {
-            start = semanaDay + 1;
+        if (start === 0) { // esto es para recorrer los dias (unicamente lo deberia realizar la primvera vez)
+            start = semanaDay + 1;// ya que empieza en 0
         }
-        days.push(i);
-        if (semanaDay == 6) {
-            if (auxWeek.length !== 0) {
-                start = 1
+        let plusData = [] // data adicional a los dias
+        props.specialDays.forEach(specialDay => {
+            if (specialDay.data[day] !== undefined) {
+                plusData.push({
+                    object: specialDay.data[day],
+                    color: specialDay.color,
+                    title: specialDay.title
+                });
             }
+            // for (let i = 0; i < specialDay.data.length; i++) {
+            //     if (specialDay.data[i].day == day) {
+            //         // Unicamnte deberia agregar uno por especial
+            //         plusData.push({
+            //             object: day,
+            //             color: specialDay.color,
+            //         });
+            //         break;
+            //     }
+            // }
+        });
+
+        days.push({ dayText: day, plusData: plusData });
+        if (semanaDay == 6) { // Al finnzalizar la semana agragamos sus respectivos dias
             auxWeek.push({
                 days: [...days],
                 start
             });
+            start = 1
             days = [];
         }
     }
@@ -47,6 +70,7 @@ const weeks = computed(() => {
         });
     }
 
+    // console.log(auxWeek);
     return auxWeek;
 })
 
@@ -61,10 +85,18 @@ const weeks = computed(() => {
             </div>
         </div>
         <div class="grid-calendar-week">
+            <!-- Weeks -->
             <div class="grid-calendar" v-for="(week, indexWeek) in weeks" :key="indexWeek">
-                <div v-for="(day, dayIndex) in week.days" :key="indexWeek + '' + day"
+                <!-- Days -->
+                <div v-for="(day, dayIndex) in week.days" :key="dayIndex"
                     :class="{ ['col-start-' + week.start]: dayIndex == 0 }">
-                    {{ day }}
+                    {{ day.dayText }}
+                    <!-- Special Days -->
+                    <div v-for="(data, indexData) in day.plusData" :key="dayIndex + '-' + indexData">
+                        <div class="w-full my-1 rounded-lg" :style="{ 'background-color': data.color }">
+                            <span class="py-1 text-white cursor-pointer">{{ data.title }} </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
