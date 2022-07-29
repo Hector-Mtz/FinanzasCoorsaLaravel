@@ -83,7 +83,7 @@ const chageComponent = () => {
 
         <div class="px-3 py-3 fondo_general">
             <div class="grid-ventas">
-                <Card class="h-full">
+                <Card>
                     <Ventas :clientes="props.clientes" @show-ventas="showingVentas = true" />
                 </Card>
                 <div class="grid text-white">
@@ -146,7 +146,7 @@ const chageComponent = () => {
 
                         </tfoot>
                     </table>
-                    <Card class="">
+                    <Card>
                         <VentasCalendar :date="date" @change-date="changeDate($event)" />
                     </Card>
                 </div>
@@ -177,6 +177,6 @@ const chageComponent = () => {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     gap: 20px;
-    height: 95vh;
+    min-height: 95vh;
 }
 </style>
