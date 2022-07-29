@@ -65,4 +65,5 @@ Route::middleware([
     Route::get('/servicios/catalogo', [ServicioController::class, 'catalogo'])->name('servicios.catalogo');
     Route::get('/tipos/catalogo', [TipoController::class, 'catalogo'])->name('tipos.catalogo');
 });
+
 Route::apiResource('/clientes', ClienteController::class);
