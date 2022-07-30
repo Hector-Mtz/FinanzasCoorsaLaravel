@@ -59,6 +59,31 @@ class CECOConceptoController extends Controller
       return $allObjects;
     }
 
+    public function byClienteConcepto ($x, $y)
+    {
+        $object = DB::table(DB::raw('productos'))
+        ->select(DB::raw(
+            'productos.cantidad  AS CANTIDAD,
+            cecos.nombre AS CECO,
+            clientes.nombre  AS CLIENTE,
+            tipo_movimientos.nombre  AS MOVIMIENTO,
+            conceptos.nombre  AS CONCEPTO,
+            grupo_conceptos.nombre  AS GRUPO_CONCEPTO'
+        ))
+        ->join('soli_movimientos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
+        ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
+        ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', '=', 'ceco_conceptos.id')
+        ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
+        ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')
+        ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
+        ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', '=', 'grupo_conceptos.id')
+        ->where('cecos.nombre','LIKE','%'.$y.'%',)
+        ->where('conceptos.nombre','LIKE','%'.$x.'%',)
+        ->get();
+
+        return $object;
+    }
+
     public function index()
     {
         //

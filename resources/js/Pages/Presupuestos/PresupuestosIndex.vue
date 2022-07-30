@@ -31,7 +31,6 @@ const changeDate = (newDate) => {
     <AppLayout title="Presupuestos">
         <template #header>
               <div class="flex items-center justify-around">
-
                     <h2 class="text-xl font-semibold leading-tight text-gray-800">
                         Presupuestos
                     </h2>
@@ -50,9 +49,6 @@ const changeDate = (newDate) => {
                          <div class="texts_dash">
                            <h2 class="dashboard_text2">TABLA DE DATOS</h2>
                          </div>
-                      </div>
-                      <div class="datepicker">
-                    
                       </div>
                     </div> 
                       <Graph 
