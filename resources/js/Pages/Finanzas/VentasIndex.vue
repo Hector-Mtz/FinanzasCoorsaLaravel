@@ -83,12 +83,73 @@ const chageComponent = () => {
 
         <div class="px-3 py-3 fondo_general">
             <div class="grid-ventas">
-                <Card class="h-full">
+                <Card>
                     <Ventas :clientes="props.clientes" @show-ventas="showingVentas = true" />
                 </Card>
-                <Card>
-                    <VentasCalendar :date="date" @change-date="changeDate($event)" />
-                </Card>
+                <div class="grid text-white">
+                    <table class="mb-4 md:mx-auto">
+                        <thead>
+                            <tr class="text-center">
+                                <td class="w-3/12">
+                                    <span>
+                                        VENTAS
+                                    </span>
+                                </td>
+                                <td class="w-3/12">
+                                    <span>
+                                        PC
+                                    </span>
+                                </td>
+                                <td class="w-3/12">
+                                    <span>
+                                        PP
+                                    </span>
+                                </td>
+                                <td class="w-3/12">
+                                    <span>
+                                        C
+                                    </span>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="text-center">
+                                <td class="p-2">
+                                    $
+                                </td>
+                                <td class="p-2">
+                                    $
+                                </td>
+                                <td class="p-2">
+                                    $
+                                </td>
+                                <td class="p-2">
+                                    $
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4">
+                                    <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" width="66.22" height="23.82"
+                                        viewBox="0 0 66.22 23.82">
+                                        <g data-name="Grupo 89" transform="translate(-2229.56 -1215.34)">
+                                            <path id="Trazado_155" data-name="Trazado 155" d="M0,0H66.22"
+                                                transform="translate(2229.56 1216.84)" fill="none" stroke="#40bb6e"
+                                                stroke-width="3" />
+                                            <path id="Trazado_154" data-name="Trazado 154"
+                                                d="M2241.166,1216.973l22.187,22.187,22.168-22.168" fill="#40bb6e" />
+                                        </g>
+                                    </svg>
+                                </td>
+                            </tr>
+
+                        </tfoot>
+                    </table>
+                    <Card>
+                        <VentasCalendar :date="date" @change-date="changeDate($event)" />
+                    </Card>
+                </div>
                 <Card>
                     <div class="flex flex-row items-center my-1 text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" @click="chageComponent()"
@@ -116,6 +177,6 @@ const chageComponent = () => {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     gap: 20px;
-    height: 95vh;
+    min-height: 95vh;
 }
 </style>

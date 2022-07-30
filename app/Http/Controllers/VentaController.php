@@ -108,4 +108,39 @@ class VentaController extends Controller
     {
         //
     }
+
+    public function totals(Request $request)
+    {
+        //monto.cantidad * venta.periodos * venta.cantidad
+        $validadData = $request->validate([
+            'month' => ['required', 'numeric', 'min:1', 'max:12'],
+            'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
+        ]);
+
+        $ventas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad),0) as total')
+            ->join('montos', 'ventas.monto_id', '=', 'montos.id')
+            ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
+            ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
+            ->first();
+
+        return response()->json($ventas);
+    }
+
+
+    public function ventasMonth(Request $request)
+    {
+        //monto.cantidad * venta.periodos * venta.cantidad
+        $validadData = $request->validate([
+            'month' => ['required', 'numeric', 'min:1', 'max:12'],
+            'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
+        ]);
+
+        $ventas = Venta::select('ventas.id')
+            ->selectRaw('day(ventas.fechaInicial) as day')
+            ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
+            ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
+            ->get();
+        $ventas = $ventas->groupBy('day');
+        return response()->json($ventas);
+    }
 }
