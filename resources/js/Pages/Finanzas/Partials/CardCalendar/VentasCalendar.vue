@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
+import { onBeforeMount, reactive, ref, watch } from 'vue';
 
 import CalendarHeader from '@/Components/CalendarHeader.vue';
 import Calendar from '@/Components/Calendar.vue';
