@@ -113,6 +113,7 @@ const create = () => {
     form.post(route('ventas.store'), {
         preserveScroll: true,
         preserveState: true,
+        only: ['clientes', 'totalVentas'],
         onSuccess: () => {
             form.reset();
             close();
@@ -123,6 +124,7 @@ const update = () => {
     form.put(route('ventas.update', props.venta.id), {
         preserveScroll: true,
         preserveState: true,
+        only: ['clientes', 'totalVentas'],
         onSuccess: () => {
             form.reset();
             close();

@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, watch, watchSyncEffect } from 'vue';
+import { onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
 
 import CalendarHeader from '@/Components/CalendarHeader.vue';
 import Calendar from '@/Components/Calendar.vue';
@@ -14,7 +14,15 @@ const totalsVentas = ref({
     c: 0
 });
 const props = defineProps({
-    date: { month: Number, year: Number }
+    date: { month: Number, year: Number },
+    totalVentas: {
+        type: Object,
+        required: true
+    },
+    totalOcs: {
+        type: Object,
+        required: true,
+    }
 });
 const showsStatus = reactive(['ventas']);// Ya que debe ser profundo el watch
 const specialDays = ref([]);
@@ -95,14 +103,7 @@ async function getDaysStatus() {
     specialDays.value = daysStatus;
 }
 
-
-// show status months
-watch(showsStatus, async () => {
-    await getDaysStatus()
-});
-
-//Change totals months
-watchSyncEffect(async () => {
+async function getTotalsMonth() {
     const date = {
         month: props.date.month + 1,
         year: props.date.year
@@ -123,7 +124,23 @@ watchSyncEffect(async () => {
     totalsVentas.value = auxResponse;
     await getDaysStatus();
 
+}
+
+// show status months
+watch(showsStatus, async () => {
+    await getDaysStatus()
+});
+
+onBeforeMount(() => {
+    getTotalsMonth();
+});
+
+//Change totals months
+watch(props, () => {
+    getTotalsMonth();
 })
+
+
 
 
 </script>

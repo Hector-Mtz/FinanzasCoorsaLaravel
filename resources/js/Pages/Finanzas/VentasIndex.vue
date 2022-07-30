@@ -12,6 +12,8 @@ import Facturas from './Partials/CardFacturas/Facturas.vue';
 import Depositos from './Partials/CardDepositos/Depositos.vue';
 import ButtonCalendar from '../../Components/ButtonCalendar.vue';
 import VentasCalendar from './Partials/CardCalendar/VentasCalendar.vue';
+import { formatoMoney } from '../../utils/conversiones';
+
 
 const dateNow = new Date();
 const showingVentas = ref(false);
@@ -33,6 +35,14 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    totalVentas: {
+        type: Object,
+        required: true,
+    },
+    totalOcs: {
+        type: Object,
+        required: true,
+    }
 });
 
 
@@ -115,16 +125,16 @@ const chageComponent = () => {
                         <tbody>
                             <tr class="text-center">
                                 <td class="p-2">
-                                    $
+                                    ${{ formatoMoney(props.totalVentas.total.toFixed(2)) }}
                                 </td>
                                 <td class="p-2">
-                                    $
+                                    ${{ formatoMoney(props.totalOcs.pc.toFixed(2)) }}
                                 </td>
                                 <td class="p-2">
-                                    $
+                                    ${{ formatoMoney(props.totalOcs.pp.toFixed(2)) }}
                                 </td>
                                 <td class="p-2">
-                                    $
+                                    ${{ formatoMoney(props.totalOcs.c.toFixed(2)) }}
                                 </td>
                             </tr>
                         </tbody>
@@ -147,7 +157,8 @@ const chageComponent = () => {
                         </tfoot>
                     </table>
                     <Card>
-                        <VentasCalendar :date="date" @change-date="changeDate($event)" />
+                        <VentasCalendar :date="date" @change-date="changeDate($event)" :totalVentas="props.totalVentas"
+                            :totalOcs="props.totalOcs" />
                     </Card>
                 </div>
                 <Card>

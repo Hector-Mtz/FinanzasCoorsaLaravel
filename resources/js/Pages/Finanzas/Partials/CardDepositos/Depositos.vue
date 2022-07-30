@@ -10,6 +10,7 @@ import DepositosModal from './DepositosModal.vue';
 import ItemCliente from '../ItemCliente.vue';
 import ItemIngresoC from './ItemIngresoC.vue';
 import FacturasDepositoModal from './FacturasDepositoModal.vue';
+import { Inertia } from '@inertiajs/inertia';
 
 
 
@@ -26,7 +27,7 @@ const deposito = ref({});
 // Modal Methods
 
 const updateDepositos = () => {
-    search(searchText.value)
+    search(searchText.value);
 }
 const addFacturaToDeposito = (form) => {
     // esto es para el error
@@ -35,7 +36,12 @@ const addFacturaToDeposito = (form) => {
     })
     axios.post(route('ingresos.facturas.store', form.deposito_id), form)
         .then(() => {
-            search(searchText.value)
+            search(searchText.value);
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            });
 
         }).catch(error => {
             if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
@@ -122,7 +128,7 @@ watch(searchText, (newSearch) => {
                 </span>
             </div>
             <!-- Lista de clientes -->
-            <div class="overflow-hidden overflow-y-auto  -mx-2" style="max-height: 65vh;">
+            <div class="-mx-2 overflow-hidden overflow-y-auto" style="max-height: 65vh;">
                 <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente">
                     <div
                         class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden bg-gray-900 shadow-xl sm:rounded-lg">

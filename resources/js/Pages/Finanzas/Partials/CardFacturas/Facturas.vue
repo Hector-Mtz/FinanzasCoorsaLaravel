@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
-
+import { Inertia } from '@inertiajs/inertia';
 import { pickBy } from 'lodash'
 
 import ButtonAdd from '@/Components/ButtonAdd.vue';
@@ -41,6 +41,11 @@ const addOc = (form) => {
     axios.post(route('facturas.ocs.store', form.factura_id), form)
         .then((resp) => {
             facturas.value[finIndexFactura] = resp.data
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            })
             if (facturaSelect.value.id !== -1) { // lo actualimos ya que no lo realiza en el modal ocs
                 facturaSelect.value = facturas.value[finIndexFactura]
             }
