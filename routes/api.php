@@ -20,3 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/ceco_concepto/{x}/{y}',[CECOConceptoController::class, 'byCecoConcepto'])->name('ceco_concepto');
+
+Route::get('/cliente_concepto/{x}/{y}',[CECOConceptoController::class, 'byClienteConcepto'])->name('cliente_concepto');

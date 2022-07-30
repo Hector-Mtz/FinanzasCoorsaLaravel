@@ -576,9 +576,9 @@ export default {
               TipoMov(this.movimiento.state);
               console.log(data);
 
-              series.columns.template.events.once("click", () => {
+              series.columns.template.events.once("click", (ev) => {
                 if(zoom){
-                    this.nuevoClick()
+                    this.nuevoClick(ev)
                 }
            }); //funcion para el modal
                
@@ -645,10 +645,27 @@ export default {
             console.log(data);
         } ,
 
-        nuevoClick: function()
+        nuevoClick: function(ev)
         {
-           this.ModalMov = true;  
+           this.ModalMov = true;   //abrimos modal
            this.data = data;
+           let datos = this.data;
+           console.log(datos);
+           nuevosValores = ev.target._dataItem.dataContext; 
+           console.log(nuevosValores);
+           let x = nuevosValores.x;
+           let y = nuevosValores.y;
+           
+           axios.get('api/cliente_concepto/'+x+'/'+y,{ob: x},{ob1: y}) //enviamos el dato a la ruta de la api
+           .then((resp)=>{
+            console.log(resp);
+             let datos = resp.data;
+             
+           })
+            .catch(function (error)
+           {
+            console.log(error);
+           }); 
         },
 
         closeModal:function()
@@ -685,10 +702,9 @@ export default {
 
   <DialogModal :show="ModalMov" @close="closeModal">
     <template #title>
-        <h2 style="text-align:center; color:black">Grupo Concepto: </h2>
+        <h2 style="text-align:center; color:black">Grupo Concepto </h2>
     </template>
     <template #content>
-        <pre>{{data}}</pre>
          <SecondaryButton1  @click="closeModal">
             Cerrar
          </SecondaryButton1>
