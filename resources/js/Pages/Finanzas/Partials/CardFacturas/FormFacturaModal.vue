@@ -3,6 +3,8 @@ import { computed, reactive } from 'vue';
 
 import axios from 'axios';
 
+import { Inertia } from '@inertiajs/inertia';
+
 import JetLabel from '@/Jetstream/Label.vue';
 import JetButton from '@/Jetstream/Button.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
@@ -88,6 +90,11 @@ const create = () => {
             emit("addFactura", resp.data);
             form.recentlySuccessful = true;
             restForm();
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            })
             setTimeout(() => {
                 close();
             }, 500);
@@ -104,6 +111,11 @@ const create = () => {
             };
         }).then(() => { // always
             form.processing = false;
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            })
             setTimeout(() => {
                 form.recentlySuccessful = false;
             }, 500);

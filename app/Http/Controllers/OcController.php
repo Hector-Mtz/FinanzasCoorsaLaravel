@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Factura;
+use App\Models\Ingreso;
 use App\Models\Oc;
+use App\Models\Venta;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+
+use function GuzzleHttp\Promise\queue;
 
 class OcController extends Controller
 {
@@ -41,9 +46,23 @@ class OcController extends Controller
             'cantidad' => ["required", "numeric"],
             'venta_id' => ["required", "exists:ventas,id"],
         ]);
-
-        $oc = Oc::create($newOc);
-        return response()->json($oc);
+        try {
+            $oc = Oc::create($newOc);
+            $venta = Venta::select('ventas.*')
+                ->selectRaw('count(ocs.id) as total_ocs')
+                ->leftJoin('ocs', 'ventas.id', '=', 'ocs.venta_id')
+                ->firstWhere($newOc['venta_id']);
+            // Cierre en automatico de ventas cuando el numero de ocs es igual al número de periodos
+            if ($venta->periodos === $venta->total_ocs) {
+                $venta->status_id = 2;
+                $venta->save();
+            }
+            return response()->json($oc);
+        } catch (QueryException $e) {
+            @throw ValidationException::withMessages([
+                'nombre' => $e->getMessage()
+            ]);
+        }
     }
 
 
@@ -111,19 +130,24 @@ class OcController extends Controller
         ]);
         $status = collect(['pc' => 0, 'pp' => 0, 'c' => 0]);
 
-        $ocs = Oc::selectRaw('sum(ocs.cantidad) as total,
-                if(ocs.factura_id is null, "pc", if(facturas.ingreso_id is null,"pp","c")) as status')
-            ->leftJoin('facturas', 'ocs.factura_id', '=', 'facturas.id')
-            ->groupBy('status')
+        $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
+            ->whereNull('ocs.factura_id')
             ->whereMonth('ocs.created_at', '=', $validadData['month'])
             ->whereYear('ocs.created_at', '=', $validadData['year'])
-            ->get();
+            ->first();
+        $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
+            ->whereNull('facturas.ingreso_id')
+            ->whereMonth('facturas.fechaDePago', '=', $validadData['month'])
+            ->whereYear('facturas.fechaDePago', '=', $validadData['year'])
+            ->first();
+        $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
+            ->whereMonth('ingresos.created_at', '=', $validadData['month'])
+            ->whereYear('ingresos.created_at', '=', $validadData['year'])
+            ->first();
 
-        $auxStatus = collect([]);
-        foreach ($ocs as $oc) {
-            $auxStatus[$oc->status] = $oc->total;
-        }
-        $status = $status->merge($auxStatus);
+        $status['pc'] =  $ocs->total;
+        $status['pp'] =  $facturas->total;
+        $status['c'] = $ingreso->total;
 
         return response()->json($status);
     }
@@ -136,26 +160,31 @@ class OcController extends Controller
             'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
             'status' => ['required', 'in:pc,pp,c']
         ]);
-
-
-        $ocs = Oc::select('ocs.id', 'facturas.ingreso_id')
-            ->selectRaw('day(ocs.created_at) as day')
-            ->leftJoin('facturas', 'ocs.factura_id', '=', 'facturas.id')
-            ->whereMonth('ocs.created_at', '=', $validadData['month'])
-            ->whereYear('ocs.created_at', '=', $validadData['year']);
         switch ($validadData['status']) {
             case "pc":
-                $ocs = $ocs->whereNull("ocs.factura_id")->get();
+                $daysStatus =  Oc::select('ocs.id')
+                    ->selectRaw('day(ocs.created_at) as day')
+                    ->whereNull('ocs.factura_id')
+                    ->whereMonth('ocs.created_at', '=', $validadData['month'])
+                    ->whereYear('ocs.created_at', '=', $validadData['year'])
+                    ->get();
                 break;
             case "pp":
-                $ocs = $ocs->whereNotNull("ocs.factura_id")
-                    ->whereNull("facturas.ingreso_id")->get();
+                $daysStatus =  Factura::select('facturas.id', 'facturas.ingreso_id')
+                    ->selectRaw('day(facturas.fechaDePago) as day')
+                    ->whereNull('facturas.ingreso_id')
+                    ->whereMonth('facturas.fechaDePago', '=', $validadData['month'])
+                    ->whereYear('facturas.fechaDePago', '=', $validadData['year'])
+                    ->get();
                 break;
             case "c":
-                $ocs = $ocs->whereNotNull("ingreso_id")->get();
+                $daysStatus =  Ingreso::select('ingresos.id')
+                    ->selectRaw('day(ingresos.created_at) as day')
+                    ->whereMonth('ingresos.created_at', '=', $validadData['month'])
+                    ->whereYear('ingresos.created_at', '=', $validadData['year'])
+                    ->get();
                 break;
         }
-        $ocs = $ocs->groupBy('day');
-        return response()->json($ocs);
+        return response()->json($daysStatus->groupBy('day'));
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Models\Factura;
+use App\Models\Ingreso;
 use App\Models\Oc;
 use App\Models\Venta;
 use Illuminate\Http\Request;
@@ -46,25 +48,11 @@ class VentaController extends Controller
         $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad),0) as total')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id');
 
-        // OC TOTALES
-        $statusOcs = collect(['pc' => 0, 'pp' => 0, 'c' => 0]);
-        $ocs = Oc::selectRaw('sum(ocs.cantidad) as total,
-                    if(ocs.factura_id is null, "pc", if(facturas.ingreso_id is null,"pp","c")) as status')
-            ->leftJoin('facturas', 'ocs.factura_id', '=', 'facturas.id')
-            ->groupBy('status')
-            ->get();
-
-        $auxStatus = collect([]);
-        foreach ($ocs as $oc) {
-            $auxStatus[$oc->status] = $oc->total;
-        }
-        $statusOcs = $statusOcs->merge($auxStatus);
-        // END OC TOTALES
 
         return Inertia::render('Finanzas/VentasIndex', [
             'clientes' =>  fn () =>  $clientes->get(),
             'totalVentas' => fn () => $totalVentas->first(),
-            'totalOcs' => fn () => $statusOcs,
+            'totalOcs' => fn () => $this->totalStatus(),
         ]);
     }
 
@@ -163,5 +151,25 @@ class VentaController extends Controller
             ->get();
         $ventas = $ventas->groupBy('day');
         return response()->json($ventas);
+    }
+
+
+    public function totalStatus()
+    {
+        $status = collect(['pc' => 0, 'pp' => 0, 'c' => 0]);
+
+        $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
+            ->whereNull('ocs.factura_id')
+            ->first();
+        $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
+            ->whereNull('facturas.ingreso_id')
+            ->first();
+        $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
+            ->first();
+
+        $status['pc'] = $ocs->total;
+        $status['pp'] =  $facturas->total;
+        $status['c'] = $ingreso->total;
+        return $status;
     }
 }

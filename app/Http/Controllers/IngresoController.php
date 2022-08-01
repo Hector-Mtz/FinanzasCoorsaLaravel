@@ -178,6 +178,8 @@ class IngresoController extends Controller
                 $factura->save();
                 if ($totalFacturas == $ingreso->cantidad) {
                     // :TODO UPDATE STATUS VENTAS Y INGRESOS
+                    $ingreso->status_id = 2;
+                    $ingreso->save();
                 }
 
                 DB::commit();

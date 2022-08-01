@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onBeforeMount, reactive, ref } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
 
 import axios from 'axios';
 
@@ -91,6 +92,11 @@ const create = () => {
             emit("addDeposito", resp.data);
             form.recentlySuccessful = true;
             restForm();
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            });
             setTimeout(() => {
                 close();
             }, 500);
@@ -123,8 +129,13 @@ const update = () => {
             // Es el mismo ya que reconsulta
             emit("addDeposito", resp.data);
             form.recentlySuccessful = true
+            restForm();
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            });
             setTimeout(() => {
-                restForm();
                 close();
             }, 500);
         }).catch(error => {
