@@ -48,10 +48,11 @@ class OcController extends Controller
         ]);
         try {
             $oc = Oc::create($newOc);
-            $venta = Venta::select('ventas.*')
+            $venta = Venta::select('ventas.id', 'ventas.cantidad', 'ventas.periodos')
                 ->selectRaw('count(ocs.id) as total_ocs')
                 ->leftJoin('ocs', 'ventas.id', '=', 'ocs.venta_id')
-                ->firstWhere($newOc['venta_id']);
+                ->groupBy('ventas.id', 'ventas.cantidad', 'ventas.periodos')
+                ->firstWhere('ventas.id', '=', $newOc['venta_id']);
             // Cierre en automatico de ventas cuando el numero de ocs es igual al número de periodos
             if ($venta->periodos === $venta->total_ocs) {
                 $venta->status_id = 2;
