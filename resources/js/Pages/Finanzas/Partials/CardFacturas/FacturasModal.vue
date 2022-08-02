@@ -94,7 +94,7 @@ watch(props, () => {
             </TableComponent>
             <!-- MODALS -->
             <FormFacturaModal :show="showingFormFactura" :type-form="typeForm" :factura="factura"
-                @add-factura="emit('addFactura', $event)" @close="showingFormFactura = false" />
+                @add-factura="emit('addFactura')" @close="showingFormFactura = false" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

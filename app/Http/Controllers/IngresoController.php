@@ -74,7 +74,16 @@ class IngresoController extends Controller
         }
 
         $clientes[0]['ingresos'] = $ingresos->orderBy('id')->get();
-        return response()->json($clientes);
+        $totalIngresos = Ingreso::selectRaw("ifnull(sum(ingresos.cantidad),0) total");
+        if ($hasStatus) {
+            $totalIngresos->where("ingresos.status_id", "=", request('status_id'));
+        }
+
+
+        return response()->json([
+            'clientesIngresos' => $clientes,
+            'totalIngresos' => $totalIngresos->first(),
+        ]);
     }
 
 

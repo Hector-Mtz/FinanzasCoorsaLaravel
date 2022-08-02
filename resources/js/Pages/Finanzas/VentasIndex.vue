@@ -39,6 +39,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    totalVentasStatus: {
+        type: Object,
+        required: true,
+    },
     totalOcs: {
         type: Object,
         required: true,
@@ -95,6 +99,11 @@ const chageComponent = () => {
             <div class="grid-ventas">
                 <Card>
                     <Ventas :clientes="props.clientes" @show-ventas="showingVentas = true" />
+                    <div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3">
+                        <span class="text-lg font-bold text-white">
+                            Total: {{ formatoMoney(totalVentasStatus.total.toFixed(2)) }}
+                        </span>
+                    </div>
                 </Card>
                 <div class="grid text-white">
                     <table class="mb-4 md:mx-auto">

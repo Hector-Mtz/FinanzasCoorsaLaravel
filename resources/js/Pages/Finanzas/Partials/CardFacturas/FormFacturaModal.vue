@@ -87,7 +87,7 @@ const create = () => {
             },
         })
         .then((resp) => {
-            emit("addFactura", resp.data);
+            emit("addFactura");
             form.recentlySuccessful = true;
             restForm();
             Inertia.visit(route('ventas.index'), {

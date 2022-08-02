@@ -3,16 +3,11 @@ import { onBeforeMount, reactive, ref, watch } from 'vue';
 
 import CalendarHeader from '@/Components/CalendarHeader.vue';
 import Calendar from '@/Components/Calendar.vue';
+import CalendarModal from './CalendarModal.vue';
 import { formatoMoney } from '../../../../utils/conversiones';
 
 const emit = defineEmits(['changeDate'])
 
-const totalsVentas = ref({
-    ventas: 0,
-    pc: 0,
-    pp: 0,
-    c: 0
-});
 const props = defineProps({
     date: { month: Number, year: Number },
     totalVentas: {
@@ -24,9 +19,21 @@ const props = defineProps({
         required: true,
     }
 });
+const totalsVentas = ref({
+    ventas: 0,
+    pc: 0,
+    pp: 0,
+    c: 0
+});
 const showsStatus = reactive(['ventas']);// Ya que debe ser profundo el watch
 const specialDays = ref([]);
+const showingModal = ref(false);
+const dataCalendar = ref([]);
+
+// no es renderizable
 const colorsStatus = ['#A16207', '#CA8A04', '#E4B308', '#FDE047'];
+
+
 const addStatus = (status) => {
     if (showsStatus.length >= 1) {
         // Determinamos si existe
@@ -53,7 +60,7 @@ const getVentasDays = async (date) => {
     const resp = await axios.get(route('ventas.month'), {
         params: date
     });
-    specialDays.value.push({ data: resp.data, color: 'red' });
+    specialDays.value.push({ data: resp.data, color: 'red', });
 }
 
 async function getDaysStatus() {
@@ -63,10 +70,10 @@ async function getDaysStatus() {
     }
     const axiosDaysStatus = [];
     // colores
+    let series = [];
     let colors = [];
-    let titles = [];
     showsStatus.forEach(st => {
-        titles.push(st)
+        series.push(st);
         if (st === 'ventas') {
             const respVentas = axios.get(route('ventas.month'), {
                 params: date
@@ -97,8 +104,21 @@ async function getDaysStatus() {
 
     const responses = await Promise.all(axiosDaysStatus);
 
+    var total = 0;
+    // Genera el titulo de la data
     const daysStatus = responses.map((resp, index) => {
-        return { data: resp.data, color: colors[index], title: titles[index] }
+        // Se recorren los attributos
+        for (let d in resp.data) {
+            total = 0;
+            resp.data[d].forEach((obj) => {
+                total += obj.total;
+                obj.total = formatoMoney(obj.total);
+            });
+            resp.data[d].data = resp.data[d];
+            resp.data[d].title = formatoMoney(total);
+        }
+        total = formatoMoney(total);
+        return { data: resp.data, color: colors[index], serie: series[index] }
     });
     specialDays.value = daysStatus;
 }
@@ -125,6 +145,12 @@ async function getTotalsMonth() {
     await getDaysStatus();
 
 }
+
+const showCalendarModal = (data) => {
+    dataCalendar.value = data;
+    showingModal.value = true;
+}
+
 
 // show status months
 watch(showsStatus, async () => {
@@ -199,9 +225,14 @@ watch(props, () => {
         </div>
         <!-- End Interacion -->
         <div class="px-4 py-2">
-            <Calendar :month="props.date.month" :special-days="specialDays" :year="props.date.year" class="text-white">
+            <Calendar :month="props.date.month" :special-days="specialDays" :year="props.date.year"
+                @on-special-days="showCalendarModal($event)" class="text-white">
             </Calendar>
         </div>
+        <!--Modals-->
+
+        <CalendarModal :data-calendar="dataCalendar" :show="showingModal" @close="showingModal = false" />
+        <!--End Modals-->
     </div>
 </template>
 <style scoped>

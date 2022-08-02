@@ -136,7 +136,13 @@ class OcController extends Controller
             ->whereMonth('ocs.created_at', '=', $validadData['month'])
             ->whereYear('ocs.created_at', '=', $validadData['year'])
             ->first();
+        // $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
+        //     ->whereNull('facturas.ingreso_id')
+        //     ->whereMonth('facturas.fechaDePago', '=', $validadData['month'])
+        //     ->whereYear('facturas.fechaDePago', '=', $validadData['year'])
+        //     ->first();
         $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
+            ->join('ocs', 'facturas.id', '=', 'ocs.factura_id')
             ->whereNull('facturas.ingreso_id')
             ->whereMonth('facturas.fechaDePago', '=', $validadData['month'])
             ->whereYear('facturas.fechaDePago', '=', $validadData['year'])
@@ -163,7 +169,7 @@ class OcController extends Controller
         ]);
         switch ($validadData['status']) {
             case "pc":
-                $daysStatus =  Oc::select('ocs.id')
+                $daysStatus =  Oc::select('ocs.id', 'ocs.nombre', 'ocs.cantidad as total')
                     ->selectRaw('day(ocs.created_at) as day')
                     ->whereNull('ocs.factura_id')
                     ->whereMonth('ocs.created_at', '=', $validadData['month'])
@@ -171,7 +177,7 @@ class OcController extends Controller
                     ->get();
                 break;
             case "pp":
-                $daysStatus =  Factura::select('facturas.id', 'facturas.ingreso_id')
+                $daysStatus =  Factura::select('facturas.id', 'facturas.referencia as nombre', 'facturas.cantidad as total')
                     ->selectRaw('day(facturas.fechaDePago) as day')
                     ->whereNull('facturas.ingreso_id')
                     ->whereMonth('facturas.fechaDePago', '=', $validadData['month'])
@@ -179,7 +185,7 @@ class OcController extends Controller
                     ->get();
                 break;
             case "c":
-                $daysStatus =  Ingreso::select('ingresos.id')
+                $daysStatus =  Ingreso::select('ingresos.id', 'ingresos.nombre', 'ingresos.cantidad as total')
                     ->selectRaw('day(ingresos.created_at) as day')
                     ->whereMonth('ingresos.created_at', '=', $validadData['month'])
                     ->whereYear('ingresos.created_at', '=', $validadData['year'])

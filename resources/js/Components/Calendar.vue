@@ -3,6 +3,8 @@ import { ref, computed } from 'vue'
 import { listDaysSem } from '../data/calendar';
 
 
+defineEmits(['onSpecialDays']);
+
 const props = defineProps({
     month: {
         type: Number,
@@ -37,9 +39,10 @@ const weeks = computed(() => {
         props.specialDays.forEach(specialDay => {
             if (specialDay.data[day] !== undefined) {
                 plusData.push({
-                    object: specialDay.data[day],
-                    color: specialDay.color,
-                    title: specialDay.title
+                    ...specialDay,
+                    date: day + '/' + (props.month + 1) + '/' + props.year,
+                    data: specialDay.data[day],
+                    title: specialDay.data[day].title,
                 });
             }
             // for (let i = 0; i < specialDay.data.length; i++) {
@@ -93,7 +96,8 @@ const weeks = computed(() => {
                     {{ day.dayText }}
                     <!-- Special Days -->
                     <div v-for="(data, indexData) in day.plusData" :key="dayIndex + '-' + indexData">
-                        <div class="w-full my-1 rounded-lg" :style="{ 'background-color': data.color }">
+                        <div @click="$emit('onSpecialDays', data)" class="w-full my-1 rounded-lg"
+                            :style="{ 'background-color': data.color }">
                             <span class="py-1 text-white cursor-pointer">{{ data.title }} </span>
                         </div>
                     </div>

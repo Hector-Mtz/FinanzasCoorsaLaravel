@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onBeforeMount, ref, watch } from 'vue';
 
+import { Inertia } from '@inertiajs/inertia';
 import { pickBy } from 'lodash'
 
 import ButtonAdd from '@/Components/ButtonAdd.vue';
@@ -10,7 +11,8 @@ import DepositosModal from './DepositosModal.vue';
 import ItemCliente from '../ItemCliente.vue';
 import ItemIngresoC from './ItemIngresoC.vue';
 import FacturasDepositoModal from './FacturasDepositoModal.vue';
-import { Inertia } from '@inertiajs/inertia';
+
+import { formatoMoney } from '../../../../utils/conversiones';
 
 
 
@@ -18,6 +20,7 @@ import { Inertia } from '@inertiajs/inertia';
 const emit = defineEmits([''])
 
 const clientes = ref([])
+const totalIngresos = ref({ total: 0 })
 const tab = ref("1") // Referencia al id
 const searchText = ref("")
 const showingDepositos = ref(false);
@@ -75,7 +78,8 @@ const changeTab = (status_id) => {
 const search = async (newSearch) => {
     const params = pickBy({ status_id: tab.value, search: newSearch })
     const resp = await axios.get(route('ingresos.index'), { params })
-    clientes.value = resp.data;
+    clientes.value = resp.data.clientesIngresos;
+    totalIngresos.value = resp.data.totalIngresos;
 }
 
 onBeforeMount(() => {
@@ -154,6 +158,11 @@ watch(searchText, (newSearch) => {
                         </table>
                     </div>
                 </ItemCliente>
+            </div>
+            <div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3">
+                <span class="text-lg font-bold text-white">
+                    Total: {{ formatoMoney(totalIngresos.total) }}
+                </span>
             </div>
         </div>
         <!--Modals -->
