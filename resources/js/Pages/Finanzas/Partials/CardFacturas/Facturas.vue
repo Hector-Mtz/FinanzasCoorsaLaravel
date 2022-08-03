@@ -10,6 +10,7 @@ import FacturasModal from './FacturasModal.vue';
 import OcsFacturaModal from './OcsFacturaModal.vue';
 import ItemCliente from '../ItemCliente.vue';
 import { formatoMoney } from '../../../../utils/conversiones';
+import SkeletonLoader from '../../../../Components/SkeletonLoader.vue';
 
 
 
@@ -131,13 +132,17 @@ watch(searchText, (newSearch) => {
                 </span>
             </div>
             <!-- Lista de clientes -->
-            <div>
-                <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente">
-                    <ItemObjectShow v-for="factura in cliente.facturas" :key="factura.id" :data="factura"
-                        @onShow="showOcsFactura($event)">
-                        #{{ factura.referencia }}
-                    </ItemObjectShow>
-                </ItemCliente>
+
+            <div class="-mx-2 overflow-hidden overflow-y-auto" style="max-height: 65vh;">
+                <SkeletonLoader v-if="clientes.length === 0" style="height: 65vh;" />
+                <div v-else>
+                    <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente">
+                        <ItemObjectShow v-for="factura in cliente.facturas" :key="factura.id" :data="factura"
+                            @onShow="showOcsFactura($event)">
+                            #{{ factura.referencia }}
+                        </ItemObjectShow>
+                    </ItemCliente>
+                </div>
             </div>
             <div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3">
                 <span class="text-lg font-bold text-white">
@@ -152,6 +157,3 @@ watch(searchText, (newSearch) => {
         <!--Ends Modals-->
     </div>
 </template>
-
-<style lang="scss" scoped>
-</style>
