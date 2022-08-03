@@ -47,7 +47,7 @@ const changeTab = (status_id) => {
             data: params,
             preserveState: true,
             preserveScroll: true,
-            only: ['clientes'],
+            only: ['clientes', 'totalVentasStatus'],
         })
     }
 }
@@ -57,7 +57,7 @@ const search = (newSearch) => {
         data: params,
         preserveState: true,
         preserveScroll: true,
-        only: ['clientes'],
+        only: ['clientes', 'totalVentasStatus'],
     })
 }
 
@@ -97,7 +97,7 @@ watch(searchText, (newSearch) => {
                 </span>
             </div>
             <!-- Lista de clientes -->
-            <div>
+            <div class="overflow-y-auto" style="max-height: 65vh;">
 
                 <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente">
                     <ItemObjectShow v-for="venta in cliente.ventas" :key="venta.id" :data="venta"

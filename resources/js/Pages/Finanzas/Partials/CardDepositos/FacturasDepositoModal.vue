@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
 
 import ButtonAdd from '@/Components/ButtonAdd.vue';
 import DialogModal from '@/Components/DialogModal.vue';
@@ -40,6 +41,11 @@ const deleteFactura = (indexFactura) => {
         .then(() => {
             props.deposito.error = "";
             props.deposito.facturas.splice(indexFactura, 1);
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            });
             emit('updateDepositos');
         }).catch(error => {
             if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {

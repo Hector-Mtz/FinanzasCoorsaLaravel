@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Models\Factura;
+use App\Models\Ingreso;
+use App\Models\Oc;
 use App\Models\Venta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,8 +45,18 @@ class VentaController extends Controller
             $clientes->where("clientes.nombre", "like", "%" . $search . "%");
         }
 
+        $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad),0) as total')
+            ->join('montos', 'ventas.monto_id', '=', 'montos.id');
+        $totalVentasStatus = $totalVentas;
+        if ($request->status_id != "") {
+            $totalVentasStatus->where("ventas.status_id", "=", $request->status_id);
+        }
+
         return Inertia::render('Finanzas/VentasIndex', [
             'clientes' =>  fn () =>  $clientes->get(),
+            'totalVentas' => fn () =>  $totalVentas->first(),
+            'totalVentasStatus' => fn () =>  $totalVentasStatus->first(),
+            'totalOcs' => fn () => $this->totalStatus(),
         ]);
     }
 
@@ -93,7 +106,6 @@ class VentaController extends Controller
             "tipo_id" =>  ["required", "exists:tipos,id"],
             "ceco_id" =>  ["required", "exists:cecos,id"],
         ]);
-
         $venta->update($newVenta);
         return redirect()->back();
     }
@@ -135,12 +147,35 @@ class VentaController extends Controller
             'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
         ]);
 
-        $ventas = Venta::select('ventas.id')
+        $ventas = Venta::select('ventas.id', 'ventas.nombre')
+            ->selectRaw('ifnull(montos.cantidad * ventas.periodos * ventas.cantidad,0) as total')
             ->selectRaw('day(ventas.fechaInicial) as day')
+            ->join('montos', 'ventas.monto_id', '=', 'montos.id')
+            ->groupBy('ventas.id', 'day')
             ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
             ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
             ->get();
         $ventas = $ventas->groupBy('day');
         return response()->json($ventas);
+    }
+
+
+    public function totalStatus()
+    {
+        $status = collect(['pc' => 0, 'pp' => 0, 'c' => 0]);
+
+        $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
+            ->whereNull('ocs.factura_id')
+            ->first();
+        $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
+            ->whereNull('facturas.ingreso_id')
+            ->first();
+        $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
+            ->first();
+
+        $status['pc'] = $ocs->total;
+        $status['pp'] =  $facturas->total;
+        $status['c'] = $ingreso->total;
+        return $status;
     }
 }

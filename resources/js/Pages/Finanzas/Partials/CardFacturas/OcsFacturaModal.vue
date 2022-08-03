@@ -7,6 +7,7 @@ import TableComponent from '@/Components/Table.vue';
 import ItemOcFactura from './ItemOcFactura.vue';
 import ListDataInput from '@/Components/ListDataInput.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
+import { Inertia } from '@inertiajs/inertia';
 
 const emit = defineEmits(["close", "addOc"])
 const props = defineProps({
@@ -41,6 +42,11 @@ const deleteOc = (indexOc) => {
             const cantidadRest = props.factura.ocs[indexOc].cantidad;
             props.factura.total_ocs = (props.factura.total_ocs - cantidadRest).toFixed(2);
             props.factura.ocs.splice(indexOc, 1);
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            })
         }).catch(error => {
             if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
                 props.factura.error = error.response.data.message

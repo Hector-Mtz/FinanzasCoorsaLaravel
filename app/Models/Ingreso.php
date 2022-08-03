@@ -13,6 +13,7 @@ class Ingreso extends Model
         'nombre',
         'cantidad',
         'banco_id',
+        'status_id',
     ];
 
 

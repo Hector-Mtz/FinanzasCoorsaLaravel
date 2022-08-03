@@ -12,6 +12,8 @@ import Facturas from './Partials/CardFacturas/Facturas.vue';
 import Depositos from './Partials/CardDepositos/Depositos.vue';
 import ButtonCalendar from '../../Components/ButtonCalendar.vue';
 import VentasCalendar from './Partials/CardCalendar/VentasCalendar.vue';
+import { formatoMoney } from '../../utils/conversiones';
+
 
 const dateNow = new Date();
 const showingVentas = ref(false);
@@ -33,6 +35,18 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    totalVentas: {
+        type: Object,
+        required: true,
+    },
+    totalVentasStatus: {
+        type: Object,
+        required: true,
+    },
+    totalOcs: {
+        type: Object,
+        required: true,
+    }
 });
 
 
@@ -85,6 +99,11 @@ const chageComponent = () => {
             <div class="grid-ventas">
                 <Card>
                     <Ventas :clientes="props.clientes" @show-ventas="showingVentas = true" />
+                    <div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3">
+                        <span class="text-lg font-bold text-white">
+                            Total: {{ formatoMoney(totalVentasStatus.total.toFixed(2)) }}
+                        </span>
+                    </div>
                 </Card>
                 <div class="grid text-white">
                     <table class="mb-4 md:mx-auto">
@@ -115,16 +134,16 @@ const chageComponent = () => {
                         <tbody>
                             <tr class="text-center">
                                 <td class="p-2">
-                                    $
+                                    ${{ formatoMoney(props.totalVentas.total.toFixed(2)) }}
                                 </td>
                                 <td class="p-2">
-                                    $
+                                    ${{ formatoMoney(props.totalOcs.pc.toFixed(2)) }}
                                 </td>
                                 <td class="p-2">
-                                    $
+                                    ${{ formatoMoney(props.totalOcs.pp.toFixed(2)) }}
                                 </td>
                                 <td class="p-2">
-                                    $
+                                    ${{ formatoMoney(props.totalOcs.c.toFixed(2)) }}
                                 </td>
                             </tr>
                         </tbody>
@@ -147,7 +166,8 @@ const chageComponent = () => {
                         </tfoot>
                     </table>
                     <Card>
-                        <VentasCalendar :date="date" @change-date="changeDate($event)" />
+                        <VentasCalendar :date="date" @change-date="changeDate($event)" :totalVentas="props.totalVentas"
+                            :totalOcs="props.totalOcs" />
                     </Card>
                 </div>
                 <Card>

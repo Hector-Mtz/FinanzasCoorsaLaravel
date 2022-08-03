@@ -12,6 +12,7 @@ import Input from '@/Components/Input.vue';
 import ListDataInput from '@/Components/ListDataInput.vue';
 import SpinProgress from '@/Components/SpinProgress.vue';
 import SelectComponent from '@/Components/SelectComponent.vue';
+import { Inertia } from '@inertiajs/inertia';
 
 const emit = defineEmits(["close", "addOc", "editOc"])
 const props = defineProps({
@@ -102,6 +103,11 @@ const create = () => {
             emit("addOc", resp.data);
             form.recentlySuccessful = true;
             restForm();
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            })
             setTimeout(() => {
                 close();
             }, 500);
@@ -133,10 +139,13 @@ const update = () => {
         .then((resp) => {
             emit("editOc", resp.data);
             form.recentlySuccessful = true
-
-
+            restForm();
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            })
             setTimeout(() => {
-                restForm();
                 close();
             }, 500);
         }).catch(error => {

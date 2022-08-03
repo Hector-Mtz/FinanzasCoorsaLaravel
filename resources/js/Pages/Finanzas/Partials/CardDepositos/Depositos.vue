@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onBeforeMount, ref, watch } from 'vue';
 
+import { Inertia } from '@inertiajs/inertia';
 import { pickBy } from 'lodash'
 
 import ButtonAdd from '@/Components/ButtonAdd.vue';
@@ -11,12 +12,15 @@ import ItemCliente from '../ItemCliente.vue';
 import ItemIngresoC from './ItemIngresoC.vue';
 import FacturasDepositoModal from './FacturasDepositoModal.vue';
 
+import { formatoMoney } from '../../../../utils/conversiones';
+
 
 
 
 const emit = defineEmits([''])
 
 const clientes = ref([])
+const totalIngresos = ref({ total: 0 })
 const tab = ref("1") // Referencia al id
 const searchText = ref("")
 const showingDepositos = ref(false);
@@ -26,7 +30,7 @@ const deposito = ref({});
 // Modal Methods
 
 const updateDepositos = () => {
-    search(searchText.value)
+    search(searchText.value);
 }
 const addFacturaToDeposito = (form) => {
     // esto es para el error
@@ -35,7 +39,12 @@ const addFacturaToDeposito = (form) => {
     })
     axios.post(route('ingresos.facturas.store', form.deposito_id), form)
         .then(() => {
-            search(searchText.value)
+            search(searchText.value);
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            });
 
         }).catch(error => {
             if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
@@ -69,7 +78,8 @@ const changeTab = (status_id) => {
 const search = async (newSearch) => {
     const params = pickBy({ status_id: tab.value, search: newSearch })
     const resp = await axios.get(route('ingresos.index'), { params })
-    clientes.value = resp.data;
+    clientes.value = resp.data.clientesIngresos;
+    totalIngresos.value = resp.data.totalIngresos;
 }
 
 onBeforeMount(() => {
@@ -122,7 +132,7 @@ watch(searchText, (newSearch) => {
                 </span>
             </div>
             <!-- Lista de clientes -->
-            <div class="overflow-hidden overflow-y-auto  -mx-2" style="max-height: 65vh;">
+            <div class="-mx-2 overflow-hidden overflow-y-auto" style="max-height: 65vh;">
                 <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente">
                     <div
                         class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden bg-gray-900 shadow-xl sm:rounded-lg">
@@ -148,6 +158,11 @@ watch(searchText, (newSearch) => {
                         </table>
                     </div>
                 </ItemCliente>
+            </div>
+            <div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3">
+                <span class="text-lg font-bold text-white">
+                    Total: {{ formatoMoney(totalIngresos.total) }}
+                </span>
             </div>
         </div>
         <!--Modals -->

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\Oc;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +22,44 @@ class FacturaController extends Controller
     {
 
 
+        $clientes = Cliente::select('clientes.id', 'clientes.nombre')->orderBy('id')->get();
+        $numClientes = $clientes->count();
+
+        $hasStatus = request('status_id') != "";
+
+        if (request()->has('search')) {
+            $search = strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
+        }
+
+        for ($i = 0; $i < $numClientes; $i++) {
+            $facturas = Factura::select("facturas.*")
+                ->selectRaw("ifnull(sum(ocs.cantidad),0) total_ocs")
+                ->with('ocs:id,nombre,cantidad,factura_id,created_at')
+                ->leftJoin('ocs', 'facturas.id', "=", "ocs.factura_id")
+                ->groupBy(
+                    "facturas.id",
+                    "facturas.cantidad",
+                    "facturas.status_id",
+                    "facturas.referencia",
+                    "facturas.fechaDePago"
+                )->where('facturas.cliente_id', '=', $clientes[$i]->id);
+            if ($hasStatus) {
+                $facturas->where("facturas.status_id", "=", request('status_id'));
+            }
+            if (isset($search)) {
+                $facturas->where('facturas.referencia', 'like', '%' . $search . '%');
+            }
+
+
+            $clientes[$i]->facturas = $facturas->orderBy('id')->get();
+        }
+        //SIN CLIENTE
+        $clientes->prepend(new Collection([
+            'id' => -1,
+            'nombre' => 'SIN CLIENTE',
+            'facturas' => []
+        ]));
+
         $facturas = Factura::select("facturas.*")
             ->selectRaw("ifnull(sum(ocs.cantidad),0) total_ocs")
             ->with('ocs:id,nombre,cantidad,factura_id,created_at')
@@ -30,18 +70,24 @@ class FacturaController extends Controller
                 "facturas.status_id",
                 "facturas.referencia",
                 "facturas.fechaDePago"
-            );
-        if (request("status_id") != "") {
-            $facturas->where("facturas.status_id", "=", request("status_id"));
+            )->whereNull('facturas.cliente_id');
+        if ($hasStatus) {
+            $facturas->where("facturas.status_id", "=", request('status_id'));
+        }
+        if (isset($search)) {
+            $facturas->where('facturas.referencia', 'like', '%' . $search . '%');
         }
 
-
-        if (request()->has("search")) {
-            $search = strtr(request("search"), array("'" => "\\'", "%" => "\\%"));
-            $facturas->where("facturas.referencia", "like", "%" . $search . "%");
+        $totalFacturas  = Factura::selectRaw("ifnull(sum(facturas.cantidad),0) total");
+        if ($hasStatus) {
+            $totalFacturas->where("facturas.status_id", "=", request('status_id'));
         }
 
-        return response()->json($facturas->get());
+        $clientes[0]['facturas'] = $facturas->orderBy('id')->get();
+        return response()->json([
+            'clientesFacturas' => $clientes,
+            'totalFacturas' => $totalFacturas->first()
+        ]);
     }
 
 
@@ -85,7 +131,6 @@ class FacturaController extends Controller
         ]);
 
         $factura->update($newFactura);
-        $factura->load("ocs:id,nombre,cantidad,factura_id");
         return response()->json($factura);
     }
 
@@ -160,7 +205,6 @@ class FacturaController extends Controller
 
                 DB::commit();
                 $facturaFind->total_ocs = $nuevaCantidad; // no es un valor a almacenar
-                $facturaFind->load("ocs:id,nombre,cantidad,factura_id,created_at");
                 return response()->json($facturaFind);
             } catch (QueryException $e) {
                 DB::rollBack();
