@@ -6,9 +6,12 @@ import * as am5hierarchy from  '@amcharts/amcharts5/hierarchy';
 import { watch, ref, onMounted  } from '@vue/runtime-core';
 import { Inertia } from '@inertiajs/inertia';
 import axios from 'axios';
-import DialogModal from '@/Components/DialogModal.vue';
+import ModalGastos from '@/Components/DialogModal.vue';
 import ButtonPres from '../../Components/ButtonPres.vue';
 import SecondaryButton1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/SecondaryButton.vue';
+import Button from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Button.vue';
+import ButtonAdd from '../../Components/ButtonAdd.vue';
+import TableComponent from '@/Components/Table.vue';
 
 
 //variables GLOBALES
@@ -25,6 +28,7 @@ let root;
 let yRenderer;
 let xRenderer;
 let chart;
+let modalDatos = [];
 
 export default {
     props: {
@@ -39,7 +43,11 @@ export default {
         return {
             movimiento: { state: "PRESUPUESTO" },
             ModalMov:false,
-            data: []
+            ModalNewGastos: false,
+            data: [],
+            modalData:modalDatos,
+            movimientos:[], //array para listar los tipo de movimiento
+            agrupacionModal:[]
         };
     },
     
@@ -574,9 +582,9 @@ export default {
                  }
               //console.log(this.movimiento.state);
               TipoMov(this.movimiento.state);
-              console.log(data);
+              //console.log(data);
 
-              series.columns.template.events.once("click", (ev) => {
+              series.columns.template.events.on("click", (ev) => {
                 if(zoom){
                     this.nuevoClick(ev)
                 }
@@ -647,33 +655,112 @@ export default {
 
         nuevoClick: function(ev)
         {
-           this.ModalMov = true;   //abrimos modal
            this.data = data;
            let datos = this.data;
-           console.log(datos);
+           //console.log(datos);
            nuevosValores = ev.target._dataItem.dataContext; 
-           console.log(nuevosValores);
+           //console.log(nuevosValores);
            let x = nuevosValores.x;
            let y = nuevosValores.y;
            
            axios.get('api/cliente_concepto/'+x+'/'+y,{ob: x},{ob1: y}) //enviamos el dato a la ruta de la api
-           .then((resp)=>{
-            console.log(resp);
-             let datos = resp.data;
+           .then((resp)=>
+           {
+            //console.log(resp);
+             modalDatos=resp.data[0];
+             this.modalData = modalDatos;
+             //console.log(this.modalData);
+             let newData = this.modalData;
+             this.movimientos = resp.data[1];
+             let tipoMovimientos = this.movimientos;
+             //console.log(tipoMovimientos);
+             let nuevoArregloMovimientos = [];
+             for (let index = 0; index < tipoMovimientos.length; index++) //for para agrupar
+             {
+                let element = tipoMovimientos[index];
+                //console.log(element);
+                if(element == tipoMovimientos[0])
+                {
+                  nuevoArregloMovimientos.push(
+                    {
+                        movimiento:element.nombre
+                    }
+                  );
+                } 
+                else {
+                    let nombreTipo = element.nombre;
+                    //console.log(nombreTipo); //imprime los diferentes a indice 0
+                    let i=0;
+                    let nuevoObj;
+                    //console.log(nuevoArregloMovimientos.length); //marca cuantos elementos hay en el arreglo
+                    for (let i = 0; i < nuevoArregloMovimientos.length; i++) 
+                    {
+                        let element = nuevoArregloMovimientos[i]; //almacenamos en variable el elemento que fue guardado en la primera vuelta
+                        if(element !== nombreTipo) //comparamos si el elemento que fue agregado en la primer vuelta es igual al que recorremos
+                        {
+                            nuevoObj = //por cada elemento nuevo creamos un objeto
+                           {
+                             movimiento:nombreTipo
+                           }
+                        } 
+                       
+                    }
+                     nuevoArregloMovimientos.push(nuevoObj); //hacemos push al array principal
+                }  
+                   
+             } 
+             // console.log(nuevoArregloMovimientos)  si regresa la variable llena
+              //this.agrupacionModal = nuevoArregloMovimientos;
+          
+              function agrupacionTDs(arregloMovimientos, elementosArray)
+              {
+                console.log(elementosArray);
+                let element;
+                for (let index = 0; index < arregloMovimientos.length; index++) //recorremos los movimientos
+                {
+                    element = arregloMovimientos[index]; //guardamos en variable el movimiento actual
+                    //console.log(element); //imprimimos el elemento actual del recorrido
+                    for(let i= 0; i < elementosArray.lenght; i++)
+                    {
+                       let ele = elementosArray[i]; 
+                       switch (ele) 
+                         {
+                             case element: //creamos 1 caso el cual recorrera todos los disponibles
+                                    console.log(element);
+                                    console.log(ele);
+                                 break; 
+                         }
+                    }
+
+                }     
+              }
+            
+            agrupacionTDs(nuevoArregloMovimientos, newData);
+
              
-           })
+             })
             .catch(function (error)
            {
             console.log(error);
            }); 
+
+            this.ModalMov = true;   //abrimos modal
         },
+
+                
+        nuevoGasto:function(){
+            this.ModalNewGastos = true;
+         },
 
         closeModal:function()
         {
            this.ModalMov=false;
+           this.ModalNewGastos = false;
         }
+
+
     },
-    components: { ButtonPres, DialogModal, SecondaryButton1 }
+    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd,TableComponent }
 }
 
 </script>
@@ -685,30 +772,105 @@ export default {
  }
 </style>
 <template>
-<div class="group">
-    <ButtonPres class="buttonCECO" style="background-color:#111F2E">CECO</ButtonPres>
-         <ButtonPres class="buttonCON" style="background-color:#111F2E">CON.</ButtonPres> 
-            <div class="dropdown" >
-                <button onclick="myFunction()" class="dropbtn">$</button>
-                <div id="myDropdown" class="dropdown-content">
-                    <button id="PRESUPUESTO" @click="cambiar('PRESUPUESTO')">Presupuesto</button>
-                    <button id="SUPLEMENTO" @click="cambiar('SUPLEMENTO')">Suplemento</button>
-                    <button id="TOTAL" @click="cambiar('TOTAL')">Total</button>
-                    <button id="GASTO" @click="cambiar('GASTO')">Gasto</button>
-                    <button id="DISPONIBLE" @click="cambiar('DISPONIBLE')">Disponible</button>     
-                </div>
-            </div>
-</div>
-
-  <DialogModal :show="ModalMov" @close="closeModal">
+  <div class="group">
+      <ButtonPres class="buttonCECO" style="background-color:#111F2E">CECO</ButtonPres>
+           <ButtonPres class="buttonCON" style="background-color:#111F2E">CON.</ButtonPres> 
+              <div class="dropdown" >
+                  <button onclick="myFunction()" class="dropbtn">$</button>
+                  <div id="myDropdown" class="dropdown-content">
+                      <button id="PRESUPUESTO" @click="cambiar('PRESUPUESTO')">Presupuesto</button>
+                      <button id="SUPLEMENTO" @click="cambiar('SUPLEMENTO')">Suplemento</button>
+                      <button id="TOTAL" @click="cambiar('TOTAL')">Total</button>
+                      <button id="GASTO" @click="cambiar('GASTO')">Gasto</button>
+                      <button id="DISPONIBLE" @click="cambiar('DISPONIBLE')">Disponible</button>     
+                  </div>
+              </div>
+  </div>
+  <ModalGastos :show="ModalMov" @close="closeModal">
     <template #title>
-        <h2 style="text-align:center; color:black">Grupo Concepto </h2>
+       <div class="modalPart1">
+         <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
+             <span class="block font-bold text-center text-white">
+                 {{modalData[0].grupoConcepto}} 
+             </span>
+         </div>
+        </div>
     </template>
     <template #content>
-         <SecondaryButton1  @click="closeModal">
+        <div class="flex flex-row modalPart1">
+                <div class="px-4 py-1 border-r-4 borderModal basis-1/3">
+                    <span class="block font-bold text-center text-white">
+                        Concepto: {{modalData[0].concepto}}
+                    </span>
+                </div>
+                <div class="flex-1 px-2 py-1">
+                    <div class="flex justify-center">
+                        <span class="block font-bold text-center text-white">
+                            CECO: {{modalData[0].ceco}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <TableComponent>
+                <template #thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th v-for="item in movimientos" :key="item.id">
+                           {{item.nombre}} <!--Listamos nombre de productos-->
+                        </th>
+                        <th>Evidencia</th>
+                        <th>Fecha de creación</th>
+                    </tr>
+                </template>
+                <template #tbody>
+                    <tr v-for="item in modalData"  :key="item.id"> <!---recorrido de la data por filas-->
+                      <td>{{item.nombre}}</td> 
+                      <td id="GASTO"></td>
+                      <td id="SUPLEMENTO"></td>
+                      <td id="PRESUPUESTO"></td>
+                      <td>foto</td>  
+                      <td>{{item.fecha}}</td>         
+                    </tr>
+  
+                    <tr>
+                       <td></td>
+                       <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
+                       <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
+                       <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
+                       <td colspan="2"></td>
+                    </tr>
+
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td colspan="2"></td> 
+                    </tr>
+                </template>
+            </TableComponent>
+         <SecondaryButton1  @click="closeModal" style="margin:1rem">
             Cerrar
          </SecondaryButton1>
     </template>
-  </DialogModal>
+  </ModalGastos>
+
+  <ModalGastos :show="ModalNewGastos" @close="closeModal">
+    <template #title>
+           <div class="modalPart1">
+         <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
+             <span class="block font-bold text-center text-white">
+                 Nuevo movimiento en grupo:  {{modalData[0].grupoConcepto}}
+             </span>
+         </div>
+        </div>
+    </template>
+    <template #content>
+         <SecondaryButton1  @click="closeModal" style="margin:1rem">
+            Cerrar
+         </SecondaryButton1>
+    </template>
+  </ModalGastos>
+
   <div class="graph" ref="chartdiv">  </div>
 </template>

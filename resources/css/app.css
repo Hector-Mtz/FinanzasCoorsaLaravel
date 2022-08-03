@@ -10,6 +10,7 @@
     --borderColor:#26458D;
     --azul1:#111F2E;
     --vemergent:#687FA4;
+    --vemergent2:#3E5A7E;
 }
 
 .tabs-header {
@@ -173,6 +174,16 @@
     display:inline-grid;
     z-index: 2;
 }
+
+
+.modalPart1{
+    background-color: var(--vemergent2);
+}
+
+.borderModal{
+    border-color: #687FA4;
+}
+
 .tabs-header {
   display: flex;
   justify-content: space-between;
