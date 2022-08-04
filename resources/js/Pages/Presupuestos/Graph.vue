@@ -12,6 +12,7 @@ import SecondaryButton1 from '../../../../vendor/laravel/jetstream/stubs/inertia
 import Button from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Button.vue';
 import ButtonAdd from '../../Components/ButtonAdd.vue';
 import TableComponent from '@/Components/Table.vue';
+import Label from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Label.vue';
 
 
 //variables GLOBALES
@@ -670,7 +671,7 @@ export default {
              modalDatos=resp.data[0];
              this.modalData = modalDatos;
              //console.log(this.modalData);
-             let newData = this.modalData;
+             let newData = this.modalData; //almacenamos lo que viene de la bd en una variable
              this.movimientos = resp.data[1];
              let tipoMovimientos = this.movimientos;
              //console.log(tipoMovimientos);
@@ -690,7 +691,6 @@ export default {
                 else {
                     let nombreTipo = element.nombre;
                     //console.log(nombreTipo); //imprime los diferentes a indice 0
-                    let i=0;
                     let nuevoObj;
                     //console.log(nuevoArregloMovimientos.length); //marca cuantos elementos hay en el arreglo
                     for (let i = 0; i < nuevoArregloMovimientos.length; i++) 
@@ -709,30 +709,64 @@ export default {
                 }  
                    
              } 
-             // console.log(nuevoArregloMovimientos)  si regresa la variable llena
+              //console.log(nuevoArregloMovimientos) // si regresa la variable llena
               //this.agrupacionModal = nuevoArregloMovimientos;
           
               function agrupacionTDs(arregloMovimientos, elementosArray)
               {
-                console.log(elementosArray);
-                let element;
-                for (let index = 0; index < arregloMovimientos.length; index++) //recorremos los movimientos
+                //console.log(elementosArray); //parametro que viene de la newData que esta viene de la BD
+                //console.log(arregloMovimientos); //arreglo de tipo de movimientos
+                let elementoPrincipal;
+                for (let index = 0; index < elementosArray.length; index++) //recorremos la newData
                 {
-                    element = arregloMovimientos[index]; //guardamos en variable el movimiento actual
-                    //console.log(element); //imprimimos el elemento actual del recorrido
-                    for(let i= 0; i < elementosArray.lenght; i++)
-                    {
-                       let ele = elementosArray[i]; 
-                       switch (ele) 
-                         {
-                             case element: //creamos 1 caso el cual recorrera todos los disponibles
-                                    console.log(element);
-                                    console.log(ele);
-                                 break; 
-                         }
-                    }
+                    elementoPrincipal = elementosArray[index];
+                    //console.log(elementoPrincipal);
+                    let elementoMovimiento = elementosArray[index].movimiento;
+                    
+                    //console.log(elementoMovimiento) //imprime los elementos del array de la bd
 
-                }     
+                    for (let i = 0; i < arregloMovimientos.length; i++)  //recorremos los movimientos
+                    {
+                         let  eleMovimiento = arregloMovimientos[i].movimiento;
+                             if ( elementoMovimiento == eleMovimiento)
+                              {
+                                //console.log(elementosArray.movimiento , x.movimiento) // imprime del principal el movimiento y de los movimientos
+                                  parseInt(i);
+                                 // console.log(y) //imprime
+                                  elementoPrincipal.indice = i
+                              }
+                    }
+                }  
+                //RECORRIDO PARA HACER LOS TDs
+                for (let x = 0; x < elementosArray.length; x++) {
+
+                    let tr = `<tr id = ${x}><td>${item.nombre}</td></tr>`
+                    let indice = elementosArray[x].indice; //seleccionamos el indice del elemento actual
+                    //console.log(indice); //imprime el indice
+                    console.log("vuelta numero" +  x)
+                    let longitud = elementosArray.length; //rescatamos la longitud
+                    for ( let k = 0; k < arregloMovimientos.length; k++) {
+                        console.log(k)
+                        let  indiceMovimiento = k; //recuperamos indice actual
+                        //console.log(tipoMovimiento);
+                        if(indiceMovimiento === indice + 1)
+                        {
+                          //console.log(elementosArray[x].cantidad)
+                          let td = `<td>${elementosArray[x].cantidad}</td>` ;
+                          //console.log(td);
+                          console.log("llegue aqui" + k)
+                          document.getElementById(x).innerHTML=td; // obtengo el id y sustituyo por el actual     
+                        }
+                        else{
+                            let td = `<td></td>` ;
+                          //console.log(td);
+                          console.log("llegue aqui" + k)
+                          document.getElementById(x).innerHTML=td; // obtengo el id y sustituyo por el actual     
+                        }
+
+                    }
+                    
+                }
               }
             
             agrupacionTDs(nuevoArregloMovimientos, newData);
@@ -760,7 +794,7 @@ export default {
 
 
     },
-    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd,TableComponent }
+    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label }
 }
 
 </script>
@@ -823,11 +857,11 @@ export default {
                     </tr>
                 </template>
                 <template #tbody>
-                    <tr v-for="item in modalData"  :key="item.id"> <!---recorrido de la data por filas-->
+                    <tr v-for="item in modalData"  :key="item.id" id="trColums"> <!---recorrido de la data por filas-->
                       <td>{{item.nombre}}</td> 
-                      <td id="GASTO"></td>
-                      <td id="SUPLEMENTO"></td>
-                      <td id="PRESUPUESTO"></td>
+                      <td id="cantidad"></td>
+                      <td></td>
+                      <td></td>
                       <td>foto</td>  
                       <td>{{item.fecha}}</td>         
                     </tr>
@@ -866,6 +900,11 @@ export default {
         </div>
     </template>
     <template #content>
+         <form>
+            <label>Cantidad</label>
+            <Input type="number"></Input>
+         </form>
+
          <SecondaryButton1  @click="closeModal" style="margin:1rem">
             Cerrar
          </SecondaryButton1>
