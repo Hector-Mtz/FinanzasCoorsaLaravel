@@ -6,7 +6,7 @@ import { pickBy } from 'lodash'
 
 import ButtonAdd from '@/Components/ButtonAdd.vue';
 import InputSearch from '@/Components/InputSearch.vue';
-import ItemObjectShow from '../ItemObjectShow.vue';
+import ItemObjectShow from '@/Components/ItemObjectShow.vue';
 import DepositosModal from './DepositosModal.vue';
 import ItemCliente from '../ItemCliente.vue';
 import ItemIngresoC from './ItemIngresoC.vue';

@@ -66,6 +66,12 @@ const logout = () => {
                                     Finanzas
                                 </JetNavLink>
                             </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <JetNavLink :href="route('catalogos.index')"
+                                    :active="route().current('catalogos.index')">
+                                    Catalogos
+                                </JetNavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -224,6 +230,10 @@ const logout = () => {
                         </JetResponsiveNavLink>
                         <JetResponsiveNavLink :href="route('ventas.index')" :active="route().current('ventas.index')">
                             Finanzas
+                        </JetResponsiveNavLink>
+                        <JetResponsiveNavLink :href="route('catalogos.index')"
+                            :active="route().current('catalogos.index')">
+                            Catalogos
                         </JetResponsiveNavLink>
                     </div>
 

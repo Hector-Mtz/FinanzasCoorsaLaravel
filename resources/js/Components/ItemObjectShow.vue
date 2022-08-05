@@ -1,5 +1,5 @@
 <script setup>
-import DangerButton from '../../../Components/DangerButton.vue';
+import DangerButton from '../Components/DangerButton.vue';
 
 const emit = defineEmits(['onShow'])
 

@@ -5,7 +5,7 @@ import { pickBy } from 'lodash'
 
 import ButtonAdd from '@/Components/ButtonAdd.vue';
 import InputSearch from '@/Components/InputSearch.vue';
-import ItemObjectShow from '../ItemObjectShow.vue';
+import ItemObjectShow from '@/Components/ItemObjectShow.vue';
 import FacturasModal from './FacturasModal.vue';
 import OcsFacturaModal from './OcsFacturaModal.vue';
 import ItemCliente from '../ItemCliente.vue';
@@ -106,7 +106,7 @@ watch(searchText, (newSearch) => {
     //Bounce de busqueda
     timeout = setTimeout(() => {
         search(newSearch)
-    }, 500);
+    }, 300);
 });
 
 

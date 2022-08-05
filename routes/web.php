@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\BancoController;
+use App\Http\Controllers\CatalogosController;
 use App\Http\Controllers\CecoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\GrupoConceptoController;
 use App\Http\Controllers\IngresoController;
 use App\Http\Controllers\OcController;
 use App\Http\Controllers\ServicioController;
@@ -64,6 +66,11 @@ Route::middleware([
     Route::delete('/ingresos/{ingreso}/facturas', [IngresoController::class, "destroyFactura"])->name("ingresos.facturas.destroy");
 
     Route::apiResource('bancos', BancoController::class)->only('index');
+
+    Route::get('catalogos', [CatalogosController::class, 'index'])->name('catalogos.index');
+    Route::get('clientes/listados', [ClienteController::class, 'listado'])->name('clientes.listado');
+    Route::apiResource('/servicios', ServicioController::class);
+    Route::apiResource('/grupo-conceptos', GrupoConceptoController::class);
 
     Route::get('/cecos/catalogo', [CecoController::class, 'catalogo'])->name('cecos.catalogo');
     Route::get('/servicios/catalogo', [ServicioController::class, 'catalogo'])->name('servicios.catalogo');

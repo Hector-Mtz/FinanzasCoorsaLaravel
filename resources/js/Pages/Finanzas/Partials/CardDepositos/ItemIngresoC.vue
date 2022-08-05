@@ -1,6 +1,6 @@
 <script setup>
 import DangerButton from '@/Components/DangerButton.vue';
-import ItemObjectShow from '../ItemObjectShow.vue';
+import ItemObjectShow from '@/Components/ItemObjectShow.vue';
 import { formatoMoney } from '../../../../utils/conversiones';
 
 const emit = defineEmits(['onShow'])

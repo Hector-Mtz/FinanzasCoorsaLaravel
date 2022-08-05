@@ -14,18 +14,25 @@ class GrupoConceptoController extends Controller
      */
     public function index()
     {
-        //
+        request()->validate([
+            'direction' => 'in:desc,asc'
+        ]);
+
+        $grupoConceptos =  GrupoConcepto::select('grupo_conceptos.id', 'grupo_conceptos.nombre');
+        if (request()->has('search')) {
+            $search =  strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
+            $grupoConceptos->where('grupo_conceptos.nombre', 'like', '%' . $search . '%');
+        }
+
+        if (request()->has('field')) {
+            $grupoConceptos->orderBy(request('field'), request('direction'));
+        } else {
+            $grupoConceptos->orderBy('grupo_conceptos.created_at', 'desc');
+        }
+        return response()->json($grupoConceptos->paginate(15));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -35,30 +42,15 @@ class GrupoConceptoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $newGrupo = $request->validate([
+            'nombre' => 'unique:grupo_conceptos,nombre'
+        ]);
+
+        return response()->json(GrupoConcepto::create($newGrupo));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\GrupoConcepto  $grupoConcepto
-     * @return \Illuminate\Http\Response
-     */
-    public function show(GrupoConcepto $grupoConcepto)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\GrupoConcepto  $grupoConcepto
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(GrupoConcepto $grupoConcepto)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -69,7 +61,12 @@ class GrupoConceptoController extends Controller
      */
     public function update(Request $request, GrupoConcepto $grupoConcepto)
     {
-        //
+        $newGrupo = $request->validate([
+            'nombre' => 'unique:grupo_conceptos,nombre,' . $grupoConcepto->id . ',id',
+        ]);
+        $grupoConcepto->update($newGrupo);
+
+        return response()->json($grupoConcepto);
     }
 
     /**
