@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Ceco;
 use App\Models\CECOConcepto;
 use App\Models\Concepto;
+use App\Models\TipoMovimiento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -63,12 +64,15 @@ class CECOConceptoController extends Controller
     {
         $object = DB::table(DB::raw('productos'))
         ->select(DB::raw(
-            'productos.cantidad  AS CANTIDAD,
-            cecos.nombre AS CECO,
-            clientes.nombre  AS CLIENTE,
-            tipo_movimientos.nombre  AS MOVIMIENTO,
-            conceptos.nombre  AS CONCEPTO,
-            grupo_conceptos.nombre  AS GRUPO_CONCEPTO'
+            'productos.id AS id,
+            productos.nombre AS nombre,
+            productos.cantidad  AS cantidad,
+            cecos.nombre AS ceco,
+            clientes.nombre  AS cliente,
+            tipo_movimientos.nombre  AS movimiento,
+            conceptos.nombre  AS concepto,
+            grupo_conceptos.nombre  AS grupoConcepto,
+            productos.created_at AS fecha'
         ))
         ->join('soli_movimientos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
         ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
@@ -81,7 +85,9 @@ class CECOConceptoController extends Controller
         ->where('conceptos.nombre','LIKE','%'.$x.'%',)
         ->get();
 
-        return $object;
+        $object2 = TipoMovimiento::all();
+        $arrayObject = [$object, $object2];
+        return $arrayObject ;
     }
 
     public function index()
