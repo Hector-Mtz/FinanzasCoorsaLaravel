@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Concepto;
+use App\Models\GrupoConcepto;
 use Illuminate\Http\Request;
 
 class ConceptoController extends Controller
@@ -12,20 +13,27 @@ class ConceptoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, GrupoConcepto $grupoConcepto)
     {
-        //
+        $request->validate([
+            'direction' => 'in:desc,asc'
+        ]);
+
+        $conceptos =  $grupoConcepto->conceptos()->select('conceptos.id', 'conceptos.nombre');
+        if ($request->has('search')) {
+            $search =  strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
+            $conceptos->where('conceptos.nombre', 'like', '%' . $search . '%');
+        }
+
+        if ($request->has('field')) {
+            $conceptos->orderBy(request('field'), request('direction'));
+        } else {
+            $conceptos->orderBy('conceptos.created_at', 'desc');
+        }
+        return response()->json($conceptos->paginate(15));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -33,32 +41,15 @@ class ConceptoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, GrupoConcepto $grupoConcepto)
     {
-        //
+        $newConcepto = $request->validate([
+            'nombre' => 'unique:cecos,nombre'
+        ]);
+
+        return response()->json($grupoConcepto->conceptos()->create($newConcepto));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Concepto  $concepto
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Concepto $concepto)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Concepto  $concepto
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Concepto $concepto)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -67,9 +58,14 @@ class ConceptoController extends Controller
      * @param  \App\Models\Concepto  $concepto
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Concepto $concepto)
+    public function update(Request $request, GrupoConcepto $grupoConcepto, Concepto $concepto)
     {
-        //
+        $newConcepto = $request->validate([
+            'nombre' => 'unique:cecos,nombre,' . $concepto->id . ',id',
+        ]);
+        $concepto->update($newConcepto);
+
+        return response()->json($concepto);
     }
 
     /**

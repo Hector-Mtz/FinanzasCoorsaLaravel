@@ -13,4 +13,10 @@ class GrupoConcepto extends Model
     protected $fillable = [
         'nombre'
     ];
+
+
+    public function conceptos()
+    {
+        return $this->hasMany(Concepto::class, 'grupo_concepto_id', 'id');
+    }
 }

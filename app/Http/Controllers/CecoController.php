@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ceco;
+use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,10 +14,24 @@ class CecoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, Cliente $cliente)
     {
-        //
+        $request->validate([
+            'direction' => 'in:desc,asc'
+        ]);
 
+        $cecos =  $cliente->cecos()->select('cecos.id', 'cecos.nombre');
+        if ($request->has('search')) {
+            $search =  strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
+            $cecos->where('cecos.nombre', 'like', '%' . $search . '%');
+        }
+
+        if ($request->has('field')) {
+            $cecos->orderBy(request('field'), request('direction'));
+        } else {
+            $cecos->orderBy('cecos.created_at', 'desc');
+        }
+        return response()->json($cecos->paginate(15));
     }
 
     /**
@@ -25,9 +40,13 @@ class CecoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Cliente $cliente)
     {
-        //
+        $newCeco = $request->validate([
+            'nombre' => 'unique:cecos,nombre'
+        ]);
+
+        return response()->json($cliente->cecos()->create($newCeco));
     }
 
 
@@ -40,9 +59,14 @@ class CecoController extends Controller
      * @param  \App\Models\Ceco  $ceco
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Ceco $ceco)
+    public function update(Request $request, Cliente $cliente, Ceco $ceco)
     {
-        //
+        $newCeco = $request->validate([
+            'nombre' => 'unique:cecos,nombre,' . $ceco->id . ',id',
+        ]);
+        $ceco->update($newCeco);
+
+        return response()->json($ceco);
     }
 
     /**

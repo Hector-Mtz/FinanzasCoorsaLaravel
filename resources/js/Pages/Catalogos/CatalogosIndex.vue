@@ -99,7 +99,7 @@ watch(searchTextGroup, (newSearch) => {
 
         <div class="px-3 py-3 fondo_general">
             <div class="grid-catalogos">
-                <CardGenerica :data="clientes" route-name="clientes" title="Clientes"
+                <CardGenerica :data="clientes" route-name="clientes" sub-route="cecos" title="Clientes"
                     @reload="searchClientes(searchTextCliente, clientes.current_page)">
                     <template #search>
                         <InputSearch v-model="searchTextCliente" />
@@ -110,7 +110,7 @@ watch(searchTextGroup, (newSearch) => {
                     </template>
 
                 </CardGenerica>
-                <CardGenerica :data="servicios" route-name="servicios" title="Servicios"
+                <CardGenerica :data="servicios" route-name="servicios" sub-route="montos" title="Servicios"
                     @reload="searchServicios(searchTextServ, servicios.current_page)">
                     <template #search>
                         <InputSearch v-model="searchTextServ" />
@@ -119,7 +119,7 @@ watch(searchTextGroup, (newSearch) => {
                         <PaginationAxios :pagination="servicios" @load-page="searchServicios(searchTextServ, $event)" />
                     </template>
                 </CardGenerica>
-                <CardGenerica :data="grupoConceptos" route-name="grupo-conceptos" title="Grupos"
+                <CardGenerica :data="grupoConceptos" route-name="grupo-conceptos" sub-route="conceptos" title="Grupos"
                     @reload="searchGrupos(searchTextGroup, grupoConceptos.current_page)">
                     <template #search>
                         <InputSearch v-model="searchTextGroup" />

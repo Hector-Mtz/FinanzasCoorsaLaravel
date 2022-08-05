@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Ceco extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'nombre',
+        'cliente_id'
+    ];
 }

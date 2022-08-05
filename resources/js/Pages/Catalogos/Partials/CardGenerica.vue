@@ -7,6 +7,7 @@ import Card from '@/Components/Card.vue';
 import ButtonAdd from '@/Components/ButtonAdd.vue';
 import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 import ListObjModal from './ListObjModal.vue';
+import SubcatalogoModal from './SubcatalogoModal.vue';
 
 defineEmits(['reload'])
 
@@ -19,15 +20,22 @@ const props = defineProps({
         type: String,
         required: true
     },
+    subRoute: {
+        type: String,
+        required: true
+    },
     title: {
         type: String,
         required: true
     }
 })
 const showingList = ref(false);
+const showingSubCatalogo = ref(false);
+const object = ref({});
 
 const showSubCatalogo = (obj) => {
-
+    object.value = obj;
+    showingSubCatalogo.value = true;
 }
 
 
@@ -63,6 +71,9 @@ const showSubCatalogo = (obj) => {
             <!--Modals -->
             <ListObjModal :title="props.title" :routeName="props.routeName" :show="showingList" :listObj="data.data"
                 @add="$emit('reload')" @close="showingList = false" />
+
+            <SubcatalogoModal :title="subRoute" :routeName="subRoute" :object="object" :show="showingSubCatalogo"
+                @close="showingSubCatalogo = false" />
             <!--Ends Modals-->
         </div>
     </Card>
