@@ -72,8 +72,8 @@ const showSubCatalogo = (obj) => {
             <ListObjModal :title="props.title" :routeName="props.routeName" :show="showingList" :listObj="data.data"
                 @add="$emit('reload')" @close="showingList = false" />
 
-            <SubcatalogoModal :title="subRoute" :routeName="subRoute" :object="object" :show="showingSubCatalogo"
-                @close="showingSubCatalogo = false" />
+            <SubcatalogoModal :title="subRoute === 'montos' ? 'Precios' : subRoute" :routeName="subRoute" :object="object"
+                :show="showingSubCatalogo" @close="showingSubCatalogo = false" />
             <!--Ends Modals-->
         </div>
     </Card>
