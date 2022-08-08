@@ -61,7 +61,7 @@ const titleModal = computed(() => {
         restForm();
         return "Nuevo " + props.title.slice(0, -1)
     } else {
-        if (props.title === "montos") {
+        if (props.routeName === "montos") {
             form.cantidad = props.object.cantidad;
         } else {
 
@@ -178,7 +178,7 @@ const update = () => {
         <template #content>
             <form @submit.prevent="createOrUpdate()">
                 <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
-                    <div v-if="props.title === 'montos'">
+                    <div v-if="props.routeName === 'montos'">
                         <JetLabel for="cantidad" value="Cantidad:" />
                         <Input id="cantidad" name="cantidad" type="text" pattern="^\d*(\.\d{0,2})?$"
                             v-model="form.cantidad" required maxlength="30" />

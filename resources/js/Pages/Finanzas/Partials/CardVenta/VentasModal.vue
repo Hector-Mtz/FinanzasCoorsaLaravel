@@ -6,6 +6,7 @@ import DialogModal from '@/Components/DialogModal.vue';
 import ItemVentaDatials from './ItemVentaDatials.vue';
 import TableComponent from '@/Components/Table.vue';
 import FormVentaModal from './FormVentaModal.vue';
+import { Inertia } from '@inertiajs/inertia';
 
 const emit = defineEmits(["close",])
 const props = defineProps({
@@ -33,6 +34,23 @@ const showFormVentas = (ventaSelect) => {
     showingFormVenta.value = true
 }
 // EN MODALS FUNCTION
+
+const activeIva = (ventaId) => {
+    axios.put(route('ventas.iva', ventaId)).
+        then(() => {
+            Inertia.visit(route('ventas.index'), {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['clientes', 'totalVentas', 'errors'],
+            })
+        }).catch(err => {
+            if (err.hasOwnProperty('errors') && err.response.data.hasOwnProperty('errors')) {
+                alert(err.response.data.message)
+            } else {
+                alert("ERROR ACTIVE IVA")
+            }
+        });
+}
 
 const close = () => {
     emit('close');
@@ -63,15 +81,15 @@ const close = () => {
                     <tr>
                         <th>CLIENTE</th>
                         <th>IVA</th>
-                        <th>TOTAL IVA</th>
                         <th>SUBTOTAL</th>
+                        <th>TOTAL IVA</th>
                         <th>TOTAL</th>
                         <th></th>
                     </tr>
                 </template>
                 <template #tbody>
                     <ItemVentaDatials v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta"
-                        @edit="showFormVentas($event)" />
+                        @edit="showFormVentas($event)" @activeIva="activeIva($event)" />
                 </template>
             </TableComponent>
             <!-- MODALS -->

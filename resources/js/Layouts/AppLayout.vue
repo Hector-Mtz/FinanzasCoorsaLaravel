@@ -36,7 +36,7 @@ const logout = () => {
 
         <JetBanner />
 
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen ">
             <nav class="bg-gray-900 border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -66,6 +66,11 @@ const logout = () => {
                                     Finanzas
                                 </JetNavLink>
                             </div>
+                            <!-- <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                <JetNavLink :href="route('users.index')" :active="route().current('users.index')">
+                                    Usuarios
+                                </JetNavLink>
+                            </div> -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <JetNavLink :href="route('catalogos.index')"
                                     :active="route().current('catalogos.index')">
@@ -230,6 +235,10 @@ const logout = () => {
                         </JetResponsiveNavLink>
                         <JetResponsiveNavLink :href="route('ventas.index')" :active="route().current('ventas.index')">
                             Finanzas
+                        </JetResponsiveNavLink>
+                        <JetResponsiveNavLink :href="route('catalogos.index')"
+                            :active="route().current('catalogos.index')">
+                            Usuarios
                         </JetResponsiveNavLink>
                         <JetResponsiveNavLink :href="route('catalogos.index')"
                             :active="route().current('catalogos.index')">

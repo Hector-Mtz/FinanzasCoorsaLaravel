@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    background-color: #010E1D;
+}
+
 :root{
     --blanco: #fff;
     --letrasLogin:gray;
@@ -206,7 +210,7 @@
 }
 
 #tabla thead{
-   
+
 }
 
 #tabla thead tr th{

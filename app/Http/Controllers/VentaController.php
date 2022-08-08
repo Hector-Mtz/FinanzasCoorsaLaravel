@@ -27,7 +27,7 @@ class VentaController extends Controller
                     $query->select(
                         "ventas.*",
                         "cecos_ventas.nombre as ceco",
-                        "montos.cantidad as total",
+                        "montos.cantidad as monto",
                         "montos.servicio_id"
                     )
                         ->join('montos', 'ventas.monto_id', '=', 'montos.id')
@@ -44,8 +44,8 @@ class VentaController extends Controller
             $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
             $clientes->where("clientes.nombre", "like", "%" . $search . "%");
         }
-
-        $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad),0) as total')
+        //UNO ES PARA EL TOTAL Y OTRA DEPENDE DEL STATUS DONDE SE ENCUENTRE
+        $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)),0) as total')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id');
         $totalVentasStatus = $totalVentas;
         if ($request->status_id != "") {
@@ -70,7 +70,7 @@ class VentaController extends Controller
     {
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
-            "nombre" =>  ["required", "max:100", "unique:ventas,nombre"],
+            "nombre" =>  ["required", "max:100"],
             "fechaInicial" =>  ["required", "date"],
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],
@@ -98,7 +98,7 @@ class VentaController extends Controller
     {
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
-            "nombre" =>  ["required", "max:100", "unique:ventas,nombre," . $venta->id . ",id"],
+            "nombre" =>  ["required", "max:100"],
             "fechaInicial" =>  ["required", "date"],
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],
@@ -108,6 +108,21 @@ class VentaController extends Controller
         ]);
         $venta->update($newVenta);
         return redirect()->back();
+    }
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Venta  $venta
+     * @return \Illuminate\Http\Response
+     */
+    public function activeIva(Request $request, Venta $venta)
+    {
+        $venta->iva = !$venta->iva;
+        $venta->save();
+        return response()->json([
+            'message' => 'updated'
+        ]);
     }
 
     /**
@@ -129,12 +144,15 @@ class VentaController extends Controller
             'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
         ]);
 
-        $ventas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad),0) as total')
+        $ventas = Venta::selectRaw('sum(montos.cantidad * ventas.periodos * ventas.cantidad  +
+            if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)) as total')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
             ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
             ->first();
-
+        if ($ventas->total === null) {
+            $ventas->total = 0;
+        }
         return response()->json($ventas);
     }
 
@@ -148,7 +166,8 @@ class VentaController extends Controller
         ]);
 
         $ventas = Venta::select('ventas.id', 'ventas.nombre')
-            ->selectRaw('ifnull(montos.cantidad * ventas.periodos * ventas.cantidad,0) as total')
+            ->selectRaw('ifnull(montos.cantidad * ventas.periodos * ventas.cantidad
+               + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0),0) as total')
             ->selectRaw('day(ventas.fechaInicial) as day')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->groupBy('ventas.id', 'day')
