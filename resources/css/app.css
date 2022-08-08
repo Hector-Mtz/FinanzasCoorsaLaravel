@@ -216,6 +216,7 @@
     width: 1%;
     color: white;
     background-color:var(--vemergent2);
+    text-align: center;
 }
 
 #tabla tbody tr td{
@@ -225,6 +226,7 @@
     width: 1%;
     color: white;
     background-color:var(--vemergent2);
+    text-align: center;
 }
 
 .active {

@@ -62,19 +62,19 @@ class CECOConceptoController extends Controller
 
     public function byClienteConcepto ($x, $y)
     {
-        $object = DB::table(DB::raw('productos'))
+        $object = DB::table(DB::raw('soli_movimientos'))
         ->select(DB::raw(
-            'productos.id AS id,
-            productos.nombre AS nombre,
-            productos.cantidad  AS cantidad,
+            'soli_movimientos.id AS id,
+            soli_movimientos.nombre AS nombre,
+            SUM(productos.cantidad) AS cantidad,
+            tipo_movimientos.nombre  AS movimiento,
             cecos.nombre AS ceco,
             clientes.nombre  AS cliente,
-            tipo_movimientos.nombre  AS movimiento,
             conceptos.nombre  AS concepto,
             grupo_conceptos.nombre  AS grupoConcepto,
-            productos.created_at AS fecha'
+            soli_movimientos.created_at AS fecha'
         ))
-        ->join('soli_movimientos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
+        ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
         ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
         ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', '=', 'ceco_conceptos.id')
         ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
@@ -83,6 +83,14 @@ class CECOConceptoController extends Controller
         ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', '=', 'grupo_conceptos.id')
         ->where('cecos.nombre','LIKE','%'.$y.'%',)
         ->where('conceptos.nombre','LIKE','%'.$x.'%',)
+        ->groupBy('soli_movimientos.id')
+        ->groupBy('soli_movimientos.nombre')
+        ->groupBy('tipo_movimientos.nombre')
+        ->groupBy('cecos.nombre')
+        ->groupBy('clientes.nombre')
+        ->groupBy('conceptos.nombre')
+        ->groupBy('grupo_conceptos.nombre')
+        ->groupBy('soli_movimientos.created_at')
         ->get();
 
         $object2 = TipoMovimiento::all();
