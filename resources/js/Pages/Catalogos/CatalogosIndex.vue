@@ -98,7 +98,7 @@ watch(searchTextGroup, (newSearch) => {
         </template>
 
         <div class="px-3 py-3 fondo_general">
-            <div class="grid-catalogos">
+            <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
                 <CardGenerica :data="clientes" route-name="clientes" sub-route="cecos" title="Clientes"
                     @reload="searchClientes(searchTextCliente, clientes.current_page)">
                     <template #search>
@@ -137,11 +137,3 @@ watch(searchTextGroup, (newSearch) => {
 </template>
 
 
-<style lang="css" scoped>
-.grid-catalogos {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px;
-    min-height: 95vh;
-}
-</style>
