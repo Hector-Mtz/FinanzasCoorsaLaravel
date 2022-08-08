@@ -14,18 +14,24 @@ class ServicioController extends Controller
      */
     public function index()
     {
-        //
+        request()->validate([
+            'direction' => 'in:desc,asc'
+        ]);
+
+        $servicios =  Servicio::select('servicios.id', 'servicios.nombre');
+        if (request()->has('search')) {
+            $search =  strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
+            $servicios->where('servicios.nombre', 'like', '%' . $search . '%');
+        }
+
+        if (request()->has('field')) {
+            $servicios->orderBy(request('field'), request('direction'));
+        } else {
+            $servicios->orderBy('servicios.created_at', 'desc');
+        }
+        return response()->json($servicios->paginate(15));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -35,18 +41,11 @@ class ServicioController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $newServicio = $request->validate([
+            'nombre' => 'unique:servicios,nombre'
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Servicio  $servicio
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Servicio $servicio)
-    {
-        //
+        return response()->json(Servicio::create($newServicio));
     }
 
 
@@ -59,7 +58,12 @@ class ServicioController extends Controller
      */
     public function update(Request $request, Servicio $servicio)
     {
-        //
+        $newServicio = $request->validate([
+            'nombre' => 'unique:servicios,nombre,' . $servicio->id . ',id',
+        ]);
+        $servicio->update($newServicio);
+
+        return response()->json($servicio);
     }
 
     /**

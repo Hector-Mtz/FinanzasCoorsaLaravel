@@ -115,7 +115,7 @@ async function getDaysStatus() {
                 obj.total = formatoMoney(obj.total);
             });
             resp.data[d].data = resp.data[d];
-            resp.data[d].title = formatoMoney(total);
+            resp.data[d].title = formatoMoney(total.toFixed(2));
         }
         total = formatoMoney(total);
         return { data: resp.data, color: colors[index], serie: series[index] }

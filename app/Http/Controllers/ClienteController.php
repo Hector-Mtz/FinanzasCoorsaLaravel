@@ -51,14 +51,25 @@ class ClienteController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+    public function listado()
     {
-        //
+        request()->validate([
+            'direction' => 'in:desc,asc'
+        ]);
+
+        $clientes =  Cliente::select('clientes.id', 'clientes.nombre');
+        if (request()->has('search')) {
+            $search =  strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
+            $clientes->where('clientes.nombre', 'like', '%' . $search . '%');
+        }
+
+        if (request()->has('field')) {
+            $clientes->orderBy(request('field'), request('direction'));
+        } else {
+            $clientes->orderBy('clientes.created_at', 'desc');
+        }
+        return response()->json($clientes->paginate(15));
     }
 
     /**
@@ -69,30 +80,13 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $newCliente = $request->validate([
+            'nombre' => 'unique:clientes,nombre'
+        ]);
+
+        return response()->json(Cliente::create($newCliente));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Cliente  $cliente
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Cliente $cliente)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Cliente  $cliente
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Cliente $cliente)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -103,7 +97,12 @@ class ClienteController extends Controller
      */
     public function update(Request $request, Cliente $cliente)
     {
-        //
+        $newCliente = $request->validate([
+            'nombre' => 'unique:clientes,nombre,' . $cliente->id . ',id',
+        ]);
+        $cliente->update($newCliente);
+
+        return response()->json($cliente);
     }
 
     /**

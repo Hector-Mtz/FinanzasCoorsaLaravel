@@ -8,7 +8,7 @@ import ButtonAdd from '@/Components/ButtonAdd.vue';
 import InputSearch from '@/Components/InputSearch.vue';
 import OcsModal from './OcsModal.vue';
 import ItemCliente from '../ItemCliente.vue';
-import ItemObjectShow from '../ItemObjectShow.vue';
+import ItemObjectShow from '@/Components/ItemObjectShow.vue';
 
 
 const emit = defineEmits(['showVentas'])

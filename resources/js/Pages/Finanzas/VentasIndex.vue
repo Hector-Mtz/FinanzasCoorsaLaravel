@@ -96,7 +96,7 @@ const chageComponent = () => {
         </template>
 
         <div class="px-3 py-3 fondo_general">
-            <div class="grid-ventas">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <Card>
                     <Ventas :clientes="props.clientes" @show-ventas="showingVentas = true" />
                     <div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3">
@@ -105,7 +105,7 @@ const chageComponent = () => {
                         </span>
                     </div>
                 </Card>
-                <div class="grid text-white">
+                <div class="col-span-2 grid text-white">
                     <table class="mb-4 md:mx-auto">
                         <thead>
                             <tr class="text-center">

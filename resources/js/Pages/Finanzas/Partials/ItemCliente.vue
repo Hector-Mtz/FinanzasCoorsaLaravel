@@ -1,8 +1,4 @@
 <script setup>
-import DangerButton from '../../../Components/DangerButton.vue';
-import ItemObjectShow from './ItemObjectShow.vue';
-
-
 const props = defineProps({
     cliente: {
         type: Object,
