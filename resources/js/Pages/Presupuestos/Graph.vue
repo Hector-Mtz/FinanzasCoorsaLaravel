@@ -13,6 +13,7 @@ import Button from '../../../../vendor/laravel/jetstream/stubs/inertia/resources
 import ButtonAdd from '../../Components/ButtonAdd.vue';
 import TableComponent from '@/Components/Table.vue';
 import Label from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Label.vue';
+import Input1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Input.vue';
 
 
 //variables GLOBALES
@@ -29,7 +30,7 @@ let root;
 let yRenderer;
 let xRenderer;
 let chart;
-let modalDatos = [];
+let modalDatos = [{grupoconcepto:''}];
 
 export default {
     props: {
@@ -432,33 +433,36 @@ export default {
                     while (i < nuevoArreglo.length) 
                     {
                       var elemento0 = nuevoArreglo[i]; //tomamos el elemento que esta en primera posicion
-                      //console.log(elemento0); 
+                      //console.log(elemento0); //imprime el arreglo con los movimientos
                       let newxy = elemento0.x + elemento0.y; //extraemos el xy del elemento 0
+                      //console.log(xy);
                       if (xy === newxy)  //comprobamos si son iguales los xy
                       {
                           //console.log("XY elemento0:" +newxy + " XY de otro elemento: "+ xy)
                           let e = 0
                           let k = 0
-                          while (e < elemento0.movimientos.length) 
+                          while (e < elemento0.movimientos.length)  //recorremos los movimientos
                           {
                               let z = elemento0.movimientos[e];
-                              let j = z.tipo
-                              let h = element.Movimiento
-                              if (j === h) 
+                              let j = z.tipo; // imprime el tipo del movimiento
+                              let h = element.Movimiento; //imprime el movimiento que tra de la BD
+                              //console.log(h); 
+                              if (j === h)  //si los movimientos son iguales
                               {
                                   z.cantidad = parseInt(z.cantidad) + parseInt(element.Cantidad)
-                                  k = 1
+                                  k = 1; //levantamos bandera
                                   break
                               }
                               e++
                           }
-                          if (k === 0) 
+                          if (k === 0)  //si la bandera es igual a 0
                           {
                               a = {
                                   tipo: element.Movimiento,
                                   cantidad: parseInt(element.Cantidad)
                                  }
-                                newxy.movimientos.push(a)
+                                 console.log(newxy);
+                                 elemento0.movimientos.push(a)
                           }
                           r = 1
                           break
@@ -739,37 +743,56 @@ export default {
                 }  
                 //RECORRIDO PARA HACER LOS TDs
                 for (let x = 0; x < elementosArray.length; x++) {
-
-                    let tr = `<tr id = ${x}><td>${item.nombre}</td></tr>`
+                    console.log(elementosArray);
+                    let tds = [];                    
                     let indice = elementosArray[x].indice; //seleccionamos el indice del elemento actual
                     //console.log(indice); //imprime el indice
-                    console.log("vuelta numero" +  x)
-                    let longitud = elementosArray.length; //rescatamos la longitud
+                    //console.log("vuelta numero" +  x)
+                    //let longitud = elementosArray.length; //rescatamos la longitud
                     for ( let k = 0; k < arregloMovimientos.length; k++) {
-                        console.log(k)
+                        //console.log(k)
                         let  indiceMovimiento = k; //recuperamos indice actual
                         //console.log(tipoMovimiento);
-                        if(indiceMovimiento === indice + 1)
+                        if(indiceMovimiento === indice)
                         {
                           //console.log(elementosArray[x].cantidad)
-                          let td = `<td>${elementosArray[x].cantidad}</td>` ;
+                          let td = '<td>'+elementosArray[x].cantidad+'</td>' ;
                           //console.log(td);
-                          console.log("llegue aqui" + k)
-                          document.getElementById(x).innerHTML=td; // obtengo el id y sustituyo por el actual     
+                          tds.push(td)
                         }
                         else{
                             let td = `<td></td>` ;
+                            tds.push(td)
                           //console.log(td);
-                          console.log("llegue aqui" + k)
-                          document.getElementById(x).innerHTML=td; // obtengo el id y sustituyo por el actual     
+                          //console.log("llegue aqui" + k)
+                          //document.getElementById(x).innerHTML=td; // obtengo el id y sustituyo por el actual     
                         }
 
                     }
                     
+                    let stringTds = tds.toString();
+                    console.log(elementosArray);
+                    let stringTdsSinComas = stringTds.replace(",", " ");  
+                    let stringTdsSinComas2 = stringTdsSinComas.replace(",", " ");  
+                    stringTdsSinComas2 += `<td>foto</td><td>${elementosArray[x].fecha}</td>`;
+                    console.log(stringTdsSinComas2)
+        
+                    let tr = `<tr><td>${elementosArray[x].nombre}</td>${stringTdsSinComas2}</tr>`
+                    //console.log(tr)
+                    let tabla = document.getElementById('tabla');
+                    
+                    function insertRow (table, tr)
+                    {
+                       var table = document.getElementById("tabla"); //seleccionamos la tabla por ID
+                       var row = table.insertRow(1);//insertamos los datos despues de la fila 1
+                       row.innerHTML = tr; //insertamos
+                    }
+
+                    insertRow(tabla,tr);
                 }
               }
             
-            agrupacionTDs(nuevoArregloMovimientos, newData);
+             agrupacionTDs(nuevoArregloMovimientos, newData);
 
              
              })
@@ -794,7 +817,7 @@ export default {
 
 
     },
-    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label }
+    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1 }
 }
 
 </script>
@@ -844,45 +867,36 @@ export default {
                         </span>
                     </div>
                 </div>
-            </div>
-            <TableComponent>
-                <template #thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th v-for="item in movimientos" :key="item.id">
-                           {{item.nombre}} <!--Listamos nombre de productos-->
-                        </th>
-                        <th>Evidencia</th>
-                        <th>Fecha de creación</th>
+        </div>
+        <table id="tabla">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th v-for="item in movimientos" :key="item.id">
+                   {{item.nombre}} <!--Listamos nombre de movimietos-->
+                </th>
+                <th>Evidencia</th>
+                <th>Fecha de creación</th>
+              </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td></td>
+                  <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
+                  <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
+                  <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
+                  <td colspan="2"></td>
+               </tr>
+               <tr>
+                   <td></td>
+                   <td></td>
+                   <td></td>
+                   <td></td>
+                   <td colspan="2"></td> 
                     </tr>
-                </template>
-                <template #tbody>
-                    <tr v-for="item in modalData"  :key="item.id" id="trColums"> <!---recorrido de la data por filas-->
-                      <td>{{item.nombre}}</td> 
-                      <td id="cantidad"></td>
-                      <td></td>
-                      <td></td>
-                      <td>foto</td>  
-                      <td>{{item.fecha}}</td>         
-                    </tr>
-  
-                    <tr>
-                       <td></td>
-                       <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
-                       <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
-                       <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
-                       <td colspan="2"></td>
-                    </tr>
-
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td colspan="2"></td> 
-                    </tr>
-                </template>
-            </TableComponent>
+            </tbody>
+        </table>
+       
          <SecondaryButton1  @click="closeModal" style="margin:1rem">
             Cerrar
          </SecondaryButton1>
@@ -900,9 +914,11 @@ export default {
         </div>
     </template>
     <template #content>
-         <form>
-            <label>Cantidad</label>
-            <Input type="number"></Input>
+        <pre>{{modalData}}</pre>
+         <form style="margin:1rem;">
+            <label style="color:white">Cantidad: </label>
+            <Input1 type="number"></Input1>
+            <label></label>
          </form>
 
          <SecondaryButton1  @click="closeModal" style="margin:1rem">
