@@ -102,7 +102,7 @@ watch(searchText, (newSearch) => {
                 <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente">
                     <ItemObjectShow v-for="venta in cliente.ventas" :key="venta.id" :data="venta"
                         @onShow="showOcs($event)">
-                        {{ venta.ceco + "-" + venta.nombre }}
+                        {{ venta.ceco + "-" + venta.servicio }}
                     </ItemObjectShow>
                 </ItemCliente>
             </div>

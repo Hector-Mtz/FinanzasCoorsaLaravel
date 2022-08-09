@@ -58,7 +58,7 @@ const close = () => {
 
 </script>
 <template>
-    <DialogModal :show="show" @close="close()">
+    <DialogModal :show="show" @close="close()" maxWidth="6xl">
         <template #title>
             <div class="flex flex-row">
                 <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
@@ -84,6 +84,7 @@ const close = () => {
                         <th>SUBTOTAL</th>
                         <th>TOTAL IVA</th>
                         <th>TOTAL</th>
+                        <th>FECHA INICIAL</th>
                         <th></th>
                     </tr>
                 </template>

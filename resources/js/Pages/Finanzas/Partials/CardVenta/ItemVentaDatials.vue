@@ -17,7 +17,7 @@ const ventaShow = computed(() => {
     const auxVenta = { ...props.venta };
     if (ivaChecked.value) {
         const totalIva = auxVenta.sub_total * IVA;
-        auxVenta.iva = formatoMoney(totalIva);
+        auxVenta.iva = formatoMoney(totalIva.toFixed(2));
         auxVenta.total = formatoMoney((auxVenta.sub_total + totalIva).toFixed(2));
 
     } else {
@@ -38,7 +38,7 @@ const activeIva = () => {
 </script>
 <template>
     <tr>
-        <td>{{ ventaShow.ceco + "-" + ventaShow.nombre }}</td>
+        <td>{{ ventaShow.ceco + "-" + ventaShow.servicio }}</td>
         <td>
             <div @click="activeIva()" class="w-10 h-5 px-2 mx-2 bg-yellow-600 hover:bg-yellow-500 rounded-xl">
                 <svg v-if="ivaChecked" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mx-auto" fill="none"
@@ -50,6 +50,7 @@ const activeIva = () => {
         <td>${{ ventaShow.sub_total }}</td>
         <td>${{ ventaShow.iva }}</td>
         <td>${{ ventaShow.total }}</td>
+        <td>{{ ventaShow.fechaInicial }}</td>
         <td>
             <SuccessButton v-if="ventaShow.status_id == 1" @click="emit('edit', props.venta)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">

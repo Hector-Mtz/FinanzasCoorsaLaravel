@@ -27,11 +27,14 @@ class VentaController extends Controller
                     $query->select(
                         "ventas.*",
                         "cecos_ventas.nombre as ceco",
+                        "servicios.nombre as servicio",
                         "montos.cantidad as monto",
                         "montos.servicio_id"
                     )
                         ->join('montos', 'ventas.monto_id', '=', 'montos.id')
-                        ->join('cecos as cecos_ventas', 'ventas.ceco_id', '=', 'cecos_ventas.id');
+                        ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
+                        ->join('cecos as cecos_ventas', 'ventas.ceco_id', '=', 'cecos_ventas.id')
+                        ->orderBy('ventas.fechaInicial');
 
                     if ($request->status_id != "") {
                         $query->where("ventas.status_id", "=", $request->status_id);
@@ -165,11 +168,13 @@ class VentaController extends Controller
             'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
         ]);
 
-        $ventas = Venta::select('ventas.id', 'ventas.nombre')
-            ->selectRaw('ifnull(montos.cantidad * ventas.periodos * ventas.cantidad
+        $ventas = Venta::select('ventas.id')
+            ->selectRaw('concat(cecos.nombre,"-",servicios.nombre) as nombre, ifnull(montos.cantidad * ventas.periodos * ventas.cantidad
                + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0),0) as total')
             ->selectRaw('day(ventas.fechaInicial) as day')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
+            ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
+            ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
             ->groupBy('ventas.id', 'day')
             ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
             ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
