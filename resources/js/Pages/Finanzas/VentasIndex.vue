@@ -55,7 +55,7 @@ const ventas = computed(() => {
     props.clientes.forEach(cliente => {
         let ventas = cliente.ventas
         ventas = ventas.map(venta => {
-            venta.total = venta.total * venta.periodos * venta.cantidad
+            venta.sub_total = venta.monto * venta.periodos * venta.cantidad
             return venta;
         });
         auxVentas = auxVentas.concat(ventas);
@@ -105,7 +105,7 @@ const chageComponent = () => {
                         </span>
                     </div>
                 </Card>
-                <div class="col-span-2 grid text-white">
+                <div class="grid col-span-2 text-white">
                     <table class="mb-4 md:mx-auto">
                         <thead>
                             <tr class="text-center">

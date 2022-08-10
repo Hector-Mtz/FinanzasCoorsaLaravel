@@ -16,9 +16,10 @@ return new class extends Migration
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('monto_id')->constrained('montos');
-            $table->string('nombre')->unique();
+            $table->string('nombre', 100);
             $table->date('fechaInicial');
             $table->date('fechaFinal');
+            $table->boolean('iva')->default(0);
             $table->smallInteger('periodos')->default(1);
             $table->smallInteger('cantidad');
             $table->foreignId('tipo_id')->constrained('tipos');

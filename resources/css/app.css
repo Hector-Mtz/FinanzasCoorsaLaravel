@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    background-color: #010E1D;
+}
+
 :root{
     --blanco: #fff;
     --letrasLogin:gray;
@@ -23,7 +27,7 @@
 }
 
 .fondo_menu{
-    background-image: url('../assets/img/LOGIN.jpg');
+    background-image: url('../img/LOGIN.jpg');
     background-size: cover;
     background-repeat: no-repeat;
 
@@ -206,7 +210,7 @@
 }
 
 #tabla thead{
-   
+
 }
 
 #tabla thead tr th{

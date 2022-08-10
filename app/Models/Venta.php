@@ -14,12 +14,17 @@ class Venta extends Model
         'monto_id',
         'nombre',
         'cantidad',
+        'iva',
         'fechaInicial',
         'fechaFinal',
         'periodos',
         'tipo_id',
         'status_id',
         'ceco_id',
+    ];
+
+    protected $casts = [
+        'iva' => 'boolean'
     ];
 
     public function ceco()

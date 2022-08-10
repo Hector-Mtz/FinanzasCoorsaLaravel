@@ -3,8 +3,7 @@ import { computed, ref } from "vue";
 import { formatoMoney, IVA } from "../../../../utils/conversiones";
 import SuccessButton from "@/Components/SuccessButton.vue";
 
-const emit = defineEmits(['edit'])
-const ivaChecked = ref(false);
+const emit = defineEmits(['edit', 'activeIva'])
 
 const props = defineProps({
     venta: {
@@ -12,37 +11,46 @@ const props = defineProps({
         required: true
     }
 })
+const ivaChecked = ref(props.venta.iva);
+
 const ventaShow = computed(() => {
     const auxVenta = { ...props.venta };
     if (ivaChecked.value) {
-        const totalIva = (auxVenta.total * IVA).toFixed(2);
-        auxVenta.iva = formatoMoney(totalIva);
-        auxVenta.sub_total = formatoMoney((auxVenta.total - totalIva).toFixed(2));
+        const totalIva = auxVenta.sub_total * IVA;
+        auxVenta.iva = formatoMoney(totalIva.toFixed(2));
+        auxVenta.total = formatoMoney((auxVenta.sub_total + totalIva).toFixed(2));
+
     } else {
         auxVenta.iva = "";
-        auxVenta.sub_total = "";
+        auxVenta.total = formatoMoney(auxVenta.sub_total.toFixed(2));
     }
-    auxVenta.total = formatoMoney(auxVenta.total.toFixed(2));
+    auxVenta.sub_total = formatoMoney(auxVenta.sub_total.toFixed(2));
 
     return auxVenta;
 });
 
+const activeIva = () => {
+    ivaChecked.value = !ivaChecked.value
+    emit('activeIva', props.venta.id);
+}
+
+
 </script>
 <template>
     <tr>
-        <td>{{ ventaShow.ceco + "-" + ventaShow.nombre }}</td>
+        <td>{{ ventaShow.ceco + "-" + ventaShow.servicio }}</td>
         <td>
-            <div @click="ivaChecked = !ivaChecked"
-                class="w-10 h-5 px-2 mx-2 bg-yellow-600 hover:bg-yellow-500 rounded-xl">
+            <div @click="activeIva()" class="w-10 h-5 px-2 mx-2 bg-yellow-600 hover:bg-yellow-500 rounded-xl">
                 <svg v-if="ivaChecked" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mx-auto" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
             </div>
         </td>
-        <td>${{ ventaShow.iva }}</td>
         <td>${{ ventaShow.sub_total }}</td>
+        <td>${{ ventaShow.iva }}</td>
         <td>${{ ventaShow.total }}</td>
+        <td>{{ ventaShow.fechaInicial }}</td>
         <td>
             <SuccessButton v-if="ventaShow.status_id == 1" @click="emit('edit', props.venta)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
