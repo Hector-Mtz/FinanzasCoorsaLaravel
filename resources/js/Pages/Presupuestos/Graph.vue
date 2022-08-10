@@ -774,10 +774,15 @@ export default {
                     console.log(elementosArray);
                     let stringTdsSinComas = stringTds.replace(",", " ");  
                     let stringTdsSinComas2 = stringTdsSinComas.replace(",", " ");  
-                    stringTdsSinComas2 += `<td>foto</td><td>${elementosArray[x].fecha}</td>`;
-                    console.log(stringTdsSinComas2)
+                    stringTdsSinComas2 += `<td>foto</td>
+                                           <td>${elementosArray[x].fecha}</td>`;
+                    stringTdsSinComas2+= `<td>button</td>`;
+                    console.log(stringTdsSinComas2) 
         
-                    let tr = `<tr><td>${elementosArray[x].nombre}</td>${stringTdsSinComas2}</tr>`
+                    let tr = `<tr>
+                                <td><a>${elementosArray[x].nombre}</a></td>
+                                ${stringTdsSinComas2}
+                              </tr>`
                     //console.log(tr)
                     let tabla = document.getElementById('tabla');
                     
@@ -804,7 +809,7 @@ export default {
             this.ModalMov = true;   //abrimos modal
         },
 
-                
+            
         nuevoGasto:function(){
             this.ModalNewGastos = true;
          },
@@ -877,6 +882,7 @@ export default {
                 </th>
                 <th>Evidencia</th>
                 <th>Fecha de creación</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -885,7 +891,7 @@ export default {
                   <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
                   <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
                   <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
-                  <td colspan="2"></td>
+                  <td colspan="3"></td>
                </tr>
                <tr>
                    <td></td>
@@ -894,6 +900,7 @@ export default {
                    <td></td>
                    <td colspan="2"></td> 
                     </tr>
+                <tr><InputSearch></InputSearch></tr>
             </tbody>
         </table>
        
