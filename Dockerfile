@@ -29,6 +29,8 @@ RUN cd /app && \
     php artisan storage:link
 RUN cd /app && \
     /usr/local/bin/npm ci
+RUN cd /app && \
+    /usr/local/bin/npm run build
 
 
 RUN chown -R www-data: /app
