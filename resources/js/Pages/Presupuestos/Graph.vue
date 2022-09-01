@@ -14,7 +14,8 @@ import ButtonAdd from '../../Components/ButtonAdd.vue';
 import TableComponent from '@/Components/Table.vue';
 import Label from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Label.vue';
 import Input1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Input.vue';
-
+import DangerButton from '@/Components/DangerButton.vue';
+import { isSet } from '@vue/shared';
 
 //variables GLOBALES
 let zoom = false;
@@ -33,6 +34,7 @@ let chart;
 let modalDatos = [{grupoconcepto:''}];
 
 export default {
+
     props: {
         clientes: Object,
         grupo_conceptos: Object,
@@ -46,6 +48,7 @@ export default {
             movimiento: { state: "PRESUPUESTO" },
             ModalMov:false,
             ModalNewGastos: false,
+            WatchProductos:false,
             data: [],
             modalData:modalDatos,
             movimientos:[], //array para listar los tipo de movimiento
@@ -59,6 +62,8 @@ export default {
         //console.log(clients);
         let grupo_conceptos = this.grupo_conceptos;
         //console.log(grupo_conceptos);
+        //console.log(this.WatchProductos);
+
         let datos = this.cantidades;
         root = am5.Root.new(this.$refs.chartdiv);
         root.setThemes([am5themes_Animated.new(root)]);
@@ -392,7 +397,7 @@ export default {
     methods: { 
         click:function(ev)
         {
-            zoom = true;
+           zoom = true;
            nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
            //console.log(nuevosValores);
            let x = nuevosValores.x;
@@ -672,6 +677,7 @@ export default {
            .then((resp)=>
            {
             //console.log(resp);
+             let button;
              modalDatos=resp.data[0];
              this.modalData = modalDatos;
              //console.log(this.modalData);
@@ -680,7 +686,7 @@ export default {
              let tipoMovimientos = this.movimientos;
              //console.log(tipoMovimientos);
              let nuevoArregloMovimientos = [];
-             for (let index = 0; index < tipoMovimientos.length; index++) //for para agrupar
+                for (let index = 0; index < tipoMovimientos.length; index++) //for para agrupar
              {
                 let element = tipoMovimientos[index];
                 //console.log(element);
@@ -712,26 +718,19 @@ export default {
                      nuevoArregloMovimientos.push(nuevoObj); //hacemos push al array principal
                 }  
                    
-             } 
-              //console.log(nuevoArregloMovimientos) // si regresa la variable llena
-              //this.agrupacionModal = nuevoArregloMovimientos;
-          
-              function agrupacionTDs(arregloMovimientos, elementosArray)
-              {
-                //console.log(elementosArray); //parametro que viene de la newData que esta viene de la BD
-                //console.log(arregloMovimientos); //arreglo de tipo de movimientos
+                } 
                 let elementoPrincipal;
-                for (let index = 0; index < elementosArray.length; index++) //recorremos la newData
+                for (let index = 0; index < newData.length; index++) //recorremos la newData
                 {
-                    elementoPrincipal = elementosArray[index];
+                    elementoPrincipal = newData[index];
                     //console.log(elementoPrincipal);
-                    let elementoMovimiento = elementosArray[index].movimiento;
+                    let elementoMovimiento = newData[index].movimiento;
                     
                     //console.log(elementoMovimiento) //imprime los elementos del array de la bd
 
-                    for (let i = 0; i < arregloMovimientos.length; i++)  //recorremos los movimientos
+                    for (let i = 0; i < nuevoArregloMovimientos.length; i++)  //recorremos los movimientos
                     {
-                         let  eleMovimiento = arregloMovimientos[i].movimiento;
+                         let  eleMovimiento = nuevoArregloMovimientos[i].movimiento;
                              if ( elementoMovimiento == eleMovimiento)
                               {
                                 //console.log(elementosArray.movimiento , x.movimiento) // imprime del principal el movimiento y de los movimientos
@@ -742,21 +741,24 @@ export default {
                     }
                 }  
                 //RECORRIDO PARA HACER LOS TDs
-                for (let x = 0; x < elementosArray.length; x++) {
-                    console.log(elementosArray);
+                let cambio = false;
+                for (let x = 0; x < newData.length; x++)
+                 {
+                    console.log(newData);
                     let tds = [];                    
-                    let indice = elementosArray[x].indice; //seleccionamos el indice del elemento actual
+                    let indice = newData[x].indice; //seleccionamos el indice del elemento actual
                     //console.log(indice); //imprime el indice
                     //console.log("vuelta numero" +  x)
                     //let longitud = elementosArray.length; //rescatamos la longitud
-                    for ( let k = 0; k < arregloMovimientos.length; k++) {
+                    for ( let k = 0; k < nuevoArregloMovimientos.length; k++) 
+                    {
                         //console.log(k)
                         let  indiceMovimiento = k; //recuperamos indice actual
                         //console.log(tipoMovimiento);
                         if(indiceMovimiento === indice)
                         {
                           //console.log(elementosArray[x].cantidad)
-                          let td = '<td>'+elementosArray[x].cantidad+'</td>' ;
+                          let td = '<td>'+newData[x].cantidad+'</td>' ;
                           //console.log(td);
                           tds.push(td)
                         }
@@ -771,16 +773,26 @@ export default {
                     }
                     
                     let stringTds = tds.toString();
-                    console.log(elementosArray);
+                    console.log(newData);
                     let stringTdsSinComas = stringTds.replace(",", " ");  
                     let stringTdsSinComas2 = stringTdsSinComas.replace(",", " ");  
                     stringTdsSinComas2 += `<td>foto</td>
-                                           <td>${elementosArray[x].fecha}</td>`;
-                    stringTdsSinComas2+= `<td>button</td>`;
+                                           <td>${newData[x].fecha}</td>`;
+                    stringTdsSinComas2+= `
+                    <td>
+                      <Button id="watch${newData[x].id}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4" viewBox="0 0 16 16" >
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"></path>
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
+                        </svg>
+                      </Button>
+                    </td>`;
                     console.log(stringTdsSinComas2) 
         
                     let tr = `<tr>
-                                <td><a>${elementosArray[x].nombre}</a></td>
+                                <td>
+                                  <a>${newData[x].nombre}</a>
+                                </td>
                                 ${stringTdsSinComas2}
                               </tr>`
                     //console.log(tr)
@@ -793,13 +805,19 @@ export default {
                        row.innerHTML = tr; //insertamos
                     }
 
-                    insertRow(tabla,tr);
-                }
-              }
-            
-             agrupacionTDs(nuevoArregloMovimientos, newData);
+                    insertRow(tabla,tr); //insertamos en la tabla los datos anteriores
 
-             
+                    button = document.getElementById(`watch${newData[x].id}`); //seleccionamos el boton que hara la funcion
+                    
+                    let idvar = newData[x].id;
+                    //console.log(idvar)
+                    
+                    console.log(this.verProductos);
+
+                    button.addEventListener("click", this.verProductos); //le asignamos un addevent al click y le pasamos la funcion vuejs
+                    
+              }
+
              })
             .catch(function (error)
            {
@@ -809,6 +827,12 @@ export default {
             this.ModalMov = true;   //abrimos modal
         },
 
+        verProductos:function(id)
+        {
+            console.log(id);
+
+            this.WatchProductos = true;
+        },
             
         nuevoGasto:function(){
             this.ModalNewGastos = true;
@@ -818,11 +842,21 @@ export default {
         {
            this.ModalMov=false;
            this.ModalNewGastos = false;
+           this.WatchProductos = false;
         }
 
 
     },
-    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1 }
+    components: { ButtonPres,
+     ModalGastos,
+     SecondaryButton1,
+     Button, 
+     ButtonAdd, 
+     TableComponent, 
+     Label, 
+     Input1,
+     DangerButton 
+      }
 }
 
 </script>
@@ -886,6 +920,7 @@ export default {
               </tr>
             </thead>
             <tbody>
+               <tr></tr>
                <tr>
                   <td></td>
                   <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
@@ -895,12 +930,12 @@ export default {
                </tr>
                <tr>
                    <td></td>
-                   <td></td>
-                   <td></td>
-                   <td></td>
-                   <td colspan="2"></td> 
+                   <td>total</td>
+                   <td>total</td>
+                   <td>total</td>
+                   <td colspan="3"></td> 
                     </tr>
-                <tr><InputSearch></InputSearch></tr>
+                <tr></tr>
             </tbody>
         </table>
        
@@ -927,12 +962,30 @@ export default {
             <Input1 type="number"></Input1>
             <label></label>
          </form>
-
          <SecondaryButton1  @click="closeModal" style="margin:1rem">
             Cerrar
          </SecondaryButton1>
     </template>
   </ModalGastos>
 
+
+    <ModalGastos :show="WatchProductos" @close="closeModal">
+    <template #title>
+        <div class="modalPart1">
+         <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
+             <span class="block font-bold text-center text-white">
+                 Productos de:  {{modalData}}
+             </span>
+         </div>
+        </div>
+    </template>
+    <template #content>
+        
+
+         <SecondaryButton1  @click="closeModal" style="margin:1rem">
+            Cerrar
+         </SecondaryButton1>
+    </template>
+  </ModalGastos>
   <div class="graph" ref="chartdiv">  </div>
 </template>

@@ -14,12 +14,15 @@
 
         <script type="text/javascript" src="{{ asset('assets/js/dropdown.js')}}"></script>
 
-
+        <!-- JQUERY -->
+       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
         <!-- Scripts -->
         @routes
         @vite('resources/js/app.js')
         @inertiaHead
 
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     </head>
     <body class="font-sans antialiased">
         @inertia

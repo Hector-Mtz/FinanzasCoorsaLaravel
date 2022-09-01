@@ -188,6 +188,14 @@ body {
     border-color: #687FA4;
 }
 
+#watch {
+    padding: 10%;
+    background-color: #BB1313;
+    border-radius: 50%;
+    padding-left: 11px;
+    padding-right: 12px;
+}
+
 .tabs-header {
   display: flex;
   justify-content: space-between;
