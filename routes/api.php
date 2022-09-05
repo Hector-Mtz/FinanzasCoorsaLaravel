@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CECOConceptoController;
+use App\Http\Controllers\ProductoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,6 @@ Route::get('/ceco_concepto/{x}/{y}',[CECOConceptoController::class, 'byCecoConce
 
 Route::get('/cliente_concepto/{x}/{y}',[CECOConceptoController::class, 'byClienteConcepto'])->name('cliente_concepto');
 
-Route::get('/productos/{x}',[CECOConceptoController::class, 'byClienteConcepto'])->name('productos');
+Route::get('/productos/{x}',[ProductoController::class, 'byProductos'])->name('productos');
+
+Route::get('/cecos_grupoconcepto/{x}/{y}',[CECOConceptoController::class, 'byCecosGrupoConcepot'])->name('cecos_grupoconcepto');

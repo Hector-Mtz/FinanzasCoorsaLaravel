@@ -31,7 +31,7 @@ const changeDate = (newDate) => {
     <AppLayout title="Presupuestos">
         <template #header>
               <div class="flex items-center justify-around">
-                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                    <h2 class="text-xl font-semibold leading-tight text-white">
                         Presupuestos
                     </h2>
                     <ButtonCalendar :month="date.month" :year="date.year" @change-date="changeDate($event)"/> 
