@@ -799,7 +799,7 @@ export default {
             
              agrupacionTDs(nuevoArregloMovimientos, newData);
 
-             
+             //cambio
              })
             .catch(function (error)
            {
