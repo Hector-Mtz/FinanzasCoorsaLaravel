@@ -52,7 +52,8 @@ export default {
             data: [],
             modalData:modalDatos,
             movimientos:[], //array para listar los tipo de movimiento
-            agrupacionModal:[]
+            agrupacionModal:[],
+            productos:[]
         };
     },
     
@@ -781,7 +782,7 @@ export default {
                     stringTdsSinComas2+= `
                     <td>
                       <Button id="watch${newData[x].id}">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4" viewBox="0 0 16 16" >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 eye" viewBox="0 0 16 16" >
                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"></path>
                             <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
                         </svg>
@@ -796,6 +797,8 @@ export default {
                                 ${stringTdsSinComas2}
                               </tr>`
                     //console.log(tr)
+
+
                     let tabla = document.getElementById('tabla');
                     
                     function insertRow (table, tr)
@@ -811,11 +814,14 @@ export default {
                     
                     let idvar = newData[x].id;
                     //console.log(idvar)
+                   
                     
-                    console.log(this.verProductos);
+                   //le asignamos un addevent al click y le pasamos la funcion vuejs
 
-                    button.addEventListener("click", this.verProductos); //le asignamos un addevent al click y le pasamos la funcion vuejs
-                    
+                    button.addEventListener('click',(e) =>  {
+                        console.log(e)
+                        this.verProductos(idvar)
+                    }); 
               }
 
              })
@@ -829,9 +835,18 @@ export default {
 
         verProductos:function(id)
         {
-            console.log(id);
-
-            this.WatchProductos = true;
+          console.log(id);
+            axios.get('api/productos/'+id,{ob: id}) //enviamos el dato a la ruta de la api
+           .then((resp)=>
+             {
+               console.log(resp);
+               this.WatchProductos = true;
+               this.productos=resp.data;
+             })
+            .catch(function (error)
+           {
+            console.log(error);
+           }); 
         },
             
         nuevoGasto:function(){
@@ -841,10 +856,22 @@ export default {
         closeModal:function()
         {
            this.ModalMov=false;
-           this.ModalNewGastos = false;
-           this.WatchProductos = false;
-        }
+        },
 
+        closeModalNewGastos: function ()
+        {
+            this.ModalNewGastos = false;
+        },
+
+        closeModalProductos: function ()
+        {
+            this.WatchProductos = false;
+        },
+
+        filtroCECOS:function()
+        {
+           console.log("hola");
+        }
 
     },
     components: { ButtonPres,
@@ -868,8 +895,8 @@ export default {
  }
 </style>
 <template>
-  <div class="group">
-      <ButtonPres class="buttonCECO" style="background-color:#111F2E">CECO</ButtonPres>
+     <div class="group">
+           <ButtonPres class="buttonCECO" @click="filtroCECOS" style="background-color:#111F2E">CECO</ButtonPres>
            <ButtonPres class="buttonCON" style="background-color:#111F2E">CON.</ButtonPres> 
               <div class="dropdown" >
                   <button onclick="myFunction()" class="dropbtn">$</button>
@@ -881,7 +908,7 @@ export default {
                       <button id="DISPONIBLE" @click="cambiar('DISPONIBLE')">Disponible</button>     
                   </div>
               </div>
-  </div>
+     </div>
   <ModalGastos :show="ModalMov" @close="closeModal">
     <template #title>
        <div class="modalPart1">
@@ -962,7 +989,7 @@ export default {
             <Input1 type="number"></Input1>
             <label></label>
          </form>
-         <SecondaryButton1  @click="closeModal" style="margin:1rem">
+         <SecondaryButton1  @click="closeModalNewGastos" style="margin:1rem">
             Cerrar
          </SecondaryButton1>
     </template>
@@ -974,15 +1001,28 @@ export default {
         <div class="modalPart1">
          <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
              <span class="block font-bold text-center text-white">
-                 Productos de:  {{modalData}}
+                 Productos de solicitud:  {{productos[0].soli_movimiento_id}}
              </span>
          </div>
         </div>
     </template>
     <template #content>
-        
+        <table id="tabla2">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+               <tr v-for="item in productos" :key="item.id">
+                  <td>{{item.nombre}}</td>
+                  <td>{{item.cantidad}}</td>
+                </tr>
+            </tbody>
+        </table>
 
-         <SecondaryButton1  @click="closeModal" style="margin:1rem">
+         <SecondaryButton1  @click="closeModalProductos" style="margin:1rem">
             Cerrar
          </SecondaryButton1>
     </template>
