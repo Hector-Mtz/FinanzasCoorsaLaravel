@@ -13,6 +13,7 @@ var props = defineProps({
     clientes:Object,
     grupo_conceptos: Object,
     cantidades:Object,
+    movimientos:Object
 });
 
 
@@ -52,6 +53,7 @@ const changeDate = (newDate) => {
                       </div>
                     </div> 
                       <Graph 
+                      :movimientos = movimientos
                       :clientes= clientes
                       :grupo_conceptos = grupo_conceptos
                       :cantidades = cantidades

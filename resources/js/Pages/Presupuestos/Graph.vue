@@ -39,6 +39,7 @@ export default {
         clientes: Object,
         grupo_conceptos: Object,
         cantidades: Object,
+        movimientos:Object
     },
     components: {
         ButtonPres,
@@ -781,7 +782,7 @@ export default {
                                            <td>${newData[x].fecha}</td>`;
                     stringTdsSinComas2+= `
                     <td>
-                      <Button id="watch${newData[x].id}">
+                      <Button id="watch${newData[x].id}" class="watch">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 eye" viewBox="0 0 16 16" >
                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"></path>
                             <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
@@ -849,7 +850,8 @@ export default {
            }); 
         },
             
-        nuevoGasto:function(){
+        nuevoGasto:function()
+         {
             this.ModalNewGastos = true;
          },
 
@@ -977,13 +979,12 @@ export default {
            <div class="modalPart1">
          <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
              <span class="block font-bold text-center text-white">
-                 Nuevo movimiento en grupo:  {{modalData[0].grupoConcepto}}
+                  
              </span>
          </div>
         </div>
     </template>
     <template #content>
-        <pre>{{modalData}}</pre>
          <form style="margin:1rem;">
             <label style="color:white">Cantidad: </label>
             <Input1 type="number"></Input1>
