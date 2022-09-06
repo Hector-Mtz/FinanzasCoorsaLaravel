@@ -11,7 +11,7 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql zip gd
 RUN mkdir -p /run/nginx
 
 COPY docker/nginx.conf /etc/nginx/nginx.conf
-COPY docker/php.ini /etc/php/php.ini
+COPY docker/php.ini /usr/local/etc/php/php.ini
 
 RUN mkdir -p /app
 COPY . /app
