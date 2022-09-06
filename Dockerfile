@@ -6,7 +6,7 @@ ENV TZ=UTC
 RUN apk add --update bash libpng-dev libxml2-dev zip unzip curl sqlite supervisor npm libzip-dev
 RUN npm install -g npm@latest
 RUN apk add --no-cache nginx wget
-RUN docker-php-ext-install mysqli pdo pdo_mysql zip
+RUN docker-php-ext-install mysqli pdo pdo_mysql zip gd
 
 RUN mkdir -p /run/nginx
 
