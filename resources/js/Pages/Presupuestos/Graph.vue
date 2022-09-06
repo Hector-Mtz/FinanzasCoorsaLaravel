@@ -16,6 +16,7 @@ import Label from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/
 import Input1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Input.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import { isSet } from '@vue/shared';
+import SelectComponent from '../../Components/SelectComponent.vue';
 
 //variables GLOBALES
 let zoom = false;
@@ -50,11 +51,13 @@ export default {
             ModalMov:false,
             ModalNewGastos: false,
             WatchProductos:false,
+            ModalNewProducto:false,
             data: [],
             modalData:modalDatos,
             movimientos:[], //array para listar los tipo de movimiento
             agrupacionModal:[],
-            productos:[]
+            productos:[],
+            idMovimientoForm:0,
         };
     },
     
@@ -850,9 +853,15 @@ export default {
            }); 
         },
             
-        nuevoGasto:function()
+        nuevoRegistro:function(idMovimiento)
          {
             this.ModalNewGastos = true;
+            this.idMovimientoForm = idMovimiento;
+         },
+
+        nuevoProducto:function()
+         {
+            this.ModalNewProducto = true;
          },
 
         closeModal:function()
@@ -870,22 +879,18 @@ export default {
             this.WatchProductos = false;
         },
 
+        closeModalNewProducto: function ()
+        {
+            this.ModalNewProducto = false;
+        },
+
         filtroCECOS:function()
         {
-           console.log("hola");
+           
         }
 
     },
-    components: { ButtonPres,
-     ModalGastos,
-     SecondaryButton1,
-     Button, 
-     ButtonAdd, 
-     TableComponent, 
-     Label, 
-     Input1,
-     DangerButton 
-      }
+    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1, DangerButton, SelectComponent }
 }
 
 </script>
@@ -952,9 +957,9 @@ export default {
                <tr></tr>
                <tr>
                   <td></td>
-                  <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
-                  <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
-                  <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
+                  <td v-for="item in movimientos" :key="item.id">
+                    <ButtonAdd class="h-5" @click="nuevoRegistro(item.id)" />
+                  </td>
                   <td colspan="3"></td>
                </tr>
                <tr>
@@ -979,25 +984,59 @@ export default {
            <div class="modalPart1">
          <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
              <span class="block font-bold text-center text-white">
-                  
+                  Nuevo Registro
              </span>
          </div>
         </div>
     </template>
     <template #content>
-         <form style="margin:1rem;">
-            <label style="color:white">Cantidad: </label>
-            <Input1 type="number"></Input1>
-            <label></label>
+         <form class="formNewGastos">
+            <div>
+                <label class ="labelForm">Nombre de solicitud: </label>
+                <Input1 type="text"></Input1>
+            </div>
+
+           <div>
+             <label class ="labelForm" >TIPO DE MOVIMIENTO:</label>
+              <Input1 type="text" disabled  :placeholder="idMovimientoForm"></Input1>
+           </div>
          </form>
+         <ButtonAdd class="h-5" @click="nuevoProducto()" />
+         <br>
          <SecondaryButton1  @click="closeModalNewGastos" style="margin:1rem">
             Cerrar
          </SecondaryButton1>
     </template>
   </ModalGastos>
 
+  <ModalGastos :show="ModalNewProducto" @close="closeModal">
+    <template #title>
+           <div class="modalPart1">
+         <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
+             <span class="block font-bold text-center text-white">
+                  Nuevo Producto
+             </span>
+         </div>
+        </div>
+    </template>
+    <template #content>
+         <form class="formNewGastos">
+            <div>
+              <label class ="labelForm" >Nombre de producto:</label>
+              <Input1 type="text"></Input1>
+            </div>
+           <div>
+              <label class ="labelForm" >Cantidad de producto:</label>
+              <Input1 type="number" :placeholder="'$0.00'"></Input1>
+           </div> 
+         </form>
+         <SecondaryButton1  @click="closeModalNewProducto" style="margin:1rem">
+            Cerrar
+         </SecondaryButton1>
+    </template>
+  </ModalGastos>
 
-    <ModalGastos :show="WatchProductos" @close="closeModal">
+  <ModalGastos :show="WatchProductos" @close="closeModal">
     <template #title>
         <div class="modalPart1">
          <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">

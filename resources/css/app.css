@@ -248,6 +248,16 @@ body {
     text-align: center;
 }
 
+.formNewGastos {
+    margin:1rem;
+    display: grid;
+    grid-template-columns: repeat(2,50%);
+}
+
+.labelForm{
+    color: var(--blanco);
+    font-family: var(--fuentePrincipal);
+}
 
 #tabla2 
 {
