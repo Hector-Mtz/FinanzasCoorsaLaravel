@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TipoMovimiento;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TipoMovimientoController extends Controller
 {
@@ -16,6 +17,18 @@ class TipoMovimientoController extends Controller
     {
         //
     }
+
+    public function consultaMovimiento ($id)
+     {
+        $object = DB::table(DB::raw('tipo_movimientos'))
+        ->select(DB::raw(
+            'nombre'
+        ))
+        ->where('id','LIKE','%'.$id.'%',)
+        ->get();
+
+        return $object;
+     }
 
     /**
      * Show the form for creating a new resource.

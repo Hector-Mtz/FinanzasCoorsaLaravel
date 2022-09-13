@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CECOConceptoController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\TipoMovimientoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,3 +28,5 @@ Route::get('/cliente_concepto/{x}/{y}',[CECOConceptoController::class, 'byClient
 Route::get('/productos/{x}',[ProductoController::class, 'byProductos'])->name('productos');
 
 Route::get('/cecos_grupoconcepto/{x}/{y}',[CECOConceptoController::class, 'byCecosGrupoConcepot'])->name('cecos_grupoconcepto');
+
+Route::get('/consultaMovimiento/{x}',[TipoMovimientoController::class, 'consultaMovimiento'])->name('consultaMovimiento');

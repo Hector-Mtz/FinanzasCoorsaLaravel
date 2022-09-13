@@ -203,6 +203,30 @@ body {
     padding-right: 12px;
 }
 
+
+.buttonAdd {
+    background: transparent;
+    color: white;
+}
+
+.buttonAdd:hover{
+    font-weight: bold; 
+    background-color: #40BB6E;
+}
+
+.buttonRemove
+{
+    font-weight: bold; 
+    background: transparent;
+    color: white;
+}
+
+.buttonRemove:hover
+{
+    background-color: #d14242;
+    color: white;
+}
+
 .tabs-header {
   display: flex;
   justify-content: space-between;

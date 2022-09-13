@@ -4,19 +4,25 @@ import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import * as am5hierarchy from  '@amcharts/amcharts5/hierarchy';
 import { watch, ref, onMounted  } from '@vue/runtime-core';
-import { Inertia } from '@inertiajs/inertia';
+import { reactive } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import axios from 'axios';
 import ModalGastos from '@/Components/DialogModal.vue';
 import ButtonPres from '../../Components/ButtonPres.vue';
-import SecondaryButton1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/SecondaryButton.vue';
-import Button from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Button.vue';
+import SecondaryButton1 from '@/Jetstream/SecondaryButton.vue';
+import Button from '@/Jetstream/Button.vue';
 import ButtonAdd from '../../Components/ButtonAdd.vue';
 import TableComponent from '@/Components/Table.vue';
-import Label from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Label.vue';
-import Input1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Input.vue';
+import Label from '@/Jetstream/Label.vue';
+import Input1 from '@/Jetstream/Input.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import { isSet } from '@vue/shared';
-import SelectComponent from '../../Components/SelectComponent.vue';
+import SelectComponent from '@/Components/SelectComponent.vue';
+import Table from '../../Components/Table.vue';
+import Checkbox from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/Checkbox.vue';
+import Checkbox1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/Checkbox.vue';
+import DangerButton1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/DangerButton.vue';
 
 //variables GLOBALES
 let zoom = false;
@@ -33,6 +39,7 @@ let yRenderer;
 let xRenderer;
 let chart;
 let modalDatos = [{grupoconcepto:''}];
+let idMovimientoForm; 
 
 export default {
 
@@ -40,7 +47,8 @@ export default {
         clientes: Object,
         grupo_conceptos: Object,
         cantidades: Object,
-        movimientos:Object
+        movimientos:Object,
+        solicitudes:Object
     },
     components: {
         ButtonPres,
@@ -58,7 +66,19 @@ export default {
             agrupacionModal:[],
             productos:[],
             idMovimientoForm:0,
+            nombreMovimiento:"",
+            filas:[]
         };
+    },
+
+    setup()
+    {
+        const formSolicitud = reactive({
+          nombre: "",
+          tipo_movimiento_id: 0,
+          })
+
+          return { formSolicitud }
     },
     
     mounted() {
@@ -855,14 +875,24 @@ export default {
             
         nuevoRegistro:function(idMovimiento)
          {
-            this.ModalNewGastos = true;
-            this.idMovimientoForm = idMovimiento;
+            axios.get('/api/consultaMovimiento/'+idMovimiento,{ob: idMovimiento}) //enviamos el dato a la ruta de la api
+           .then((resp)=>
+             {
+               console.log(resp);
+               this.ModalNewGastos = true;
+               this.idMovimientoForm = idMovimiento;
+               //console.log(resp.data[0].nombre);
+               this.nombreMovimiento = resp.data[0].nombre;
+               //console.log(this.nombreMovimiento);
+               
+             })
+            .catch(function (error)
+           {
+            console.log(error);
+           });
+
          },
 
-        nuevoProducto:function()
-         {
-            this.ModalNewProducto = true;
-         },
 
         closeModal:function()
         {
@@ -887,10 +917,40 @@ export default {
         filtroCECOS:function()
         {
            
+        },
+
+        addRow:function()
+        {
+            console.log("Añade fila");
+            this.filas.push({
+                nombreProducto:'',
+                cantidad:0,
+                costo:0,
+                iva:'',
+                total: 0
+            });
+
+            
+        },
+
+        removeRow:function()
+        {
+            console.log("Quita fila");
+            this.filas.pop();
+        },
+
+
+        enviarFormSolicitud:function()
+        {
+            //console.log(this.idMovimientoForm); //si recibe el id
+            console.log(this.filas);
+            this.formSolicitud.tipo_movimiento_id = this.idMovimientoForm;
+            //console.log(this.formSolicitud);
+            //Inertia.post('/users', );
         }
 
     },
-    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1, DangerButton, SelectComponent }
+    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1, DangerButton, SelectComponent, Table, Checkbox, Checkbox1, DangerButton1 }
 }
 
 </script>
@@ -990,20 +1050,60 @@ export default {
         </div>
     </template>
     <template #content>
-         <form class="formNewGastos">
+         <form class="formNewGastos" v-on:submit.prevent="enviarFormSolicitud">
             <div>
                 <label class ="labelForm">Nombre de solicitud: </label>
-                <Input1 type="text"></Input1>
+                <Input1 v-model="formSolicitud.nombre" type="text"></Input1>
             </div>
 
            <div>
              <label class ="labelForm" >TIPO DE MOVIMIENTO:</label>
-              <Input1 type="text" disabled  :placeholder="idMovimientoForm"></Input1>
+              <Input1 type="text" disabled v-model="formSolicitud.tipo_movimiento_id" :value="nombreMovimiento" ></Input1>
            </div>
+
+           <div style="margin-top: 15px;">
+              <SecondaryButton1 class="buttonAdd" @click="addRow()">+</SecondaryButton1>
+              <SecondaryButton1 class="buttonRemove" @click="removeRow()">-</SecondaryButton1>
+           </div>
+           <br>
+
+
+            <SecondaryButton1 style="float:right; width: min-content; margin-top: 10px;" class="mb-3 btn btn-primary" type="submit">Enviar</SecondaryButton1>
          </form>
-         <ButtonAdd class="h-5" @click="nuevoProducto()" />
-         <br>
-         <SecondaryButton1  @click="closeModalNewGastos" style="margin:1rem">
+
+         <table id="tabla" style="margin-top:5px;">
+              <thead>
+                <tr>
+                  <th>Nombre de producto</th>
+                  <th>Cantidad</th>
+                  <th>$</th>
+                  <th>IVA</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody >
+                 <tr v-for="item in filas">
+                    <td>
+                        <Input1 type="text" v-model="item.nombreProducto" style="color: black;"></Input1>
+                    </td>
+                    <td>
+                        <Input1 type="number" v-model="item.cantidad" style="width: 100px;color: black;"></Input1>
+                    </td>
+                    <td>
+                        <Input1 type="number" v-model="item.costo" style="width: 100px;color: black;"></Input1>
+                    </td>
+                    <td>
+                        <Checkbox1 v-model="item.iva"></Checkbox1>
+                    </td>
+                    <td>
+                        <Input1 type="number" v-model="item.total" disabled style="width: 100px;color: black;"></Input1>
+                    </td>
+                 </tr>
+              </tbody>
+            </table>
+
+
+         <SecondaryButton1  @click="closeModalNewGastos" style="margin:1rem; float: right;">
             Cerrar
          </SecondaryButton1>
     </template>
