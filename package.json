@@ -24,6 +24,7 @@
         "@amcharts/amcharts5": "^5.2.10",
         "bootstrap": "^5.2.0",
         "bootstrap-vue": "^2.22.0",
+        "moment": "^2.29.4",
         "prop-types": "^15.8.1",
         "react": "^18.2.0",
         "react-datepicker": "^4.8.0",

@@ -35,7 +35,10 @@ class SoliMovimientoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $datosSolicitud =request()->except('productos');
+        //SoliMovimiento::insert($datosSolicitud);
+
     }
 
     /**

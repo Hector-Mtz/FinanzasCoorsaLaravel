@@ -30,3 +30,5 @@ Route::get('/productos/{x}',[ProductoController::class, 'byProductos'])->name('p
 Route::get('/cecos_grupoconcepto/{x}/{y}',[CECOConceptoController::class, 'byCecosGrupoConcepot'])->name('cecos_grupoconcepto');
 
 Route::get('/consultaMovimiento/{x}',[TipoMovimientoController::class, 'consultaMovimiento'])->name('consultaMovimiento');
+
+Route::get('/consulta_ceco_concepto/{x}/{y}',[CECOConceptoController::class, 'consulta_ceco_concepto'])->name('consulta_ceco_concepto');

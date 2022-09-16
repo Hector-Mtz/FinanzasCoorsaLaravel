@@ -11,6 +11,7 @@ use App\Http\Controllers\IngresoController;
 use App\Http\Controllers\MontoController;
 use App\Http\Controllers\OcController;
 use App\Http\Controllers\ServicioController;
+use App\Http\Controllers\SoliMovimientoController;
 use App\Http\Controllers\TipoController;
 use App\Http\Controllers\VentaController;
 use Illuminate\Foundation\Application;
@@ -84,3 +85,5 @@ Route::middleware([
 });
 
 Route::apiResource('/clientes', ClienteController::class);
+
+Route::apiResource('/soliMovimientos', SoliMovimientoController::class);

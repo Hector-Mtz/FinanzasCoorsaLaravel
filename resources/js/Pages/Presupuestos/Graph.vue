@@ -23,7 +23,7 @@ import Table from '../../Components/Table.vue';
 import Checkbox from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/Checkbox.vue';
 import Checkbox1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/Checkbox.vue';
 import DangerButton1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/DangerButton.vue';
-
+import moment from 'moment';
 //variables GLOBALES
 let zoom = false;
 let data =[];
@@ -77,6 +77,10 @@ export default {
         const formSolicitud = reactive({
           nombre: "",
           tipo_movimiento_id: 0,
+          ceco_concepto_id:0,
+          productos:[],
+          autorizacion_id:1,
+          fecha:""
           })
 
           return { formSolicitud }
@@ -941,13 +945,32 @@ export default {
         },
 
 
-        enviarFormSolicitud:function()
+        enviarFormSolicitud:function(concepto,ceco)
         {
             //console.log(this.idMovimientoForm); //si recibe el id
-            console.log(this.filas);
+            //console.log(concepto);
+            //console.log(ceco);
+           // console.log(this.filas);
             this.formSolicitud.tipo_movimiento_id = this.idMovimientoForm;
-            console.log(this.formSolicitud);
-            Inertia.post('/', );
+            this.formSolicitud.productos = this.filas;
+            // obtener el nombre del mes, día del mes, año, hora
+            var now = moment().format("YYYY-MM-DD HH:mm:ss");
+            this.formSolicitud.fecha = now;
+            //console.log(now);
+            axios.get('api/consulta_ceco_concepto/'+ceco+'/'+concepto,{ob: ceco},{ob1: concepto}) //enviamos los dato a la ruta de la api
+           .then((resp)=>
+             {
+               console.log(resp.data[0].id); // tenemos el id del ceco_concepto a insertar
+               this.formSolicitud.ceco_concepto_id = resp.data[0].id;
+               console.log(this.formSolicitud);
+               Inertia.post('/soliMovimientos', this.formSolicitud);
+             })
+            .catch(function (error)
+           {
+            console.log(error);
+           });
+
+
         }
 
     },
@@ -1051,7 +1074,7 @@ export default {
         </div>
     </template>
     <template #content>
-         <form class="formNewGastos" v-on:submit.prevent="enviarFormSolicitud">
+         <form class="formNewGastos" v-on:submit.prevent="enviarFormSolicitud(modalData[0].concepto,modalData[0].ceco)">
             <div>
                 <label class ="labelForm">Nombre de solicitud: </label>
                 <Input1 v-model="formSolicitud.nombre" type="text"></Input1>
@@ -1059,7 +1082,8 @@ export default {
 
            <div>
              <label class ="labelForm" >TIPO DE MOVIMIENTO:</label>
-              <Input1 type="text" disabled v-model="formSolicitud.tipo_movimiento_id" :value="nombreMovimiento" ></Input1>
+             <p style="display:none">{{formSolicitud.tipo_movimiento_id=idMovimientoForm}}</p>
+              <Input1 type="text" disabled v-model="formSolicitud.tipo_movimiento_id" :value="nombreMovimiento" required ></Input1>
            </div>
 
            <div style="margin-top: 15px;">
