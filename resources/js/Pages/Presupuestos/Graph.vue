@@ -67,7 +67,8 @@ export default {
             productos:[],
             idMovimientoForm:0,
             nombreMovimiento:"",
-            filas:[]
+            filas:[],
+            newFilas:[]
         };
     },
 
@@ -893,7 +894,6 @@ export default {
 
          },
 
-
         closeModal:function()
         {
            this.ModalMov=false;
@@ -923,6 +923,7 @@ export default {
         {
             console.log("Añade fila");
             this.filas.push({
+                id:0,
                 nombreProducto:'',
                 cantidad:0,
                 costo:0,
@@ -930,13 +931,13 @@ export default {
                 total: 0
             });
 
-            
         },
 
-        removeRow:function()
+        removeRow:function(id)
         {
             console.log("Quita fila");
-            this.filas.pop();
+            console.log(id);
+            this.filas.splice(id,1);
         },
 
 
@@ -945,8 +946,8 @@ export default {
             //console.log(this.idMovimientoForm); //si recibe el id
             console.log(this.filas);
             this.formSolicitud.tipo_movimiento_id = this.idMovimientoForm;
-            //console.log(this.formSolicitud);
-            //Inertia.post('/users', );
+            console.log(this.formSolicitud);
+            Inertia.post('/', );
         }
 
     },
@@ -1063,7 +1064,6 @@ export default {
 
            <div style="margin-top: 15px;">
               <SecondaryButton1 class="buttonAdd" @click="addRow()">+</SecondaryButton1>
-              <SecondaryButton1 class="buttonRemove" @click="removeRow()">-</SecondaryButton1>
            </div>
            <br>
 
@@ -1074,29 +1074,38 @@ export default {
          <table id="tabla" style="margin-top:5px;">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Nombre de producto</th>
                   <th>Cantidad</th>
                   <th>$</th>
                   <th>IVA</th>
                   <th>Total</th>
+                  <th>Eliminar</th>
                 </tr>
               </thead>
               <tbody >
                  <tr v-for="item in filas">
+                    <td>{{item.id}}</td>
                     <td>
                         <Input1 type="text" v-model="item.nombreProducto" style="color: black;"></Input1>
                     </td>
                     <td>
-                        <Input1 type="number" v-model="item.cantidad" style="width: 100px;color: black;"></Input1>
+                        <Input1 type="number" v-model="item.cantidad" style="width: 70px;color: black;"></Input1>
                     </td>
                     <td>
-                        <Input1 type="number" v-model="item.costo" style="width: 100px;color: black;"></Input1>
+                        <Input1 type="number" v-model="item.costo" style="width: 70px;color: black;"></Input1>
                     </td>
                     <td>
                         <Checkbox1 v-model="item.iva"></Checkbox1>
                     </td>
                     <td>
+                        <p style="display:none" v-if="item.iva==false">{{item.total = (item.cantidad)*(item.costo)}}</p>
+                        <p style="display:none" v-if="item.iva==true">{{item.total = ((item.cantidad)*(item.costo))*1.16}}</p>
                         <Input1 type="number" v-model="item.total" disabled style="width: 100px;color: black;"></Input1>
+                        
+                    </td>
+                    <td>
+                       <SecondaryButton1 class="buttonRemove" @click="removeRow(item.id)">-</SecondaryButton1>
                     </td>
                  </tr>
               </tbody>
