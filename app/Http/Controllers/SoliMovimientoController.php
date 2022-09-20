@@ -38,19 +38,24 @@ class SoliMovimientoController extends Controller
 
         //$datosSolicitud =request()->except('productos'); //insertamos los datos excepto la de los productos
         //SoliMovimiento::insert($datosSolicitud);
-        // $idSolicitud = SoliMovimiento::latest('id')->first(); //rescatamos el ultimo reg insertado
+         $lastInsert = SoliMovimiento::latest('id')->first(); //rescatamos el ultimo reg insertado
          $datosProductos = request()->except('nombre,tipo_movimiento_id,ceco_concepto_id,autorizacion_id');
          $productos=$datosProductos['productos'];
           
+         $idSolicitud = $lastInsert['id'];
          //var_dump($productos);
+         $productosArreglo = [];
          foreach ($productos as $fila) 
          {
-            foreach($fila as $dato)
-            {
-                print_r($dato);
-            }
+            //var_dump($fila);      
+            $nombreProducto = $fila['nombreProducto'];
+            $total = $fila['total'];
+            $productosArreglo = array( 'nombre' => $nombreProducto, 
+                                       'total' => $total,
+                                       'id_solicitud' => $idSolicitud
+                                     );
          }
-        
+         return $productosArreglo;
     }
 
     /**
