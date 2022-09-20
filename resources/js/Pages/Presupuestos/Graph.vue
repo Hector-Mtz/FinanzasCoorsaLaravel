@@ -80,7 +80,8 @@ export default {
           ceco_concepto_id:0,
           productos:[],
           autorizacion_id:1,
-          fecha:""
+          created_at:"",
+          updated_at:""
           })
 
           return { formSolicitud }
@@ -955,7 +956,8 @@ export default {
             this.formSolicitud.productos = this.filas;
             // obtener el nombre del mes, día del mes, año, hora
             var now = moment().format("YYYY-MM-DD HH:mm:ss");
-            this.formSolicitud.fecha = now;
+            this.formSolicitud.created_at = now;
+            this.formSolicitud.updated_at = now;
             //console.log(now);
             axios.get('api/consulta_ceco_concepto/'+ceco+'/'+concepto,{ob: ceco},{ob1: concepto}) //enviamos los dato a la ruta de la api
            .then((resp)=>
@@ -964,6 +966,8 @@ export default {
                this.formSolicitud.ceco_concepto_id = resp.data[0].id;
                console.log(this.formSolicitud);
                Inertia.post('/soliMovimientos', this.formSolicitud);
+               this.ModalNewGastos = false;
+               this.formSolicitud.reset();
              })
             .catch(function (error)
            {
@@ -1077,7 +1081,7 @@ export default {
          <form class="formNewGastos" v-on:submit.prevent="enviarFormSolicitud(modalData[0].concepto,modalData[0].ceco)">
             <div>
                 <label class ="labelForm">Nombre de solicitud: </label>
-                <Input1 v-model="formSolicitud.nombre" type="text"></Input1>
+                <Input1 v-model="formSolicitud.nombre" type="text" required></Input1>
             </div>
 
            <div>
@@ -1090,15 +1094,9 @@ export default {
               <SecondaryButton1 class="buttonAdd" @click="addRow()">+</SecondaryButton1>
            </div>
            <br>
-
-
-            <SecondaryButton1 style="float:right; width: min-content; margin-top: 10px;" class="mb-3 btn btn-primary" type="submit">Enviar</SecondaryButton1>
-         </form>
-
-         <table id="tabla" style="margin-top:5px;">
+           <table id="tabla" style="margin-top:5px; grid-column: 1/3;">
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Nombre de producto</th>
                   <th>Cantidad</th>
                   <th>$</th>
@@ -1109,15 +1107,14 @@ export default {
               </thead>
               <tbody >
                  <tr v-for="item in filas">
-                    <td>{{item.id}}</td>
                     <td>
-                        <Input1 type="text" v-model="item.nombreProducto" style="color: black;"></Input1>
+                        <Input1 name="nombreProducto" type="text" v-model="item.nombreProducto" style="color: black;" required ></Input1>
                     </td>
                     <td>
-                        <Input1 type="number" v-model="item.cantidad" style="width: 70px;color: black;"></Input1>
+                        <Input1 type="number" min="1" pattern="^[0-9]+" v-model="item.cantidad" style="width: 70px;color: black;" required></Input1>
                     </td>
                     <td>
-                        <Input1 type="number" v-model="item.costo" style="width: 70px;color: black;"></Input1>
+                        <Input1 type="number" min="1" pattern="^[0-9]+" v-model="item.costo" style="width: 70px;color: black;" required></Input1>
                     </td>
                     <td>
                         <Checkbox1 v-model="item.iva"></Checkbox1>
@@ -1125,17 +1122,17 @@ export default {
                     <td>
                         <p style="display:none" v-if="item.iva==false">{{item.total = (item.cantidad)*(item.costo)}}</p>
                         <p style="display:none" v-if="item.iva==true">{{item.total = ((item.cantidad)*(item.costo))*1.16}}</p>
-                        <Input1 type="number" v-model="item.total" disabled style="width: 100px;color: black;"></Input1>
-                        
+                        <Input1 type="number" min="1" pattern="^[0-9]+" v-model="item.total" disabled style="width: 100px;color: black;"></Input1>     
                     </td>
                     <td>
                        <SecondaryButton1 class="buttonRemove" @click="removeRow(item.id)">-</SecondaryButton1>
                     </td>
                  </tr>
               </tbody>
-            </table>
-
-
+          </table>
+          <br>
+            <SecondaryButton1 style="float:right; width: min-content; margin-top: 10px;" class="mb-3 btn btn-primary" type="submit">Enviar</SecondaryButton1>
+         </form>
          <SecondaryButton1  @click="closeModalNewGastos" style="margin:1rem; float: right;">
             Cerrar
          </SecondaryButton1>
