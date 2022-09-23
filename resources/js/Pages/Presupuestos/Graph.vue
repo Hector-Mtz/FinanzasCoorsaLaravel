@@ -25,7 +25,7 @@ import Checkbox1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resour
 import DangerButton1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/DangerButton.vue';
 import moment from 'moment';
 //variables GLOBALES
-//cambio
+//cambio aaa
 let zoom = false;
 let data =[];
 let nuevoArreglo=[];
