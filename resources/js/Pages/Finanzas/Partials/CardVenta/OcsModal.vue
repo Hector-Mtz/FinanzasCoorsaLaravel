@@ -95,7 +95,7 @@ watch(props, () => {
                 <div class="flex-1 px-2 py-1">
                     <div class="flex justify-center">
                         <span class="block font-bold text-center text-gray-300">
-                            Agregar
+                            Fecha Inicial {{venta.fechaInicial}}
                         </span>
                     </div>
                 </div>
