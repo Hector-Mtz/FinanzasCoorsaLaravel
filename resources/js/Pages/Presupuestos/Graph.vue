@@ -773,6 +773,7 @@ export default {
                 }  
                 //RECORRIDO PARA HACER LOS TDs
                 let cambio = false;
+                console.log(newData);
                 for (let x = 0; x < newData.length; x++)
                  {
                     console.log(newData);
@@ -807,7 +808,8 @@ export default {
                     console.log(newData);
                     let stringTdsSinComas = stringTds.replace(",", " ");  
                     let stringTdsSinComas2 = stringTdsSinComas.replace(",", " ");  
-                    stringTdsSinComas2 += `<td>foto</td>
+                    stringTdsSinComas2 += `<td>
+                        </td>
                                            <td>${newData[x].fecha}</td>`;
                     stringTdsSinComas2+= `
                     <td>
@@ -1079,7 +1081,7 @@ export default {
     </template>
     <template #content>
          <form class="formNewGastos" v-on:submit.prevent="enviarFormSolicitud(modalData[0].concepto,modalData[0].ceco)">
-            <div>
+            <div style="margin-left:3rem;">
                 <label class ="labelForm">Nombre de solicitud: </label>
                 <Input1 v-model="formSolicitud.nombre" type="text" required></Input1>
             </div>
@@ -1090,7 +1092,7 @@ export default {
               <Input1 type="text" disabled v-model="formSolicitud.tipo_movimiento_id" :value="nombreMovimiento" required ></Input1>
            </div>
 
-           <div style="margin-top: 15px;">
+           <div class="buttonModalAdd1">
               <SecondaryButton1 class="buttonAdd" @click="addRow()">+</SecondaryButton1>
            </div>
            <br>
@@ -1131,11 +1133,12 @@ export default {
               </tbody>
           </table>
           <br>
-            <SecondaryButton1 style="float:right; width: min-content; margin-top: 10px;" class="mb-3 btn btn-primary" type="submit">Enviar</SecondaryButton1>
-         </form>
-         <SecondaryButton1  @click="closeModalNewGastos" style="margin:1rem; float: right;">
+            <SecondaryButton1 class="mb-3 btn btn-primary sentButtonModal1" type="submit">Enviar</SecondaryButton1>
+            <SecondaryButton1  @click="closeModalNewGastos" class="closeModal1">
             Cerrar
          </SecondaryButton1>
+         </form>
+
     </template>
   </ModalGastos>
 

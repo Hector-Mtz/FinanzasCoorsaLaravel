@@ -309,6 +309,32 @@ body {
     text-align: center;
 }
 
+.sentButtonModal1 {
+    float:right; 
+    width: min-content; 
+    margin-top: 2rem;
+    grid-column:1/3 ;
+    grid-row: 4/5;
+    margin-left: 6rem;
+    float: left;
+}
+
+.buttonModalAdd1{
+    grid-row:4/5;
+    margin-top:2rem;
+    margin-left: 2.1rem;
+    grid-column: 1/2;
+    margin-left: 2rem;
+}
+
+.closeModal1 {
+    margin: auto;
+    grid-row: 4/5;
+    margin-right: 2rem;
+    margin-top: 2rem;
+    grid-column: 2/3;
+}
+
 .active {
     border-color: #010E1D;
 }
