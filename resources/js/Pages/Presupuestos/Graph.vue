@@ -20,9 +20,6 @@ import DangerButton from '@/Components/DangerButton.vue';
 import { isSet } from '@vue/shared';
 import SelectComponent from '@/Components/SelectComponent.vue';
 import Table from '../../Components/Table.vue';
-import Checkbox from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/Checkbox.vue';
-import Checkbox1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/Checkbox.vue';
-import DangerButton1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/DangerButton.vue';
 import moment from 'moment';
 //variables GLOBALES
 //cambio aaa
@@ -1120,7 +1117,7 @@ export default {
                         <Input1 type="number" min="1" pattern="^[0-9]+" v-model="item.costo" style="width: 70px;color: black;" required></Input1>
                     </td>
                     <td>
-                        <Checkbox1 v-model="item.iva"></Checkbox1>
+                        <checkbox v-model="item.iva"></checkbox>
                     </td>
                     <td>
                         <p style="display:none" v-if="item.iva==false">{{item.total = (item.cantidad)*(item.costo)}}</p>
