@@ -1,9 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
-
 import { pickBy } from 'lodash'
-
 import ButtonAdd from '@/Components/ButtonAdd.vue';
 import InputSearch from '@/Components/InputSearch.vue';
 import OcsModal from './OcsModal.vue';
@@ -13,12 +11,14 @@ import ItemObjectShow from '@/Components/ItemObjectShow.vue';
 
 const emit = defineEmits(['showVentas'])
 
+console.log(emit);
 
 const props = defineProps({
     "clientes": {
         type: Object
     }
 })
+
 
 const tab = ref("") // Referencia al id
 const searchText = ref("")
@@ -59,6 +59,8 @@ const search = (newSearch) => {
         preserveScroll: true,
         only: ['clientes', 'totalVentasStatus'],
     })
+
+    console.log(props.clientes);
 }
 
 
@@ -98,11 +100,10 @@ watch(searchText, (newSearch) => {
             </div>
             <!-- Lista de clientes -->
             <div class="overflow-y-auto" style="max-height: 65vh;">
-
                 <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente">
                     <ItemObjectShow v-for="venta in cliente.ventas" :key="venta.id" :data="venta"
                         @onShow="showOcs($event)">
-                        {{ venta.ceco + "-" + venta.servicio + "-" }}
+                        {{ venta.ceco + "-" + venta.servicio + "-" + venta.fechaInicial}}
                     
                     </ItemObjectShow>
                 </ItemCliente>
