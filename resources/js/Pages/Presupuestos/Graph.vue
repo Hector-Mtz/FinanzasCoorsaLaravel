@@ -978,7 +978,7 @@ export default {
         }
 
     },
-    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1, DangerButton, SelectComponent, Table, Checkbox, Checkbox1, DangerButton1 }
+    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1, SelectComponent, Table }
 }
 
 </script>

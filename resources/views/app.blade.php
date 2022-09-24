@@ -22,7 +22,7 @@
         @vite('resources/js/app.js')
         @inertiaHead
 
-        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        
     </head>
     <body class="font-sans antialiased">
         @inertia
