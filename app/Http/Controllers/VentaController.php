@@ -135,9 +135,11 @@ class VentaController extends Controller
      * @param  \App\Models\Venta  $venta
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Venta $venta)
+    public function destroy($venta)
     {
         //
+        $ventaAEliminar = Venta::find($venta);
+        return $ventaAEliminar;
     }
 
     public function totals(Request $request)

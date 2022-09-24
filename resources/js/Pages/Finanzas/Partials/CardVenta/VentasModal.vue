@@ -86,6 +86,7 @@ const close = () => {
                         <th>TOTAL</th>
                         <th>FECHA INICIAL</th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </template>
                 <template #tbody>

@@ -2,7 +2,8 @@
 import { computed, ref } from "vue";
 import { formatoMoney, IVA } from "../../../../utils/conversiones";
 import SuccessButton from "@/Components/SuccessButton.vue";
-
+import DangerButton from "@/Components/DangerButton.vue";
+import { Inertia } from "@inertiajs/inertia";
 const emit = defineEmits(['edit', 'activeIva'])
 
 const props = defineProps({
@@ -34,6 +35,9 @@ const activeIva = () => {
     emit('activeIva', props.venta.id);
 }
 
+const eliminarVenta = (id) => {
+    //
+}
 
 </script>
 <template>
@@ -58,6 +62,11 @@ const activeIva = () => {
                         d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                 </svg>
             </SuccessButton>
+        </td>
+        <td>
+            <DangerButton @click="eliminarVenta(ventaShow.id)">
+                Eliminar
+            </DangerButton>
         </td>
     </tr>
 </template>
