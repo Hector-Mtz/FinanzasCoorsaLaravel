@@ -4,19 +4,28 @@ import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import * as am5hierarchy from  '@amcharts/amcharts5/hierarchy';
 import { watch, ref, onMounted  } from '@vue/runtime-core';
-import { Inertia } from '@inertiajs/inertia';
+import { reactive } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import axios from 'axios';
 import ModalGastos from '@/Components/DialogModal.vue';
 import ButtonPres from '../../Components/ButtonPres.vue';
-import SecondaryButton1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/SecondaryButton.vue';
-import Button from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Button.vue';
+import SecondaryButton1 from '@/Jetstream/SecondaryButton.vue';
+import Button from '@/Jetstream/Button.vue';
 import ButtonAdd from '../../Components/ButtonAdd.vue';
 import TableComponent from '@/Components/Table.vue';
-import Label from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Label.vue';
-import Input1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Jetstream/Input.vue';
-
-
+import Label from '@/Jetstream/Label.vue';
+import Input1 from '@/Jetstream/Input.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import { isSet } from '@vue/shared';
+import SelectComponent from '@/Components/SelectComponent.vue';
+import Table from '../../Components/Table.vue';
+import Checkbox from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/Checkbox.vue';
+import Checkbox1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/Checkbox.vue';
+import DangerButton1 from '../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/DangerButton.vue';
+import moment from 'moment';
 //variables GLOBALES
+//cambio aaa
 let zoom = false;
 let data =[];
 let nuevoArreglo=[];
@@ -31,12 +40,16 @@ let yRenderer;
 let xRenderer;
 let chart;
 let modalDatos = [{grupoconcepto:''}];
+let idMovimientoForm; 
 
 export default {
+
     props: {
         clientes: Object,
         grupo_conceptos: Object,
         cantidades: Object,
+        movimientos:Object,
+        solicitudes:Object
     },
     components: {
         ButtonPres,
@@ -46,11 +59,33 @@ export default {
             movimiento: { state: "PRESUPUESTO" },
             ModalMov:false,
             ModalNewGastos: false,
+            WatchProductos:false,
+            ModalNewProducto:false,
             data: [],
             modalData:modalDatos,
             movimientos:[], //array para listar los tipo de movimiento
-            agrupacionModal:[]
+            agrupacionModal:[],
+            productos:[],
+            idMovimientoForm:0,
+            nombreMovimiento:"",
+            filas:[],
+            newFilas:[]
         };
+    },
+
+    setup()
+    {
+        const formSolicitud = reactive({
+          nombre: "",
+          tipo_movimiento_id: 0,
+          ceco_concepto_id:0,
+          productos:[],
+          autorizacion_id:1,
+          created_at:"",
+          updated_at:""
+          })
+
+          return { formSolicitud }
     },
     
     mounted() {
@@ -59,6 +94,8 @@ export default {
         //console.log(clients);
         let grupo_conceptos = this.grupo_conceptos;
         //console.log(grupo_conceptos);
+        //console.log(this.WatchProductos);
+
         let datos = this.cantidades;
         root = am5.Root.new(this.$refs.chartdiv);
         root.setThemes([am5themes_Animated.new(root)]);
@@ -392,7 +429,7 @@ export default {
     methods: { 
         click:function(ev)
         {
-            zoom = true;
+           zoom = true;
            nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
            //console.log(nuevosValores);
            let x = nuevosValores.x;
@@ -672,6 +709,7 @@ export default {
            .then((resp)=>
            {
             //console.log(resp);
+             let button;
              modalDatos=resp.data[0];
              this.modalData = modalDatos;
              //console.log(this.modalData);
@@ -680,7 +718,7 @@ export default {
              let tipoMovimientos = this.movimientos;
              //console.log(tipoMovimientos);
              let nuevoArregloMovimientos = [];
-             for (let index = 0; index < tipoMovimientos.length; index++) //for para agrupar
+                for (let index = 0; index < tipoMovimientos.length; index++) //for para agrupar
              {
                 let element = tipoMovimientos[index];
                 //console.log(element);
@@ -712,26 +750,19 @@ export default {
                      nuevoArregloMovimientos.push(nuevoObj); //hacemos push al array principal
                 }  
                    
-             } 
-              //console.log(nuevoArregloMovimientos) // si regresa la variable llena
-              //this.agrupacionModal = nuevoArregloMovimientos;
-          
-              function agrupacionTDs(arregloMovimientos, elementosArray)
-              {
-                //console.log(elementosArray); //parametro que viene de la newData que esta viene de la BD
-                //console.log(arregloMovimientos); //arreglo de tipo de movimientos
+                } 
                 let elementoPrincipal;
-                for (let index = 0; index < elementosArray.length; index++) //recorremos la newData
+                for (let index = 0; index < newData.length; index++) //recorremos la newData
                 {
-                    elementoPrincipal = elementosArray[index];
+                    elementoPrincipal = newData[index];
                     //console.log(elementoPrincipal);
-                    let elementoMovimiento = elementosArray[index].movimiento;
+                    let elementoMovimiento = newData[index].movimiento;
                     
                     //console.log(elementoMovimiento) //imprime los elementos del array de la bd
 
-                    for (let i = 0; i < arregloMovimientos.length; i++)  //recorremos los movimientos
+                    for (let i = 0; i < nuevoArregloMovimientos.length; i++)  //recorremos los movimientos
                     {
-                         let  eleMovimiento = arregloMovimientos[i].movimiento;
+                         let  eleMovimiento = nuevoArregloMovimientos[i].movimiento;
                              if ( elementoMovimiento == eleMovimiento)
                               {
                                 //console.log(elementosArray.movimiento , x.movimiento) // imprime del principal el movimiento y de los movimientos
@@ -742,21 +773,25 @@ export default {
                     }
                 }  
                 //RECORRIDO PARA HACER LOS TDs
-                for (let x = 0; x < elementosArray.length; x++) {
-                    console.log(elementosArray);
+                let cambio = false;
+                console.log(newData);
+                for (let x = 0; x < newData.length; x++)
+                 {
+                    console.log(newData);
                     let tds = [];                    
-                    let indice = elementosArray[x].indice; //seleccionamos el indice del elemento actual
+                    let indice = newData[x].indice; //seleccionamos el indice del elemento actual
                     //console.log(indice); //imprime el indice
                     //console.log("vuelta numero" +  x)
                     //let longitud = elementosArray.length; //rescatamos la longitud
-                    for ( let k = 0; k < arregloMovimientos.length; k++) {
+                    for ( let k = 0; k < nuevoArregloMovimientos.length; k++) 
+                    {
                         //console.log(k)
                         let  indiceMovimiento = k; //recuperamos indice actual
                         //console.log(tipoMovimiento);
                         if(indiceMovimiento === indice)
                         {
                           //console.log(elementosArray[x].cantidad)
-                          let td = '<td>'+elementosArray[x].cantidad+'</td>' ;
+                          let td = '<td>'+newData[x].cantidad+'</td>' ;
                           //console.log(td);
                           tds.push(td)
                         }
@@ -771,19 +806,32 @@ export default {
                     }
                     
                     let stringTds = tds.toString();
-                    console.log(elementosArray);
+                    console.log(newData);
                     let stringTdsSinComas = stringTds.replace(",", " ");  
                     let stringTdsSinComas2 = stringTdsSinComas.replace(",", " ");  
-                    stringTdsSinComas2 += `<td>foto</td>
-                                           <td>${elementosArray[x].fecha}</td>`;
-                    stringTdsSinComas2+= `<td>button</td>`;
+                    stringTdsSinComas2 += `<td>
+                        </td>
+                                           <td>${newData[x].fecha}</td>`;
+                    stringTdsSinComas2+= `
+                    <td>
+                      <Button id="watch${newData[x].id}" class="watch">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-4 eye" viewBox="0 0 16 16" >
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"></path>
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
+                        </svg>
+                      </Button>
+                    </td>`;
                     console.log(stringTdsSinComas2) 
         
                     let tr = `<tr>
-                                <td><a>${elementosArray[x].nombre}</a></td>
+                                <td>
+                                  <a>${newData[x].nombre}</a>
+                                </td>
                                 ${stringTdsSinComas2}
                               </tr>`
                     //console.log(tr)
+
+
                     let tabla = document.getElementById('tabla');
                     
                     function insertRow (table, tr)
@@ -793,13 +841,22 @@ export default {
                        row.innerHTML = tr; //insertamos
                     }
 
-                    insertRow(tabla,tr);
-                }
-              }
-            
-             agrupacionTDs(nuevoArregloMovimientos, newData);
+                    insertRow(tabla,tr); //insertamos en la tabla los datos anteriores
 
-             //cambio
+                    button = document.getElementById(`watch${newData[x].id}`); //seleccionamos el boton que hara la funcion
+                    
+                    let idvar = newData[x].id;
+                    //console.log(idvar)
+                   
+                    
+                   //le asignamos un addevent al click y le pasamos la funcion vuejs
+
+                    button.addEventListener('click',(e) =>  {
+                        console.log(e)
+                        this.verProductos(idvar)
+                    }); 
+              }
+
              })
             .catch(function (error)
            {
@@ -809,20 +866,122 @@ export default {
             this.ModalMov = true;   //abrimos modal
         },
 
+        verProductos:function(id)
+        {
+          console.log(id);
+            axios.get('api/productos/'+id,{ob: id}) //enviamos el dato a la ruta de la api
+           .then((resp)=>
+             {
+               console.log(resp);
+               this.WatchProductos = true;
+               this.productos=resp.data;
+             })
+            .catch(function (error)
+           {
+            console.log(error);
+           }); 
+        },
             
-        nuevoGasto:function(){
-            this.ModalNewGastos = true;
+        nuevoRegistro:function(idMovimiento)
+         {
+            axios.get('/api/consultaMovimiento/'+idMovimiento,{ob: idMovimiento}) //enviamos el dato a la ruta de la api
+           .then((resp)=>
+             {
+               console.log(resp);
+               this.ModalNewGastos = true;
+               this.idMovimientoForm = idMovimiento;
+               //console.log(resp.data[0].nombre);
+               this.nombreMovimiento = resp.data[0].nombre;
+               //console.log(this.nombreMovimiento);
+               
+             })
+            .catch(function (error)
+           {
+            console.log(error);
+           });
+
          },
 
         closeModal:function()
         {
            this.ModalMov=false;
-           this.ModalNewGastos = false;
+        },
+
+        closeModalNewGastos: function ()
+        {
+            this.ModalNewGastos = false;
+        },
+
+        closeModalProductos: function ()
+        {
+            this.WatchProductos = false;
+        },
+
+        closeModalNewProducto: function ()
+        {
+            this.ModalNewProducto = false;
+        },
+
+        filtroCECOS:function()
+        {
+           
+        },
+
+        addRow:function()
+        {
+            console.log("Añade fila");
+            this.filas.push({
+                id:0,
+                nombreProducto:'',
+                cantidad:0,
+                costo:0,
+                iva:'',
+                total: 0
+            });
+
+        },
+
+        removeRow:function(id)
+        {
+            console.log("Quita fila");
+            console.log(id);
+            this.filas.splice(id,1);
+        },
+
+
+        enviarFormSolicitud:function(concepto,ceco)
+        {
+            //console.log(this.idMovimientoForm); //si recibe el id
+            //console.log(concepto);
+            //console.log(ceco);
+           // console.log(this.filas);
+            this.formSolicitud.tipo_movimiento_id = this.idMovimientoForm;
+            this.formSolicitud.productos = this.filas;
+            // obtener el nombre del mes, día del mes, año, hora
+            var now = moment().format("YYYY-MM-DD HH:mm:ss");
+            this.formSolicitud.created_at = now;
+            this.formSolicitud.updated_at = now;
+            //console.log(now);
+            axios.get('api/consulta_ceco_concepto/'+ceco+'/'+concepto,{ob: ceco},{ob1: concepto}) //enviamos los dato a la ruta de la api
+           .then((resp)=>
+             {
+               console.log(resp.data[0].id); // tenemos el id del ceco_concepto a insertar
+               this.formSolicitud.ceco_concepto_id = resp.data[0].id;
+               console.log(this.formSolicitud);
+               Inertia.post('/soliMovimientos', this.formSolicitud);
+               this.ModalNewGastos = false;
+               this.formSolicitud.reset();
+             })
+            .catch(function (error)
+           {
+            console.log(error);
+           });
+
+
         }
 
-
     },
-    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1 }
+    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1, DangerButton, SelectComponent, Table, Checkbox, Checkbox1, DangerButton1 }
 }
 
 </script>
@@ -834,8 +993,8 @@ export default {
  }
 </style>
 <template>
-  <div class="group">
-      <ButtonPres class="buttonCECO" style="background-color:#111F2E">CECO</ButtonPres>
+     <div class="group">
+           <ButtonPres class="buttonCECO" @click="filtroCECOS" style="background-color:#111F2E">CECO</ButtonPres>
            <ButtonPres class="buttonCON" style="background-color:#111F2E">CON.</ButtonPres> 
               <div class="dropdown" >
                   <button onclick="myFunction()" class="dropbtn">$</button>
@@ -847,7 +1006,7 @@ export default {
                       <button id="DISPONIBLE" @click="cambiar('DISPONIBLE')">Disponible</button>     
                   </div>
               </div>
-  </div>
+     </div>
   <ModalGastos :show="ModalMov" @close="closeModal">
     <template #title>
        <div class="modalPart1">
@@ -886,21 +1045,22 @@ export default {
               </tr>
             </thead>
             <tbody>
+               <tr></tr>
                <tr>
                   <td></td>
-                  <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
-                  <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
-                  <td><ButtonAdd class="h-5" @click="nuevoGasto()" /></td>
+                  <td v-for="item in movimientos" :key="item.id">
+                    <ButtonAdd class="h-5" @click="nuevoRegistro(item.id)" />
+                  </td>
                   <td colspan="3"></td>
                </tr>
                <tr>
                    <td></td>
-                   <td></td>
-                   <td></td>
-                   <td></td>
-                   <td colspan="2"></td> 
+                   <td>total</td>
+                   <td>total</td>
+                   <td>total</td>
+                   <td colspan="3"></td> 
                     </tr>
-                <tr><InputSearch></InputSearch></tr>
+                <tr></tr>
             </tbody>
         </table>
        
@@ -915,24 +1075,131 @@ export default {
            <div class="modalPart1">
          <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
              <span class="block font-bold text-center text-white">
-                 Nuevo movimiento en grupo:  {{modalData[0].grupoConcepto}}
+                  Nuevo Registro
              </span>
          </div>
         </div>
     </template>
     <template #content>
-        <pre>{{modalData}}</pre>
-         <form style="margin:1rem;">
-            <label style="color:white">Cantidad: </label>
-            <Input1 type="number"></Input1>
-            <label></label>
+         <form class="formNewGastos" v-on:submit.prevent="enviarFormSolicitud(modalData[0].concepto,modalData[0].ceco)">
+            <div style="margin-left:3rem;">
+                <label class ="labelForm">Nombre de solicitud: </label>
+                <Input1 v-model="formSolicitud.nombre" type="text" required></Input1>
+            </div>
+
+           <div>
+             <label class ="labelForm" >TIPO DE MOVIMIENTO:</label>
+             <p style="display:none">{{formSolicitud.tipo_movimiento_id=idMovimientoForm}}</p>
+              <Input1 type="text" disabled v-model="formSolicitud.tipo_movimiento_id" :value="nombreMovimiento" required ></Input1>
+           </div>
+
+           <div class="buttonModalAdd1">
+              <SecondaryButton1 class="buttonAdd" @click="addRow()">+</SecondaryButton1>
+           </div>
+           <br>
+           <table id="tabla" style="margin-top:5px; grid-column: 1/3;">
+              <thead>
+                <tr>
+                  <th>Nombre de producto</th>
+                  <th>Cantidad</th>
+                  <th>$</th>
+                  <th>IVA</th>
+                  <th>Total</th>
+                  <th>Eliminar</th>
+                </tr>
+              </thead>
+              <tbody >
+                 <tr v-for="item in filas" :key="item.id">
+                    <td>
+                        <Input1 name="nombreProducto" type="text" v-model="item.nombreProducto" style="color: black;" required ></Input1>
+                    </td>
+                    <td>
+                        <Input1 type="number" min="1" pattern="^[0-9]+" v-model="item.cantidad" style="width: 70px;color: black;" required></Input1>
+                    </td>
+                    <td>
+                        <Input1 type="number" min="1" pattern="^[0-9]+" v-model="item.costo" style="width: 70px;color: black;" required></Input1>
+                    </td>
+                    <td>
+                        <Checkbox1 v-model="item.iva"></Checkbox1>
+                    </td>
+                    <td>
+                        <p style="display:none" v-if="item.iva==false">{{item.total = (item.cantidad)*(item.costo)}}</p>
+                        <p style="display:none" v-if="item.iva==true">{{item.total = ((item.cantidad)*(item.costo))*1.16}}</p>
+                        <Input1 type="number" min="1" pattern="^[0-9]+" v-model="item.total" disabled style="width: 100px;color: black;"></Input1>     
+                    </td>
+                    <td>
+                       <SecondaryButton1 class="buttonRemove" @click="removeRow(item.id)">-</SecondaryButton1>
+                    </td>
+                 </tr>
+              </tbody>
+          </table>
+          <br>
+            <SecondaryButton1 class="mb-3 btn btn-primary sentButtonModal1" type="submit">Enviar</SecondaryButton1>
+            <SecondaryButton1  @click="closeModalNewGastos" class="closeModal1">
+            Cerrar
+         </SecondaryButton1>
          </form>
 
-         <SecondaryButton1  @click="closeModal" style="margin:1rem">
+    </template>
+  </ModalGastos>
+
+  <ModalGastos :show="ModalNewProducto" @close="closeModal">
+    <template #title>
+           <div class="modalPart1">
+         <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
+             <span class="block font-bold text-center text-white">
+                  Nuevo Producto
+             </span>
+         </div>
+        </div>
+    </template>
+    <template #content>
+         <form class="formNewGastos">
+            <div>
+              <label class ="labelForm" >Nombre de producto:</label>
+              <Input1 type="text"></Input1>
+            </div>
+           <div>
+              <label class ="labelForm" >Cantidad de producto:</label>
+              <Input1 type="number" :placeholder="'$0.00'"></Input1>
+           </div> 
+         </form>
+         <SecondaryButton1  @click="closeModalNewProducto" style="margin:1rem">
             Cerrar
          </SecondaryButton1>
     </template>
   </ModalGastos>
 
+  <ModalGastos :show="WatchProductos" @close="closeModal">
+    <template #title>
+        <div class="modalPart1">
+         <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
+             <span class="block font-bold text-center text-white">
+                 Productos de solicitud:  {{productos[0].soli_movimiento_id}}
+             </span>
+         </div>
+        </div>
+    </template>
+    <template #content>
+        <table id="tabla2">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+               <tr v-for="item in productos" :key="item.id">
+                  <td>{{item.nombre}}</td>
+                  <td>{{item.cantidad}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+         <SecondaryButton1  @click="closeModalProductos" style="margin:1rem">
+            Cerrar
+         </SecondaryButton1>
+    </template>
+  </ModalGastos>
   <div class="graph" ref="chartdiv">  </div>
 </template>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductoController extends Controller
 {
@@ -15,6 +16,20 @@ class ProductoController extends Controller
     public function index()
     {
         //
+    }
+
+    public function byProductos($x)
+    {
+        $object = DB::table(DB::raw('productos'))
+        ->select(DB::raw(
+            'id,
+            nombre,
+            cantidad,
+            soli_movimiento_id'
+        ))
+        ->where('productos.soli_movimiento_id','=',$x)
+        ->get();
+      return $object;
     }
 
     /**

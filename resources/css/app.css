@@ -96,11 +96,6 @@ body {
     float: left;
 }
 
-.group{
-    display: grid;
-    grid-template-columns: repeat(15,1fr);
-    grid-template-rows:repeat(2,1fr) ;
-}
 
 .datetexts{
     display: flex;
@@ -108,38 +103,42 @@ body {
     justify-content: center;
 }
 
+.group 
+{
+  display: flex;
+}
+
 .buttonCECO{
     transform: rotate(270deg);
-    border: 5px solid  var(--borderColor) ;
-    align-items: center;
-    font-weight:bold;
     color: var(--blanco);
-    font-size: 20px;
     font-family: var(--fuentePrincipal);
-    border-radius: 10%;
-    grid-column: 2/3;
-    grid-row: 1/2;
+    padding: 1rem;
+    border-radius: 15%  15% 0% 0%;
+    border: 0.3rem solid var(--borderColor);
 }
 
-.buttonCON{
-    border: 3px solid  var(--borderColor) ;
+.buttonCON
+{  
     color: var(--blanco);
-    float: left;
-    grid-column: 3/4;
-    grid-row: 1/2;
-    padding: 0%;
-    border-radius: 10%;
+    font-family: var(--fuentePrincipal);
+    border-radius: 0%  15% 0% 0%;
+    border: 0.3rem solid var(--borderColor);
+    padding: 0.4rem;
+    margin-bottom: 2rem;
 }
 
-.dropbtn {
+.dropbtn
+{
+    color: var(--blanco);
+    font-family: var(--fuentePrincipal);
+    border: 0.3rem solid var(--borderColor);
     background-color: var(--azul1);
-    border: 3px solid  var(--borderColor) ;
-    color: white;
-    padding: 15px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    border-radius: 10%;
+    margin-left: -60px;
+    margin-top: 3rem;
+    padding-right: 2.8rem;
+    border-radius:15% 0% 15% 0%;
+    text-align: center;
+    text-align:center;
 }
 
 .dropbtn:hover, .dropbtn:focus {
@@ -188,6 +187,46 @@ body {
     border-color: #687FA4;
 }
 
+.watch {
+    padding: 10%;
+    background-color: #BB1313;
+    border-radius: 50%;
+    padding-left: 11px;
+    padding-right: 12px;
+}
+
+.watch:hover {
+    padding: 10%;
+    background-color: #d14242;
+    border-radius: 50%;
+    padding-left: 11px;
+    padding-right: 12px;
+}
+
+
+.buttonAdd {
+    background: transparent;
+    color: white;
+}
+
+.buttonAdd:hover{
+    font-weight: bold; 
+    background-color: #40BB6E;
+}
+
+.buttonRemove
+{
+    font-weight: bold; 
+    background: transparent;
+    color: white;
+}
+
+.buttonRemove:hover
+{
+    background-color: #d14242;
+    color: white;
+}
+
 .tabs-header {
   display: flex;
   justify-content: space-between;
@@ -231,6 +270,69 @@ body {
     color: white;
     background-color:var(--vemergent2);
     text-align: center;
+}
+
+.formNewGastos {
+    margin:1rem;
+    display: grid;
+    grid-template-columns: repeat(2,50%);
+}
+
+.labelForm{
+    color: var(--blanco);
+    font-family: var(--fuentePrincipal);
+}
+
+#tabla2 
+{
+  margin: 10px;     
+}
+
+#tabla2 thead tr th
+{
+    border: 3px solid var(--vemergent);
+    border-radius: 2px;
+    align-items: center;
+    width: 1%;
+    color: white;
+    background-color:var(--vemergent2);
+    text-align: center;
+}
+
+#tabla2 tbody tr td{
+    border: 3px solid var(--vemergent);
+    border-radius: 2px;
+    align-content: center;
+    width: 1%;
+    color: white;
+    background-color:var(--vemergent2);
+    text-align: center;
+}
+
+.sentButtonModal1 {
+    float:right; 
+    width: min-content; 
+    margin-top: 2rem;
+    grid-column:1/3 ;
+    grid-row: 4/5;
+    margin-left: 6rem;
+    float: left;
+}
+
+.buttonModalAdd1{
+    grid-row:4/5;
+    margin-top:2rem;
+    margin-left: 2.1rem;
+    grid-column: 1/2;
+    margin-left: 2rem;
+}
+
+.closeModal1 {
+    margin: auto;
+    grid-row: 4/5;
+    margin-right: 2rem;
+    margin-top: 2rem;
+    grid-column: 2/3;
 }
 
 .active {

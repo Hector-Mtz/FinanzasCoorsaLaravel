@@ -22,6 +22,12 @@ class TipoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     public function consultaMovimiento ($id)
+     {
+
+     }
+
     public function create()
     {
         //

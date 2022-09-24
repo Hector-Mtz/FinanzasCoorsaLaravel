@@ -6,6 +6,8 @@ use App\Models\Ceco;
 use App\Models\Cliente;
 use App\Models\GrupoConcepto;
 use App\Models\Producto;
+use App\Models\TipoMovimiento;
+use App\Models\SoliMovimiento;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -21,6 +23,8 @@ class ClienteController extends Controller
 
         $clientes = Cliente::all();
         $grupo_conceptos = GrupoConcepto::all();
+        $movimientos = TipoMovimiento::all();
+        $solicitudes = SoliMovimiento::all();
 
         $cantidades = DB::table(DB::raw('soli_movimientos'))
             ->select(DB::raw(
@@ -47,7 +51,9 @@ class ClienteController extends Controller
         return Inertia::render('Presupuestos/PresupuestosIndex', [
             'clientes' => $clientes,
             'grupo_conceptos' => $grupo_conceptos,
-            'cantidades' => $cantidades
+            'cantidades' => $cantidades,
+            'movimientos' => $movimientos,
+            'solicitudes' => $solicitudes
         ]);
     }
 

@@ -98,6 +98,22 @@ class CECOConceptoController extends Controller
         return $arrayObject ;
     }
 
+    public function consulta_ceco_concepto($x, $y)
+    {
+        //$x = Ceco 
+        //$y = concepto
+        $object = DB::table(DB::raw('ceco_conceptos'))
+        ->select(DB::raw(
+            'ceco_conceptos.id'
+        ))
+        ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
+        ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
+        ->where('cecos.nombre','LIKE','%'.$x.'%',)
+        ->where('conceptos.nombre','LIKE','%'.$y.'%',)
+        ->get();
+        return $object;
+    }
+
     public function index()
     {
         //
