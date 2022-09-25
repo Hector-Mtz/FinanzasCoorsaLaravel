@@ -40,13 +40,12 @@ class VentaController extends Controller
                         $query->where("ventas.status_id", "=", $request->status_id);
                     }
                 }
-            ])
-            ->join('cecos','cecos.cliente_id', '=', 'clientes.id');
+            ]);
 
 
         if ($request->has("search")) {
             $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
-            $clientes->where("cecos.nombre", "like", "%" . $search . "%");
+            $clientes->where("clientes.nombre", "like", "%" . $search . "%");
         }
         //UNO ES PARA EL TOTAL Y OTRA DEPENDE DEL STATUS DONDE SE ENCUENTRE
         $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)),0) as total')
@@ -139,7 +138,8 @@ class VentaController extends Controller
     {
         //
         $ventaAEliminar = Venta::find($venta);
-        return $ventaAEliminar;
+        $ventaAEliminar->delete();
+         return redirect()->back();
     }
 
     public function totals(Request $request)
