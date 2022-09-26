@@ -37,6 +37,7 @@ const activeIva = () => {
 
 const eliminarVenta = (id) => {
     //
+    Inertia.delete(route("ventas.destroy", id));
 }
 
 </script>
