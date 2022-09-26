@@ -23,7 +23,8 @@ class VentaController extends Controller
 
         $clientes = Cliente::select('clientes.*')
             ->with([
-                'ventas' => function ($query) use ($request) {
+                'ventas' => function ($query) use ($request) 
+                {
                     $query->select(
                         "ventas.*",
                         "cecos_ventas.nombre as ceco",
@@ -39,14 +40,16 @@ class VentaController extends Controller
                     if ($request->status_id != "") {
                         $query->where("ventas.status_id", "=", $request->status_id);
                     }
+                    if ($request->has("search")) 
+                    {
+                        $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
+                        $query->where("cecos_ventas.nombre", "like", "%" . $search . "%");
+                    }
                 }
-            ]);
+            ]);            
 
 
-        if ($request->has("search")) {
-            $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
-            $clientes->where("clientes.nombre", "like", "%" . $search . "%");
-        }
+       
         //UNO ES PARA EL TOTAL Y OTRA DEPENDE DEL STATUS DONDE SE ENCUENTRE
         $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)),0) as total')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id');

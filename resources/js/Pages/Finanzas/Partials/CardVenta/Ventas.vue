@@ -20,6 +20,7 @@ const props = defineProps({
 })
 
 
+
 const tab = ref("") // Referencia al id
 const searchText = ref("")
 const showingOcs = ref(false);
@@ -57,10 +58,11 @@ const search = (newSearch) => {
         data: params,
         preserveState: true,
         preserveScroll: true,
-        only: ['clientes', 'totalVentasStatus'],
+        only: ['clientes', 
+        'totalVentasStatus',
+    ],
     })
 
-    console.log(props.clientes);
 }
 
 
