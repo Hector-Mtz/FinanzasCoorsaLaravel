@@ -1109,7 +1109,7 @@ export default {
                 </tr>
               </thead>
               <tbody >
-                 <tr v-for="item in filas">
+                 <tr v-for="item in filas" :key="item.id">
                     <td>
                         <Input1 name="nombreProducto" type="text" v-model="item.nombreProducto" style="color: black;" required ></Input1>
                     </td>
