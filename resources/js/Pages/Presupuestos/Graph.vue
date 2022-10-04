@@ -21,6 +21,7 @@ import { isSet } from '@vue/shared';
 import SelectComponent from '@/Components/SelectComponent.vue';
 import Table from '../../Components/Table.vue';
 import moment from 'moment';
+import Checkbox from '@/Components/Checkbox.vue';
 //variables GLOBALES
 //cambio aaa
 let zoom = false;
@@ -792,8 +793,22 @@ export default {
                         if(indiceMovimiento === indice)
                         {
                           
-                          let td = '<td>'+newData[x].cantidad+'</td>' ;
-                          //console.log(td);
+                          let td = '<td>'+newData[x].cantidad+'</td>' ; 
+                          
+                          switch (indiceMovimiento) //evaluamos el indice para hacer la suma por columna
+                          {
+                            case 0: //Gasto
+                                this.totales.totalGasto = newData[x].cantidad+newData[x].cantidad ;
+                                break;
+                            case 1://Suplemento
+                                this.totales.totalSuplemento = newData[x].cantidad+newData[x].cantidad ;
+                             break;
+                             case 2://Presupuesto
+                                this.totales.totalPresupuesto = newData[x].cantidad+newData[x].cantidad ;
+                                break;
+                            default:
+                                break;
+                          }
                           
                           tds.push(td)
                         }
@@ -982,7 +997,7 @@ export default {
         }
 
     },
-    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1, SelectComponent, Table }
+    components: { ButtonPres, ModalGastos, SecondaryButton1, Button, ButtonAdd, TableComponent, Label, Input1, SelectComponent, Table, Checkbox }
 }
 
 </script>
@@ -1121,7 +1136,7 @@ export default {
                         <Input1 type="number" min="1" pattern="^[0-9]+" v-model="item.costo" style="width: 70px;color: black;" required></Input1>
                     </td>
                     <td>
-                        <checkbox v-model="item.iva"></checkbox>
+                        <Checkbox v-model="item.iva"></Checkbox>
                     </td>
                     <td>
                         <p style="display:none" v-if="item.iva==false">{{item.total = (item.cantidad)*(item.costo)}}</p>
