@@ -66,7 +66,11 @@ export default {
             idMovimientoForm:0,
             nombreMovimiento:"",
             filas:[],
-            newFilas:[]
+            newFilas:[],
+            totales :{ totalPresupuesto:0,
+                       totalSuplemento:0,
+                       totalGasto:0,
+                    }
         };
     },
 
@@ -787,9 +791,10 @@ export default {
                         //console.log(tipoMovimiento);
                         if(indiceMovimiento === indice)
                         {
-                          //console.log(elementosArray[x].cantidad)
+                          
                           let td = '<td>'+newData[x].cantidad+'</td>' ;
                           //console.log(td);
+                          
                           tds.push(td)
                         }
                         else{
@@ -945,7 +950,6 @@ export default {
             this.filas.splice(id,1);
         },
 
-
         enviarFormSolicitud:function(concepto,ceco)
         {
             //console.log(this.idMovimientoForm); //si recibe el id
@@ -1052,9 +1056,9 @@ export default {
                </tr>
                <tr>
                    <td></td>
-                   <td>total</td>
-                   <td>total</td>
-                   <td>total</td>
+                   <td>{{totales.totalGasto}}</td>
+                   <td>{{totales.totalSuplemento}}</td>
+                   <td>{{totales.totalPresupuesto}}</td>
                    <td colspan="3"></td> 
                     </tr>
                 <tr></tr>
