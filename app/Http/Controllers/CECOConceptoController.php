@@ -94,8 +94,10 @@ class CECOConceptoController extends Controller
         ->get();
 
         $object2 = TipoMovimiento::all();
-        $arrayObject = [$object, $object2];
-        return $arrayObject ;
+        return response()->json([
+            'tiposMovimiento' => $object2,
+            'salidas' => $object
+        ]) ;
     }
 
     public function consulta_ceco_concepto($x, $y)
@@ -112,6 +114,20 @@ class CECOConceptoController extends Controller
         ->where('conceptos.nombre','LIKE','%'.$y.'%',)
         ->get();
         return $object;
+    }
+
+    public function ceco_grupo_concepto ($x, $y)
+    {
+        /*
+        $object = DB::table(DB::raw('soli_movimientos'))
+        ->select(DB::raw(
+            ''
+        ))
+        ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
+        ->get();
+
+       
+        return $object ;*/
     }
 
     public function index()
