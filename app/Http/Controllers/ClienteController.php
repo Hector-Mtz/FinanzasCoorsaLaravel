@@ -20,20 +20,33 @@ class ClienteController extends Controller
      */
     public function index(Request $request)
     {
+        $request->validate(
+            [
+                'grupoType' => ['in:clientes'] //valida el grupo si viene contenga clientes
+            ]
+        );//validamos la data que viene 
 
-        $clientes = Cliente::all();
+        if($request->has('grupoType'))
+        { 
+          $clientes = Cliente::selectRaw('CONCAT(clientes.nombre,cecos.nombre) AS nombre,
+          cecos.nombre AS ceco,
+          clientes.nombre AS grupoCliente')
+          ->join('cecos', 'clientes.id', '=', 'cecos.cliente_id');
+        }
+        else
+        {
+            $clientes = Cliente::selectRaw('clientes.*');
+        }
+
         $grupo_conceptos = GrupoConcepto::all();
         $movimientos = TipoMovimiento::all();
         $solicitudes = SoliMovimiento::all();
-
         $cantidades = DB::table(DB::raw('soli_movimientos'))
-            ->select(DB::raw(
-                '
-                 clientes.nombre AS Cliente,
-                 grupo_conceptos.nombre AS GrupoConcepto,
+            ->selectRaw(
+                'grupo_conceptos.nombre AS GrupoConcepto,
                  SUM(productos.cantidad) AS Cantidad,
                  tipo_movimientos.nombre AS Movimiento'
-            ))
+            )
             ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
             ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
             ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', '=', 'ceco_conceptos.id')
@@ -41,22 +54,29 @@ class ClienteController extends Controller
             ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')
             ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
             ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', '=', 'grupo_conceptos.id')
-            ->groupBy('grupo_conceptos.nombre')
-            ->groupBy('clientes.nombre')
-            ->groupBy('tipo_movimientos.nombre')
-            ->groupBy('soli_movimientos.nombre')
-            ->get();
+            ->groupBy(['grupo_conceptos.nombre', 
+            'clientes.nombre',
+            'cecos.nombre',
+            'tipo_movimientos.nombre',
+            ]);
 
+         if($request->has('grupoType')){
+            $cantidades->selectRaw('CONCAT(clientes.nombre,cecos.nombre) AS Cliente');
+         }else{
+            $cantidades->selectRaw('clientes.nombre AS Cliente');
+         }   
+       //return response()->json($cantidades);
 
-        return Inertia::render('Presupuestos/PresupuestosIndex', [
-            'clientes' => $clientes,
+        return Inertia::render('Presupuestos/PresupuestosIndex', 
+        [
+            'filtros' => $request->all(['grupoType']), //parametro que filtrara para saber como esta agrupado
+            'clientes' => fn() => $clientes->get(),
             'grupo_conceptos' => $grupo_conceptos,
-            'cantidades' => $cantidades,
+            'cantidades' => fn() => $cantidades->get(),
             'movimientos' => $movimientos,
             'solicitudes' => $solicitudes
         ]);
     }
-
 
     public function listado()
     {

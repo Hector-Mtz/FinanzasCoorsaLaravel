@@ -86,4 +86,6 @@ Route::middleware([
 
 Route::apiResource('/clientes', ClienteController::class);
 
+Route::get("/clientesAgrupados",[ClienteController::class, 'clientesAgrupados']);
+
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);

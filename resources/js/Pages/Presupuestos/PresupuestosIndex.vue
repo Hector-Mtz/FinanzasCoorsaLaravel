@@ -8,13 +8,15 @@ import ButtonPres from '@/Components/ButtonPres.vue';
 import Dropdown from '@/Components/DropDownLink.vue';
 import ButtonCalendar from '../../Components/ButtonCalendar.vue';
 import Graph from './Graph.vue';
+import GraphPrueba from './GraphPrueba.vue';
 
 var props = defineProps({
     clientes:Object,
     grupo_conceptos: Object,
     cantidades:Object,
     movimientos:Object,
-    solicitudes:Object
+    solicitudes:Object,
+    filtros: Object
 });
 
 
@@ -53,13 +55,14 @@ const changeDate = (newDate) => {
                          </div>
                       </div>
                     </div> 
-                      <Graph 
+                      <GraphPrueba
+                      :filtros = filtros 
                       :movimientos = movimientos
                       :clientes= clientes
                       :grupo_conceptos = grupo_conceptos
                       :cantidades = cantidades
                       :solicitudes= solicitudes
-                       ></Graph>
+                       ></GraphPrueba>
                 </div>
             </div>
         </div>

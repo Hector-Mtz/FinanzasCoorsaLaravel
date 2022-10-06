@@ -16,14 +16,13 @@ class CECOConceptoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function byCecoConcepto($x,$y){
+    public function byCecoConcepto($GrupoConcepto,$Cliente){
         //Consulta para generar matriz ceco/concepto
     $object = DB::table(DB::raw('soli_movimientos'))
       ->select(DB::raw(
-          'clientes.nombre AS Cliente,
-           cecos.nombre AS CECO,
-           grupo_conceptos.nombre AS GrupoConcepto,
-           conceptos.nombre AS Concepto,
+          '
+           cecos.nombre AS Cliente,
+           conceptos.nombre AS GrupoConcepto,
            SUM(productos.cantidad) AS Cantidad,
            tipo_movimientos.nombre AS Movimiento'
       ))
@@ -39,21 +38,21 @@ class CECOConceptoController extends Controller
       ->groupBy('clientes.nombre')
       ->groupBy('cecos.nombre')
       ->groupBy('tipo_movimientos.nombre')
-      ->where('grupo_conceptos.nombre','LIKE','%'.$x.'%',)
-      ->where('clientes.nombre','LIKE','%'.$y.'%',)
+      ->where('grupo_conceptos.nombre','LIKE','%'.$GrupoConcepto.'%',)
+      ->where('clientes.nombre','LIKE','%'.$Cliente.'%',)
       ->get();
 
       $object2 = DB::table(DB::raw('cecos'))
       ->select('cecos.nombre')
       ->join('clientes','cecos.cliente_id','=','clientes.id')
-      ->where('clientes.nombre','LIKE','%'.$y.'%')
+      ->where('clientes.nombre','LIKE','%'.$Cliente.'%')
       ->get();
 
 
       $object3 = DB::table(DB::raw('conceptos'))
       ->select('conceptos.nombre')
       ->join('grupo_conceptos','conceptos.grupo_concepto_id','=','grupo_conceptos.id')
-      ->where('grupo_conceptos.nombre','LIKE','%'.$x.'%')
+      ->where('grupo_conceptos.nombre','LIKE','%'.$GrupoConcepto.'%')
       ->get();
 
       $allObjects = [$object,$object2,$object3];
