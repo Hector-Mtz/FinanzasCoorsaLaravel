@@ -272,7 +272,7 @@ import ModalWatchProducts from './ModalWatchProducts.vue';
                     </div>
                 </div>
              </div>
-             <table id="tabla">
+             <table id="tabla" style="margin-top:1rem">
                    <thead>
                      <tr>
                        <th>Nombre</th>
@@ -294,7 +294,7 @@ import ModalWatchProducts from './ModalWatchProducts.vue';
                          <td colspan="3"></td>
                       </tr>
                       <tr>
-                          <td></td>
+                          <td>TOTALES:</td>
                           <td>{{totales.totalGasto}}</td>
                           <td>{{totales.totalSuplemento}}</td>
                           <td>{{totales.totalPresupuesto}}</td>

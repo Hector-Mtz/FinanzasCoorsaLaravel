@@ -408,7 +408,7 @@ export default {
            axios.get('api/ceco_concepto/'+x+'/'+y,{ob: x},{ob1: y}) //enviamos el dato a la ruta de la api
            .then((resp)=>{
               let datos = resp.data[0]; //la respuesta que obtenemos de BD es la que almacenamos
-              console.log(datos); //imprimimos la respuesta accediendo a la data
+              //console.log(datos); //imprimimos la respuesta accediendo a la data
               data = []; //vaciamos el arreglo data
               let a = {};
               nuevoArreglo = [];
@@ -469,7 +469,7 @@ export default {
                                   tipo: element.Movimiento,
                                   cantidad: parseInt(element.Cantidad)
                                  }
-                                 console.log(newxy);
+                                 //console.log(newxy);
                                  elemento0.movimientos.push(a)
                           }
                           r = 1
