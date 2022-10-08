@@ -79,12 +79,13 @@ export default {
             minGridDistance: 20,
             inversed: true
         });
-        yRenderer.grid.template.set("visible", false);
+
         //console.log(this.filtros);
+        yRenderer.grid.template.set("visible", false);
         if(this.filtros.grupoType)
         {
           //console.log(this.filtros);
-          yRenderer.labels.template.setAll({ text: "{ceco}" })
+          yRenderer.labels.template.setAll({ text: "{ceco}" }) //enmascara
         }
 
         yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
@@ -98,7 +99,12 @@ export default {
             opposite: true,
         });
         xRenderer.grid.template.set("visible", false);
-         xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+        if(this.filtros.grupoType2)
+        {
+          //console.log(this.filtros);
+          xRenderer.labels.template.setAll({ text: "{concepto}" }) //enmascara la seccion
+        }
+        xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
             renderer: xRenderer,
             categoryField: "category",
         }));
@@ -181,6 +187,7 @@ export default {
               }
               else
               {
+                //console.log(auxiliarGrupo);
                 if(auxiliarGrupo.grupoCliente != element.grupoCliente) //ya se tiene guardado el cliente
                 {
                     var range = yAxis.makeDataItem({
@@ -207,14 +214,51 @@ export default {
                     //auxiliarGrupo = element;
                  }
               }
-                               }
+           }
         }
         yAxis.data.setAll(ejey);
         //Siteamos los datos que aparecen en el eje x
+        let auxiliarGrupo2= {};
         for (let i = 0; i < grupo_conceptos.length; i++) {
-            const e = grupo_conceptos[i];
-            // console.log(e.nombre);
-            ejex.push({ category: e.nombre });
+            const elemento = grupo_conceptos[i];
+            //console.log(elemento);
+            ejex.push({ category: elemento.nombre, concepto:elemento.concepto});
+            //Agrupacion 
+            if(this.filtros.grupoType2)
+            {
+               if(auxiliarGrupo2.nombre  == null) //si esl auxiliar.nombre es nulo guardamos el nombre del grupoconcepto
+               {
+                 auxiliarGrupo2 = elemento; //le almacenamos el elemento completo para el agrupamiento
+               } 
+               else
+              {
+                if(auxiliarGrupo2.grupoConcepto != elemento.grupoConcepto) //comparamos si ya existe elgrupoConcepto
+                {
+                    var range = xAxis.makeDataItem({ //definimos una variable con los rangos
+                                "category": auxiliarGrupo2.nombre,
+                                "endCategory": auxiliarGrupo2.nombre,
+                     });
+                     xAxis.createAxisRange(range); //le  asignamos al axis el rango
+                    
+                     var label = range.get("label"); //definimos un label que se asignrara el nombre del rango
+
+                     label.setAll({
+                       text: auxiliarGrupo2.grupoConcepto, //definimos el texto que se mostrara
+                       dx: -100,
+                       dy:-20,
+                       fontWeight: "bold",
+                       tooltipText: auxiliarGrupo2.grupoConcepto,
+                       rotation:0  });
+                     
+                     var tick = range.get("tick");
+                     tick.setAll({ visible: true, strokeOpacity: 1, length: 50, location: 1 });
+                     
+                    var grid = range.get("grid");
+                    grid.setAll({ strokeOpacity: 1 });
+                    //auxiliarGrupo = element;
+                }
+              }
+            }
         }
         xAxis.data.setAll(ejex);
         //click
@@ -242,61 +286,138 @@ export default {
         click:function(ev)
         {
            this.zoom = true;
-           nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
-           //console.log(nuevosValores);
-           
-           let GrupoConcepto = nuevosValores.GrupoConcepto;
-           let Cliente = nuevosValores.Cliente;
-           axios.get('api/ceco_concepto/'+GrupoConcepto+'/'+Cliente,{ob: GrupoConcepto},{ob1: Cliente}) //enviamos el dato a la ruta de la api
-           .then((resp)=>{
-              let datos = resp.data[0];//la respuesta que obtenemos de BD es la que almacenamos
-              //console.log(datos); //imprimimos la respuesta accediendo a la datay trae el tipo de mv
-              data = []; //vaciamos el arreglo data
-              let a = {};
-              ejex=[]; //vaciamos el ejex
-              let cecos = resp.data[1]; //traemos el objeto donde contiene los cecos
-              for (let index = 0; index < cecos.length; index++) //recorremos cecos
+           //CLICK DE PANTALLA PRINCIPAL
+           console.log(this.filtros);
+           let nuevosValores = null;
+           //preguntamos si estan agrupados por clientes, o por grupoConceptos
+           if(this.filtros.grupoType || this.filtros.grupoType2) 
+           {
+              if(this.filtros.grupoType) //Preguntamos si estan agrupados por clientes
               {
-                let nombreCeco = cecos[index].nombre; //guardamos en variables los cecos
-                ejex.push({ category: nombreCeco }); // lo metemos al objeto
+                 console.log("agrupamiento por clientes");
+                 nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
+                 console.log(nuevosValores);
+                 let grupoConcepto_send = nuevosValores.grupoConcepto_id; //almacenamos el id del grupoConcepto
+                 let ceco_id_send = nuevosValores.ceco_id;
               }
-              ejey = [];
-              let conceptos = resp.data[2];
-              for (let f = 0; f < conceptos.length; f++) 
+              else
               {
-                  let nombreConcepto = conceptos[f].nombre;
-                  ejey.push({ category: nombreConcepto });
-              }
-              series.columns.template.events.on("click", (ev) => {
-                  if (this.zoom)
-                  {
-                    let nuevosValores = ev.target._dataItem.dataContext; 
-                    console.log(nuevosValores);
-                    this.cliente= nuevosValores.Cliente;
-                    this.grupo_concepto= nuevosValores.GrupoConcepto;
-                    this.SalidaMovimiento = true;
-                }
-              }); //funcion para el modal
-
-              yAxis.data.setAll(ejex);
-              xAxis.data.setAll(ejey);
-              //console.log(datos);
-              //console.log("Datos Response:", datos);
-              this.datosGrafica =datos;
-              this.cambiar(this.movimiento.state);
+                console.log("agrupamiento por grupoConceptos");
+                nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
+                console.log(nuevosValores);
+              } 
+           }
+           else
+           {
+              nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
+              console.log(nuevosValores);
+              //tiene que almacenar el idcliente y idgrupoConcepto para la peticion axios
+              let GrupoConcepto_id = nuevosValores.grupoConcepto_id;
+              let Cliente_id = nuevosValores.clientes_id;
+              axios.get('api/ceco_concepto/'+GrupoConcepto_id+'/'+Cliente_id,{ob: GrupoConcepto_id},{ob1: Cliente_id}) //enviamos el dato a la ruta de la api
+              .then((resp)=>{
+                 let datos = resp.data[0];//la respuesta que obtenemos de BD es la que almacenamos
+                 console.log(datos); //imprimimos la respuesta accediendo a la datay trae el tipo de mv
+                 data = []; //vaciamos el arreglo data
+                 ejex=[]; //vaciamos el ejex
+                 let cecos = resp.data[1]; //traemos el objeto donde contiene los cecos
+                 for (let index = 0; index < cecos.length; index++) //recorremos cecos
+                 {
+                   let nombreCeco = cecos[index].nombre; //guardamos en variables los cecos
+                   ejex.push({ category: nombreCeco }); // lo metemos al objeto
+                 }
+                 ejey = [];
+                 let conceptos = resp.data[2];
+                 for (let f = 0; f < conceptos.length; f++) 
+                 {
+                     let nombreConcepto = conceptos[f].nombre;
+                     ejey.push({ category: nombreConcepto });
+                 }
+                 series.columns.template.events.on("click", (ev) => {
+                     if (this.zoom)
+                     {
+                       let nuevosValores = ev.target._dataItem.dataContext; 
+                       console.log(nuevosValores);
+                       this.cliente= nuevosValores.Cliente;
+                       this.grupo_concepto= nuevosValores.GrupoConcepto;
+                       this.SalidaMovimiento = true; //funcion para el modal
+                   }
+                 }); 
      
-          })
-           .catch(function (error)
-          {
-           console.log(error);
-          });    
+                 yAxis.data.setAll(ejex);
+                 xAxis.data.setAll(ejey);
+                 //console.log(datos);
+                 //console.log("Datos Response:", datos);
+                 this.datosGrafica =datos;
+                 this.cambiar(this.movimiento.state);
+             })
+             .catch(function (error)
+             {
+             console.log(error);
+             }); 
+           }   
+           
         },
 
         cambiar: function (movimiento) {
             this.movimiento.state = movimiento; //reemplazamos la variable global por la que traemos del boton
-            let data = this.datosGrafica ;
-            data = data.filter((cantidad) => cantidad.Movimiento === this.movimiento.state);
-
+            let data = this.datosGrafica ; //trae los datos de la grafica
+            //listada de data;
+            //console.log(movimiento);
+            let auxData = {...data[0]};  
+            auxData.movimientos = {
+              "PRESUPUESTO": 0,
+              "SUPLEMENTO": 0,
+              "GASTO": 0,
+            };
+            let arrayElementos = [];
+            switch (movimiento) 
+            {
+              case "DISPONIBLE":
+              case "TOTAL":
+                    data.forEach(salida =>
+                   {
+                    if(auxData.Cliente === salida.Cliente && auxData.GrupoConcepto === salida.GrupoConcepto){
+                        auxData.movimientos[salida.Movimiento] = salida.Cantidad
+                    }else
+                    {
+                        auxData.Cantidad = auxData.movimientos['PRESUPUESTO']+
+                        auxData.movimientos['SUPLEMENTO']; 
+                      
+                      if(movimiento === 'DISPONIBLE'){
+                        auxData.Cantidad =   auxData.Cantidad- 
+                        (auxData.movimientos['GASTO'])     
+                      }
+                      arrayElementos.push(auxData);
+                      auxData = salida;
+                      auxData.movimientos = {
+                        "PRESUPUESTO": 0,
+                        "SUPLEMENTO": 0,
+                        "GASTO": 0,
+                      };
+                      auxData.movimientos[salida.Movimiento] = salida.Cantidad
+                    }
+                  });
+                    
+                  auxData.Cantidad = auxData.movimientos['PRESUPUESTO']+
+                        auxData.movimientos['SUPLEMENTO']; 
+                      
+                      if(movimiento === 'DISPONIBLE'){
+                        auxData.Cantidad =   auxData.Cantidad- 
+                        (auxData.movimientos['GASTO'])     
+                      }
+                      arrayElementos.push(auxData);
+                      console.log(arrayElementos);
+                      data=arrayElementos;
+         
+                break;
+             
+            
+              default:
+                  data = data.filter((cantidad) => cantidad.Movimiento === this.movimiento.state);
+                break;
+    
+            }
             series.data.setAll(data);
         } ,
 
@@ -315,13 +436,19 @@ export default {
  }
 </style>
 <template>
+    {{cantidades}}
      <div class="group">
            <Link :href="route('clientes.index')" :only="['cantidades','clientes','filtros']" preserveScroll :data="{grupoType: 'clientes'}">
               <ButtonPres class="buttonCECO"  style="background-color:#111F2E">
                 CECO
               </ButtonPres>
           </Link>
-           <ButtonPres class="buttonCON" style="background-color:#111F2E">CON.</ButtonPres> 
+          <Link :href="route('clientes.index')" :only="['cantidades','grupo_conceptos','filtros']" preserveScroll :data="{grupoType2: 'grupo_conceptos'}" >
+            <ButtonPres class="buttonCON" style="background-color:#111F2E">
+                CON.
+            </ButtonPres> 
+          </Link>
+
            <div class="dropdown" >
                   <button onclick="myFunction()" class="dropbtn">$</button>
                   <div id="myDropdown" class="dropdown-content">

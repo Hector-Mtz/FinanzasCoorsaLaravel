@@ -38,21 +38,21 @@ class CECOConceptoController extends Controller
       ->groupBy('clientes.nombre')
       ->groupBy('cecos.nombre')
       ->groupBy('tipo_movimientos.nombre')
-      ->where('grupo_conceptos.nombre','LIKE','%'.$GrupoConcepto.'%',)
-      ->where('clientes.nombre','LIKE','%'.$Cliente.'%',)
+      ->where('grupo_conceptos.id','LIKE','%'.$GrupoConcepto.'%',)
+      ->where('clientes.id','LIKE','%'.$Cliente.'%',)
       ->get();
 
       $object2 = DB::table(DB::raw('cecos'))
       ->select('cecos.nombre')
       ->join('clientes','cecos.cliente_id','=','clientes.id')
-      ->where('clientes.nombre','LIKE','%'.$Cliente.'%')
+      ->where('clientes.id','LIKE','%'.$Cliente.'%')
       ->get();
 
 
       $object3 = DB::table(DB::raw('conceptos'))
       ->select('conceptos.nombre')
       ->join('grupo_conceptos','conceptos.grupo_concepto_id','=','grupo_conceptos.id')
-      ->where('grupo_conceptos.nombre','LIKE','%'.$GrupoConcepto.'%')
+      ->where('grupo_conceptos.id','LIKE','%'.$GrupoConcepto.'%')
       ->get();
 
       $allObjects = [$object,$object2,$object3];
