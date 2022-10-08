@@ -16,7 +16,7 @@ const props = defineProps({
     <tr>
         <td>#{{ props.oc.nombre }}</td>
         <td>${{ formatoMoney(props.oc.cantidad) }}</td>
-        <td>{{ props.oc.created_at }}</td>
+        <td>{{ props.oc.fecha_alta }}</td>
         <td>
             <SuccessButton @click="emit('edit', props.oc)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">

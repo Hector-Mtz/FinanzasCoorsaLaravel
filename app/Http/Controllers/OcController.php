@@ -45,6 +45,7 @@ class OcController extends Controller
             'nombre' => ["required", "string", "unique:ocs,nombre"],
             'cantidad' => ["required", "numeric"],
             'venta_id' => ["required", "exists:ventas,id"],
+            'fecha_alta' => ["required", "date"],
         ]);
         try {
             $oc = Oc::create($newOc);
@@ -79,6 +80,7 @@ class OcController extends Controller
         $newOc = $request->validate([
             'nombre' => ["required", "string", "unique:ocs,nombre," . $oc->id . ",id"],
             'cantidad' => ["required", "numeric"],
+            'fecha_alta' => ["required", "date"],
         ]);
 
         if ($oc->factura_id !== null) {
