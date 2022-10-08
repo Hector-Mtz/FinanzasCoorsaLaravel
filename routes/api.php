@@ -33,4 +33,4 @@ Route::get('/consultaMovimiento/{x}',[TipoMovimientoController::class, 'consulta
 
 Route::get('/consulta_ceco_concepto/{x}/{y}',[CECOConceptoController::class, 'consulta_ceco_concepto'])->name('consulta_ceco_concepto');
 
-Route::get('/ceco_grupo_concepto/{x}',[CECOConceptoController::class, 'ceco_grupo_concepto'])->name('ceco_grupo_concepto');
+Route::get('/ceco_grupo_concepto/{x}/{y}',[CECOConceptoController::class, 'ceco_grupo_concepto'])->name('ceco_grupo_concepto');

@@ -299,13 +299,25 @@ export default {
                  console.log(nuevosValores);
                  let grupoConcepto_send = nuevosValores.grupoConcepto_id; //almacenamos el id del grupoConcepto
                  let ceco_id_send = nuevosValores.ceco_id;
-              }
-              else
-              {
-                console.log("agrupamiento por grupoConceptos");
-                nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
-                console.log(nuevosValores);
-              } 
+                 axios.get('api/ceco_grupo_concepto/'+ceco_id_send+'/'+grupoConcepto_send,{ob: ceco_id_send},{ob1: grupoConcepto_send}) //enviamos el dato a la ruta de la api
+                 .then((resp)=>
+                  {
+                     let datos = resp.data[0];
+                     let ceco = resp.data[1];//la respuesta que obtenemos de BD es la que almacenamos
+                     let conceptos = resp.data[2];
+                     console.log(datos);
+                  })
+                  .catch(function (error)
+                  {
+                    console.log(error);
+                  }); 
+                  }
+                  else
+                  {
+                    console.log("agrupamiento por grupoConceptos");
+                    nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
+                    console.log(nuevosValores);
+                  } 
            }
            else
            {
