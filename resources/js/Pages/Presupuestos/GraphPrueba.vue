@@ -305,7 +305,13 @@ export default {
                      let datos = resp.data[0];
                      let ceco = resp.data[1];//la respuesta que obtenemos de BD es la que almacenamos
                      let conceptos = resp.data[2];
-                     console.log(datos);
+                     ejey=[]; //vaciamos el ejex
+                     for (let index = 0; index < ceco.length; index++) //recorremos cecos
+                      {
+                        let nombreCeco = ceco[index].nombre; //guardamos en variables los cecos
+                         ejey.push({ category: nombreCeco }); // lo metemos al objeto
+                      }
+                      yAxis.data.setAll(ejey);
                   })
                   .catch(function (error)
                   {

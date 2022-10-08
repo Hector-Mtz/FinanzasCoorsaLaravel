@@ -150,7 +150,7 @@ class CECOConceptoController extends Controller
         ->where('conceptos.grupo_concepto_id','=',$grupoConcepto)
         ->get();
 
-        $datos = [$uniqueCeco,$conceptos,$sql];
+        $datos = [$sql,$uniqueCeco,$conceptos];
         return $datos;
        
     }
