@@ -58,9 +58,9 @@ const search = (newSearch) => {
         data: params,
         preserveState: true,
         preserveScroll: true,
-        only: ['clientes', 
-        'totalVentasStatus',
-    ],
+        only: ['clientes',
+            'totalVentasStatus',
+        ],
     })
 
 }
@@ -102,7 +102,8 @@ watch(searchText, (newSearch) => {
             </div>
             <!-- Lista de clientes -->
             <div class="overflow-y-auto" style="max-height: 65vh;">
-                <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente">
+                <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
+                    :total="cliente.ventas.length">
                     <ItemObjectShow v-for="venta in cliente.ventas" :key="venta.id" :data="venta"
                         @onShow="showOcs($event)">
                         {{ venta.ceco + "-" + venta.servicio}}
@@ -120,4 +121,5 @@ watch(searchText, (newSearch) => {
 </template>
 
 <style lang="scss" scoped>
+
 </style>

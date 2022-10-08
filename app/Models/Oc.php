@@ -18,12 +18,13 @@ class Oc extends Model
         'status_id',
         'venta_id',
         'factura_id',
+        'fecha_alta',
     ];
 
-    public function createdAt(): Attribute
+    public function fechaAlta(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => Carbon::parse($value)->format('d/m/y')
+            get: fn ($value) => Carbon::parse($value)->format('d/m/Y')
         );
     }
 }

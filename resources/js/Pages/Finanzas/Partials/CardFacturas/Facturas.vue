@@ -136,7 +136,8 @@ watch(searchText, (newSearch) => {
             <div class="-mx-2 overflow-hidden overflow-y-auto" style="max-height: 65vh;">
                 <SkeletonLoader v-if="clientes.length === 0" style="height: 65vh;" />
                 <div v-else>
-                    <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente">
+                    <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente"
+                        :total="cliente.facturas.length">
                         <ItemObjectShow v-for="factura in cliente.facturas" :key="factura.id" :data="factura"
                             @onShow="showOcsFactura($event)">
                             #{{ factura.referencia }}

@@ -14,7 +14,11 @@ import SpinProgress from '@/Components/SpinProgress.vue';
 import SelectComponent from '@/Components/SelectComponent.vue';
 import { Inertia } from '@inertiajs/inertia';
 
-const emit = defineEmits(["close", "addOc", "editOc"])
+const emit = defineEmits(["close", "addOc", "editOc"]);
+
+let nowDate = new Date();
+const month = nowDate.getMonth() + 1;
+nowDate = nowDate.getFullYear() + '-' + (month < 10 ? '0' + month : month) + '-' + (nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate.getDate());
 const props = defineProps({
     show: {
         type: Boolean,
@@ -40,6 +44,7 @@ const props = defineProps({
 const form = reactive({
     'nombre': "",
     'cantidad': "",
+    'fecha_alta': nowDate,
     'status_id': "",
     'venta_id': "",
     'hasErrors': false,
@@ -52,10 +57,13 @@ const form = reactive({
 const titleModal = computed(() => {
     if (props.typeForm === 'create') {
         restForm();
+        form.fecha_alta = nowDate;
+
         return "Nueva Oc"
     } else {
         form.nombre = props.oc.nombre;
         form.cantidad = props.oc.cantidad;
+        form.fecha_alta = props.oc.fecha_alta.split('/').reverse().join('-');
         form.status_id = props.oc.status_id;
         form.venta_id = props.oc.venta_id;
         return "Actualizar Oc"
@@ -65,6 +73,7 @@ const titleModal = computed(() => {
 function restForm() {
     form.nombre = "";
     form.cantidad = "";
+    form.fecha_alta = "";
     form.status_id = "";
     form.venta_id = "";
     form.venta_id = props.venta.id;
@@ -195,6 +204,12 @@ const update = () => {
                         <Input id="cantidad" name="cantidad" type="text" pattern="^\d*(\.\d{0,2})?$"
                             v-model="form.cantidad" required maxlength="30" />
                         <JetInputError :message="form.errors.cantidad" class="mt-2" />
+                    </div>
+                    <div>
+                        <JetLabel for="fecha_alta" value="Fecha Alta:" />
+                        <Input id="fecha_alta" name="fecha_alta" type="date" min="2000-01-02" v-model="form.fecha_alta"
+                            required />
+                        <JetInputError :message="form.errors.fecha_alta" class="mt-2" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">
