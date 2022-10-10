@@ -18,7 +18,7 @@ class CECOConceptoController extends Controller
      */
     public function byCecoConcepto($GrupoConcepto,$Cliente){
         //Consulta para generar matriz ceco/concepto
-    $object = DB::table(DB::raw('soli_movimientos'))
+      $object = DB::table(DB::raw('soli_movimientos'))
       ->select(DB::raw(
           '
            cecos.nombre AS Cliente,
@@ -121,8 +121,8 @@ class CECOConceptoController extends Controller
         $sql =  DB::table(DB::raw('soli_movimientos'))
         ->selectRaw(
             'SUM(productos.cantidad) AS Cantidad,
-             cecos.nombre AS Ceco,
-             conceptos.nombre AS Concepto,
+             cecos.nombre AS Cliente,
+             conceptos.nombre AS GrupoConcepto,
              tipo_movimientos.nombre AS Movimiento'
         )
         ->join('productos','productos.soli_movimiento_id','=','soli_movimientos.id')
@@ -153,6 +153,44 @@ class CECOConceptoController extends Controller
         $datos = [$sql,$uniqueCeco,$conceptos];
         return $datos;
        
+    }
+
+    public function concepto_clientes ($concepto, $clientes)
+    {
+      $sql =  DB::table(DB::raw('soli_movimientos'))
+      ->selectRaw(
+          'SUM(productos.cantidad) AS Cantidad,
+           cecos.nombre AS Cliente,
+           conceptos.nombre AS GrupoConcepto,
+           tipo_movimientos.nombre AS Movimiento'
+      )
+      ->join('ceco_conceptos','soli_movimientos.ceco_concepto_id','=','ceco_conceptos.id')
+      ->join('productos','productos.soli_movimiento_id','=','soli_movimientos.id')
+      ->join('tipo_movimientos','soli_movimientos.tipo_movimiento_id','=','tipo_movimientos.id')
+      ->join('cecos','ceco_conceptos.ceco_id','=','cecos.id')
+      ->join('clientes','cecos.cliente_id','=','clientes.id' )
+      ->join('conceptos','ceco_conceptos.concepto_id','=','conceptos.id')
+      ->where('conceptos.id','=',$concepto)
+      ->where('clientes.id','=',$clientes)
+      ->groupBy('conceptos.nombre','cecos.nombre','tipo_movimientos.nombre')
+      ->get();;
+
+      $cecos = DB::table(DB::raw('cecos'))
+      ->selectRaw(
+          'cecos.id, cecos.nombre'
+      )
+      ->where('cecos.cliente_id','=',$clientes)
+      ->get();
+
+      $uniqueConcepto = DB::table(DB::raw('conceptos'))
+      ->selectRaw(
+          'conceptos.id, conceptos.nombre'
+      )
+      ->where('conceptos.id','=',$concepto)
+      ->get();
+
+      $arrayObjects = [$sql, $cecos, $uniqueConcepto];
+      return $arrayObjects ;
     }
 
     public function index()

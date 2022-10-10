@@ -12,6 +12,7 @@ import ButtonPres from '../../Components/ButtonPres.vue';
 import moment from 'moment';
 import ModalSalidaMovimiento from './Components/ModalSalidaMovimiento.vue';
 
+
 //variables GLOBALES
 //cambio aaa
 let data =[];

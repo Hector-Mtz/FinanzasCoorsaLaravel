@@ -6,7 +6,6 @@
     import SecondaryButton from '@/Jetstream/SecondaryButton.vue';
     import Input1 from '@/Jetstream/Input.vue';
     import Label from '@/Jetstream/Label.vue';
-    import Checkbox from '@/Components/Checkbox.vue';
     import moment from 'moment';
     import { Inertia } from '@inertiajs/inertia';  
     import { useForm } from '@inertiajs/inertia-vue3' 
@@ -28,6 +27,7 @@
     const verProductos = async function()
         {
          //await permite dejar que haga la peticion para realizar la funcion
+         productos = [];
           await axios.get('api/productos/'+props.idSolicitudGasto,{ob: props.idSolicitudGasto}) //enviamos el dato a la ruta de la api
            .then((resp)=>
              {

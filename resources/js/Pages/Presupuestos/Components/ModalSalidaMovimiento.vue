@@ -5,7 +5,7 @@
     import TableComponent from '@/Components/Table.vue';
     import ModalNewProducto from './ModalNewProducto.vue';
     import SecondaryButton from '@/Jetstream/SecondaryButton.vue';
-import ModalWatchProducts from './ModalWatchProducts.vue';
+    import ModalWatchProducts from './ModalWatchProducts.vue';
    
     const emit = defineEmits(["close", "addFactura", "addOc"])
     const props = defineProps({
@@ -55,6 +55,9 @@ import ModalWatchProducts from './ModalWatchProducts.vue';
 
     const getSalidas = async function(ev)
         {
+           totales.value.totalGasto = 0;
+           totales.value.totalSuplemento = 0;
+           totales.value.totalPresupuesto = 0;
            console.log(props);
            axios.get('api/cliente_concepto/'+props.concepto+'/'+props.ceco,{ob: props.concepto},{ob1: props.ceco}) //enviamos el dato a la ruta de la api
            .then((resp)=>

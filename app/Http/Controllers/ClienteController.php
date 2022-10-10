@@ -73,16 +73,22 @@ class ClienteController extends Controller
             'clientes.nombre',
             'cecos.nombre',
             'tipo_movimientos.nombre',
-             'grupo_conceptos.id',
-             'clientes.id',
-             'cecos.id'
-            ])->orderBy('Cliente', 'DESC' );
+            'grupo_conceptos.id',
+            'clientes.id',
+            'cecos.id',
+            'conceptos.id'
+            ])->orderBy('Cliente', 'DESC' )
+            ->orderBy('GrupoConcepto', 'DESC' );
 
 
          if($request->has('grupoType')){
-            $cantidades->selectRaw('CONCAT(clientes.nombre,cecos.nombre) AS Cliente');
+            $cantidades->selectRaw('CONCAT(clientes.nombre,cecos.nombre) AS Cliente,
+            clientes.id AS clientes_id,
+            conceptos.id AS concepto_id');
          }else{
-            $cantidades->selectRaw('clientes.nombre AS Cliente');
+            $cantidades->selectRaw('clientes.nombre AS Cliente,
+            clientes.id AS clientes_id,
+            conceptos.id AS concepto_id');
          }   
 
          if($request->has('grupoType2')){

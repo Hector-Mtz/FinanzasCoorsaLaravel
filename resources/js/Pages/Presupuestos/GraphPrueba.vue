@@ -287,7 +287,7 @@ export default {
         {
            this.zoom = true;
            //CLICK DE PANTALLA PRINCIPAL
-           console.log(this.filtros);
+           //console.log(this.filtros);
            let nuevosValores = null;
            //preguntamos si estan agrupados por clientes, o por grupoConceptos
            if(this.filtros.grupoType || this.filtros.grupoType2) 
@@ -296,22 +296,47 @@ export default {
               {
                  console.log("agrupamiento por clientes");
                  nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
-                 console.log(nuevosValores);
+                 //console.log(nuevosValores);
                  let grupoConcepto_send = nuevosValores.grupoConcepto_id; //almacenamos el id del grupoConcepto
                  let ceco_id_send = nuevosValores.ceco_id;
                  axios.get('api/ceco_grupo_concepto/'+ceco_id_send+'/'+grupoConcepto_send,{ob: ceco_id_send},{ob1: grupoConcepto_send}) //enviamos el dato a la ruta de la api
                  .then((resp)=>
                   {
                      let datos = resp.data[0];
-                     let ceco = resp.data[1];//la respuesta que obtenemos de BD es la que almacenamos
+                     //console.log(datos);
+                     let cecos = resp.data[1];//la respuesta que obtenemos de BD es la que almacenamos
+                     //console.log(cecos);
                      let conceptos = resp.data[2];
-                     ejey=[]; //vaciamos el ejex
-                     for (let index = 0; index < ceco.length; index++) //recorremos cecos
+                     let ejey=[]; //vaciamos el ejex
+                     let ejex=[];
+                     for (let index = 0; index < cecos.length; index++) //recorremos cecos
                       {
-                        let nombreCeco = ceco[index].nombre; //guardamos en variables los cecos
-                         ejey.push({ category: nombreCeco }); // lo metemos al objeto
+                        let ceco = cecos[index]; //guardamos en variables los cecos
+                        //console.log(nombreCeco);
+                        ejey.push({ category: ceco.nombre});
+                        yRenderer.labels.template.setAll({ text: ceco.nombre }) //enmascara
+                        //console.log(ejey)
                       }
+                      
+                      for (let i = 0; i < conceptos.length; i++) {
+                        const concepto = conceptos[i];
+                        ejex.push({ category: concepto.nombre});
+                      }
+              
+                      this.datosGrafica = datos;
                       yAxis.data.setAll(ejey);
+                      xAxis.data.setAll(ejex);
+                      this.cambiar(this.movimiento.state);
+                      series.columns.template.events.on("click", (ev) => {
+                         if (this.zoom)
+                         {
+                          let nuevosValores = ev.target._dataItem.dataContext; 
+                          //console.log(nuevosValores);
+                          this.cliente= nuevosValores.Cliente;
+                          this.grupo_concepto= nuevosValores.GrupoConcepto;
+                          this.SalidaMovimiento = true; //funcion para el modal
+                        }
+                     });        
                   })
                   .catch(function (error)
                   {
@@ -320,9 +345,52 @@ export default {
                   }
                   else
                   {
-                    console.log("agrupamiento por grupoConceptos");
+                    //console.log("agrupamiento por grupoConceptos");
                     nuevosValores = ev.target._dataItem.dataContext; //recuperamos x y anteriores
                     console.log(nuevosValores);
+                    let clientes_id = nuevosValores.clientes_id;
+                    let concepto_id = nuevosValores.concepto_id;
+                    axios.get('api/concepto_clientes/'+concepto_id+'/'+clientes_id,{ob: concepto_id},{ob1: clientes_id}) //enviamos el dato a la ruta de la api
+                    .then((resp)=>
+                     {
+                        console.log(resp.data);
+                        let uniqueConcepto= resp.data[2];
+                        let cecos = resp.data[1];
+                        let datos = resp.data[0];     
+                        let ejey=[]; //vaciamos el ejex
+                        let ejex=[];    
+
+                        for (let i = 0; i < uniqueConcepto.length; i++) {
+                          const concepto = uniqueConcepto[i];
+                          ejex.push({ category: concepto.nombre});
+                          xRenderer.labels.template.setAll({ text: concepto.nombre }) //enmascara
+                        }
+
+                        for (let index = 0; index < cecos.length; index++) 
+                        {
+                           const ceco = cecos[index];    
+                           ejey.push({ category: ceco.nombre});
+                           //yRenderer.labels.template.setAll({ text: ceco.nombre }) //enmascara
+                        }            
+                          this.datosGrafica = datos;
+                          yAxis.data.setAll(ejey);
+                          xAxis.data.setAll(ejex);
+                          this.cambiar(this.movimiento.state);
+                          series.columns.template.events.on("click", (ev) => {
+                             if (this.zoom)
+                             {
+                              let nuevosValores = ev.target._dataItem.dataContext; 
+                              //console.log(nuevosValores);
+                              this.cliente= nuevosValores.Cliente;
+                              this.grupo_concepto= nuevosValores.GrupoConcepto;
+                              this.SalidaMovimiento = true; //funcion para el modal
+                            }
+                         });        
+                      })
+                     .catch(function (error)
+                      {
+                        console.log(error);
+                       }); 
                   } 
            }
            else
@@ -349,7 +417,8 @@ export default {
                  for (let f = 0; f < conceptos.length; f++) 
                  {
                      let nombreConcepto = conceptos[f].nombre;
-                     ejey.push({ category: nombreConcepto });
+                     ejey.push({ category: nombreConcepto});
+          
                  }
                  series.columns.template.events.on("click", (ev) => {
                      if (this.zoom)
@@ -380,6 +449,7 @@ export default {
         cambiar: function (movimiento) {
             this.movimiento.state = movimiento; //reemplazamos la variable global por la que traemos del boton
             let data = this.datosGrafica ; //trae los datos de la grafica
+            console.log(data);
             //listada de data;
             //console.log(movimiento);
             let auxData = {...data[0]};  
@@ -453,8 +523,7 @@ export default {
    height: 500px;
  }
 </style>
-<template>
-    {{cantidades}}
+<template>  
      <div class="group">
            <Link :href="route('clientes.index')" :only="['cantidades','clientes','filtros']" preserveScroll :data="{grupoType: 'clientes'}">
               <ButtonPres class="buttonCECO"  style="background-color:#111F2E">
