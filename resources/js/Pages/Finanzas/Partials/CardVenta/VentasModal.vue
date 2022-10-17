@@ -80,6 +80,7 @@ const close = () => {
                 <template #thead>
                     <tr>
                         <th>CLIENTE</th>
+                        <th>COMENTARIO</th>
                         <th>IVA</th>
                         <th>SUBTOTAL</th>
                         <th>TOTAL IVA</th>

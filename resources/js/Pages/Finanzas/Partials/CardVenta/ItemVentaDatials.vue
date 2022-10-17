@@ -50,6 +50,7 @@ const eliminarVenta = (id) => {
 <template>
     <tr>
         <td>{{ ventaShow.ceco + "-" + ventaShow.servicio }}</td>
+        <td>{{ ventaShow.comentario}}</td>
         <td>
             <div @click="activeIva()" class="w-10 h-5 px-2 mx-2 bg-yellow-600 hover:bg-yellow-500 rounded-xl">
                 <svg v-if="ivaChecked" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mx-auto" fill="none"

@@ -16,18 +16,12 @@
 </template>
 <style lang="css">
 .custome-table thead tr th {
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
+    padding-left: 0.2rem 0.2rem;
     border: 4px solid #4b5563;
 }
 
 .custome-table tbody tr td {
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
+    padding-left: 0.2rem 0.2rem;
     border: 4px solid #4b5563;
 }
 

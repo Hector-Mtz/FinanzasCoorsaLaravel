@@ -1,8 +1,10 @@
 <script setup>
+import { computed } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 
 import DialogModal from '@/Components/DialogModal.vue';
 import TableComponent from '@/Components/Table.vue';
+
 
 const emit = defineEmits(["close", "addOc"])
 const props = defineProps({
@@ -16,6 +18,24 @@ const props = defineProps({
     },
 })
 
+const headerTable = computed(() => {
+    if (props.dataCalendar.data.lenght == 0) {
+        return ['', 'Cantidad']
+    }
+    let keyData;
+    const auxHeader = [];
+    for (keyData in props.dataCalendar.data[0]) {
+        switch (keyData) {
+            case "id":
+            case "day":
+                break;
+            default:
+                auxHeader.push(keyData)
+                break;
+        }
+    }
+    return auxHeader;
+})
 
 const close = () => {
 
@@ -43,22 +63,16 @@ const close = () => {
         <template #content>
             <TableComponent>
                 <template #thead>
-
-                    <tr>
-                        <th>
-                        </th>
-                        <th>
-                            Cantidad
+                    <tr class="uppercase">
+                        <th v-for="header in headerTable" :key="header">
+                            {{header}}
                         </th>
                     </tr>
                 </template>
                 <template #tbody>
                     <tr v-for="(obj, index) in dataCalendar.data" :key="index">
-                        <td>
-                            {{ obj.nombre }}
-                        </td>
-                        <td>
-                            ${{ obj.total }}
+                        <td v-for="header in headerTable" :key="header + index">
+                            {{ obj[header] }}
                         </td>
                     </tr>
                 </template>
