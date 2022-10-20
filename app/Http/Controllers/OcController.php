@@ -135,8 +135,8 @@ class OcController extends Controller
 
         $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
             ->whereNull('ocs.factura_id')
-            ->whereMonth('ocs.created_at', '=', $validadData['month'])
-            ->whereYear('ocs.created_at', '=', $validadData['year'])
+            ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
+            ->whereYear('ocs.fecha_alta', '=', $validadData['year'])
             ->first();
 
         $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
