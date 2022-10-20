@@ -12,6 +12,7 @@ import Input from '@/Components/Input.vue';
 import ListDataInput from '@/Components/ListDataInput.vue';
 import SpinProgress from '@/Components/SpinProgress.vue';
 import SelectComponent from '@/Components/SelectComponent.vue';
+import TextArea from '../../../../Components/TextArea.vue';
 
 const emit = defineEmits(["close"])
 const props = defineProps({
@@ -32,6 +33,7 @@ const props = defineProps({
 const form = useForm({
     "monto_id": "",
     "nombre": "",
+    "comentario": "",
     "fechaInicial": "",
     "fechaFinal": "",
     "periodos": "",
@@ -49,6 +51,7 @@ const titleModal = computed(() => {
     if (props.typeForm === 'create') {
         form.monto_id = "";
         form.nombre = "";
+        form.comentario = "";
         form.fechaInicial = "";
         form.fechaFinal = "";
         form.periodos = "";
@@ -60,6 +63,7 @@ const titleModal = computed(() => {
     } else {
         form.monto_id = props.venta.monto_id
         form.nombre = props.venta.nombre
+        form.comentario = props.venta.comentario
         form.fechaInicial = props.venta.fechaInicial
         form.fechaFinal = props.venta.fechaFinal
         form.periodos = props.venta.periodos
@@ -210,6 +214,11 @@ watch(props, () => {
                         <JetLabel for="periodos" value="Periodos:" />
                         <Input id="periodos" name="periodos" type="number" v-model="form.periodos" required
                             maxlength="30" />
+                        <JetInputError :message="form.errors.periodos" class="mt-2" />
+                    </div>
+                    <div>
+                        <JetLabel for="comentario" value="Comentarios:" />
+                        <TextArea id="comentario" name="comentario" v-model="form.comentario" maxlength="255" />
                         <JetInputError :message="form.errors.periodos" class="mt-2" />
                     </div>
                 </div>

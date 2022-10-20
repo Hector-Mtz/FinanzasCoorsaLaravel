@@ -133,7 +133,8 @@ watch(searchText, (newSearch) => {
             </div>
             <!-- Lista de clientes -->
             <div class="-mx-2 overflow-hidden overflow-y-auto" style="max-height: 65vh;">
-                <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente">
+                <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente"
+                    :total="cliente.ingresos.length">
                     <div
                         class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden bg-gray-900 shadow-xl sm:rounded-lg">
                         <table class="table-ingresos">
@@ -175,4 +176,5 @@ watch(searchText, (newSearch) => {
 </template>
 
 <style lang="scss" scoped>
+
 </style>

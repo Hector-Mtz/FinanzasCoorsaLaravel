@@ -10,18 +10,7 @@ class Venta extends Model
     use HasFactory;
 
 
-    protected $fillable = [
-        'monto_id',
-        'nombre',
-        'cantidad',
-        'iva',
-        'fechaInicial',
-        'fechaFinal',
-        'periodos',
-        'tipo_id',
-        'status_id',
-        'ceco_id',
-    ];
+    protected $guarded = ['id'];
 
     protected $casts = [
         'iva' => 'boolean'

@@ -23,8 +23,7 @@ class VentaController extends Controller
 
         $clientes = Cliente::select('clientes.*')
             ->with([
-                'ventas' => function ($query) use ($request) 
-                {
+                'ventas' => function ($query) use ($request) {
                     $query->select(
                         "ventas.*",
                         "cecos_ventas.nombre as ceco",
@@ -40,16 +39,15 @@ class VentaController extends Controller
                     if ($request->status_id != "") {
                         $query->where("ventas.status_id", "=", $request->status_id);
                     }
-                    if ($request->has("search")) 
-                    {
+                    if ($request->has("search")) {
                         $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
                         $query->where("cecos_ventas.nombre", "like", "%" . $search . "%");
                     }
                 }
-            ]);            
+            ]);
 
 
-       
+
         //UNO ES PARA EL TOTAL Y OTRA DEPENDE DEL STATUS DONDE SE ENCUENTRE
         $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)),0) as total')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id');
@@ -81,6 +79,7 @@ class VentaController extends Controller
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],
             "cantidad" =>  ["required", "numeric", "min:1"],
+            "comentario" =>  ["nullable", "string"],
             "tipo_id" =>  ["required", "exists:tipos,id"],
             "ceco_id" =>  ["required", "exists:cecos,id"],
         ]);
@@ -109,6 +108,7 @@ class VentaController extends Controller
             "fechaFinal" =>  ["required", "date", "after:fechaInicial"],
             "periodos" =>  ["required", "numeric", "min:1"],
             "cantidad" =>  ["required", "numeric", "min:1"],
+            "comentario" =>  ["nullable", "string"],
             "tipo_id" =>  ["required", "exists:tipos,id"],
             "ceco_id" =>  ["required", "exists:cecos,id"],
         ]);
@@ -142,7 +142,7 @@ class VentaController extends Controller
         //
         $ventaAEliminar = Venta::find($venta);
         $ventaAEliminar->delete();
-         return redirect()->back();
+        return redirect()->back();
     }
 
     public function totals(Request $request)
@@ -177,7 +177,7 @@ class VentaController extends Controller
         $ventas = Venta::select('ventas.id')
             ->selectRaw('concat(cecos.nombre,"-",servicios.nombre) as nombre, ifnull(montos.cantidad * ventas.periodos * ventas.cantidad
                + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0),0) as total')
-            ->selectRaw('day(ventas.fechaInicial) as day')
+            ->selectRaw('day(ventas.fechaInicial) as day,ventas.comentario')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
