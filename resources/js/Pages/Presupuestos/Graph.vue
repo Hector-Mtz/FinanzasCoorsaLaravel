@@ -711,8 +711,8 @@ export default {
     @close="closeModalSalida">
   </ModalSalidaMovimiento>
 
-  <a  v-if="zoom" :href="route('clientes.index')" style="color:red" >  
-        Regresar
+  <a  v-if="zoom" :href="route('clientes.index')" style="color:red;">  
+        Regresarss
   </a >
   <div class="graph" ref="chartdiv">  </div>
 </template>

@@ -116,6 +116,50 @@ class ClienteController extends Controller
         ]);
     }
 
+    public function tablaPresupuestos (Request $request)
+    {
+        $fechaActual = date('Y-m'); //obtenemos el año y fecha actual
+        if($request->has('fecha'))
+        {
+            $ceco_concepto = DB::table(DB::raw('soli_movimientos'))
+            ->selectRaw(
+                'cecos.nombre AS CECO,
+                 conceptos.nombre AS Concepto,
+                 tipo_movimientos.nombre AS Movimiento,
+                 SUM(productos.cantidad)  AS Cantidad'
+            )
+            ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', '=', 'ceco_conceptos.id')
+            ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
+            ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
+            ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
+            ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
+            ->groupBy('cecos.nombre','conceptos.nombre','tipo_movimientos.nombre')
+            ->where('soli_movimientos.created_at','LIKE', '%'.$request['fecha'].'%');
+        }
+        else
+        {
+            $ceco_concepto = DB::table(DB::raw('soli_movimientos'))
+            ->selectRaw(
+                'cecos.nombre AS CECO,
+                 conceptos.nombre AS Concepto,
+                 SUM(productos.cantidad)  AS Cantidad
+                 '
+            )
+            ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', '=', 'ceco_conceptos.id')
+            ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
+            ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
+            ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
+            ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
+            ->groupBy('cecos.nombre','conceptos.nombre','tipo_movimientos.nombre') 
+            ->where('soli_movimientos.created_at','LIKE', '%'.$fechaActual.'%');
+
+            
+        }
+        
+        return Inertia::render('Presupuestos/TablaPresupuestosIndex', 
+        ['ceco_concepto' => fn() => $ceco_concepto ->get()]);
+    }
+
     public function listado()
     {
         request()->validate([

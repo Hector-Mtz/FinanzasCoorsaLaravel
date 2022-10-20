@@ -9,6 +9,7 @@ import Dropdown from '@/Components/DropDownLink.vue';
 import ButtonCalendar from '../../Components/ButtonCalendar.vue';
 import Graph from './Graph.vue';
 import GraphPrueba from './GraphPrueba.vue';
+import Button from '../../Jetstream/Button.vue';
 
 var props = defineProps({
     clientes:Object,
@@ -38,8 +39,14 @@ const changeDate = (newDate) => {
                     <h2 class="text-xl font-semibold leading-tight text-white">
                         Presupuestos
                     </h2>
+                    
                     <ButtonCalendar :month="date.month" :year="date.year" @change-date="changeDate($event)"/> 
               </div>
+              <div class="button_submenu">
+                <Button style="float:left">
+                    <a :href="route('tabla.presupuestos')">TABLA DE DATOS</a>
+                </Button>
+              </div>        
         </template>
  
         <div class="py-12 fondo_general" >
@@ -56,6 +63,7 @@ const changeDate = (newDate) => {
                       </div>
                     </div> 
                       <GraphPrueba
+                      :date = date
                       :filtros = filtros 
                       :movimientos = movimientos
                       :clientes= clientes

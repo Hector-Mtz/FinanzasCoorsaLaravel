@@ -27,7 +27,7 @@
     const verProductos = async function()
         {
          //await permite dejar que haga la peticion para realizar la funcion
-         productos = [];
+          productos.value = [];
           await axios.get('api/productos/'+props.idSolicitudGasto,{ob: props.idSolicitudGasto}) //enviamos el dato a la ruta de la api
            .then((resp)=>
              {

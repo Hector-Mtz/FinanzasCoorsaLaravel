@@ -86,6 +86,8 @@ Route::middleware([
 
 Route::apiResource('/clientes', ClienteController::class);
 
+Route::get('/tablaPresupuestos', [ClienteController::class, 'tablaPresupuestos'])->name('tabla.presupuestos');;
+
 Route::get("/clientesAgrupados",[ClienteController::class, 'clientesAgrupados']);
 
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);

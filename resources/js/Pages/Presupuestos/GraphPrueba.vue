@@ -10,6 +10,8 @@ import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import axios from 'axios';
 import ButtonPres from '../../Components/ButtonPres.vue';
 import ModalSalidaMovimiento from './Components/ModalSalidaMovimiento.vue';
+import ButtonReturn from '../../Components/ButtonReturn.vue';
+
 
 //variables GLOBALES
 let data =[];
@@ -26,16 +28,15 @@ let xRenderer;
 let chart;
 let modalDatos = [{grupoconcepto:''}];
 
-
 export default {
-
     props: {
         clientes: Object,
         grupo_conceptos: Object,
         cantidades: Object,
         movimientos:Object,
         solicitudes:Object,
-        filtros:Object
+        filtros:Object,
+        date:Object
     },
     components: {
         ButtonPres,
@@ -58,10 +59,8 @@ export default {
     },
   
     mounted() {
-
         // console.log(vm.clientes); //comprobamos si imprime todos los los clientes
         let clients = this.clientes; //guardamos en una varibale los cliente spara iterarlos
-
         let grupo_conceptos = this.grupo_conceptos;
         let datos = this.cantidades;
         root = am5.Root.new(this.$refs.chartdiv);
@@ -77,7 +76,7 @@ export default {
          yRenderer = am5xy.AxisRendererY.new(root, { //este tenia var
             visible: false,
             minGridDistance: 20,
-            inversed: true
+            inversed: true,
         });
 
         //console.log(this.filtros);
@@ -172,6 +171,8 @@ export default {
         series.data.setAll(data);
         ejey = [];
         ejex = [];
+        yAxis.data.setAll({});
+        xAxis.data.setAll({});
         //Siteamos los datos que aparecen en el eje y
         let auxiliarGrupo= {nombre:null};
         for (let index = 0; index < clients.length; index++) {
@@ -514,7 +515,7 @@ export default {
             this.SalidaMovimiento = false;
         },
     },
-    components: { ModalSalidaMovimiento,ButtonPres ,Link }
+    components: { ModalSalidaMovimiento, ButtonPres, Link, ButtonReturn }
 }
 </script>
 <style scoped>
@@ -537,7 +538,7 @@ export default {
           </Link>
 
            <div class="dropdown" >
-                  <button onclick="myFunction()" class="dropbtn">$</button>
+                  <button onclick="myFunction()" class="dropbtn"><p>$</p></button>
                   <div id="myDropdown" class="dropdown-content">
                       <button id="PRESUPUESTO" @click="cambiar('PRESUPUESTO')">Presupuesto</button>
                       <button id="SUPLEMENTO" @click="cambiar('SUPLEMENTO')">Suplemento</button>
@@ -554,8 +555,11 @@ export default {
     @close="closeModalSalida">
   </ModalSalidaMovimiento>
 
-  <a  v-if="zoom" :href="route('clientes.index')" style="color:red" >  
+  <ButtonReturn class="buttonReturn" v-if="zoom">
+     <a   :href="route('clientes.index')">  
         Regresar
-  </a >
+     </a >
+  </ButtonReturn>
+
   <div class="graph" ref="chartdiv">  </div>
 </template>

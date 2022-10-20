@@ -49,18 +49,28 @@
 
     const addRow =  function ()
     {
-        filas.value.push({
-                id:0,
-                nombreProducto:'',
-                cantidad:0,
-                costo:0,
-                iva:'',
-                total: 0
-            });
+        if(filas.value)
+        {
+            filas.value.push({
+                  id:0,
+                  nombreProducto:'',
+                  cantidad:0,
+                  costo:0,
+                  iva:'',
+                  total: 0
+             });
+        }
+        for (let index = 0; index < filas.value.length; index++) 
+        {
+          const element = filas.value[index];
+           filas.value[index].id = index;
+        }
+        console.log(filas.value); 
     }
 
     const removeRow = function(id)
         {
+            console.log(id);
             filas.value.splice(id,1);
         }
 
