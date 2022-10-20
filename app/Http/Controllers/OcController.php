@@ -170,8 +170,8 @@ class OcController extends Controller
                 $daysStatus =  Oc::select('ocs.id', 'ocs.nombre', 'ocs.cantidad as total')
                     ->selectRaw('day(ocs.created_at) as day')
                     ->whereNull('ocs.factura_id')
-                    ->whereMonth('ocs.created_at', '=', $validadData['month'])
-                    ->whereYear('ocs.created_at', '=', $validadData['year'])
+                    ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
+                    ->whereYear('ocs.fecha_alta', '=', $validadData['year'])
                     ->get();
                 break;
             case "pp":
