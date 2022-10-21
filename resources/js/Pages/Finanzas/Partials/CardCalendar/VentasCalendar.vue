@@ -25,6 +25,8 @@ const totalsVentas = ref({
     pp: 0,
     c: 0
 });
+
+
 const showsStatus = reactive(['ventas']);// Ya que debe ser profundo el watch
 const specialDays = ref([]);
 const showingModal = ref(false);
@@ -78,6 +80,7 @@ async function getDaysStatus() {
             const respVentas = axios.get(route('ventas.month'), {
                 params: date
             });
+            console.log(respVentas);
             axiosDaysStatus.push(respVentas);
             colors.push(colorsStatus[0]);
         } else {
@@ -105,6 +108,7 @@ async function getDaysStatus() {
     const responses = await Promise.all(axiosDaysStatus);
 
     var total = 0;
+    var subtotal =0;
     // Genera el titulo de la data
     const daysStatus = responses.map((resp, index) => {
         // Se recorren los attributos
@@ -113,6 +117,8 @@ async function getDaysStatus() {
             resp.data[d].forEach((obj) => {
                 total += obj.total;
                 obj.total = formatoMoney(obj.total);
+                subtotal += obj.subtotal;
+                obj.subtotal = formatoMoney(obj.subtotal);
             });
             resp.data[d].data = resp.data[d];
             resp.data[d].title = formatoMoney(total.toFixed(2));
@@ -165,9 +171,6 @@ onBeforeMount(() => {
 watch(props, () => {
     getTotalsMonth();
 })
-
-
-
 
 </script>
 <template>

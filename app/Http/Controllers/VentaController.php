@@ -175,13 +175,14 @@ class VentaController extends Controller
         ]);
 
         $ventas = Venta::select('ventas.id')
-            ->selectRaw('concat(cecos.nombre,"-",servicios.nombre) as nombre, ifnull(montos.cantidad * ventas.periodos * ventas.cantidad
+            ->selectRaw('concat(cecos.nombre,"-",servicios.nombre) as nombre,montos.cantidad * ventas.periodos * ventas.cantidad AS subtotal, ifnull(montos.cantidad * ventas.periodos * ventas.cantidad
                + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0),0) as total')
             ->selectRaw('day(ventas.fechaInicial) as day,ventas.comentario')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
-            ->groupBy('ventas.id', 'day')
+            ->groupBy('ventas.id', 'day', 'cecos.nombre', 'servicios.nombre',
+             'montos.cantidad','ventas.periodos','ventas.cantidad','ventas.iva' , 'ventas.comentario')
             ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
             ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
             ->get();
