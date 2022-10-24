@@ -44,7 +44,7 @@ const changeDate = (newDate) => {
               </div>
               <div class="button_submenu">
                 <Button style="float:left">
-                    <a :href="route('tabla.presupuestos')">TABLA DE DATOS</a>
+                    <Link :href="route('tabla.presupuestos')" preserve-state>TABLA DE DATOS</Link>
                 </Button>
               </div>        
         </template>

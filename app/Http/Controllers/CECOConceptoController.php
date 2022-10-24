@@ -102,17 +102,49 @@ class CECOConceptoController extends Controller
     public function consulta_ceco_concepto($x, $y)
     {
         //$x = Ceco 
-        //$y = concepto
-        $object = DB::table(DB::raw('ceco_conceptos'))
-        ->select(DB::raw(
+        //$y = concepto  
+        if( !is_numeric($x))
+        {
+            $object = DB::table(DB::raw('ceco_conceptos'))
+            ->select(DB::raw(
             'ceco_conceptos.id'
-        ))
-        ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
-        ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
-        ->where('cecos.nombre','LIKE','%'.$x.'%',)
-        ->where('conceptos.nombre','LIKE','%'.$y.'%',)
-        ->get();
-        return $object;
+            ))
+            ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
+            ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
+            ->where('cecos.nombre','LIKE','%'.$x.'%',)
+            ->where('conceptos.nombre','LIKE','%'.$y.'%',)
+            ->get();
+        }
+        else
+        {
+            $object = DB::table(DB::raw('ceco_conceptos'))
+            ->select(DB::raw(
+            'ceco_conceptos.id'
+            ))
+            ->where('ceco_id','LIKE','%'.$x.'%',)
+            ->where('concepto_id','LIKE','%'.$y.'%',)
+            ->get();
+        }
+    
+        //validacion para saber que existe en la db
+        if(count($object) > 0 )
+        {
+            echo "Existe";
+            return  $object;
+        }
+        else
+        {
+            DB::insert('insert into ceco_conceptos (ceco_id, concepto_id) values (?, ?)',[$x,$y]);
+            $object = DB::table(DB::raw('ceco_conceptos'))
+            ->select(DB::raw(
+            'ceco_conceptos.id'
+            ))
+            ->where('ceco_id','LIKE','%'.$x.'%',)
+            ->where('concepto_id','LIKE','%'.$y.'%',)
+            ->get();
+            return  $object;
+        }
+
     }
 
     public function ceco_grupo_concepto ($ceco, $grupoConcepto)

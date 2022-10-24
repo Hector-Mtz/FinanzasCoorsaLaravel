@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ceco;
 use App\Models\Cliente;
+use App\Models\Concepto;
 use App\Models\GrupoConcepto;
 use App\Models\Producto;
 use App\Models\TipoMovimiento;
@@ -142,6 +143,8 @@ class ClienteController extends Controller
             ->selectRaw(
                 'cecos.nombre AS CECO,
                  conceptos.nombre AS Concepto,
+                 tipo_movimientos.nombre AS Movimiento,
+                 tipo_movimientos.id AS IDMovimiento,
                  SUM(productos.cantidad)  AS Cantidad
                  '
             )
@@ -150,14 +153,19 @@ class ClienteController extends Controller
             ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
             ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
             ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
-            ->groupBy('cecos.nombre','conceptos.nombre','tipo_movimientos.nombre') 
+            ->groupBy('cecos.nombre','conceptos.nombre','tipo_movimientos.nombre','tipo_movimientos.id') 
             ->where('soli_movimientos.created_at','LIKE', '%'.$fechaActual.'%');
-
-            
+ 
         }
+
+        $cecos = Ceco::all();
+        $conceptos = Concepto::all();
         
         return Inertia::render('Presupuestos/TablaPresupuestosIndex', 
-        ['ceco_concepto' => fn() => $ceco_concepto ->get()]);
+        ['ceco_concepto' => fn() => $ceco_concepto ->get(),
+         'conceptos' => $conceptos,
+         'cecos' => $cecos
+        ]);
     }
 
     public function listado()

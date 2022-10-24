@@ -16,7 +16,6 @@ var props = defineProps
     datos:Object
 });
 
-console.log(props.datos);
 
 onMounted(() => 
 {
