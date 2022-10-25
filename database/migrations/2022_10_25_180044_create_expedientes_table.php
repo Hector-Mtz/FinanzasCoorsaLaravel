@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cecos', function (Blueprint $table) {
+        Schema::create('expedientes', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 60)->unique();
-            $table->boolean('bandera');
-            $table->foreignId('cliente_id')->constrained('clientes');
+            $table->string('ruta', 255)->nullable(false);
+            $table->foreignId('cat_tipos_documento_id')->constrained('cat_tipo_documentos');
+            $table->foreignId('empleado_id')->constrained('users');
             $table->timestamps();
+            $table->boolean('activo')->default(1)->nullable(false);
         });
     }
 
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cecos');
+        Schema::dropIfExists('expedientes');
     }
 };

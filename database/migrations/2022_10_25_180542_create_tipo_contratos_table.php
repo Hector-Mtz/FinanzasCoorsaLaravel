@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cecos', function (Blueprint $table) {
+        Schema::create('tipo_contratos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 60)->unique();
-            $table->boolean('bandera');
-            $table->foreignId('cliente_id')->constrained('clientes');
+            $table->string('nombre', 40);
             $table->timestamps();
+            $table->boolean('activo')->default(1)->nullable(false);
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cecos');
+        Schema::dropIfExists('tipo_contratos');
     }
 };

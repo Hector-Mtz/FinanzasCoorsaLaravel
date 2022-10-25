@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cecos', function (Blueprint $table) {
+        Schema::create('finiquitos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 60)->unique();
-            $table->boolean('bandera');
-            $table->foreignId('cliente_id')->constrained('clientes');
+            $table->foreignId('empleado_id')->nullable()->constrained('users');
+            $table->double('monto', 7, 2)->nullable(false);
+            $table->timestamp('fecha_finiquito')->nullable();
             $table->timestamps();
+            $table->boolean('pagado')->default(0)->nullable(false);
+            $table->boolean('activo')->default(1)->nullable(false);
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cecos');
+        Schema::dropIfExists('finiquitos');
     }
 };

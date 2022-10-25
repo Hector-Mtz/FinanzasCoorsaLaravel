@@ -25,6 +25,7 @@ var props = defineProps({
 let movimiento = ref ({ state: "PRESUPUESTO" });
 let idMov = ref(3);
 let tableCecoConceptos = ref([]);
+tableCecoConceptos.value = [];
 tableCecoConceptos.value = props.ceco_concepto.filter(ceco_concepto => ceco_concepto.Movimiento === movimiento.value.state);
 let date = ref({month:new Date().getMonth(), 
                 year: new Date().getFullYear()});
