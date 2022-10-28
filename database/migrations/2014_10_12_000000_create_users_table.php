@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('apellido_paterno', 40)->nullable(true);
             $table->string('apellido_materno', 40)->nullable(true);
             $table->string('email')->unique();
-            $table->date('fecha_nacimiento');
+            $table->date('fecha_nacimiento')->nullable(true);;
             $table->date('fecha_ingreso')->nullable(true);
             $table->date('fecha_ingreso_real')->nullable(true);
             $table->string('nss',20)->nullable(true);
@@ -40,11 +40,27 @@ return new class extends Migration
             $table->double('fondo_ahorro', 7, 2)->nullable(true);
             $table->string('alergias', 60)->nullable(true);
             $table->string('enfermedades_cronicas', 60)->nullable(true);
-            $table->foreignId('banco_id')->constrained('bancos');
-            $table->foreignId('escolaridad_id')->constrained('escolaridads');
-            $table->foreignId('cat_tipos_nomina_id')->constrained('cat_tipos_nominas');
-            $table->foreignId('tipos_contrato_id')->constrained('tipo_contratos');
-            $table->foreignId('cat_genero_id')->constrained('cat_generos');
+            $table->foreignId('banco_id')
+                ->references('id')
+                ->on('bancos')
+                ->nullable() ; 
+            $table->foreignId('escolaridad_id') 
+            ->references('id')
+            ->on('escolaridads')
+            ->nullable();
+            $table->foreignId('cat_tipos_nomina_id')
+            ->references('id')
+            ->on('cat_tipos_nominas')
+            ->nullable();
+            $table->foreignId('tipos_contrato_id')
+            ->references('id')
+            ->on('tipo_contratos')
+            ->nullable();
+            $table->foreignId('cat_genero_id')
+            ->references('id')
+            ->on('cat_generos')
+            ->nullable();
+            $table->boolean('activo')->default(1);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

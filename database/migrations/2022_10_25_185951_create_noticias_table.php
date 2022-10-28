@@ -15,8 +15,6 @@ return new class extends Migration
     {
         Schema::create('noticias', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('descripcion');
             $table->string('image');
             $table->foreignId('empleado_id')->constrained('users');
             $table->boolean('activo')->default(1)->nullable(false);
