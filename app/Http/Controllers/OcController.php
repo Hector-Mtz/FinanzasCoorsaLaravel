@@ -110,7 +110,7 @@ class OcController extends Controller
 
     public function catalogos()
     {
-        $ocs = Oc::select("ocs.id", "ocs.nombre")
+        $ocs = Oc::select("ocs.id", "ocs.nombre","ocs.cantidad")
             ->whereNull('factura_id');
         if (request()->has("search")) {
             $search = strtr(request("search"), array("'" => "\\'", "%" => "\\%"));
