@@ -45,7 +45,7 @@ console.log(props.ocs);
             <span v-for="oc  in props.factura.ocs" :key="oc.nombre"> #{{ oc.nombre }}</span>
 
             <div class="flex flex-row justify-center">
-                <ListDataInput class="w-50" v-model="ocIdAdd" list="ocs-catalogo" :options="props.ocs.nombre + '-' + props.ocs.cantidad" />
+                <ListDataInput class="w-50" v-model="ocIdAdd" list="ocs-catalogo" :options="props.ocs" />
                 <ButtonAdd class="ml-1 h-7" @click="addOc()" />
             </div>
             <JetInputError :message="props.factura.error" class="mt-2" />
