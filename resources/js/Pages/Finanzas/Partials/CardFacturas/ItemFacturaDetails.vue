@@ -33,8 +33,6 @@ const addOc = () => {
     }
 }
 
-console.log(props.ocs);
-
 </script>
 <template>
     <tr>

@@ -41,7 +41,7 @@ class FacturaController extends Controller
                     "facturas.cantidad",
                     "facturas.status_id",
                     "facturas.referencia",
-                    "facturas.fechaDePago"
+                    "facturas.fechaDePago",
                 )->where('facturas.cliente_id', '=', $clientes[$i]->id);
             if ($hasStatus) {
                 $facturas->where("facturas.status_id", "=", request('status_id'));
