@@ -1,7 +1,7 @@
 <script setup>
-import { type } from '@amcharts/amcharts5';
 import { computed, onMounted, ref, watch } from 'vue';
-import { formatoMoney } from "../../js/utils/conversiones";
+import { formatoMoney } from '../utils/conversiones';
+
 
 const emit = defineEmits(['update:modelValue', 'value']);
 
@@ -28,11 +28,7 @@ const props = defineProps({
         default: 'nombre'
     },
     'value': {
-        default: 'cantidad'
-    },
-    'cantidad': {
-        default:'nombre',
-        type:String
+        default: ''
     }
 })
 
@@ -95,8 +91,8 @@ defineExpose({ focus: () => inputlist.value.focus() });
             @keyup="emit('value', valueText)" @input="changeText($event.target.value)" ref="inputlist"
             :disabled="disabled">
         <datalist :id="list">
-            <option v-for="opcion in props.options" :key="opcion[props.keyOption]">
-                {{ opcion[props.nameOption] }}
+            <option v-for="opcion in props.options" :value="opcion[props.nameOption]" :key="opcion[props.keyOption]">
+                 $ {{formatoMoney(opcion.cantidad)}}
             </option>
         </datalist>
     </div>
