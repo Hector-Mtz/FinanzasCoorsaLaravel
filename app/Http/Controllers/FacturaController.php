@@ -69,7 +69,8 @@ class FacturaController extends Controller
                 "facturas.cantidad",
                 "facturas.status_id",
                 "facturas.referencia",
-                "facturas.fechaDePago"
+                "facturas.fechaDePago",
+                "facturas.cliente_id",
             )->whereNull('facturas.cliente_id');
         if ($hasStatus) {
             $facturas->where("facturas.status_id", "=", request('status_id'));
@@ -159,7 +160,8 @@ class FacturaController extends Controller
                 "facturas.cantidad",
                 "facturas.status_id",
                 "facturas.referencia",
-                "facturas.fechaDePago"
+                "facturas.fechaDePago",
+                "facturas.ingreso_id",
             )
             ->firstWhere("facturas.id", "=", $factura);
         if ($facturaFind === null) {
