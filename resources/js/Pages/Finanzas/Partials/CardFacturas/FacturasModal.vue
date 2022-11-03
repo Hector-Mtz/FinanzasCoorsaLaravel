@@ -41,6 +41,7 @@ const showFormFactura = (facturaSelect) => {
 const getOcs = async () => {
     const resp = await axios.get(route('ocs.catalogos'));
     listOcs.value = resp.data;//ocs del catalogo disponible
+    console.log(listOcs);
 }
 const close = () => {
     emit('close');

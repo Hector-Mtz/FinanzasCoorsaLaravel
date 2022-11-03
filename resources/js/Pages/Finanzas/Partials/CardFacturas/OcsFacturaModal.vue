@@ -29,6 +29,7 @@ const ocIdAdd = ref("")
 // ocs del catalogo disponible
 const getOcs = async () => {
     const resp = await axios.get(route('ocs.catalogos'));
+    console.log(resp.data);
     listOcs.value = resp.data;
 }
 
