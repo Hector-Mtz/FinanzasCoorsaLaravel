@@ -96,7 +96,7 @@ defineExpose({ focus: () => inputlist.value.focus() });
             :disabled="disabled">
         <datalist :id="list">
             <option v-for="opcion in props.options" :key="opcion[props.keyOption]">
-                {{ opcion[props.nameOption] + '- $' + formatoMoney(opcion.cantidad)}}
+                {{ opcion[props.nameOption] }}
             </option>
         </datalist>
     </div>

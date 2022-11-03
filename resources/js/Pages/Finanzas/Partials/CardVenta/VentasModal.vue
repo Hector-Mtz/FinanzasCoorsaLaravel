@@ -92,7 +92,6 @@ const close = () => {
         <template #title>
             <div class="flex flex-row">
                 <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
-                    <p>es{{searchText}}</p>
                     <span class="block font-bold text-center text-white">
                         Ventas
                     </span>
