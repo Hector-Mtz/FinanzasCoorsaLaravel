@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('cecos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 60)->unique();
-            $table->boolean('bandera');
             $table->foreignId('cliente_id')->constrained('clientes');
+            $table->boolean('bandera')->nullable();
             $table->timestamps();
         });
     }

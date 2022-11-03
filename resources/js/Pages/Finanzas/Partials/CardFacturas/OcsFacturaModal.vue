@@ -5,7 +5,7 @@ import ButtonAdd from '@/Components/ButtonAdd.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import TableComponent from '@/Components/Table.vue';
 import ItemOcFactura from './ItemOcFactura.vue';
-import ListDataInput from '@/Components/ListDataInput.vue';
+import ListDataInput from '@/Components/ListDataInputOCS.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 import { Inertia } from '@inertiajs/inertia';
 
