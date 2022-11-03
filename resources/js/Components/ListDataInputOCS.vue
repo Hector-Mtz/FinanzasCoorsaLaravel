@@ -28,7 +28,7 @@ const props = defineProps({
         default: 'nombre'
     },
     'value': {
-        default: 'cantidad'
+        default: ''
     },
     'cantidad': {
         default:'nombre',
@@ -95,8 +95,8 @@ defineExpose({ focus: () => inputlist.value.focus() });
             @keyup="emit('value', valueText)" @input="changeText($event.target.value)" ref="inputlist"
             :disabled="disabled">
         <datalist :id="list">
-            <option v-for="opcion in props.options" :key="opcion[props.keyOption]">
-                {{ opcion[props.nameOption] }}
+            <option v-for="opcion in props.options" :key="opcion[props.keyOption]" :value="opcion.cantidad">
+                {{ opcion[props.nameOption] + '-' + opcion.cantidad }}
             </option>
         </datalist>
     </div>

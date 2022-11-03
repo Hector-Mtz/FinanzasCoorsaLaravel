@@ -5,9 +5,9 @@ import ButtonAdd from '@/Components/ButtonAdd.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import TableComponent from '@/Components/Table.vue';
 import ItemOcFactura from './ItemOcFactura.vue';
-import ListDataInput from '@/Components/ListDataInputOCS.vue';
 import JetInputError from '@/Jetstream/InputError.vue';
 import { Inertia } from '@inertiajs/inertia';
+import ListDataInputOCS from '../../../../Components/ListDataInputOCS.vue';
 
 const emit = defineEmits(["close", "addOc"])
 const props = defineProps({
@@ -118,7 +118,7 @@ watch(props, () => {
                         <th>
                             <h3 class="mb-1">OCS</h3>
                             <div class="flex flex-row justify-center">
-                                <ListDataInput class="w-50" v-model="ocIdAdd" :value="textOcs" list="ocs-catalogo"
+                                <ListDataInputOCS class="w-50" v-model="ocIdAdd" :value="textOcs" list="ocs-catalogo"
                                     :options="listOcs" />
                                 <ButtonAdd class="ml-1 h-7" @click="addOc()" />
                             </div>
