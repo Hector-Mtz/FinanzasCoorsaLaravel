@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue';
-
+import { ref, watch } from 'vue';
+import { pickBy } from 'lodash';
 import ButtonAdd from '@/Components/ButtonAdd.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import ItemVentaDatials from './ItemVentaDatials.vue';
 import TableComponent from '@/Components/Table.vue';
 import FormVentaModal from './FormVentaModal.vue';
+import InputSearch from '@/Components/InputSearch.vue';
 import { Inertia } from '@inertiajs/inertia';
 
 const emit = defineEmits(["close",])
@@ -19,6 +20,7 @@ const props = defineProps({
         required: true,
     }
 });
+const searchText = ref("");
 const showingFormVenta = ref(false);
 const venta = ref({});
 const typeForm = ref("create");
@@ -52,16 +54,45 @@ const activeIva = (ventaId) => {
         });
 }
 
+const search = (newSearch) => {
+    const params = pickBy({search: newSearch })
+    Inertia.visit(route('ventas.index'), {
+        data: params,
+        preserveState: true,
+        preserveScroll: true,
+        only: ['clientes',
+            'totalVentasStatus',
+        ],
+    })
+
+}
+
+
+let timeout;
+watch(searchText, (newSearch) => {
+    if (timeout !== undefined) {
+        clearTimeout(timeout);
+    }
+    //Bounce de busqueda
+    timeout = setTimeout(() => {
+        search(newSearch)
+    }, 300);
+
+});
+
+
 const close = () => {
     emit('close');
 };
 
 </script>
 <template>
+ 
     <DialogModal :show="show" @close="close()" maxWidth="6xl">
         <template #title>
             <div class="flex flex-row">
                 <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
+                    <p>es{{searchText}}</p>
                     <span class="block font-bold text-center text-white">
                         Ventas
                     </span>
@@ -89,6 +120,17 @@ const close = () => {
                         <th></th>
                         <th></th>
                     </tr>
+                 <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td colspan="2">
+                        <InputSearch  v-model="searchText" />
+                    </td>
+                </tr>
                 </template>
                 <template #tbody>
                     <ItemVentaDatials v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta"

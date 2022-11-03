@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-
+import { formatoMoney } from "../../../../utils/conversiones";
 import ButtonAdd from '@/Components/ButtonAdd.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import TableComponent from '@/Components/Table.vue';
@@ -99,6 +99,38 @@ watch(props, () => {
                         </span>
                     </div>
                 </div>
+            </div>
+            <div class="flex flex-row">
+                <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3"> 
+                    <span  class="block font-bold text-gray-300">
+                            Subtotal:
+                            ${{formatoMoney(venta.monto)}}
+                    </span>
+                </div>
+                <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
+                    <span lass="block font-bold text-center text-gray-300">
+                           <p class="text-gray-300" v-if="venta.iva == true">
+                            IVA:
+                            ${{formatoMoney(Math.round(venta.monto * 0.16))}}
+                           </p>
+                           <p class="text-gray-300" v-if="venta.iva == false">
+                            IVA:
+                            ${{0}}
+                           </p>
+                </span>
+                </div>
+                <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
+                    <span class="block font-bold text-center text-gray-300">
+                            Total:
+                            ${{formatoMoney(venta.monto + (venta.monto*0.16))}}
+                    </span>
+                </div>
+            </div>
+            <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
+               <span class="block font-bold text-gray-300">
+                   COMENTARIO:
+                    {{venta.comentario}}
+                </span>
             </div>
         </template>
         <template #content>
