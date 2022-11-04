@@ -5,6 +5,7 @@ import JetInputError from '@/Jetstream/InputError.vue';
 import ListDataInput from "@/Components/ListDataInput.vue";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
+import ListDataInputOCS from '../../../../Components/ListDataInputOCS.vue';
 
 const emit = defineEmits(['addOc']);
 
@@ -43,7 +44,8 @@ const addOc = () => {
             <span v-for="oc  in props.factura.ocs" :key="oc.nombre"> #{{ oc.nombre }}</span>
 
             <div class="flex flex-row justify-center">
-                <ListDataInput class="w-50" v-model="ocIdAdd" list="ocs-catalogo" :options="props.ocs" />
+
+                <ListDataInputOCS class="w-50" v-model="ocIdAdd" list="ocs-catalogo" :options="props.ocs" />
                 <ButtonAdd class="ml-1 h-7" @click="addOc()" />
             </div>
             <JetInputError :message="props.factura.error" class="mt-2" />
