@@ -95,7 +95,7 @@ defineExpose({ focus: () => inputlist.value.focus() });
             @keyup="emit('value', valueText)" @input="changeText($event.target.value)" ref="inputlist"
             :disabled="disabled">
         <datalist :id="list">
-            <option v-for="opcion in props.options" :key="opcion[props.keyOption]" :value="opcion.cantidad">
+            <option v-for="opcion in props.options" :key="opcion[props.keyOption]" :value="opcion[props.nameOption]">
                 {{ opcion[props.nameOption] + '-' + opcion.cantidad }}
             </option>
         </datalist>
