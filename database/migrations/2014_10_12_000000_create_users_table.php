@@ -40,11 +40,14 @@ return new class extends Migration
             $table->double('fondo_ahorro', 7, 2)->nullable(true);
             $table->string('alergias', 60)->nullable(true);
             $table->string('enfermedades_cronicas', 60)->nullable(true);
+            $table->foreignId('direccion_id')->nullable()->constrained('direcciones');
+            $table->foreignId('estado_civil_id')->nullable()->constrained('cat_estados_civiles');
             $table->foreignId('banco_id')->nullable()->constrained('bancos');
             $table->foreignId('escolaridad_id')->nullable()->constrained('escolaridads');
             $table->foreignId('cat_tipos_nomina_id')->nullable()->constrained('cat_tipos_nominas');
             $table->foreignId('tipos_contrato_id')->nullable()->constrained('tipo_contratos');
             $table->foreignId('cat_genero_id')->nullable()->constrained('cat_generos');
+            $table->foreignId('cat_tipo_sangre_id')->nullable()->constrained('cat_tipo_sangres');
             $table->boolean('activo')->default(1);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
