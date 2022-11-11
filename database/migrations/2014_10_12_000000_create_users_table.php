@@ -48,7 +48,9 @@ return new class extends Migration
             $table->foreignId('tipos_contrato_id')->nullable()->constrained('tipo_contratos');
             $table->foreignId('cat_genero_id')->nullable()->constrained('cat_generos');
             $table->foreignId('cat_tipo_sangre_id')->nullable()->constrained('cat_tipo_sangres');
+            $table->foreignId('role_id')->nullable()->constrained('roles');
             $table->boolean('activo')->default(1);
+            $table->string('fotografia')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
