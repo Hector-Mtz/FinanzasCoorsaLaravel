@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('plataformas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre')->unique();
-            $table->foreignId('plataforma_id')->constrained('plataformas');
-            $table->boolean('is_acceso')->default(1);
+            $table->boolean('activo')->default(1);
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('plataformas');
     }
 };
