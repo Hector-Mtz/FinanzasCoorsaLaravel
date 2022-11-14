@@ -66,14 +66,6 @@ class PermissionsSeeder extends Seeder
         ]);
 
         DB::table('permissions')->insert([
-            'nombre' => "calificacion.show",
-            'plataforma_id' => 2,
-            'is_acceso' => 0,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('permissions')->insert([
             'nombre' => "calificacion.create",
             'plataforma_id' => 2,
             'is_acceso' => 0,
