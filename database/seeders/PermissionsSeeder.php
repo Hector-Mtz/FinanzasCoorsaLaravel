@@ -191,5 +191,26 @@ class PermissionsSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        DB::table('permissions')->insert([
+            'nombre' => "ventas.create",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "ventas.edit",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "ventas.delete",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
