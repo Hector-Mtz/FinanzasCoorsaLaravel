@@ -107,5 +107,89 @@ class PermissionsSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        DB::table('permissions')->insert([
+            'nombre' => "ocs.create",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "ocs.edit",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "ocs.delete",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "facturas.create",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "facturas.edit",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "facturas.delete",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "facturas.oc.relation",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "deposito.create",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "deposito.edit",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "deposito.delete",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "deposito.factura.relation",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "deposito.cerrar",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
