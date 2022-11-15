@@ -59,7 +59,7 @@ Route::middleware([
     Route::get('/ocs/months', [OcController::class, "ocMonth"])->name("ocs.month");
 
 
-    Route::apiResource('/facturas', FacturaController::class)->except('destroy', 'show');
+    Route::apiResource('/facturas', FacturaController::class)->except('show');
     Route::get('/facturas/catalogos', [FacturaController::class, 'catalogos'])->name('facturas.catalogos');
     Route::post('/facturas/{factura}/ocs', [FacturaController::class, "storeOc"])->name("facturas.ocs.store");
     Route::delete('/facturas/{factura}/ocs', [FacturaController::class, "destroyOc"])->name("facturas.ocs.destroy");

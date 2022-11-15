@@ -101,6 +101,7 @@ class FacturaController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('facturas.create');
         $newFactura = $request->validate([
             "cantidad" => ["required", "numeric"],
             "referencia" => ["required", "unique:facturas,referencia"],
@@ -124,10 +125,10 @@ class FacturaController extends Controller
      */
     public function update(Request $request, Factura $factura)
     {
+        $this->authorize('facturas.edit');
         $newFactura = $request->validate([
             "cantidad" => ["required", "numeric"],
-            "status_id" => ["required", "exists:status,id"],
-            "referencia" => ["required", "unique:facturas,refrencia"],
+            "referencia" => ["required", "unique:facturas,referencia," . $factura->id . ",id"],
             "fechaDePago" => ["required", "date"],
         ]);
 
@@ -143,12 +144,20 @@ class FacturaController extends Controller
      */
     public function destroy(Factura $factura)
     {
-        //
+        $this->authorize('facturas.delete');
+        // Removemos todos los ocs asociados
+        Oc::where('factura_id', '=', $factura->id)
+            ->update(['factura_id' => null]);
+        $factura->delete();
+        return response()->json([
+            'message' => 'Factura DELETED'
+        ]);
     }
 
 
     public function storeOc(Request $request, Int $factura)
     {
+        $this->authorize('facturas.oc.create');
         $request->validate([
             'oc_id' => ["required", "exists:ocs,id"],
         ]);
@@ -220,11 +229,10 @@ class FacturaController extends Controller
 
     public function destroyOc(Request $request, Factura $factura)
     {
+        $this->authorize('facturas.oc.delete');
         $request->validate([
             'oc_id' => ["required", "exists:ocs,id"],
         ]);
-
-
         try {
             $oc = Oc::find($request->oc_id);
             DB::beginTransaction();

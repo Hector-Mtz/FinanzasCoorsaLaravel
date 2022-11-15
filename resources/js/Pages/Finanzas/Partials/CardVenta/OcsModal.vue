@@ -87,13 +87,8 @@ const deleteOc = (ocSelected) => {
             if (error.response.data.hasOwnProperty('message')) {
                 alert(error.response.data.message)
             } else {
-                alert("ERROR UPDATE OC");
+                alert("ERROR DELETE OC");
             }
-        }).then(() => { // always
-            form.processing = false;
-            setTimeout(() => {
-                form.recentlySuccessful = false;
-            }, 500);
         });
 }
 

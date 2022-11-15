@@ -86,7 +86,7 @@ const create = () => {
                 form.processing = true;
             },
         })
-        .then((resp) => {
+        .then(() => {
             emit("addFactura");
             form.recentlySuccessful = true;
             restForm();
@@ -107,7 +107,12 @@ const create = () => {
                 }
                 form.error = error.response.data.message
             } else {
-                form.error = "Error CREATE FACTURA"
+                if (error.response.data.hasOwnProperty('message')) {
+                    form.error = error.response.data.message
+                } else {
+
+                    form.error = "Error CREATE FACTURA"
+                }
             };
         }).then(() => { // always
             form.processing = false;
@@ -121,39 +126,48 @@ const create = () => {
             }, 500);
         });
 }
-// const update = () => {
-//     axios.put(route('facturas.update', props.oc.id), form,
-//         {
-//             onUploadProgress: () => {
-//                 form.processing = true;
-//             },
-//         })
-//         .then((resp) => {
-//             emit("editFactura", resp.data);
-//             form.recentlySuccessful = true
-//             setTimeout(() => {
-//                 restForm();
-//                 close();
-//             }, 500);
-//         }).catch(error => {
-//             form.hasErrors = true;
-//             console.log(error);
-//             // if (error.response.data.hasOwnProperty('errors')) {
-//             //     const errors = error.response.data.errors
-//             //     for (let error in errors) {
-//             //         form.errors[error] = errors[error][0]
-//             //     }
-//             //     form.error = error.response.data.message
-//             // } else {
-//             //     form.error = "ERROR UPDATE OC"
-//             // };
-//         }).then(() => { // always
-//             form.processing = false;
-//             setTimeout(() => {
-//                 form.recentlySuccessful = false;
-//             }, 500);
-//         });
-// }
+const update = () => {
+    axios.put(route('facturas.update', props.factura.id), form,
+        {
+            onUploadProgress: () => {
+                form.processing = true;
+            },
+        })
+        .then((resp) => {
+            emit("editFactura", resp.data);
+            form.recentlySuccessful = true;
+            restForm();
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            })
+            setTimeout(() => {
+                close();
+            }, 500);
+        }).catch(error => {
+            form.hasErrors = true;
+            console.log(error);
+            if (error.response.data.hasOwnProperty('errors')) {
+                const errors = error.response.data.errors
+                for (let error in errors) {
+                    form.errors[error] = errors[error][0]
+                }
+                form.error = error.response.data.message
+            } else {
+                if (error.response.data.hasOwnProperty('message')) {
+                    form.error = error.response.data.message
+                } else {
+                    form.error = "ERROR UPDATE FACTURA"
+                }
+            };
+        }).then(() => { // always
+            form.processing = false;
+            setTimeout(() => {
+                form.recentlySuccessful = false;
+            }, 500);
+        });
+}
 
 
 </script>
