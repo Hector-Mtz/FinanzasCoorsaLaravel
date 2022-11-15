@@ -86,5 +86,26 @@ class PermissionsSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        DB::table('permissions')->insert([
+            'nombre' => "noticias.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "video.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "menu.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
