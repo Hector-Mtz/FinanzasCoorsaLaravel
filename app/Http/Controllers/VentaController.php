@@ -73,7 +73,8 @@ class VentaController extends Controller
      */
     public function store(Request $request)
     {
-        Log::info("Puede almacenas" . $this->authorize('can-store-venta'));
+        //Authorization
+        $this->authorize('ventas.create');
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
             "nombre" =>  ["required", "max:100"],
@@ -103,6 +104,8 @@ class VentaController extends Controller
      */
     public function update(Request $request, Venta $venta)
     {
+        //Authorization
+        $this->authorize('ventas.edit');
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
             "nombre" =>  ["required", "max:100"],
@@ -141,7 +144,8 @@ class VentaController extends Controller
      */
     public function destroy($venta)
     {
-        //
+        //Authorization
+        $this->authorize('ventas.delete');
         $ventaAEliminar = Venta::find($venta);
         $ventaAEliminar->delete();
         return redirect()->back();

@@ -69,6 +69,34 @@ const editOc = (newOc) => {
     }
 }
 
+
+const deleteOc = (ocSelected) => {
+    const ocIndex = ocs.value.findIndex(ocFind => {
+        return ocFind.id === ocSelected.id;
+    })
+    axios.delete(route('ocs.destroy', ocSelected.id))
+        .then(() => {
+            ocs.value.splice(ocIndex, 1);
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            })
+        }).catch(error => {
+
+            if (error.response.data.hasOwnProperty('message')) {
+                alert(error.response.data.message)
+            } else {
+                alert("ERROR UPDATE OC");
+            }
+        }).then(() => { // always
+            form.processing = false;
+            setTimeout(() => {
+                form.recentlySuccessful = false;
+            }, 500);
+        });
+}
+
 // End Methos Modal
 
 const close = () => {
@@ -95,41 +123,41 @@ watch(props, () => {
                 <div class="flex-1 px-2 py-1">
                     <div class="flex justify-center">
                         <span class="block font-bold text-center text-gray-300">
-                            Fecha Incial {{venta.fechaInicial}}
+                            Fecha Incial {{ venta.fechaInicial }}
                         </span>
                     </div>
                 </div>
             </div>
             <div class="flex flex-row">
-                <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3"> 
-                    <span  class="block font-bold text-gray-300">
-                            Subtotal:
-                            ${{formatoMoney(venta.monto)}}
+                <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
+                    <span class="block font-bold text-gray-300">
+                        Subtotal:
+                        ${{ formatoMoney(venta.monto) }}
                     </span>
                 </div>
                 <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
                     <span lass="block font-bold text-center text-gray-300">
-                           <p class="text-gray-300" v-if="venta.iva == true">
+                        <p class="text-gray-300" v-if="venta.iva == true">
                             IVA:
-                            ${{formatoMoney(Math.round(venta.monto * 0.16))}}
-                           </p>
-                           <p class="text-gray-300" v-if="venta.iva == false">
+                            ${{ formatoMoney(Math.round(venta.monto * 0.16)) }}
+                        </p>
+                        <p class="text-gray-300" v-if="venta.iva == false">
                             IVA:
-                            ${{0}}
-                           </p>
-                </span>
+                            ${{ 0 }}
+                        </p>
+                    </span>
                 </div>
                 <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
                     <span class="block font-bold text-center text-gray-300">
-                            Total:
-                            ${{formatoMoney(venta.monto + (venta.monto*0.16))}}
+                        Total:
+                        ${{ formatoMoney(venta.monto + (venta.monto * 0.16)) }}
                     </span>
                 </div>
             </div>
             <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
-               <span class="block font-bold text-gray-300">
-                   COMENTARIO:
-                    {{venta.comentario}}
+                <span class="block font-bold text-gray-300">
+                    COMENTARIO:
+                    {{ venta.comentario }}
                 </span>
             </div>
         </template>
@@ -139,15 +167,17 @@ watch(props, () => {
                     <tr>
                         <th>
                             <h3 class="mb-1">OC</h3>
-                            <ButtonAdd class="h-5" @click="showFormOc()" />
+                            <ButtonAdd v-if="$page.props.can['ocs.create']" class="h-5" @click="showFormOc()" />
                         </th>
                         <th>CANTIDAD</th>
                         <th>FECHA</th>
-                        <th></th>
+                        <th v-if="$page.props.can['ocs.edit']"></th>
+                        <th v-if="$page.props.can['ocs.delete']"></th>
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemOc v-for="oc in ocs" :key="oc.id" :oc="oc" @edit="showFormOc($event)" />
+                    <ItemOc v-for="oc in ocs" :key="oc.id" :oc="oc" @edit="showFormOc($event)"
+                        @delete="deleteOc($event)" />
                 </template>
             </TableComponent>
             <!--Modals-->

@@ -118,16 +118,11 @@ const close = () => {
                         <th>TOTAL IVA</th>
                         <th>TOTAL</th>
                         <th>FECHA INICIAL</th>
-                        <th></th>
-                        <th></th>
+                        <th v-if="$page.props.can['ventas.edit']"></th>
+                        <th v-if="$page.props.can['ventas.delete']"></th>
                     </tr>
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td colspan="5"></td>
                         <td colspan="2">
                             <InputSearch v-model="searchText" />
                         </td>

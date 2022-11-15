@@ -129,7 +129,11 @@ const create = () => {
                 }
                 form.error = error.response.data.message
             } else {
-                form.error = "Error CREATE OC"
+                if (error.response.data.hasOwnProperty('message')) {
+                    form.error = error.response.data.message
+                } else {
+                    form.error = "Error CREATE OC"
+                }
             };
         }).then(() => { // always
             form.processing = false;
@@ -166,16 +170,21 @@ const update = () => {
                 }
                 form.error = error.response.data.message
             } else {
-                form.error = "ERROR UPDATE OC"
+                if (error.response.data.hasOwnProperty('message')) {
+                    form.error = error.response.data.message
+                } else {
+                    form.error = "ERROR UPDATE OC"
+                }
             };
         }).then(() => { // always
-            console.log("Cierra el formulario");
             form.processing = false;
             setTimeout(() => {
                 form.recentlySuccessful = false;
             }, 500);
         });
 }
+
+
 
 
 </script>

@@ -4,13 +4,14 @@ import { formatoMoney, IVA } from "../../../../utils/conversiones";
 import SuccessButton from "@/Components/SuccessButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import { Inertia } from "@inertiajs/inertia";
+import { usePage } from "@inertiajs/inertia-vue3";
 const emit = defineEmits(['edit', 'activeIva'])
 
 const props = defineProps({
     venta: {
         type: Object,
         required: true
-    }
+    },
 })
 const ivaChecked = ref(props.venta.iva);
 
@@ -42,7 +43,6 @@ const activeIva = () => {
 }
 
 const eliminarVenta = (id) => {
-    //
     Inertia.delete(route("ventas.destroy", id));
 }
 
@@ -50,7 +50,7 @@ const eliminarVenta = (id) => {
 <template>
     <tr>
         <td>{{ ventaShow.ceco + "-" + ventaShow.servicio }}</td>
-        <td>{{ ventaShow.comentario}}</td>
+        <td>{{ ventaShow.comentario }}</td>
         <td>
             <div @click="activeIva()" class="w-10 h-5 px-2 mx-2 bg-yellow-600 hover:bg-yellow-500 rounded-xl">
                 <svg v-if="ivaChecked" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mx-auto" fill="none"
@@ -63,7 +63,7 @@ const eliminarVenta = (id) => {
         <td>${{ ventaShow.iva }}</td>
         <td>${{ ventaShow.total }}</td>
         <td>{{ ventaShow.fechaInicial }}</td>
-        <td>
+        <td v-if="$page.props.can['ventas.edit']">
             <SuccessButton v-if="isEditable" @click="emit('edit', props.venta)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                     <path
@@ -71,7 +71,7 @@ const eliminarVenta = (id) => {
                 </svg>
             </SuccessButton>
         </td>
-        <td>
+        <td v-if="$page.props.can['ventas.delete']">
             <DangerButton v-if="isEditable" @click="eliminarVenta(ventaShow.id)">
                 <svg width="20" xmlns="http://www.w3.org/2000/svg" height="20" style="fill:white" viewBox="0 0 96 96"
                     xmlns:xlink="http://www.w3.org/1999/xlink">
