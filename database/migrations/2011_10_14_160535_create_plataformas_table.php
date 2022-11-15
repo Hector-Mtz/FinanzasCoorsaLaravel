@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tipopoliticas', function (Blueprint $table) {
+        Schema::create('plataformas', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('logo');
+            $table->string('nombre')->unique();
+            $table->boolean('activo')->default(1);
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipopoliticas');
+        Schema::dropIfExists('plataformas');
     }
 };

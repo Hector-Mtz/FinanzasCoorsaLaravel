@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tipopoliticas', function (Blueprint $table) {
+        Schema::create('permissions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('logo');
+            $table->string('nombre')->unique();
+            $table->foreignId('plataforma_id')->constrained('plataformas');
+            $table->boolean('is_acceso')->default(1);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipopoliticas');
+        Schema::dropIfExists('permissions');
     }
 };
