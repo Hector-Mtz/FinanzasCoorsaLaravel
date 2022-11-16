@@ -6,7 +6,7 @@ import require$$1 from "http";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers.js";
 import { ssrRenderAttrs, ssrRenderStyle, ssrRenderSlot, ssrRenderComponent, ssrRenderTeleport, ssrRenderClass, ssrLooseContain, ssrGetDynamicModelProps, ssrInterpolate, ssrRenderList, ssrRenderAttr, ssrIncludeBooleanAttr } from "vue/server-renderer";
 import axios$1 from "axios";
-import { Inertia } from "@inertiajs/inertia";
+import { Inertia as Inertia$1 } from "@inertiajs/inertia";
 import { pickBy } from "lodash";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy.js";
@@ -1939,14 +1939,14 @@ const _sfc_main$1q = {
   setup(__props) {
     const showingNavigationDropdown = ref(false);
     const switchToTeam = (team) => {
-      Inertia.put(route("current-team.update"), {
+      Inertia$1.put(route("current-team.update"), {
         team_id: team.id
       }, {
         preserveState: false
       });
     };
     const logout = () => {
-      Inertia.post(route("logout"));
+      Inertia$1.post(route("logout"));
     };
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<div${ssrRenderAttrs(_attrs)}>`);
@@ -4308,10 +4308,6 @@ const _sfc_main$13 = {
     },
     "value": {
       default: ""
-    },
-    "cantidad": {
-      default: "nombre",
-      type: String
     }
   },
   emits: ["update:modelValue", "value"],
@@ -4356,7 +4352,7 @@ const _sfc_main$13 = {
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<div${ssrRenderAttrs(mergeProps({ class: "text-gray-600" }, _attrs))}><input type="text"${ssrRenderAttr("list", __props.list)} class="${ssrRenderClass([{ "border-red-400": unref(error), "text-red-400": unref(error) }, "w-full py-1 text-sm text-white bg-gray-800 border-gray-300 rounded-md shadow-sm focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50 disabled:bg-gray-300"])}"${ssrRenderAttr("value", valueText.value)}${ssrIncludeBooleanAttr(__props.disabled) ? " disabled" : ""}><datalist${ssrRenderAttr("id", __props.list)}><!--[-->`);
       ssrRenderList(props.options, (opcion) => {
-        _push(`<option>${ssrInterpolate(opcion[props.nameOption])}</option>`);
+        _push(`<option${ssrRenderAttr("value", opcion[props.nameOption])}>${ssrInterpolate(opcion[props.nameOption])}</option>`);
       });
       _push(`<!--]--></datalist></div>`);
     };
@@ -4484,7 +4480,7 @@ const _sfc_main$10 = {
       if (props.typeForm === "create") {
         create();
       } else {
-        update2();
+        update();
       }
     };
     const create = () => {
@@ -4521,7 +4517,7 @@ const _sfc_main$10 = {
         }, 500);
       });
     };
-    const update2 = () => {
+    const update = () => {
       axios$1.put(
         route(`${props.routeName}.update`, props.object.id),
         form,
@@ -5048,7 +5044,7 @@ const _sfc_main$Y = {
       if (props.typeForm === "create") {
         create();
       } else {
-        update2();
+        update();
       }
     };
     const create = () => {
@@ -5085,7 +5081,7 @@ const _sfc_main$Y = {
         }, 500);
       });
     };
-    const update2 = () => {
+    const update = () => {
       axios$1.put(
         route(`${props.routeName}.update`, [props.padreId, props.object.id]),
         form,
@@ -6654,7 +6650,7 @@ const _sfc_main$O = {
       if (props.typeForm === "create") {
         create();
       } else {
-        update2();
+        update();
       }
     };
     const create = () => {
@@ -6670,7 +6666,7 @@ const _sfc_main$O = {
         emit("addDeposito", resp.data);
         form.recentlySuccessful = true;
         restForm();
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
@@ -6680,14 +6676,20 @@ const _sfc_main$O = {
         }, 500);
       }).catch((error) => {
         form.hasErrors = true;
-        if (error.hasOwnProperty("response") && error.response.data.hasOwnProperty("errors")) {
-          const errors = error.response.data.errors;
-          for (let error2 in errors) {
-            form.errors[error2] = errors[error2][0];
+        if (error.hasOwnProperty("response")) {
+          if (error.response.data.hasOwnProperty("errors")) {
+            const errors = error.response.data.errors;
+            for (let error2 in errors) {
+              form.errors[error2] = errors[error2][0];
+            }
+            form.error = error.response.data.message;
+          } else {
+            if (error.response.data.hasOwnProperty("message")) {
+              form.error = error.response.data.message;
+            } else {
+              form.error = "Error CREATE DEPOSITO";
+            }
           }
-          form.error = error.response.data.message;
-        } else {
-          form.error = "Error CREATE DEPOSITO";
         }
       }).then(() => {
         form.processing = false;
@@ -6696,7 +6698,7 @@ const _sfc_main$O = {
         }, 500);
       });
     };
-    const update2 = () => {
+    const update = () => {
       axios$1.put(
         route("ingresos.update", props.deposito.id),
         form,
@@ -6709,7 +6711,7 @@ const _sfc_main$O = {
         emit("addDeposito", resp.data);
         form.recentlySuccessful = true;
         restForm();
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
@@ -6719,14 +6721,20 @@ const _sfc_main$O = {
         }, 500);
       }).catch((error) => {
         form.hasErrors = true;
-        if (error.hasOwnProperty("response") && error.response.data.hasOwnProperty("errors")) {
-          const errors = error.response.data.errors;
-          for (let error2 in errors) {
-            form.errors[error2] = errors[error2][0];
+        if (error.hasOwnProperty("response")) {
+          if (error.response.data.hasOwnProperty("errors")) {
+            const errors = error.response.data.errors;
+            for (let error2 in errors) {
+              form.errors[error2] = errors[error2][0];
+            }
+            form.error = error.response.data.message;
+          } else {
+            if (error.response.data.hasOwnProperty("message")) {
+              form.error = error.response.data.message;
+            } else {
+              form.error = "ERROR UPDATE DEPOSITO";
+            }
           }
-          form.error = error.response.data.message;
-        } else {
-          form.error = "ERROR UPDATE DEPOSITO";
         }
       }).then(() => {
         form.processing = false;
@@ -6984,6 +6992,32 @@ const FormDepositoModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.d
   default: _sfc_main$O
 }, Symbol.toStringTag, { value: "Module" }));
 const _sfc_main$N = {
+  __name: "ButtonPres",
+  __ssrInlineRender: true,
+  props: {
+    type: {
+      type: String,
+      default: "button"
+    }
+  },
+  setup(__props) {
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<button${ssrRenderAttrs(mergeProps({
+        type: __props.type,
+        class: "inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-gray-700 uppercase transition bg-white border border-gray-300 rounded-md shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 active:text-gray-800 active:bg-gray-50 disabled:opacity-25"
+      }, _attrs))}>`);
+      ssrRenderSlot(_ctx.$slots, "default", {}, null, _push, _parent);
+      _push(`</button>`);
+    };
+  }
+};
+const _sfc_setup$N = _sfc_main$N.setup;
+_sfc_main$N.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/ButtonPres.vue");
+  return _sfc_setup$N ? _sfc_setup$N(props, ctx) : void 0;
+};
+const _sfc_main$M = {
   __name: "ItemDepositoDetails",
   __ssrInlineRender: true,
   props: {
@@ -6996,7 +7030,7 @@ const _sfc_main$N = {
       required: true
     }
   },
-  emits: ["addFactura", "edit", "changeStatus"],
+  emits: ["addFactura", "edit", "delete", "changeStatus"],
   setup(__props, { emit }) {
     const props = __props;
     const facturaIdAdd = ref("");
@@ -7017,108 +7051,153 @@ const _sfc_main$N = {
       ssrRenderList(props.deposito.facturas, (factura) => {
         _push(`<span> #${ssrInterpolate(factura.referencia)}</span>`);
       });
-      _push(`<!--]--><div class="flex flex-row justify-center">`);
-      _push(ssrRenderComponent(_sfc_main$13, {
-        class: "w-50",
-        modelValue: facturaIdAdd.value,
-        "onUpdate:modelValue": ($event) => facturaIdAdd.value = $event,
-        list: "facturas-catalogo",
-        "name-option": "referencia",
-        options: props.facturas
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$17, {
-        class: "ml-1 h-7",
-        onClick: ($event) => addFactura()
-      }, null, _parent));
-      _push(`</div>`);
+      _push(`<!--]-->`);
+      if (_ctx.$page.props.can["deposito.factura.create"]) {
+        _push(`<div class="flex flex-row justify-center">`);
+        _push(ssrRenderComponent(_sfc_main$13, {
+          class: "w-50",
+          modelValue: facturaIdAdd.value,
+          "onUpdate:modelValue": ($event) => facturaIdAdd.value = $event,
+          list: "facturas-catalogo",
+          "name-option": "referencia",
+          options: props.facturas
+        }, null, _parent));
+        _push(ssrRenderComponent(_sfc_main$17, {
+          class: "ml-1 h-7",
+          onClick: ($event) => addFactura()
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
       _push(ssrRenderComponent(_sfc_main$1B, {
         message: props.deposito.error,
         class: "mt-2"
       }, null, _parent));
-      _push(`</td><td>${ssrInterpolate(props.deposito.banco)}</td><td><div class="flex justify-between">`);
-      _push(ssrRenderComponent(_sfc_main$$, {
-        onClick: ($event) => emit("edit", props.deposito)
-      }, {
-        default: withCtx((_, _push2, _parent2, _scopeId) => {
-          if (_push2) {
-            _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"${_scopeId}><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"${_scopeId}></path></svg>`);
-          } else {
-            return [
-              (openBlock(), createBlock("svg", {
-                xmlns: "http://www.w3.org/2000/svg",
-                class: "w-4 h-4",
-                viewBox: "0 0 20 20",
-                fill: "currentColor"
-              }, [
-                createVNode("path", { d: "M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" })
-              ]))
-            ];
-          }
-        }),
-        _: 1
-      }, _parent));
-      _push(ssrRenderComponent(_sfc_main$1a, {
-        onClick: ($event) => emit("changeStatus", props.deposito),
-        class: "w-8 px-0 py-0 ml-2"
-      }, {
-        default: withCtx((_, _push2, _parent2, _scopeId) => {
-          if (_push2) {
-            if (props.deposito.status_id === 1) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"${_scopeId}></path></svg>`);
+      _push(`</td><td>${ssrInterpolate(props.deposito.banco)}</td>`);
+      if (_ctx.$page.props.can["deposito.edit"]) {
+        _push(`<td>`);
+        _push(ssrRenderComponent(_sfc_main$$, {
+          onClick: ($event) => emit("edit", props.deposito)
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"${_scopeId}><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"${_scopeId}></path></svg>`);
             } else {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"${_scopeId}></path></svg>`);
+              return [
+                (openBlock(), createBlock("svg", {
+                  xmlns: "http://www.w3.org/2000/svg",
+                  class: "w-4 h-4",
+                  viewBox: "0 0 20 20",
+                  fill: "currentColor"
+                }, [
+                  createVNode("path", { d: "M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" })
+                ]))
+              ];
             }
-          } else {
-            return [
-              props.deposito.status_id === 1 ? (openBlock(), createBlock("svg", {
-                key: 0,
-                xmlns: "http://www.w3.org/2000/svg",
-                class: "w-4 h-4",
-                fill: "none",
-                viewBox: "0 0 24 24",
-                stroke: "currentColor",
-                "stroke-width": "2"
-              }, [
-                createVNode("path", {
-                  "stroke-linecap": "round",
-                  "stroke-linejoin": "round",
-                  d: "M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
-                })
-              ])) : (openBlock(), createBlock("svg", {
-                key: 1,
-                xmlns: "http://www.w3.org/2000/svg",
-                class: "w-4 h-4",
-                fill: "none",
-                viewBox: "0 0 24 24",
-                stroke: "currentColor",
-                "stroke-width": "2"
-              }, [
-                createVNode("path", {
-                  "stroke-linecap": "round",
-                  "stroke-linejoin": "round",
-                  d: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                })
-              ]))
-            ];
-          }
-        }),
-        _: 1
-      }, _parent));
-      _push(`</div></td></tr>`);
+          }),
+          _: 1
+        }, _parent));
+        _push(`</td>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (_ctx.$page.props.can["deposito.cerrar"]) {
+        _push(`<td>`);
+        _push(ssrRenderComponent(_sfc_main$N, {
+          onClick: ($event) => emit("changeStatus", props.deposito),
+          class: "py-1 rounded-full"
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              if (props.deposito.status_id === 1) {
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"${_scopeId}></path></svg>`);
+              } else {
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"${_scopeId}></path></svg>`);
+              }
+            } else {
+              return [
+                props.deposito.status_id === 1 ? (openBlock(), createBlock("svg", {
+                  key: 0,
+                  xmlns: "http://www.w3.org/2000/svg",
+                  class: "w-4 h-4",
+                  fill: "none",
+                  viewBox: "0 0 24 24",
+                  stroke: "currentColor",
+                  "stroke-width": "2"
+                }, [
+                  createVNode("path", {
+                    "stroke-linecap": "round",
+                    "stroke-linejoin": "round",
+                    d: "M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
+                  })
+                ])) : (openBlock(), createBlock("svg", {
+                  key: 1,
+                  xmlns: "http://www.w3.org/2000/svg",
+                  class: "w-4 h-4",
+                  fill: "none",
+                  viewBox: "0 0 24 24",
+                  stroke: "currentColor",
+                  "stroke-width": "2"
+                }, [
+                  createVNode("path", {
+                    "stroke-linecap": "round",
+                    "stroke-linejoin": "round",
+                    d: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  })
+                ]))
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`</td>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (_ctx.$page.props.can["deposito.delete"]) {
+        _push(`<td>`);
+        _push(ssrRenderComponent(_sfc_main$1a, {
+          onClick: ($event) => emit("delete", props.deposito)
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" style="${ssrRenderStyle({ "fill": "white" })}" viewBox="0 0 96 96" xmlns:xlink="http://www.w3.org/1999/xlink"${_scopeId}><path d="m24,78c0,4.968 4.029,9 9,9h30c4.968,0 9-4.032 9-9l6-48h-60l6,48zm33-39h6v39h-6v-39zm-12,0h6v39h-6v-39zm-12,0h6v39h-6v-39zm43.5-21h-19.5c0,0-1.344-6-3-6h-12c-1.659,0-3,6-3,6h-19.5c-2.487,0-4.5,2.013-4.5,4.5s0,4.5 0,4.5h66c0,0 0-2.013 0-4.5s-2.016-4.5-4.5-4.5z"${_scopeId}></path></svg>`);
+            } else {
+              return [
+                (openBlock(), createBlock("svg", {
+                  class: "w-4 h-4",
+                  xmlns: "http://www.w3.org/2000/svg",
+                  style: { "fill": "white" },
+                  viewBox: "0 0 96 96",
+                  "xmlns:xlink": "http://www.w3.org/1999/xlink"
+                }, [
+                  createVNode("path", { d: "m24,78c0,4.968 4.029,9 9,9h30c4.968,0 9-4.032 9-9l6-48h-60l6,48zm33-39h6v39h-6v-39zm-12,0h6v39h-6v-39zm-12,0h6v39h-6v-39zm43.5-21h-19.5c0,0-1.344-6-3-6h-12c-1.659,0-3,6-3,6h-19.5c-2.487,0-4.5,2.013-4.5,4.5s0,4.5 0,4.5h66c0,0 0-2.013 0-4.5s-2.016-4.5-4.5-4.5z" })
+                ]))
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`</td>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`</tr>`);
     };
   }
 };
-const _sfc_setup$N = _sfc_main$N.setup;
-_sfc_main$N.setup = (props, ctx) => {
+const _sfc_setup$M = _sfc_main$M.setup;
+_sfc_main$M.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardDepositos/ItemDepositoDetails.vue");
-  return _sfc_setup$N ? _sfc_setup$N(props, ctx) : void 0;
+  return _sfc_setup$M ? _sfc_setup$M(props, ctx) : void 0;
 };
 const ItemDepositoDetails = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$N
+  default: _sfc_main$M
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$M = {
+const _sfc_main$L = {
   __name: "DepositosModal",
   __ssrInlineRender: true,
   props: {
@@ -7131,7 +7210,7 @@ const _sfc_main$M = {
       required: true
     }
   },
-  emits: ["close", "updateDepositos", "addFactura"],
+  emits: ["close", "updateDepositos", "deleteDeposito", "addFactura"],
   setup(__props, { emit }) {
     const props = __props;
     const showingFormDeposito = ref(false);
@@ -7150,6 +7229,19 @@ const _sfc_main$M = {
     const changeStatus = (depositoChange) => {
       axios.put(route("ingresos.status", depositoChange.id)).then((resp) => {
         emit("updateDepositos");
+      }).catch((error) => {
+        let message;
+        if (error.hasOwnProperty("response") && error.response.data.hasOwnProperty("message")) {
+          message = error.response.data.message;
+        } else {
+          message = "Error DELETE OC";
+        }
+        alert(message);
+      });
+    };
+    const deleteDeposito = (deposito2) => {
+      axios.delete(route("ingresos.destroy", deposito2.id)).then(() => {
+        emit("deleteDeposito");
       }).catch((error) => {
         let message;
         if (error.hasOwnProperty("response") && error.response.data.hasOwnProperty("message")) {
@@ -7201,25 +7293,48 @@ const _sfc_main$M = {
               thead: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
                   _push3(`<tr${_scopeId2}><th${_scopeId2}><h3 class="mb-1"${_scopeId2}>Deposito</h3>`);
-                  _push3(ssrRenderComponent(_sfc_main$17, {
-                    class: "h-5",
-                    onClick: ($event) => showFormDeposito()
-                  }, null, _parent3, _scopeId2));
-                  _push3(`</th><th${_scopeId2}>CANTIDAD</th><th${_scopeId2}>FACTURA</th><th${_scopeId2}>BANCO</th><th${_scopeId2}></th></tr>`);
+                  if (_ctx.$page.props.can["deposito.create"]) {
+                    _push3(ssrRenderComponent(_sfc_main$17, {
+                      class: "h-5",
+                      onClick: ($event) => showFormDeposito()
+                    }, null, _parent3, _scopeId2));
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  _push3(`</th><th${_scopeId2}>CANTIDAD</th><th${_scopeId2}>FACTURA</th><th${_scopeId2}>BANCO</th>`);
+                  if (_ctx.$page.props.can["deposito.edit"]) {
+                    _push3(`<th${_scopeId2}></th>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  if (_ctx.$page.props.can["deposito.cerrar"]) {
+                    _push3(`<th${_scopeId2}>CERRAR</th>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  if (_ctx.$page.props.can["deposito.delete"]) {
+                    _push3(`<th${_scopeId2}>ELIMINAR</th>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  _push3(`</tr>`);
                 } else {
                   return [
                     createVNode("tr", null, [
                       createVNode("th", null, [
                         createVNode("h3", { class: "mb-1" }, "Deposito"),
-                        createVNode(_sfc_main$17, {
+                        _ctx.$page.props.can["deposito.create"] ? (openBlock(), createBlock(_sfc_main$17, {
+                          key: 0,
                           class: "h-5",
                           onClick: ($event) => showFormDeposito()
-                        }, null, 8, ["onClick"])
+                        }, null, 8, ["onClick"])) : createCommentVNode("", true)
                       ]),
                       createVNode("th", null, "CANTIDAD"),
                       createVNode("th", null, "FACTURA"),
                       createVNode("th", null, "BANCO"),
-                      createVNode("th")
+                      _ctx.$page.props.can["deposito.edit"] ? (openBlock(), createBlock("th", { key: 0 })) : createCommentVNode("", true),
+                      _ctx.$page.props.can["deposito.cerrar"] ? (openBlock(), createBlock("th", { key: 1 }, "CERRAR")) : createCommentVNode("", true),
+                      _ctx.$page.props.can["deposito.delete"] ? (openBlock(), createBlock("th", { key: 2 }, "ELIMINAR")) : createCommentVNode("", true)
                     ])
                   ];
                 }
@@ -7228,11 +7343,12 @@ const _sfc_main$M = {
                 if (_push3) {
                   _push3(`<!--[-->`);
                   ssrRenderList(__props.depositos, (deposito2) => {
-                    _push3(ssrRenderComponent(_sfc_main$N, {
+                    _push3(ssrRenderComponent(_sfc_main$M, {
                       key: deposito2.nombre,
                       deposito: deposito2,
                       facturas: listFacturas.value,
                       onEdit: ($event) => showFormDeposito($event),
+                      onDelete: ($event) => deleteDeposito($event),
                       onAddFactura: ($event) => emit("addFactura", $event),
                       onChangeStatus: ($event) => changeStatus($event)
                     }, null, _parent3, _scopeId2));
@@ -7241,14 +7357,15 @@ const _sfc_main$M = {
                 } else {
                   return [
                     (openBlock(true), createBlock(Fragment, null, renderList(__props.depositos, (deposito2) => {
-                      return openBlock(), createBlock(_sfc_main$N, {
+                      return openBlock(), createBlock(_sfc_main$M, {
                         key: deposito2.nombre,
                         deposito: deposito2,
                         facturas: listFacturas.value,
                         onEdit: ($event) => showFormDeposito($event),
+                        onDelete: ($event) => deleteDeposito($event),
                         onAddFactura: ($event) => emit("addFactura", $event),
                         onChangeStatus: ($event) => changeStatus($event)
-                      }, null, 8, ["deposito", "facturas", "onEdit", "onAddFactura", "onChangeStatus"]);
+                      }, null, 8, ["deposito", "facturas", "onEdit", "onDelete", "onAddFactura", "onChangeStatus"]);
                     }), 128))
                   ];
                 }
@@ -7269,27 +7386,31 @@ const _sfc_main$M = {
                   createVNode("tr", null, [
                     createVNode("th", null, [
                       createVNode("h3", { class: "mb-1" }, "Deposito"),
-                      createVNode(_sfc_main$17, {
+                      _ctx.$page.props.can["deposito.create"] ? (openBlock(), createBlock(_sfc_main$17, {
+                        key: 0,
                         class: "h-5",
                         onClick: ($event) => showFormDeposito()
-                      }, null, 8, ["onClick"])
+                      }, null, 8, ["onClick"])) : createCommentVNode("", true)
                     ]),
                     createVNode("th", null, "CANTIDAD"),
                     createVNode("th", null, "FACTURA"),
                     createVNode("th", null, "BANCO"),
-                    createVNode("th")
+                    _ctx.$page.props.can["deposito.edit"] ? (openBlock(), createBlock("th", { key: 0 })) : createCommentVNode("", true),
+                    _ctx.$page.props.can["deposito.cerrar"] ? (openBlock(), createBlock("th", { key: 1 }, "CERRAR")) : createCommentVNode("", true),
+                    _ctx.$page.props.can["deposito.delete"] ? (openBlock(), createBlock("th", { key: 2 }, "ELIMINAR")) : createCommentVNode("", true)
                   ])
                 ]),
                 tbody: withCtx(() => [
                   (openBlock(true), createBlock(Fragment, null, renderList(__props.depositos, (deposito2) => {
-                    return openBlock(), createBlock(_sfc_main$N, {
+                    return openBlock(), createBlock(_sfc_main$M, {
                       key: deposito2.nombre,
                       deposito: deposito2,
                       facturas: listFacturas.value,
                       onEdit: ($event) => showFormDeposito($event),
+                      onDelete: ($event) => deleteDeposito($event),
                       onAddFactura: ($event) => emit("addFactura", $event),
                       onChangeStatus: ($event) => changeStatus($event)
-                    }, null, 8, ["deposito", "facturas", "onEdit", "onAddFactura", "onChangeStatus"]);
+                    }, null, 8, ["deposito", "facturas", "onEdit", "onDelete", "onAddFactura", "onChangeStatus"]);
                   }), 128))
                 ]),
                 _: 1
@@ -7309,17 +7430,17 @@ const _sfc_main$M = {
     };
   }
 };
-const _sfc_setup$M = _sfc_main$M.setup;
-_sfc_main$M.setup = (props, ctx) => {
+const _sfc_setup$L = _sfc_main$L.setup;
+_sfc_main$L.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardDepositos/DepositosModal.vue");
-  return _sfc_setup$M ? _sfc_setup$M(props, ctx) : void 0;
+  return _sfc_setup$L ? _sfc_setup$L(props, ctx) : void 0;
 };
 const DepositosModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$M
+  default: _sfc_main$L
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$L = {
+const _sfc_main$K = {
   __name: "ItemCliente",
   __ssrInlineRender: true,
   props: {
@@ -7354,17 +7475,17 @@ const _sfc_main$L = {
     };
   }
 };
-const _sfc_setup$L = _sfc_main$L.setup;
-_sfc_main$L.setup = (props, ctx) => {
+const _sfc_setup$K = _sfc_main$K.setup;
+_sfc_main$K.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/ItemCliente.vue");
-  return _sfc_setup$L ? _sfc_setup$L(props, ctx) : void 0;
+  return _sfc_setup$K ? _sfc_setup$K(props, ctx) : void 0;
 };
 const ItemCliente = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$L
+  default: _sfc_main$K
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$K = {
+const _sfc_main$J = {
   __name: "ItemIngresoC",
   __ssrInlineRender: true,
   props: {
@@ -7405,17 +7526,17 @@ const _sfc_main$K = {
     };
   }
 };
-const _sfc_setup$K = _sfc_main$K.setup;
-_sfc_main$K.setup = (props, ctx) => {
+const _sfc_setup$J = _sfc_main$J.setup;
+_sfc_main$J.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardDepositos/ItemIngresoC.vue");
-  return _sfc_setup$K ? _sfc_setup$K(props, ctx) : void 0;
+  return _sfc_setup$J ? _sfc_setup$J(props, ctx) : void 0;
 };
 const ItemIngresoC = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$K
+  default: _sfc_main$J
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$J = {
+const _sfc_main$I = {
   __name: "ItemFacturaDeposito",
   __ssrInlineRender: true,
   props: {
@@ -7429,43 +7550,47 @@ const _sfc_main$J = {
     const props = __props;
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<tr${ssrRenderAttrs(_attrs)}><td>`);
-      _push(ssrRenderComponent(_sfc_main$1a, {
-        onClick: ($event) => emit("remove"),
-        class: "px-1 py-0"
-      }, {
-        default: withCtx((_, _push2, _parent2, _scopeId) => {
-          if (_push2) {
-            _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3" viewBox="0 0 16 16"${_scopeId}><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"${_scopeId}></path></svg>`);
-          } else {
-            return [
-              (openBlock(), createBlock("svg", {
-                xmlns: "http://www.w3.org/2000/svg",
-                fill: "currentColor",
-                class: "w-3 h-3",
-                viewBox: "0 0 16 16"
-              }, [
-                createVNode("path", { d: "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" })
-              ]))
-            ];
-          }
-        }),
-        _: 1
-      }, _parent));
+      if (_ctx.$page.props.can["deposito.factura.delete"]) {
+        _push(ssrRenderComponent(_sfc_main$1a, {
+          onClick: ($event) => emit("remove"),
+          class: "px-1 py-0"
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3" viewBox="0 0 16 16"${_scopeId}><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"${_scopeId}></path></svg>`);
+            } else {
+              return [
+                (openBlock(), createBlock("svg", {
+                  xmlns: "http://www.w3.org/2000/svg",
+                  fill: "currentColor",
+                  class: "w-3 h-3",
+                  viewBox: "0 0 16 16"
+                }, [
+                  createVNode("path", { d: "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" })
+                ]))
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+      } else {
+        _push(`<!---->`);
+      }
       _push(` #${ssrInterpolate(props.factura.referencia)}</td><td>$${ssrInterpolate(unref(formatoMoney)(props.factura.cantidad))}</td><td>${ssrInterpolate(props.factura.fechaDePago)}</td></tr>`);
     };
   }
 };
-const _sfc_setup$J = _sfc_main$J.setup;
-_sfc_main$J.setup = (props, ctx) => {
+const _sfc_setup$I = _sfc_main$I.setup;
+_sfc_main$I.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardDepositos/ItemFacturaDeposito.vue");
-  return _sfc_setup$J ? _sfc_setup$J(props, ctx) : void 0;
+  return _sfc_setup$I ? _sfc_setup$I(props, ctx) : void 0;
 };
 const ItemFacturaDeposito = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$J
+  default: _sfc_main$I
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$I = {
+const _sfc_main$H = {
   __name: "FacturasDepositoModal",
   __ssrInlineRender: true,
   props: {
@@ -7496,7 +7621,7 @@ const _sfc_main$I = {
       }).then(() => {
         props.deposito.error = "";
         props.deposito.facturas.splice(indexFactura, 1);
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
@@ -7570,21 +7695,26 @@ const _sfc_main$I = {
             _push2(ssrRenderComponent(TableComponent, null, {
               thead: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
-                  _push3(`<tr${_scopeId2}><th${_scopeId2}><h3 class="mb-1"${_scopeId2}>FACTURAS</h3><div class="flex flex-row justify-center"${_scopeId2}>`);
-                  _push3(ssrRenderComponent(_sfc_main$13, {
-                    class: "w-50",
-                    modelValue: facturaIdAdd.value,
-                    "onUpdate:modelValue": ($event) => facturaIdAdd.value = $event,
-                    value: textFactura.value,
-                    list: "facturas-catalogo",
-                    "name-option": "referencia",
-                    options: listFacturas.value
-                  }, null, _parent3, _scopeId2));
-                  _push3(ssrRenderComponent(_sfc_main$17, {
-                    class: "ml-1 h-7",
-                    onClick: ($event) => addFactura()
-                  }, null, _parent3, _scopeId2));
-                  _push3(`</div>`);
+                  _push3(`<tr${_scopeId2}><th${_scopeId2}><h3 class="mb-1"${_scopeId2}>FACTURAS</h3>`);
+                  if (_ctx.$page.props.can["deposito.factura.create"]) {
+                    _push3(`<div class="flex flex-row justify-center"${_scopeId2}>`);
+                    _push3(ssrRenderComponent(_sfc_main$13, {
+                      class: "w-50",
+                      modelValue: facturaIdAdd.value,
+                      "onUpdate:modelValue": ($event) => facturaIdAdd.value = $event,
+                      value: textFactura.value,
+                      list: "facturas-catalogo",
+                      "name-option": "referencia",
+                      options: listFacturas.value
+                    }, null, _parent3, _scopeId2));
+                    _push3(ssrRenderComponent(_sfc_main$17, {
+                      class: "ml-1 h-7",
+                      onClick: ($event) => addFactura()
+                    }, null, _parent3, _scopeId2));
+                    _push3(`</div>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
                   _push3(ssrRenderComponent(_sfc_main$1B, {
                     message: props.deposito.error,
                     class: "mt-2"
@@ -7595,7 +7725,10 @@ const _sfc_main$I = {
                     createVNode("tr", null, [
                       createVNode("th", null, [
                         createVNode("h3", { class: "mb-1" }, "FACTURAS"),
-                        createVNode("div", { class: "flex flex-row justify-center" }, [
+                        _ctx.$page.props.can["deposito.factura.create"] ? (openBlock(), createBlock("div", {
+                          key: 0,
+                          class: "flex flex-row justify-center"
+                        }, [
                           createVNode(_sfc_main$13, {
                             class: "w-50",
                             modelValue: facturaIdAdd.value,
@@ -7609,7 +7742,7 @@ const _sfc_main$I = {
                             class: "ml-1 h-7",
                             onClick: ($event) => addFactura()
                           }, null, 8, ["onClick"])
-                        ]),
+                        ])) : createCommentVNode("", true),
                         createVNode(_sfc_main$1B, {
                           message: props.deposito.error,
                           class: "mt-2"
@@ -7629,7 +7762,7 @@ const _sfc_main$I = {
                 if (_push3) {
                   _push3(`<!--[-->`);
                   ssrRenderList(props.deposito.facturas, (factura, index) => {
-                    _push3(ssrRenderComponent(_sfc_main$J, {
+                    _push3(ssrRenderComponent(_sfc_main$I, {
                       key: factura.referencia,
                       factura,
                       onRemove: ($event) => deleteFactura(index)
@@ -7639,7 +7772,7 @@ const _sfc_main$I = {
                 } else {
                   return [
                     (openBlock(true), createBlock(Fragment, null, renderList(props.deposito.facturas, (factura, index) => {
-                      return openBlock(), createBlock(_sfc_main$J, {
+                      return openBlock(), createBlock(_sfc_main$I, {
                         key: factura.referencia,
                         factura,
                         onRemove: ($event) => deleteFactura(index)
@@ -7657,7 +7790,10 @@ const _sfc_main$I = {
                   createVNode("tr", null, [
                     createVNode("th", null, [
                       createVNode("h3", { class: "mb-1" }, "FACTURAS"),
-                      createVNode("div", { class: "flex flex-row justify-center" }, [
+                      _ctx.$page.props.can["deposito.factura.create"] ? (openBlock(), createBlock("div", {
+                        key: 0,
+                        class: "flex flex-row justify-center"
+                      }, [
                         createVNode(_sfc_main$13, {
                           class: "w-50",
                           modelValue: facturaIdAdd.value,
@@ -7671,7 +7807,7 @@ const _sfc_main$I = {
                           class: "ml-1 h-7",
                           onClick: ($event) => addFactura()
                         }, null, 8, ["onClick"])
-                      ]),
+                      ])) : createCommentVNode("", true),
                       createVNode(_sfc_main$1B, {
                         message: props.deposito.error,
                         class: "mt-2"
@@ -7687,7 +7823,7 @@ const _sfc_main$I = {
                 ]),
                 tbody: withCtx(() => [
                   (openBlock(true), createBlock(Fragment, null, renderList(props.deposito.facturas, (factura, index) => {
-                    return openBlock(), createBlock(_sfc_main$J, {
+                    return openBlock(), createBlock(_sfc_main$I, {
                       key: factura.referencia,
                       factura,
                       onRemove: ($event) => deleteFactura(index)
@@ -7704,17 +7840,17 @@ const _sfc_main$I = {
     };
   }
 };
-const _sfc_setup$I = _sfc_main$I.setup;
-_sfc_main$I.setup = (props, ctx) => {
+const _sfc_setup$H = _sfc_main$H.setup;
+_sfc_main$H.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardDepositos/FacturasDepositoModal.vue");
-  return _sfc_setup$I ? _sfc_setup$I(props, ctx) : void 0;
+  return _sfc_setup$H ? _sfc_setup$H(props, ctx) : void 0;
 };
 const FacturasDepositoModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$I
+  default: _sfc_main$H
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$H = {
+const _sfc_main$G = {
   __name: "Depositos",
   __ssrInlineRender: true,
   emits: [""],
@@ -7735,7 +7871,7 @@ const _sfc_main$H = {
       });
       axios.post(route("ingresos.facturas.store", form.deposito_id), form).then(() => {
         search(searchText.value);
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
@@ -7799,7 +7935,7 @@ const _sfc_main$H = {
       }, null, _parent));
       _push(`</div><div class="w-full"><div class="mx-5 tabs-header"><span class="${ssrRenderClass([{ "active": tab.value === "1" }, "tab"])}"> ABIERTAS </span><span class="${ssrRenderClass([{ "active": tab.value === "2" }, "tab"])}"> CERRADAS </span></div><div class="-mx-2 overflow-hidden overflow-y-auto" style="${ssrRenderStyle({ "max-height": "65vh" })}"><!--[-->`);
       ssrRenderList(clientes.value, (cliente) => {
-        _push(ssrRenderComponent(_sfc_main$L, {
+        _push(ssrRenderComponent(_sfc_main$K, {
           key: cliente.id,
           cliente,
           total: cliente.ingresos.length
@@ -7808,7 +7944,7 @@ const _sfc_main$H = {
             if (_push2) {
               _push2(`<div class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden bg-gray-900 shadow-xl sm:rounded-lg"${_scopeId}><table class="table-ingresos"${_scopeId}><thead${_scopeId}><tr${_scopeId}><th${_scopeId}> N\xFAm. Deposito </th><th${_scopeId}> Cantidad </th><th${_scopeId}> Factura </th></tr></thead><tbody${_scopeId}><!--[-->`);
               ssrRenderList(cliente.ingresos, (ingreso, index) => {
-                _push2(ssrRenderComponent(_sfc_main$K, {
+                _push2(ssrRenderComponent(_sfc_main$J, {
                   key: ingreso.id + "-" + index,
                   ingreso,
                   onOnShow: ($event) => showFacturas($event)
@@ -7828,7 +7964,7 @@ const _sfc_main$H = {
                     ]),
                     createVNode("tbody", null, [
                       (openBlock(true), createBlock(Fragment, null, renderList(cliente.ingresos, (ingreso, index) => {
-                        return openBlock(), createBlock(_sfc_main$K, {
+                        return openBlock(), createBlock(_sfc_main$J, {
                           key: ingreso.id + "-" + index,
                           ingreso,
                           onOnShow: ($event) => showFacturas($event)
@@ -7844,14 +7980,15 @@ const _sfc_main$H = {
         }, _parent));
       });
       _push(`<!--]--></div><div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3"><span class="text-lg font-bold text-white"> Total: ${ssrInterpolate(unref(formatoMoney)(totalIngresos.value.total))}</span></div></div>`);
-      _push(ssrRenderComponent(_sfc_main$M, {
+      _push(ssrRenderComponent(_sfc_main$L, {
         show: showingDepositos.value,
         depositos: unref(depositos),
         onUpdateDepositos: ($event) => updateDepositos(),
+        onDeleteDeposito: ($event) => updateDepositos(),
         onAddFactura: ($event) => addFacturaToDeposito($event),
         onClose: ($event) => showingDepositos.value = false
       }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$I, {
+      _push(ssrRenderComponent(_sfc_main$H, {
         show: showingFacturas.value,
         deposito: deposito.value,
         onAddFactura: ($event) => addFacturaToDeposito($event),
@@ -7862,17 +7999,17 @@ const _sfc_main$H = {
     };
   }
 };
-const _sfc_setup$H = _sfc_main$H.setup;
-_sfc_main$H.setup = (props, ctx) => {
+const _sfc_setup$G = _sfc_main$G.setup;
+_sfc_main$G.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardDepositos/Depositos.vue");
-  return _sfc_setup$H ? _sfc_setup$H(props, ctx) : void 0;
+  return _sfc_setup$G ? _sfc_setup$G(props, ctx) : void 0;
 };
 const Depositos = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$H
+  default: _sfc_main$G
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$G = {
+const _sfc_main$F = {
   __name: "ListDataInputOCS",
   __ssrInlineRender: true,
   props: {
@@ -7952,13 +8089,13 @@ const _sfc_main$G = {
     };
   }
 };
-const _sfc_setup$G = _sfc_main$G.setup;
-_sfc_main$G.setup = (props, ctx) => {
+const _sfc_setup$F = _sfc_main$F.setup;
+_sfc_main$F.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/ListDataInputOCS.vue");
-  return _sfc_setup$G ? _sfc_setup$G(props, ctx) : void 0;
+  return _sfc_setup$F ? _sfc_setup$F(props, ctx) : void 0;
 };
-const _sfc_main$F = {
+const _sfc_main$E = {
   __name: "ItemFacturaDetails",
   __ssrInlineRender: true,
   props: {
@@ -7971,7 +8108,7 @@ const _sfc_main$F = {
       required: true
     }
   },
-  emits: ["addOc"],
+  emits: ["addOc", "edit", "delete"],
   setup(__props, { emit }) {
     const props = __props;
     const ocIdAdd = ref("");
@@ -7992,38 +8129,98 @@ const _sfc_main$F = {
       ssrRenderList(props.factura.ocs, (oc) => {
         _push(`<span> #${ssrInterpolate(oc.nombre)}</span>`);
       });
-      _push(`<!--]--><div class="flex flex-row justify-center">`);
-      _push(ssrRenderComponent(_sfc_main$G, {
-        class: "w-50",
-        modelValue: ocIdAdd.value,
-        "onUpdate:modelValue": ($event) => ocIdAdd.value = $event,
-        list: "ocs-catalogo",
-        options: props.ocs
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$17, {
-        class: "ml-1 h-7",
-        onClick: ($event) => addOc()
-      }, null, _parent));
-      _push(`</div>`);
+      _push(`<!--]-->`);
+      if (_ctx.$page.props.can["facturas.oc.store"]) {
+        _push(`<div class="flex flex-row justify-center">`);
+        _push(ssrRenderComponent(_sfc_main$F, {
+          class: "w-50",
+          modelValue: ocIdAdd.value,
+          "onUpdate:modelValue": ($event) => ocIdAdd.value = $event,
+          list: "ocs-catalogo",
+          options: props.ocs
+        }, null, _parent));
+        _push(ssrRenderComponent(_sfc_main$17, {
+          class: "ml-1 h-7",
+          onClick: ($event) => addOc()
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
       _push(ssrRenderComponent(_sfc_main$1B, {
         message: props.factura.error,
         class: "mt-2"
       }, null, _parent));
-      _push(`</td><td>${ssrInterpolate(props.factura.fechaDePago)}</td></tr>`);
+      _push(`</td><td>${ssrInterpolate(props.factura.fechaDePago)}</td>`);
+      if (_ctx.$page.props.can["facturas.edit"]) {
+        _push(`<td>`);
+        _push(ssrRenderComponent(_sfc_main$$, {
+          onClick: ($event) => emit("edit", props.factura)
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"${_scopeId}><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"${_scopeId}></path></svg>`);
+            } else {
+              return [
+                (openBlock(), createBlock("svg", {
+                  xmlns: "http://www.w3.org/2000/svg",
+                  class: "w-4 h-4",
+                  viewBox: "0 0 20 20",
+                  fill: "currentColor"
+                }, [
+                  createVNode("path", { d: "M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" })
+                ]))
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`</td>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (_ctx.$page.props.can["facturas.delete"]) {
+        _push(`<td>`);
+        _push(ssrRenderComponent(_sfc_main$1a, {
+          onClick: ($event) => emit("delete", props.factura)
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3" viewBox="0 0 16 16"${_scopeId}><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"${_scopeId}></path></svg>`);
+            } else {
+              return [
+                (openBlock(), createBlock("svg", {
+                  xmlns: "http://www.w3.org/2000/svg",
+                  fill: "currentColor",
+                  class: "w-3 h-3",
+                  viewBox: "0 0 16 16"
+                }, [
+                  createVNode("path", { d: "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" })
+                ]))
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`</td>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`</tr>`);
     };
   }
 };
-const _sfc_setup$F = _sfc_main$F.setup;
-_sfc_main$F.setup = (props, ctx) => {
+const _sfc_setup$E = _sfc_main$E.setup;
+_sfc_main$E.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardFacturas/ItemFacturaDetails.vue");
-  return _sfc_setup$F ? _sfc_setup$F(props, ctx) : void 0;
+  return _sfc_setup$E ? _sfc_setup$E(props, ctx) : void 0;
 };
 const ItemFacturaDetails = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$F
+  default: _sfc_main$E
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$E = {
+const _sfc_main$D = {
   __name: "FormFacturaModal",
   __ssrInlineRender: true,
   props: {
@@ -8088,11 +8285,11 @@ const _sfc_main$E = {
             form.processing = true;
           }
         }
-      ).then((resp) => {
+      ).then(() => {
         emit("addFactura");
         form.recentlySuccessful = true;
         restForm();
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
@@ -8109,15 +8306,63 @@ const _sfc_main$E = {
           }
           form.error = error.response.data.message;
         } else {
-          form.error = "Error CREATE FACTURA";
+          if (error.response.data.hasOwnProperty("message")) {
+            form.error = error.response.data.message;
+          } else {
+            form.error = "Error CREATE FACTURA";
+          }
         }
       }).then(() => {
         form.processing = false;
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
         });
+        setTimeout(() => {
+          form.recentlySuccessful = false;
+        }, 500);
+      });
+    };
+    const update = () => {
+      axios$1.put(
+        route("facturas.update", props.factura.id),
+        form,
+        {
+          onUploadProgress: () => {
+            form.processing = true;
+          }
+        }
+      ).then((resp) => {
+        emit("editFactura", resp.data);
+        form.recentlySuccessful = true;
+        restForm();
+        Inertia$1.visit(route("ventas.index"), {
+          preserveState: true,
+          preserveScroll: true,
+          only: ["totalOcs"]
+        });
+        setTimeout(() => {
+          close();
+        }, 500);
+      }).catch((error) => {
+        form.hasErrors = true;
+        console.log(error);
+        if (error.response.data.hasOwnProperty("errors")) {
+          const errors = error.response.data.errors;
+          for (let error2 in errors) {
+            form.errors[error2] = errors[error2][0];
+          }
+          form.error = error.response.data.message;
+        } else {
+          if (error.response.data.hasOwnProperty("message")) {
+            form.error = error.response.data.message;
+          } else {
+            form.error = "ERROR UPDATE FACTURA";
+          }
+        }
+      }).then(() => {
+        form.processing = false;
         setTimeout(() => {
           form.recentlySuccessful = false;
         }, 500);
@@ -8334,17 +8579,17 @@ const _sfc_main$E = {
     };
   }
 };
-const _sfc_setup$E = _sfc_main$E.setup;
-_sfc_main$E.setup = (props, ctx) => {
+const _sfc_setup$D = _sfc_main$D.setup;
+_sfc_main$D.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardFacturas/FormFacturaModal.vue");
-  return _sfc_setup$E ? _sfc_setup$E(props, ctx) : void 0;
+  return _sfc_setup$D ? _sfc_setup$D(props, ctx) : void 0;
 };
 const FormFacturaModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$E
+  default: _sfc_main$D
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$D = {
+const _sfc_main$C = {
   __name: "FacturasModal",
   __ssrInlineRender: true,
   props: {
@@ -8376,7 +8621,26 @@ const _sfc_main$D = {
     const getOcs = async () => {
       const resp = await axios.get(route("ocs.catalogos"));
       listOcs.value = resp.data;
-      console.log(listOcs);
+    };
+    const deleteFactura = (facturaSelected) => {
+      props.facturas.findIndex((facturaFind) => {
+        return facturaFind.id === facturaSelected.id;
+      });
+      axios.delete(route("facturas.destroy", facturaSelected.id)).then(() => {
+        emit("addFactura");
+        Inertia.visit(route("ventas.index"), {
+          preserveState: true,
+          preserveScroll: true,
+          only: ["totalOcs"]
+        });
+      }).catch((error) => {
+        console.log(error);
+        if (error.hasOwnProperty("response") && error.response.data.hasOwnProperty("message")) {
+          alert(error.response.data.message);
+        } else {
+          alert("ERROR DELETE FACTURA");
+        }
+      });
     };
     const close = () => {
       emit("close");
@@ -8415,25 +8679,43 @@ const _sfc_main$D = {
               thead: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
                   _push3(`<tr${_scopeId2}><th${_scopeId2}><h3 class="mb-1"${_scopeId2}>FACTURA</h3>`);
-                  _push3(ssrRenderComponent(_sfc_main$17, {
-                    class: "h-5",
-                    onClick: ($event) => showFormFactura()
-                  }, null, _parent3, _scopeId2));
-                  _push3(`</th><th${_scopeId2}>CANTIDAD</th><th${_scopeId2}>TOTAL OCS</th><th${_scopeId2}>OCS</th><th${_scopeId2}>FECHA</th></tr>`);
+                  if (_ctx.$page.props.can["facturas.create"]) {
+                    _push3(ssrRenderComponent(_sfc_main$17, {
+                      class: "h-5",
+                      onClick: ($event) => showFormFactura()
+                    }, null, _parent3, _scopeId2));
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  _push3(`</th><th${_scopeId2}>CANTIDAD</th><th${_scopeId2}>TOTAL OCS</th><th${_scopeId2}>OCS</th><th${_scopeId2}>FECHA</th>`);
+                  if (_ctx.$page.props.can["facturas.edit"]) {
+                    _push3(`<th${_scopeId2}></th>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  if (_ctx.$page.props.can["facturas.delete"]) {
+                    _push3(`<th${_scopeId2}></th>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  _push3(`</tr>`);
                 } else {
                   return [
                     createVNode("tr", null, [
                       createVNode("th", null, [
                         createVNode("h3", { class: "mb-1" }, "FACTURA"),
-                        createVNode(_sfc_main$17, {
+                        _ctx.$page.props.can["facturas.create"] ? (openBlock(), createBlock(_sfc_main$17, {
+                          key: 0,
                           class: "h-5",
                           onClick: ($event) => showFormFactura()
-                        }, null, 8, ["onClick"])
+                        }, null, 8, ["onClick"])) : createCommentVNode("", true)
                       ]),
                       createVNode("th", null, "CANTIDAD"),
                       createVNode("th", null, "TOTAL OCS"),
                       createVNode("th", null, "OCS"),
-                      createVNode("th", null, "FECHA")
+                      createVNode("th", null, "FECHA"),
+                      _ctx.$page.props.can["facturas.edit"] ? (openBlock(), createBlock("th", { key: 0 })) : createCommentVNode("", true),
+                      _ctx.$page.props.can["facturas.delete"] ? (openBlock(), createBlock("th", { key: 1 })) : createCommentVNode("", true)
                     ])
                   ];
                 }
@@ -8442,10 +8724,12 @@ const _sfc_main$D = {
                 if (_push3) {
                   _push3(`<!--[-->`);
                   ssrRenderList(props.facturas, (factura2, index) => {
-                    _push3(ssrRenderComponent(_sfc_main$F, {
+                    _push3(ssrRenderComponent(_sfc_main$E, {
                       key: factura2.id + "" + index,
                       factura: factura2,
                       ocs: listOcs.value,
+                      onEdit: ($event) => showFormFactura($event),
+                      onDelete: ($event) => deleteFactura($event),
                       onAddOc: ($event) => emit("addOc", $event)
                     }, null, _parent3, _scopeId2));
                   });
@@ -8453,23 +8737,26 @@ const _sfc_main$D = {
                 } else {
                   return [
                     (openBlock(true), createBlock(Fragment, null, renderList(props.facturas, (factura2, index) => {
-                      return openBlock(), createBlock(_sfc_main$F, {
+                      return openBlock(), createBlock(_sfc_main$E, {
                         key: factura2.id + "" + index,
                         factura: factura2,
                         ocs: listOcs.value,
+                        onEdit: ($event) => showFormFactura($event),
+                        onDelete: ($event) => deleteFactura($event),
                         onAddOc: ($event) => emit("addOc", $event)
-                      }, null, 8, ["factura", "ocs", "onAddOc"]);
+                      }, null, 8, ["factura", "ocs", "onEdit", "onDelete", "onAddOc"]);
                     }), 128))
                   ];
                 }
               }),
               _: 1
             }, _parent2, _scopeId));
-            _push2(ssrRenderComponent(_sfc_main$E, {
+            _push2(ssrRenderComponent(_sfc_main$D, {
               show: showingFormFactura.value,
               "type-form": typeForm.value,
               factura: factura.value,
               onAddFactura: ($event) => emit("addFactura"),
+              onEditFactura: ($event) => emit("addFactura"),
               onClose: ($event) => showingFormFactura.value = false
             }, null, _parent2, _scopeId));
           } else {
@@ -8479,36 +8766,42 @@ const _sfc_main$D = {
                   createVNode("tr", null, [
                     createVNode("th", null, [
                       createVNode("h3", { class: "mb-1" }, "FACTURA"),
-                      createVNode(_sfc_main$17, {
+                      _ctx.$page.props.can["facturas.create"] ? (openBlock(), createBlock(_sfc_main$17, {
+                        key: 0,
                         class: "h-5",
                         onClick: ($event) => showFormFactura()
-                      }, null, 8, ["onClick"])
+                      }, null, 8, ["onClick"])) : createCommentVNode("", true)
                     ]),
                     createVNode("th", null, "CANTIDAD"),
                     createVNode("th", null, "TOTAL OCS"),
                     createVNode("th", null, "OCS"),
-                    createVNode("th", null, "FECHA")
+                    createVNode("th", null, "FECHA"),
+                    _ctx.$page.props.can["facturas.edit"] ? (openBlock(), createBlock("th", { key: 0 })) : createCommentVNode("", true),
+                    _ctx.$page.props.can["facturas.delete"] ? (openBlock(), createBlock("th", { key: 1 })) : createCommentVNode("", true)
                   ])
                 ]),
                 tbody: withCtx(() => [
                   (openBlock(true), createBlock(Fragment, null, renderList(props.facturas, (factura2, index) => {
-                    return openBlock(), createBlock(_sfc_main$F, {
+                    return openBlock(), createBlock(_sfc_main$E, {
                       key: factura2.id + "" + index,
                       factura: factura2,
                       ocs: listOcs.value,
+                      onEdit: ($event) => showFormFactura($event),
+                      onDelete: ($event) => deleteFactura($event),
                       onAddOc: ($event) => emit("addOc", $event)
-                    }, null, 8, ["factura", "ocs", "onAddOc"]);
+                    }, null, 8, ["factura", "ocs", "onEdit", "onDelete", "onAddOc"]);
                   }), 128))
                 ]),
                 _: 1
               }),
-              createVNode(_sfc_main$E, {
+              createVNode(_sfc_main$D, {
                 show: showingFormFactura.value,
                 "type-form": typeForm.value,
                 factura: factura.value,
                 onAddFactura: ($event) => emit("addFactura"),
+                onEditFactura: ($event) => emit("addFactura"),
                 onClose: ($event) => showingFormFactura.value = false
-              }, null, 8, ["show", "type-form", "factura", "onAddFactura", "onClose"])
+              }, null, 8, ["show", "type-form", "factura", "onAddFactura", "onEditFactura", "onClose"])
             ];
           }
         }),
@@ -8517,17 +8810,17 @@ const _sfc_main$D = {
     };
   }
 };
-const _sfc_setup$D = _sfc_main$D.setup;
-_sfc_main$D.setup = (props, ctx) => {
+const _sfc_setup$C = _sfc_main$C.setup;
+_sfc_main$C.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardFacturas/FacturasModal.vue");
-  return _sfc_setup$D ? _sfc_setup$D(props, ctx) : void 0;
+  return _sfc_setup$C ? _sfc_setup$C(props, ctx) : void 0;
 };
 const FacturasModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$D
+  default: _sfc_main$C
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$C = {
+const _sfc_main$B = {
   __name: "ItemOcFactura",
   __ssrInlineRender: true,
   props: {
@@ -8541,43 +8834,47 @@ const _sfc_main$C = {
     const props = __props;
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<tr${ssrRenderAttrs(_attrs)}><td>`);
-      _push(ssrRenderComponent(_sfc_main$1a, {
-        onClick: ($event) => emit("remove"),
-        class: "px-1 py-0"
-      }, {
-        default: withCtx((_, _push2, _parent2, _scopeId) => {
-          if (_push2) {
-            _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3" viewBox="0 0 16 16"${_scopeId}><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"${_scopeId}></path></svg>`);
-          } else {
-            return [
-              (openBlock(), createBlock("svg", {
-                xmlns: "http://www.w3.org/2000/svg",
-                fill: "currentColor",
-                class: "w-3 h-3",
-                viewBox: "0 0 16 16"
-              }, [
-                createVNode("path", { d: "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" })
-              ]))
-            ];
-          }
-        }),
-        _: 1
-      }, _parent));
+      if (_ctx.$page.props.can["facturas.oc.delete"]) {
+        _push(ssrRenderComponent(_sfc_main$1a, {
+          onClick: ($event) => emit("remove"),
+          class: "px-1 py-0"
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3" viewBox="0 0 16 16"${_scopeId}><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"${_scopeId}></path></svg>`);
+            } else {
+              return [
+                (openBlock(), createBlock("svg", {
+                  xmlns: "http://www.w3.org/2000/svg",
+                  fill: "currentColor",
+                  class: "w-3 h-3",
+                  viewBox: "0 0 16 16"
+                }, [
+                  createVNode("path", { d: "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" })
+                ]))
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+      } else {
+        _push(`<!---->`);
+      }
       _push(` #${ssrInterpolate(props.oc.nombre)}</td><td>$${ssrInterpolate(unref(formatoMoney)(props.oc.cantidad))}</td><td>${ssrInterpolate(props.oc.created_at)}</td></tr>`);
     };
   }
 };
-const _sfc_setup$C = _sfc_main$C.setup;
-_sfc_main$C.setup = (props, ctx) => {
+const _sfc_setup$B = _sfc_main$B.setup;
+_sfc_main$B.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardFacturas/ItemOcFactura.vue");
-  return _sfc_setup$C ? _sfc_setup$C(props, ctx) : void 0;
+  return _sfc_setup$B ? _sfc_setup$B(props, ctx) : void 0;
 };
 const ItemOcFactura = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$C
+  default: _sfc_main$B
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$B = {
+const _sfc_main$A = {
   __name: "OcsFacturaModal",
   __ssrInlineRender: true,
   props: {
@@ -8598,7 +8895,6 @@ const _sfc_main$B = {
     const ocIdAdd = ref("");
     const getOcs = async () => {
       const resp = await axios.get(route("ocs.catalogos"));
-      console.log(resp.data);
       listOcs.value = resp.data;
     };
     const deleteOc = (indexOc) => {
@@ -8610,7 +8906,7 @@ const _sfc_main$B = {
         const cantidadRest = props.factura.ocs[indexOc].cantidad;
         props.factura.total_ocs = (props.factura.total_ocs - cantidadRest).toFixed(2);
         props.factura.ocs.splice(indexOc, 1);
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
@@ -8677,20 +8973,25 @@ const _sfc_main$B = {
             _push2(ssrRenderComponent(TableComponent, null, {
               thead: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
-                  _push3(`<tr${_scopeId2}><th${_scopeId2}><h3 class="mb-1"${_scopeId2}>OCS</h3><div class="flex flex-row justify-center"${_scopeId2}>`);
-                  _push3(ssrRenderComponent(_sfc_main$G, {
-                    class: "w-50",
-                    modelValue: ocIdAdd.value,
-                    "onUpdate:modelValue": ($event) => ocIdAdd.value = $event,
-                    value: textOcs.value,
-                    list: "ocs-catalogo",
-                    options: listOcs.value
-                  }, null, _parent3, _scopeId2));
-                  _push3(ssrRenderComponent(_sfc_main$17, {
-                    class: "ml-1 h-7",
-                    onClick: ($event) => addOc()
-                  }, null, _parent3, _scopeId2));
-                  _push3(`</div>`);
+                  _push3(`<tr${_scopeId2}><th${_scopeId2}><h3 class="mb-1"${_scopeId2}>OCS</h3>`);
+                  if (_ctx.$page.props.can["facturas.oc.create"]) {
+                    _push3(`<div class="flex flex-row justify-center"${_scopeId2}>`);
+                    _push3(ssrRenderComponent(_sfc_main$F, {
+                      class: "w-50",
+                      modelValue: ocIdAdd.value,
+                      "onUpdate:modelValue": ($event) => ocIdAdd.value = $event,
+                      value: textOcs.value,
+                      list: "ocs-catalogo",
+                      options: listOcs.value
+                    }, null, _parent3, _scopeId2));
+                    _push3(ssrRenderComponent(_sfc_main$17, {
+                      class: "ml-1 h-7",
+                      onClick: ($event) => addOc()
+                    }, null, _parent3, _scopeId2));
+                    _push3(`</div>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
                   _push3(ssrRenderComponent(_sfc_main$1B, {
                     message: props.factura.error,
                     class: "mt-2"
@@ -8701,8 +9002,11 @@ const _sfc_main$B = {
                     createVNode("tr", null, [
                       createVNode("th", null, [
                         createVNode("h3", { class: "mb-1" }, "OCS"),
-                        createVNode("div", { class: "flex flex-row justify-center" }, [
-                          createVNode(_sfc_main$G, {
+                        _ctx.$page.props.can["facturas.oc.create"] ? (openBlock(), createBlock("div", {
+                          key: 0,
+                          class: "flex flex-row justify-center"
+                        }, [
+                          createVNode(_sfc_main$F, {
                             class: "w-50",
                             modelValue: ocIdAdd.value,
                             "onUpdate:modelValue": ($event) => ocIdAdd.value = $event,
@@ -8714,7 +9018,7 @@ const _sfc_main$B = {
                             class: "ml-1 h-7",
                             onClick: ($event) => addOc()
                           }, null, 8, ["onClick"])
-                        ]),
+                        ])) : createCommentVNode("", true),
                         createVNode(_sfc_main$1B, {
                           message: props.factura.error,
                           class: "mt-2"
@@ -8734,7 +9038,7 @@ const _sfc_main$B = {
                 if (_push3) {
                   _push3(`<!--[-->`);
                   ssrRenderList(props.factura.ocs, (oc, index) => {
-                    _push3(ssrRenderComponent(_sfc_main$C, {
+                    _push3(ssrRenderComponent(_sfc_main$B, {
                       key: oc.id,
                       oc,
                       onRemove: ($event) => deleteOc(index)
@@ -8744,7 +9048,7 @@ const _sfc_main$B = {
                 } else {
                   return [
                     (openBlock(true), createBlock(Fragment, null, renderList(props.factura.ocs, (oc, index) => {
-                      return openBlock(), createBlock(_sfc_main$C, {
+                      return openBlock(), createBlock(_sfc_main$B, {
                         key: oc.id,
                         oc,
                         onRemove: ($event) => deleteOc(index)
@@ -8762,8 +9066,11 @@ const _sfc_main$B = {
                   createVNode("tr", null, [
                     createVNode("th", null, [
                       createVNode("h3", { class: "mb-1" }, "OCS"),
-                      createVNode("div", { class: "flex flex-row justify-center" }, [
-                        createVNode(_sfc_main$G, {
+                      _ctx.$page.props.can["facturas.oc.create"] ? (openBlock(), createBlock("div", {
+                        key: 0,
+                        class: "flex flex-row justify-center"
+                      }, [
+                        createVNode(_sfc_main$F, {
                           class: "w-50",
                           modelValue: ocIdAdd.value,
                           "onUpdate:modelValue": ($event) => ocIdAdd.value = $event,
@@ -8775,7 +9082,7 @@ const _sfc_main$B = {
                           class: "ml-1 h-7",
                           onClick: ($event) => addOc()
                         }, null, 8, ["onClick"])
-                      ]),
+                      ])) : createCommentVNode("", true),
                       createVNode(_sfc_main$1B, {
                         message: props.factura.error,
                         class: "mt-2"
@@ -8791,7 +9098,7 @@ const _sfc_main$B = {
                 ]),
                 tbody: withCtx(() => [
                   (openBlock(true), createBlock(Fragment, null, renderList(props.factura.ocs, (oc, index) => {
-                    return openBlock(), createBlock(_sfc_main$C, {
+                    return openBlock(), createBlock(_sfc_main$B, {
                       key: oc.id,
                       oc,
                       onRemove: ($event) => deleteOc(index)
@@ -8808,17 +9115,17 @@ const _sfc_main$B = {
     };
   }
 };
-const _sfc_setup$B = _sfc_main$B.setup;
-_sfc_main$B.setup = (props, ctx) => {
+const _sfc_setup$A = _sfc_main$A.setup;
+_sfc_main$A.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardFacturas/OcsFacturaModal.vue");
-  return _sfc_setup$B ? _sfc_setup$B(props, ctx) : void 0;
+  return _sfc_setup$A ? _sfc_setup$A(props, ctx) : void 0;
 };
 const OcsFacturaModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$B
+  default: _sfc_main$A
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$A = {
+const _sfc_main$z = {
   __name: "Facturas",
   __ssrInlineRender: true,
   emits: [""],
@@ -8847,7 +9154,7 @@ const _sfc_main$A = {
       });
       axios.post(route("facturas.ocs.store", form.factura_id), form).then(() => {
         search(searchText.value);
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
@@ -8907,7 +9214,7 @@ const _sfc_main$A = {
       } else {
         _push(`<div><!--[-->`);
         ssrRenderList(clientes.value, (cliente) => {
-          _push(ssrRenderComponent(_sfc_main$L, {
+          _push(ssrRenderComponent(_sfc_main$K, {
             key: cliente.id,
             cliente,
             total: cliente.facturas.length
@@ -8957,14 +9264,14 @@ const _sfc_main$A = {
         _push(`<!--]--></div>`);
       }
       _push(`</div><div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3"><span class="text-lg font-bold text-white"> Total: ${ssrInterpolate(unref(formatoMoney)(totalFacturas.value.total))}</span></div></div>`);
-      _push(ssrRenderComponent(_sfc_main$D, {
+      _push(ssrRenderComponent(_sfc_main$C, {
         show: showingFacturas.value,
         facturas: unref(facturas),
         onAddFactura: ($event) => addFactura(),
         onAddOc: ($event) => addOc($event),
         onClose: ($event) => showingFacturas.value = false
       }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$B, {
+      _push(ssrRenderComponent(_sfc_main$A, {
         show: showingOcs.value,
         factura: facturaSelect.value,
         onAddOc: ($event) => addOc($event),
@@ -8974,17 +9281,17 @@ const _sfc_main$A = {
     };
   }
 };
-const _sfc_setup$A = _sfc_main$A.setup;
-_sfc_main$A.setup = (props, ctx) => {
+const _sfc_setup$z = _sfc_main$z.setup;
+_sfc_main$z.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardFacturas/Facturas.vue");
-  return _sfc_setup$A ? _sfc_setup$A(props, ctx) : void 0;
+  return _sfc_setup$z ? _sfc_setup$z(props, ctx) : void 0;
 };
 const Facturas = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$A
+  default: _sfc_main$z
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$z = {
+const _sfc_main$y = {
   __name: "FormOcModal",
   __ssrInlineRender: true,
   props: {
@@ -9058,7 +9365,7 @@ const _sfc_main$z = {
       if (props.typeForm === "create") {
         create();
       } else {
-        update2();
+        update();
       }
     };
     const create = () => {
@@ -9074,7 +9381,7 @@ const _sfc_main$z = {
         emit("addOc", resp.data);
         form.recentlySuccessful = true;
         restForm();
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
@@ -9091,7 +9398,11 @@ const _sfc_main$z = {
           }
           form.error = error.response.data.message;
         } else {
-          form.error = "Error CREATE OC";
+          if (error.response.data.hasOwnProperty("message")) {
+            form.error = error.response.data.message;
+          } else {
+            form.error = "Error CREATE OC";
+          }
         }
       }).then(() => {
         form.processing = false;
@@ -9100,7 +9411,7 @@ const _sfc_main$z = {
         }, 500);
       });
     };
-    const update2 = () => {
+    const update = () => {
       axios$1.put(
         route("ocs.update", props.oc.id),
         form,
@@ -9113,7 +9424,7 @@ const _sfc_main$z = {
         emit("editOc", resp.data);
         form.recentlySuccessful = true;
         restForm();
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveState: true,
           preserveScroll: true,
           only: ["totalOcs"]
@@ -9130,10 +9441,13 @@ const _sfc_main$z = {
           }
           form.error = error.response.data.message;
         } else {
-          form.error = "ERROR UPDATE OC";
+          if (error.response.data.hasOwnProperty("message")) {
+            form.error = error.response.data.message;
+          } else {
+            form.error = "ERROR UPDATE OC";
+          }
         }
       }).then(() => {
-        console.log("Cierra el formulario");
         form.processing = false;
         setTimeout(() => {
           form.recentlySuccessful = false;
@@ -9351,17 +9665,17 @@ const _sfc_main$z = {
     };
   }
 };
-const _sfc_setup$z = _sfc_main$z.setup;
-_sfc_main$z.setup = (props, ctx) => {
+const _sfc_setup$y = _sfc_main$y.setup;
+_sfc_main$y.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardVenta/FormOcModal.vue");
-  return _sfc_setup$z ? _sfc_setup$z(props, ctx) : void 0;
+  return _sfc_setup$y ? _sfc_setup$y(props, ctx) : void 0;
 };
 const FormOcModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$z
+  default: _sfc_main$y
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$y = {
+const _sfc_main$x = {
   __name: "TextArea",
   __ssrInlineRender: true,
   props: {
@@ -9387,13 +9701,13 @@ const _sfc_main$y = {
     };
   }
 };
-const _sfc_setup$y = _sfc_main$y.setup;
-_sfc_main$y.setup = (props, ctx) => {
+const _sfc_setup$x = _sfc_main$x.setup;
+_sfc_main$x.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/TextArea.vue");
-  return _sfc_setup$y ? _sfc_setup$y(props, ctx) : void 0;
+  return _sfc_setup$x ? _sfc_setup$x(props, ctx) : void 0;
 };
-const _sfc_main$x = {
+const _sfc_main$w = {
   __name: "FormVentaModal",
   __ssrInlineRender: true,
   props: {
@@ -9483,7 +9797,7 @@ const _sfc_main$x = {
       if (props.typeForm === "create") {
         create();
       } else {
-        update2();
+        update();
       }
     };
     const create = () => {
@@ -9497,7 +9811,7 @@ const _sfc_main$x = {
         }
       });
     };
-    const update2 = () => {
+    const update = () => {
       form.put(route("ventas.update", props.venta.id), {
         preserveScroll: true,
         preserveState: true,
@@ -9710,7 +10024,7 @@ const _sfc_main$x = {
               for: "comentario",
               value: "Comentarios:"
             }, null, _parent2, _scopeId));
-            _push2(ssrRenderComponent(_sfc_main$y, {
+            _push2(ssrRenderComponent(_sfc_main$x, {
               id: "comentario",
               name: "comentario",
               modelValue: unref(form).comentario,
@@ -9925,7 +10239,7 @@ const _sfc_main$x = {
                       for: "comentario",
                       value: "Comentarios:"
                     }),
-                    createVNode(_sfc_main$y, {
+                    createVNode(_sfc_main$x, {
                       id: "comentario",
                       name: "comentario",
                       modelValue: unref(form).comentario,
@@ -9969,17 +10283,17 @@ const _sfc_main$x = {
     };
   }
 };
-const _sfc_setup$x = _sfc_main$x.setup;
-_sfc_main$x.setup = (props, ctx) => {
+const _sfc_setup$w = _sfc_main$w.setup;
+_sfc_main$w.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardVenta/FormVentaModal.vue");
-  return _sfc_setup$x ? _sfc_setup$x(props, ctx) : void 0;
+  return _sfc_setup$w ? _sfc_setup$w(props, ctx) : void 0;
 };
 const FormVentaModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$x
+  default: _sfc_main$w
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$w = {
+const _sfc_main$v = {
   __name: "ItemOc",
   __ssrInlineRender: true,
   props: {
@@ -9988,47 +10302,80 @@ const _sfc_main$w = {
       required: true
     }
   },
-  emits: ["edit"],
+  emits: ["edit", "delete"],
   setup(__props, { emit }) {
     const props = __props;
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<tr${ssrRenderAttrs(_attrs)}><td>#${ssrInterpolate(props.oc.nombre)}</td><td>$${ssrInterpolate(unref(formatoMoney)(props.oc.cantidad))}</td><td>${ssrInterpolate(props.oc.fecha_alta)}</td><td>`);
-      _push(ssrRenderComponent(_sfc_main$$, {
-        onClick: ($event) => emit("edit", props.oc)
-      }, {
-        default: withCtx((_, _push2, _parent2, _scopeId) => {
-          if (_push2) {
-            _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"${_scopeId}><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"${_scopeId}></path></svg>`);
-          } else {
-            return [
-              (openBlock(), createBlock("svg", {
-                xmlns: "http://www.w3.org/2000/svg",
-                class: "w-4 h-4",
-                viewBox: "0 0 20 20",
-                fill: "currentColor"
-              }, [
-                createVNode("path", { d: "M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" })
-              ]))
-            ];
-          }
-        }),
-        _: 1
-      }, _parent));
-      _push(`</td></tr>`);
+      _push(`<tr${ssrRenderAttrs(_attrs)}><td>#${ssrInterpolate(props.oc.nombre)}</td><td>$${ssrInterpolate(unref(formatoMoney)(props.oc.cantidad))}</td><td>${ssrInterpolate(props.oc.fecha_alta)}</td>`);
+      if (_ctx.$page.props.can["ocs.edit"]) {
+        _push(`<td>`);
+        _push(ssrRenderComponent(_sfc_main$$, {
+          onClick: ($event) => emit("edit", props.oc)
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"${_scopeId}><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"${_scopeId}></path></svg>`);
+            } else {
+              return [
+                (openBlock(), createBlock("svg", {
+                  xmlns: "http://www.w3.org/2000/svg",
+                  class: "w-4 h-4",
+                  viewBox: "0 0 20 20",
+                  fill: "currentColor"
+                }, [
+                  createVNode("path", { d: "M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" })
+                ]))
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`</td>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (_ctx.$page.props.can["ocs.delete"]) {
+        _push(`<td>`);
+        _push(ssrRenderComponent(_sfc_main$1a, {
+          onClick: ($event) => emit("delete", props.oc)
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3" viewBox="0 0 16 16"${_scopeId}><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"${_scopeId}></path></svg>`);
+            } else {
+              return [
+                (openBlock(), createBlock("svg", {
+                  xmlns: "http://www.w3.org/2000/svg",
+                  fill: "currentColor",
+                  class: "w-3 h-3",
+                  viewBox: "0 0 16 16"
+                }, [
+                  createVNode("path", { d: "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" })
+                ]))
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`</td>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`</tr>`);
     };
   }
 };
-const _sfc_setup$w = _sfc_main$w.setup;
-_sfc_main$w.setup = (props, ctx) => {
+const _sfc_setup$v = _sfc_main$v.setup;
+_sfc_main$v.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardVenta/ItemOc.vue");
-  return _sfc_setup$w ? _sfc_setup$w(props, ctx) : void 0;
+  return _sfc_setup$v ? _sfc_setup$v(props, ctx) : void 0;
 };
 const ItemOc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$w
+  default: _sfc_main$v
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$v = {
+const _sfc_main$u = {
   __name: "ItemVentaDatials",
   __ssrInlineRender: true,
   props: {
@@ -10058,7 +10405,7 @@ const _sfc_main$v = {
       return props.venta.status_id == 1;
     });
     const eliminarVenta = (id) => {
-      Inertia.delete(route("ventas.destroy", id));
+      Inertia$1.delete(route("ventas.destroy", id));
     };
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<tr${ssrRenderAttrs(_attrs)}><td>${ssrInterpolate(unref(ventaShow).ceco + "-" + unref(ventaShow).servicio)}</td><td>${ssrInterpolate(unref(ventaShow).comentario)}</td><td><div class="w-10 h-5 px-2 mx-2 bg-yellow-600 hover:bg-yellow-500 rounded-xl">`);
@@ -10067,75 +10414,86 @@ const _sfc_main$v = {
       } else {
         _push(`<!---->`);
       }
-      _push(`</div></td><td>$${ssrInterpolate(unref(ventaShow).sub_total)}</td><td>$${ssrInterpolate(unref(ventaShow).iva)}</td><td>$${ssrInterpolate(unref(ventaShow).total)}</td><td>${ssrInterpolate(unref(ventaShow).fechaInicial)}</td><td>`);
-      if (unref(isEditable)) {
-        _push(ssrRenderComponent(_sfc_main$$, {
-          onClick: ($event) => emit("edit", props.venta)
-        }, {
-          default: withCtx((_, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"${_scopeId}><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"${_scopeId}></path></svg>`);
-            } else {
-              return [
-                (openBlock(), createBlock("svg", {
-                  xmlns: "http://www.w3.org/2000/svg",
-                  class: "w-4 h-4",
-                  viewBox: "0 0 20 20",
-                  fill: "currentColor"
-                }, [
-                  createVNode("path", { d: "M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" })
-                ]))
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
+      _push(`</div></td><td>$${ssrInterpolate(unref(ventaShow).sub_total)}</td><td>$${ssrInterpolate(unref(ventaShow).iva)}</td><td>$${ssrInterpolate(unref(ventaShow).total)}</td><td>${ssrInterpolate(unref(ventaShow).fechaInicial)}</td>`);
+      if (_ctx.$page.props.can["ventas.edit"]) {
+        _push(`<td>`);
+        if (unref(isEditable)) {
+          _push(ssrRenderComponent(_sfc_main$$, {
+            onClick: ($event) => emit("edit", props.venta)
+          }, {
+            default: withCtx((_, _push2, _parent2, _scopeId) => {
+              if (_push2) {
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"${_scopeId}><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"${_scopeId}></path></svg>`);
+              } else {
+                return [
+                  (openBlock(), createBlock("svg", {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    class: "w-4 h-4",
+                    viewBox: "0 0 20 20",
+                    fill: "currentColor"
+                  }, [
+                    createVNode("path", { d: "M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" })
+                  ]))
+                ];
+              }
+            }),
+            _: 1
+          }, _parent));
+        } else {
+          _push(`<!---->`);
+        }
+        _push(`</td>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`</td><td>`);
-      if (unref(isEditable)) {
-        _push(ssrRenderComponent(_sfc_main$1a, {
-          onClick: ($event) => eliminarVenta(unref(ventaShow).id)
-        }, {
-          default: withCtx((_, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(`<svg width="20" xmlns="http://www.w3.org/2000/svg" height="20" style="${ssrRenderStyle({ "fill": "white" })}" viewBox="0 0 96 96" xmlns:xlink="http://www.w3.org/1999/xlink"${_scopeId}><path d="m24,78c0,4.968 4.029,9 9,9h30c4.968,0 9-4.032 9-9l6-48h-60l6,48zm33-39h6v39h-6v-39zm-12,0h6v39h-6v-39zm-12,0h6v39h-6v-39zm43.5-21h-19.5c0,0-1.344-6-3-6h-12c-1.659,0-3,6-3,6h-19.5c-2.487,0-4.5,2.013-4.5,4.5s0,4.5 0,4.5h66c0,0 0-2.013 0-4.5s-2.016-4.5-4.5-4.5z"${_scopeId}></path></svg>`);
-            } else {
-              return [
-                (openBlock(), createBlock("svg", {
-                  width: "20",
-                  xmlns: "http://www.w3.org/2000/svg",
-                  height: "20",
-                  style: { "fill": "white" },
-                  viewBox: "0 0 96 96",
-                  "xmlns:xlink": "http://www.w3.org/1999/xlink"
-                }, [
-                  createVNode("path", { d: "m24,78c0,4.968 4.029,9 9,9h30c4.968,0 9-4.032 9-9l6-48h-60l6,48zm33-39h6v39h-6v-39zm-12,0h6v39h-6v-39zm-12,0h6v39h-6v-39zm43.5-21h-19.5c0,0-1.344-6-3-6h-12c-1.659,0-3,6-3,6h-19.5c-2.487,0-4.5,2.013-4.5,4.5s0,4.5 0,4.5h66c0,0 0-2.013 0-4.5s-2.016-4.5-4.5-4.5z" })
-                ]))
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
+      if (_ctx.$page.props.can["ventas.delete"]) {
+        _push(`<td>`);
+        if (unref(isEditable)) {
+          _push(ssrRenderComponent(_sfc_main$1a, {
+            onClick: ($event) => eliminarVenta(unref(ventaShow).id)
+          }, {
+            default: withCtx((_, _push2, _parent2, _scopeId) => {
+              if (_push2) {
+                _push2(`<svg width="20" xmlns="http://www.w3.org/2000/svg" height="20" style="${ssrRenderStyle({ "fill": "white" })}" viewBox="0 0 96 96" xmlns:xlink="http://www.w3.org/1999/xlink"${_scopeId}><path d="m24,78c0,4.968 4.029,9 9,9h30c4.968,0 9-4.032 9-9l6-48h-60l6,48zm33-39h6v39h-6v-39zm-12,0h6v39h-6v-39zm-12,0h6v39h-6v-39zm43.5-21h-19.5c0,0-1.344-6-3-6h-12c-1.659,0-3,6-3,6h-19.5c-2.487,0-4.5,2.013-4.5,4.5s0,4.5 0,4.5h66c0,0 0-2.013 0-4.5s-2.016-4.5-4.5-4.5z"${_scopeId}></path></svg>`);
+              } else {
+                return [
+                  (openBlock(), createBlock("svg", {
+                    width: "20",
+                    xmlns: "http://www.w3.org/2000/svg",
+                    height: "20",
+                    style: { "fill": "white" },
+                    viewBox: "0 0 96 96",
+                    "xmlns:xlink": "http://www.w3.org/1999/xlink"
+                  }, [
+                    createVNode("path", { d: "m24,78c0,4.968 4.029,9 9,9h30c4.968,0 9-4.032 9-9l6-48h-60l6,48zm33-39h6v39h-6v-39zm-12,0h6v39h-6v-39zm-12,0h6v39h-6v-39zm43.5-21h-19.5c0,0-1.344-6-3-6h-12c-1.659,0-3,6-3,6h-19.5c-2.487,0-4.5,2.013-4.5,4.5s0,4.5 0,4.5h66c0,0 0-2.013 0-4.5s-2.016-4.5-4.5-4.5z" })
+                  ]))
+                ];
+              }
+            }),
+            _: 1
+          }, _parent));
+        } else {
+          _push(`<!---->`);
+        }
+        _push(`</td>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`</td></tr>`);
+      _push(`</tr>`);
     };
   }
 };
-const _sfc_setup$v = _sfc_main$v.setup;
-_sfc_main$v.setup = (props, ctx) => {
+const _sfc_setup$u = _sfc_main$u.setup;
+_sfc_main$u.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardVenta/ItemVentaDatials.vue");
-  return _sfc_setup$v ? _sfc_setup$v(props, ctx) : void 0;
+  return _sfc_setup$u ? _sfc_setup$u(props, ctx) : void 0;
 };
 const ItemVentaDatials = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$v
+  default: _sfc_main$u
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$u = {
+const _sfc_main$t = {
   __name: "OcsModal",
   __ssrInlineRender: true,
   props: {
@@ -10189,6 +10547,25 @@ const _sfc_main$u = {
       if (findIndex !== -1) {
         ocs.value[findIndex] = newOc;
       }
+    };
+    const deleteOc = (ocSelected) => {
+      const ocIndex = ocs.value.findIndex((ocFind) => {
+        return ocFind.id === ocSelected.id;
+      });
+      axios.delete(route("ocs.destroy", ocSelected.id)).then(() => {
+        ocs.value.splice(ocIndex, 1);
+        Inertia.visit(route("ventas.index"), {
+          preserveState: true,
+          preserveScroll: true,
+          only: ["totalOcs"]
+        });
+      }).catch((error) => {
+        if (error.response.data.hasOwnProperty("message")) {
+          alert(error.response.data.message);
+        } else {
+          alert("ERROR DELETE OC");
+        }
+      });
     };
     const close = () => {
       ocs.value = [];
@@ -10262,24 +10639,41 @@ const _sfc_main$u = {
               thead: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
                   _push3(`<tr${_scopeId2}><th${_scopeId2}><h3 class="mb-1"${_scopeId2}>OC</h3>`);
-                  _push3(ssrRenderComponent(_sfc_main$17, {
-                    class: "h-5",
-                    onClick: ($event) => showFormOc()
-                  }, null, _parent3, _scopeId2));
-                  _push3(`</th><th${_scopeId2}>CANTIDAD</th><th${_scopeId2}>FECHA</th><th${_scopeId2}></th></tr>`);
+                  if (_ctx.$page.props.can["ocs.create"]) {
+                    _push3(ssrRenderComponent(_sfc_main$17, {
+                      class: "h-5",
+                      onClick: ($event) => showFormOc()
+                    }, null, _parent3, _scopeId2));
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  _push3(`</th><th${_scopeId2}>CANTIDAD</th><th${_scopeId2}>FECHA</th>`);
+                  if (_ctx.$page.props.can["ocs.edit"]) {
+                    _push3(`<th${_scopeId2}></th>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  if (_ctx.$page.props.can["ocs.delete"]) {
+                    _push3(`<th${_scopeId2}></th>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  _push3(`</tr>`);
                 } else {
                   return [
                     createVNode("tr", null, [
                       createVNode("th", null, [
                         createVNode("h3", { class: "mb-1" }, "OC"),
-                        createVNode(_sfc_main$17, {
+                        _ctx.$page.props.can["ocs.create"] ? (openBlock(), createBlock(_sfc_main$17, {
+                          key: 0,
                           class: "h-5",
                           onClick: ($event) => showFormOc()
-                        }, null, 8, ["onClick"])
+                        }, null, 8, ["onClick"])) : createCommentVNode("", true)
                       ]),
                       createVNode("th", null, "CANTIDAD"),
                       createVNode("th", null, "FECHA"),
-                      createVNode("th")
+                      _ctx.$page.props.can["ocs.edit"] ? (openBlock(), createBlock("th", { key: 0 })) : createCommentVNode("", true),
+                      _ctx.$page.props.can["ocs.delete"] ? (openBlock(), createBlock("th", { key: 1 })) : createCommentVNode("", true)
                     ])
                   ];
                 }
@@ -10288,28 +10682,30 @@ const _sfc_main$u = {
                 if (_push3) {
                   _push3(`<!--[-->`);
                   ssrRenderList(ocs.value, (oc2) => {
-                    _push3(ssrRenderComponent(_sfc_main$w, {
+                    _push3(ssrRenderComponent(_sfc_main$v, {
                       key: oc2.id,
                       oc: oc2,
-                      onEdit: ($event) => showFormOc($event)
+                      onEdit: ($event) => showFormOc($event),
+                      onDelete: ($event) => deleteOc($event)
                     }, null, _parent3, _scopeId2));
                   });
                   _push3(`<!--]-->`);
                 } else {
                   return [
                     (openBlock(true), createBlock(Fragment, null, renderList(ocs.value, (oc2) => {
-                      return openBlock(), createBlock(_sfc_main$w, {
+                      return openBlock(), createBlock(_sfc_main$v, {
                         key: oc2.id,
                         oc: oc2,
-                        onEdit: ($event) => showFormOc($event)
-                      }, null, 8, ["oc", "onEdit"]);
+                        onEdit: ($event) => showFormOc($event),
+                        onDelete: ($event) => deleteOc($event)
+                      }, null, 8, ["oc", "onEdit", "onDelete"]);
                     }), 128))
                   ];
                 }
               }),
               _: 1
             }, _parent2, _scopeId));
-            _push2(ssrRenderComponent(_sfc_main$z, {
+            _push2(ssrRenderComponent(_sfc_main$y, {
               show: showingFormOc.value,
               "type-form": typeForm.value,
               venta: props.venta,
@@ -10325,28 +10721,31 @@ const _sfc_main$u = {
                   createVNode("tr", null, [
                     createVNode("th", null, [
                       createVNode("h3", { class: "mb-1" }, "OC"),
-                      createVNode(_sfc_main$17, {
+                      _ctx.$page.props.can["ocs.create"] ? (openBlock(), createBlock(_sfc_main$17, {
+                        key: 0,
                         class: "h-5",
                         onClick: ($event) => showFormOc()
-                      }, null, 8, ["onClick"])
+                      }, null, 8, ["onClick"])) : createCommentVNode("", true)
                     ]),
                     createVNode("th", null, "CANTIDAD"),
                     createVNode("th", null, "FECHA"),
-                    createVNode("th")
+                    _ctx.$page.props.can["ocs.edit"] ? (openBlock(), createBlock("th", { key: 0 })) : createCommentVNode("", true),
+                    _ctx.$page.props.can["ocs.delete"] ? (openBlock(), createBlock("th", { key: 1 })) : createCommentVNode("", true)
                   ])
                 ]),
                 tbody: withCtx(() => [
                   (openBlock(true), createBlock(Fragment, null, renderList(ocs.value, (oc2) => {
-                    return openBlock(), createBlock(_sfc_main$w, {
+                    return openBlock(), createBlock(_sfc_main$v, {
                       key: oc2.id,
                       oc: oc2,
-                      onEdit: ($event) => showFormOc($event)
-                    }, null, 8, ["oc", "onEdit"]);
+                      onEdit: ($event) => showFormOc($event),
+                      onDelete: ($event) => deleteOc($event)
+                    }, null, 8, ["oc", "onEdit", "onDelete"]);
                   }), 128))
                 ]),
                 _: 1
               }),
-              createVNode(_sfc_main$z, {
+              createVNode(_sfc_main$y, {
                 show: showingFormOc.value,
                 "type-form": typeForm.value,
                 venta: props.venta,
@@ -10363,17 +10762,17 @@ const _sfc_main$u = {
     };
   }
 };
-const _sfc_setup$u = _sfc_main$u.setup;
-_sfc_main$u.setup = (props, ctx) => {
+const _sfc_setup$t = _sfc_main$t.setup;
+_sfc_main$t.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardVenta/OcsModal.vue");
-  return _sfc_setup$u ? _sfc_setup$u(props, ctx) : void 0;
+  return _sfc_setup$t ? _sfc_setup$t(props, ctx) : void 0;
 };
 const OcsModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$u
+  default: _sfc_main$t
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$t = {
+const _sfc_main$s = {
   __name: "Ventas",
   __ssrInlineRender: true,
   props: {
@@ -10384,7 +10783,6 @@ const _sfc_main$t = {
   emits: ["showVentas"],
   setup(__props, { emit }) {
     const props = __props;
-    console.log(emit);
     const tab = ref("");
     const searchText = ref("");
     const showingOcs = ref(false);
@@ -10399,7 +10797,7 @@ const _sfc_main$t = {
     };
     const search = (newSearch) => {
       const params = pickBy({ status_id: tab.value, search: newSearch });
-      Inertia.visit(route("ventas.index"), {
+      Inertia$1.visit(route("ventas.index"), {
         data: params,
         preserveState: true,
         preserveScroll: true,
@@ -10430,7 +10828,7 @@ const _sfc_main$t = {
       }, null, _parent));
       _push(`</div><div class="w-full"><div class="tabs-header"><span class="${ssrRenderClass([{ "active": tab.value === "" }, "tab"])}"> TODAS </span><span class="${ssrRenderClass([{ "active": tab.value === "1" }, "tab"])}"> ABIERTAS </span><span class="${ssrRenderClass([{ "active": tab.value === "2" }, "tab"])}"> CERRADAS </span></div><div class="overflow-y-auto" style="${ssrRenderStyle({ "max-height": "65vh" })}"><!--[-->`);
       ssrRenderList(props.clientes, (cliente) => {
-        _push(ssrRenderComponent(_sfc_main$L, {
+        _push(ssrRenderComponent(_sfc_main$K, {
           key: cliente.id,
           cliente,
           total: cliente.ventas.length
@@ -10482,7 +10880,7 @@ const _sfc_main$t = {
         }, _parent));
       });
       _push(`<!--]--></div></div>`);
-      _push(ssrRenderComponent(_sfc_main$u, {
+      _push(ssrRenderComponent(_sfc_main$t, {
         show: showingOcs.value,
         venta: ventaSelect.value,
         onClose: closeOcs
@@ -10491,17 +10889,17 @@ const _sfc_main$t = {
     };
   }
 };
-const _sfc_setup$t = _sfc_main$t.setup;
-_sfc_main$t.setup = (props, ctx) => {
+const _sfc_setup$s = _sfc_main$s.setup;
+_sfc_main$s.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardVenta/Ventas.vue");
-  return _sfc_setup$t ? _sfc_setup$t(props, ctx) : void 0;
+  return _sfc_setup$s ? _sfc_setup$s(props, ctx) : void 0;
 };
 const Ventas = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$t
+  default: _sfc_main$s
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$s = {
+const _sfc_main$r = {
   __name: "VentasModal",
   __ssrInlineRender: true,
   props: {
@@ -10532,7 +10930,7 @@ const _sfc_main$s = {
     };
     const activeIva = (ventaId) => {
       axios.put(route("ventas.iva", ventaId)).then(() => {
-        Inertia.visit(route("ventas.index"), {
+        Inertia$1.visit(route("ventas.index"), {
           preserveScroll: true,
           preserveState: true,
           only: ["clientes", "totalVentas", "errors"]
@@ -10547,7 +10945,7 @@ const _sfc_main$s = {
     };
     const search = (newSearch) => {
       const params = pickBy({ search: newSearch });
-      Inertia.visit(route("ventas.index"), {
+      Inertia$1.visit(route("ventas.index"), {
         data: params,
         preserveState: true,
         preserveScroll: true,
@@ -10627,7 +11025,18 @@ const _sfc_main$s = {
             _push2(ssrRenderComponent(TableComponent, null, {
               thead: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
-                  _push3(`<tr${_scopeId2}><th${_scopeId2}>CLIENTE</th><th${_scopeId2}>COMENTARIO</th><th${_scopeId2}>IVA</th><th${_scopeId2}>SUBTOTAL</th><th${_scopeId2}>TOTAL IVA</th><th${_scopeId2}>TOTAL</th><th${_scopeId2}>FECHA INICIAL</th><th${_scopeId2}></th><th${_scopeId2}></th></tr><tr${_scopeId2}><td${_scopeId2}></td><td${_scopeId2}></td><td${_scopeId2}></td><td${_scopeId2}></td><td${_scopeId2}></td><td${_scopeId2}></td><td colspan="2"${_scopeId2}>`);
+                  _push3(`<tr${_scopeId2}><th${_scopeId2}>CLIENTE</th><th${_scopeId2}>COMENTARIO</th><th${_scopeId2}>IVA</th><th${_scopeId2}>SUBTOTAL</th><th${_scopeId2}>TOTAL IVA</th><th${_scopeId2}>TOTAL</th><th${_scopeId2}>FECHA INICIAL</th>`);
+                  if (_ctx.$page.props.can["ventas.edit"]) {
+                    _push3(`<th${_scopeId2}></th>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  if (_ctx.$page.props.can["ventas.delete"]) {
+                    _push3(`<th${_scopeId2}></th>`);
+                  } else {
+                    _push3(`<!---->`);
+                  }
+                  _push3(`</tr><tr${_scopeId2}><td colspan="5"${_scopeId2}></td><td colspan="2"${_scopeId2}>`);
                   _push3(ssrRenderComponent(_sfc_main$1b, {
                     modelValue: searchText.value,
                     "onUpdate:modelValue": ($event) => searchText.value = $event
@@ -10643,16 +11052,11 @@ const _sfc_main$s = {
                       createVNode("th", null, "TOTAL IVA"),
                       createVNode("th", null, "TOTAL"),
                       createVNode("th", null, "FECHA INICIAL"),
-                      createVNode("th"),
-                      createVNode("th")
+                      _ctx.$page.props.can["ventas.edit"] ? (openBlock(), createBlock("th", { key: 0 })) : createCommentVNode("", true),
+                      _ctx.$page.props.can["ventas.delete"] ? (openBlock(), createBlock("th", { key: 1 })) : createCommentVNode("", true)
                     ]),
                     createVNode("tr", null, [
-                      createVNode("td"),
-                      createVNode("td"),
-                      createVNode("td"),
-                      createVNode("td"),
-                      createVNode("td"),
-                      createVNode("td"),
+                      createVNode("td", { colspan: "5" }),
                       createVNode("td", { colspan: "2" }, [
                         createVNode(_sfc_main$1b, {
                           modelValue: searchText.value,
@@ -10667,7 +11071,7 @@ const _sfc_main$s = {
                 if (_push3) {
                   _push3(`<!--[-->`);
                   ssrRenderList(props.ventas, (venta2, index) => {
-                    _push3(ssrRenderComponent(_sfc_main$v, {
+                    _push3(ssrRenderComponent(_sfc_main$u, {
                       key: venta2.id + "" + index,
                       venta: venta2,
                       onEdit: ($event) => showFormVentas($event),
@@ -10678,7 +11082,7 @@ const _sfc_main$s = {
                 } else {
                   return [
                     (openBlock(true), createBlock(Fragment, null, renderList(props.ventas, (venta2, index) => {
-                      return openBlock(), createBlock(_sfc_main$v, {
+                      return openBlock(), createBlock(_sfc_main$u, {
                         key: venta2.id + "" + index,
                         venta: venta2,
                         onEdit: ($event) => showFormVentas($event),
@@ -10690,7 +11094,7 @@ const _sfc_main$s = {
               }),
               _: 1
             }, _parent2, _scopeId));
-            _push2(ssrRenderComponent(_sfc_main$x, {
+            _push2(ssrRenderComponent(_sfc_main$w, {
               show: showingFormVenta.value,
               "type-form": typeForm.value,
               venta: venta.value,
@@ -10708,16 +11112,11 @@ const _sfc_main$s = {
                     createVNode("th", null, "TOTAL IVA"),
                     createVNode("th", null, "TOTAL"),
                     createVNode("th", null, "FECHA INICIAL"),
-                    createVNode("th"),
-                    createVNode("th")
+                    _ctx.$page.props.can["ventas.edit"] ? (openBlock(), createBlock("th", { key: 0 })) : createCommentVNode("", true),
+                    _ctx.$page.props.can["ventas.delete"] ? (openBlock(), createBlock("th", { key: 1 })) : createCommentVNode("", true)
                   ]),
                   createVNode("tr", null, [
-                    createVNode("td"),
-                    createVNode("td"),
-                    createVNode("td"),
-                    createVNode("td"),
-                    createVNode("td"),
-                    createVNode("td"),
+                    createVNode("td", { colspan: "5" }),
                     createVNode("td", { colspan: "2" }, [
                       createVNode(_sfc_main$1b, {
                         modelValue: searchText.value,
@@ -10728,7 +11127,7 @@ const _sfc_main$s = {
                 ]),
                 tbody: withCtx(() => [
                   (openBlock(true), createBlock(Fragment, null, renderList(props.ventas, (venta2, index) => {
-                    return openBlock(), createBlock(_sfc_main$v, {
+                    return openBlock(), createBlock(_sfc_main$u, {
                       key: venta2.id + "" + index,
                       venta: venta2,
                       onEdit: ($event) => showFormVentas($event),
@@ -10738,7 +11137,7 @@ const _sfc_main$s = {
                 ]),
                 _: 1
               }),
-              createVNode(_sfc_main$x, {
+              createVNode(_sfc_main$w, {
                 show: showingFormVenta.value,
                 "type-form": typeForm.value,
                 venta: venta.value,
@@ -10752,17 +11151,17 @@ const _sfc_main$s = {
     };
   }
 };
-const _sfc_setup$s = _sfc_main$s.setup;
-_sfc_main$s.setup = (props, ctx) => {
+const _sfc_setup$r = _sfc_main$r.setup;
+_sfc_main$r.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/Partials/CardVenta/VentasModal.vue");
-  return _sfc_setup$s ? _sfc_setup$s(props, ctx) : void 0;
+  return _sfc_setup$r ? _sfc_setup$r(props, ctx) : void 0;
 };
 const VentasModal = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: _sfc_main$s
+  default: _sfc_main$r
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$r = {
+const _sfc_main$q = {
   __name: "ItemMonth",
   __ssrInlineRender: true,
   props: {
@@ -10787,14 +11186,14 @@ const _sfc_main$r = {
     };
   }
 };
-const _sfc_setup$r = _sfc_main$r.setup;
-_sfc_main$r.setup = (props, ctx) => {
+const _sfc_setup$q = _sfc_main$q.setup;
+_sfc_main$q.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/ItemMonth.vue");
-  return _sfc_setup$r ? _sfc_setup$r(props, ctx) : void 0;
+  return _sfc_setup$q ? _sfc_setup$q(props, ctx) : void 0;
 };
 const PickerCalendar_vue_vue_type_style_index_0_scoped_5c03fd33_lang = "";
-const _sfc_main$q = {
+const _sfc_main$p = {
   __name: "PickerCalendar",
   __ssrInlineRender: true,
   props: {
@@ -10858,7 +11257,7 @@ const _sfc_main$q = {
       ssrRenderTeleport(_push, (_push2) => {
         _push2(`<div id="pickerCalendar" data-v-5c03fd33><div style="${ssrRenderStyle(unref(open) ? null : { display: "none" })}" data-v-5c03fd33><div class="picker-year" data-v-5c03fd33><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-4 hover:opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-5c03fd33><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" data-v-5c03fd33></path></svg><span class="text-sm item-picker active-picker" data-v-5c03fd33>${ssrInterpolate(props.year)}</span><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-4 hover:opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-5c03fd33><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-v-5c03fd33></path></svg></div><div class="picker-month" data-v-5c03fd33><div class="grid-months" data-v-5c03fd33><!--[-->`);
         ssrRenderList(monthText.value, (mText, index) => {
-          _push2(ssrRenderComponent(_sfc_main$r, {
+          _push2(ssrRenderComponent(_sfc_main$q, {
             key: mText,
             onClick: ($event) => changeIndexMes(index),
             "current-month": props.month,
@@ -10882,14 +11281,14 @@ const _sfc_main$q = {
     };
   }
 };
-const _sfc_setup$q = _sfc_main$q.setup;
-_sfc_main$q.setup = (props, ctx) => {
+const _sfc_setup$p = _sfc_main$p.setup;
+_sfc_main$p.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/PickerCalendar.vue");
-  return _sfc_setup$q ? _sfc_setup$q(props, ctx) : void 0;
+  return _sfc_setup$p ? _sfc_setup$p(props, ctx) : void 0;
 };
-const PickerCalendar = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["__scopeId", "data-v-5c03fd33"]]);
-const _sfc_main$p = {
+const PickerCalendar = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["__scopeId", "data-v-5c03fd33"]]);
+const _sfc_main$o = {
   __name: "ButtonCalendar",
   __ssrInlineRender: true,
   props: {
@@ -10944,14 +11343,14 @@ const _sfc_main$p = {
     };
   }
 };
-const _sfc_setup$p = _sfc_main$p.setup;
-_sfc_main$p.setup = (props, ctx) => {
+const _sfc_setup$o = _sfc_main$o.setup;
+_sfc_main$o.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/ButtonCalendar.vue");
-  return _sfc_setup$p ? _sfc_setup$p(props, ctx) : void 0;
+  return _sfc_setup$o ? _sfc_setup$o(props, ctx) : void 0;
 };
 const VentasIndex_vue_vue_type_style_index_0_scoped_b3d42493_lang = "";
-const _sfc_main$o = {
+const _sfc_main$n = {
   __name: "VentasIndex",
   __ssrInlineRender: true,
   props: {
@@ -11016,7 +11415,7 @@ const _sfc_main$o = {
         header: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
             _push2(`<div class="flex items-center justify-around" data-v-b3d42493${_scopeId}><h2 class="text-xl font-bold leading-tight text-white" data-v-b3d42493${_scopeId}> Finanzas </h2>`);
-            _push2(ssrRenderComponent(_sfc_main$p, {
+            _push2(ssrRenderComponent(_sfc_main$o, {
               month: date.value.month,
               year: date.value.year,
               onChangeDate: ($event) => changeDate($event)
@@ -11026,7 +11425,7 @@ const _sfc_main$o = {
             return [
               createVNode("div", { class: "flex items-center justify-around" }, [
                 createVNode("h2", { class: "text-xl font-bold leading-tight text-white" }, " Finanzas "),
-                createVNode(_sfc_main$p, {
+                createVNode(_sfc_main$o, {
                   month: date.value.month,
                   year: date.value.year,
                   onChangeDate: ($event) => changeDate($event)
@@ -11041,14 +11440,14 @@ const _sfc_main$o = {
             _push2(ssrRenderComponent(Card, null, {
               default: withCtx((_2, _push3, _parent3, _scopeId2) => {
                 if (_push3) {
-                  _push3(ssrRenderComponent(_sfc_main$t, {
+                  _push3(ssrRenderComponent(_sfc_main$s, {
                     clientes: props.clientes,
                     onShowVentas: ($event) => showingVentas.value = true
                   }, null, _parent3, _scopeId2));
                   _push3(`<div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3" data-v-b3d42493${_scopeId2}><span class="text-lg font-bold text-white" data-v-b3d42493${_scopeId2}> Total: ${ssrInterpolate(unref(formatoMoney)(__props.totalVentasStatus.total.toFixed(2)))}</span></div>`);
                 } else {
                   return [
-                    createVNode(_sfc_main$t, {
+                    createVNode(_sfc_main$s, {
                       clientes: props.clientes,
                       onShowVentas: ($event) => showingVentas.value = true
                     }, null, 8, ["clientes", "onShowVentas"]),
@@ -11089,9 +11488,9 @@ const _sfc_main$o = {
                 if (_push3) {
                   _push3(`<div class="flex flex-row items-center my-1 text-white" data-v-b3d42493${_scopeId2}><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600 hover:text-green-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b3d42493${_scopeId2}><path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" data-v-b3d42493${_scopeId2}></path></svg><h1 class="ml-2 text-lg" data-v-b3d42493${_scopeId2}>${ssrInterpolate(componentFactDep.title)}</h1></div>`);
                   if (componentFactDep.component === "Facturas") {
-                    _push3(ssrRenderComponent(_sfc_main$A, null, null, _parent3, _scopeId2));
+                    _push3(ssrRenderComponent(_sfc_main$z, null, null, _parent3, _scopeId2));
                   } else {
-                    _push3(ssrRenderComponent(_sfc_main$H, null, null, _parent3, _scopeId2));
+                    _push3(ssrRenderComponent(_sfc_main$G, null, null, _parent3, _scopeId2));
                   }
                 } else {
                   return [
@@ -11113,14 +11512,14 @@ const _sfc_main$o = {
                       ], 8, ["onClick"])),
                       createVNode("h1", { class: "ml-2 text-lg" }, toDisplayString(componentFactDep.title), 1)
                     ]),
-                    componentFactDep.component === "Facturas" ? (openBlock(), createBlock(_sfc_main$A, { key: 0 })) : (openBlock(), createBlock(_sfc_main$H, { key: 1 }))
+                    componentFactDep.component === "Facturas" ? (openBlock(), createBlock(_sfc_main$z, { key: 0 })) : (openBlock(), createBlock(_sfc_main$G, { key: 1 }))
                   ];
                 }
               }),
               _: 1
             }, _parent2, _scopeId));
             _push2(`</div></div>`);
-            _push2(ssrRenderComponent(_sfc_main$s, {
+            _push2(ssrRenderComponent(_sfc_main$r, {
               show: showingVentas.value,
               ventas: unref(ventas),
               onClose: closeModalVentas
@@ -11131,7 +11530,7 @@ const _sfc_main$o = {
                 createVNode("div", { class: "grid grid-cols-1 gap-4 md:grid-cols-4" }, [
                   createVNode(Card, null, {
                     default: withCtx(() => [
-                      createVNode(_sfc_main$t, {
+                      createVNode(_sfc_main$s, {
                         clientes: props.clientes,
                         onShowVentas: ($event) => showingVentas.value = true
                       }, null, 8, ["clientes", "onShowVentas"]),
@@ -11234,13 +11633,13 @@ const _sfc_main$o = {
                         ], 8, ["onClick"])),
                         createVNode("h1", { class: "ml-2 text-lg" }, toDisplayString(componentFactDep.title), 1)
                       ]),
-                      componentFactDep.component === "Facturas" ? (openBlock(), createBlock(_sfc_main$A, { key: 0 })) : (openBlock(), createBlock(_sfc_main$H, { key: 1 }))
+                      componentFactDep.component === "Facturas" ? (openBlock(), createBlock(_sfc_main$z, { key: 0 })) : (openBlock(), createBlock(_sfc_main$G, { key: 1 }))
                     ]),
                     _: 1
                   })
                 ])
               ]),
-              createVNode(_sfc_main$s, {
+              createVNode(_sfc_main$r, {
                 show: showingVentas.value,
                 ventas: unref(ventas),
                 onClose: closeModalVentas
@@ -11253,43 +11652,17 @@ const _sfc_main$o = {
     };
   }
 };
-const _sfc_setup$o = _sfc_main$o.setup;
-_sfc_main$o.setup = (props, ctx) => {
+const _sfc_setup$n = _sfc_main$n.setup;
+_sfc_main$n.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Finanzas/VentasIndex.vue");
-  return _sfc_setup$o ? _sfc_setup$o(props, ctx) : void 0;
+  return _sfc_setup$n ? _sfc_setup$n(props, ctx) : void 0;
 };
-const VentasIndex = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["__scopeId", "data-v-b3d42493"]]);
+const VentasIndex = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["__scopeId", "data-v-b3d42493"]]);
 const VentasIndex$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: VentasIndex
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$n = {
-  __name: "ButtonPres",
-  __ssrInlineRender: true,
-  props: {
-    type: {
-      type: String,
-      default: "button"
-    }
-  },
-  setup(__props) {
-    return (_ctx, _push, _parent, _attrs) => {
-      _push(`<button${ssrRenderAttrs(mergeProps({
-        type: __props.type,
-        class: "inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-gray-700 uppercase transition bg-white border border-gray-300 rounded-md shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 active:text-gray-800 active:bg-gray-50 disabled:opacity-25"
-      }, _attrs))}>`);
-      ssrRenderSlot(_ctx.$slots, "default", {}, null, _push, _parent);
-      _push(`</button>`);
-    };
-  }
-};
-const _sfc_setup$n = _sfc_main$n.setup;
-_sfc_main$n.setup = (props, ctx) => {
-  const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/ButtonPres.vue");
-  return _sfc_setup$n ? _sfc_setup$n(props, ctx) : void 0;
-};
 const GraficoMovimientos_vue_vue_type_style_index_0_scoped_7e911bdb_lang = "";
 const _sfc_main$m = {
   __name: "GraficoMovimientos",
@@ -12810,7 +13183,7 @@ const _sfc_main$e = {
     solicitudes: Object
   },
   components: {
-    ButtonPres: _sfc_main$n
+    ButtonPres: _sfc_main$N
   },
   data() {
     return {
@@ -13332,7 +13705,7 @@ const _sfc_main$e = {
       this.SalidaMovimiento = false;
     }
   },
-  components: { ModalSalidaMovimiento: _sfc_main$g, ButtonPres: _sfc_main$n, Link }
+  components: { ModalSalidaMovimiento: _sfc_main$g, ButtonPres: _sfc_main$N, Link }
 };
 function _sfc_ssrRender$1(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
   const _component_ButtonPres = resolveComponent("ButtonPres");
@@ -13443,7 +13816,7 @@ const _sfc_main$c = {
     date: Object
   },
   components: {
-    ButtonPres: _sfc_main$n
+    ButtonPres: _sfc_main$N
   },
   data() {
     return {
@@ -13804,7 +14177,7 @@ const _sfc_main$c = {
       this.SalidaMovimiento = false;
     }
   },
-  components: { ModalSalidaMovimiento: _sfc_main$g, ButtonPres: _sfc_main$n, Link, ButtonReturn: _sfc_main$d }
+  components: { ModalSalidaMovimiento: _sfc_main$g, ButtonPres: _sfc_main$N, Link, ButtonReturn: _sfc_main$d }
 };
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
   const _component_Link = resolveComponent("Link");
@@ -13953,7 +14326,7 @@ const _sfc_main$b = {
         header: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
             _push2(`<div class="flex items-center justify-around"${_scopeId}><h2 class="text-xl font-semibold leading-tight text-white"${_scopeId}> Presupuestos </h2>`);
-            _push2(ssrRenderComponent(_sfc_main$p, {
+            _push2(ssrRenderComponent(_sfc_main$o, {
               month: unref(date).month,
               year: unref(date).year,
               onChangeDate: ($event) => changeDate($event)
@@ -13998,7 +14371,7 @@ const _sfc_main$b = {
             return [
               createVNode("div", { class: "flex items-center justify-around" }, [
                 createVNode("h2", { class: "text-xl font-semibold leading-tight text-white" }, " Presupuestos "),
-                createVNode(_sfc_main$p, {
+                createVNode(_sfc_main$o, {
                   month: unref(date).month,
                   year: unref(date).year,
                   onChangeDate: ($event) => changeDate($event)
@@ -14109,7 +14482,7 @@ const _sfc_main$a = {
       } else {
         formatDatePHP = date.value.year + "-" + date.value.month;
       }
-      Inertia.visit(route("tabla.presupuestos"), {
+      Inertia$1.visit(route("tabla.presupuestos"), {
         data: {
           fecha: formatDatePHP
         },
@@ -14148,7 +14521,7 @@ const _sfc_main$a = {
         header: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
             _push2(`<div class="flex items-center justify-around"${_scopeId}><h2 class="text-xl font-semibold leading-tight text-white"${_scopeId}> Presupuestos </h2>`);
-            _push2(ssrRenderComponent(_sfc_main$p, {
+            _push2(ssrRenderComponent(_sfc_main$o, {
               month: unref(date).month,
               year: unref(date).year,
               onChangeDate: ($event) => changeDate($event)
@@ -14193,7 +14566,7 @@ const _sfc_main$a = {
             return [
               createVNode("div", { class: "flex items-center justify-around" }, [
                 createVNode("h2", { class: "text-xl font-semibold leading-tight text-white" }, " Presupuestos "),
-                createVNode(_sfc_main$p, {
+                createVNode(_sfc_main$o, {
                   month: unref(date).month,
                   year: unref(date).year,
                   onChangeDate: ($event) => changeDate($event)
@@ -15306,7 +15679,7 @@ const _sfc_main$5 = {
     });
     const enableTwoFactorAuthentication = () => {
       enabling.value = true;
-      Inertia.post("/user/two-factor-authentication", {}, {
+      Inertia$1.post("/user/two-factor-authentication", {}, {
         preserveScroll: true,
         onSuccess: () => Promise.all([
           showQrCode(),
@@ -15351,7 +15724,7 @@ const _sfc_main$5 = {
     };
     const disableTwoFactorAuthentication = () => {
       disabling.value = true;
-      Inertia.delete("/user/two-factor-authentication", {
+      Inertia$1.delete("/user/two-factor-authentication", {
         preserveScroll: true,
         onSuccess: () => {
           disabling.value = false;
@@ -16149,7 +16522,7 @@ const _sfc_main$3 = {
       reader.readAsDataURL(photo);
     };
     const deletePhoto = () => {
-      Inertia.delete(route("current-user-photo.destroy"), {
+      Inertia$1.delete(route("current-user-photo.destroy"), {
         preserveScroll: true,
         onSuccess: () => {
           photoPreview.value = null;
