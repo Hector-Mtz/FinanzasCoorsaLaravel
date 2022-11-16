@@ -55,7 +55,7 @@ const activeIva = (ventaId) => {
 }
 
 const search = (newSearch) => {
-    const params = pickBy({search: newSearch })
+    const params = pickBy({ search: newSearch })
     Inertia.visit(route('ventas.index'), {
         data: params,
         preserveState: true,
@@ -87,19 +87,20 @@ const close = () => {
 
 </script>
 <template>
- 
+
     <DialogModal :show="show" @close="close()" maxWidth="6xl">
         <template #title>
             <div class="flex flex-row">
                 <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
-                  
+
                     <span class="block font-bold text-center text-white">
                         Ventas
                     </span>
                 </div>
                 <div class="flex-1 px-2 py-1">
                     <div class="flex justify-center">
-                        <ButtonAdd @click="showFormVentas()" class="text-sm text-white h-7">
+                        <ButtonAdd v-if="$page.props.can['ventas.create']" @click="showFormVentas()"
+                            class="text-sm text-white h-7">
                             Agregar
                         </ButtonAdd>
                     </div>
@@ -117,20 +118,15 @@ const close = () => {
                         <th>TOTAL IVA</th>
                         <th>TOTAL</th>
                         <th>FECHA INICIAL</th>
-                        <th></th>
-                        <th></th>
+                        <th v-if="$page.props.can['ventas.edit']"></th>
+                        <th v-if="$page.props.can['ventas.delete']"></th>
                     </tr>
-                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td colspan="2">
-                        <InputSearch  v-model="searchText" />
-                    </td>
-                </tr>
+                    <tr>
+                        <td colspan="5"></td>
+                        <td colspan="2">
+                            <InputSearch v-model="searchText" />
+                        </td>
+                    </tr>
                 </template>
                 <template #tbody>
                     <ItemVentaDatials v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta"

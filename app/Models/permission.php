@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class permission extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'is_acceso' => 'boolean'
+    ];
 }

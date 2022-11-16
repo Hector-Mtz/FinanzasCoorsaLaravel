@@ -11,8 +11,6 @@ import ItemObjectShow from '@/Components/ItemObjectShow.vue';
 
 const emit = defineEmits(['showVentas'])
 
-console.log(emit);
-
 const props = defineProps({
     "clientes": {
         type: Object

@@ -49,22 +49,22 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::apiResource('/ventas', VentaController::class)->except( 'show');
+    Route::apiResource('/ventas', VentaController::class)->except('show');
     Route::put('/ventas/{venta}/iva', [VentaController::class, 'activeIva'])->name('ventas.iva');
     Route::get('/ventas/totals', [VentaController::class, 'totals'])->name('ventas.totals');
     Route::get('/ventas/months', [VentaController::class, 'ventasMonth'])->name('ventas.month');
-    Route::apiResource('/ocs', OcController::class)->except('destroy', 'show');
+    Route::apiResource('/ocs', OcController::class)->except('show');
     Route::get('/ocs/catalogos', [OcController::class, "catalogos"])->name("ocs.catalogos");
     Route::get('/ocs/totals-status', [OcController::class, "totalesStatus"])->name("ocs.totals-status");
     Route::get('/ocs/months', [OcController::class, "ocMonth"])->name("ocs.month");
 
 
-    Route::apiResource('/facturas', FacturaController::class)->except('destroy', 'show');
+    Route::apiResource('/facturas', FacturaController::class)->except('show');
     Route::get('/facturas/catalogos', [FacturaController::class, 'catalogos'])->name('facturas.catalogos');
     Route::post('/facturas/{factura}/ocs', [FacturaController::class, "storeOc"])->name("facturas.ocs.store");
     Route::delete('/facturas/{factura}/ocs', [FacturaController::class, "destroyOc"])->name("facturas.ocs.destroy");
 
-    Route::apiResource('/ingresos', IngresoController::class)->except('destroy', 'show');
+    Route::apiResource('/ingresos', IngresoController::class)->except('show');
     Route::put('/ingresos/{ingreso}/status', [IngresoController::class, 'changeStatus'])->name('ingresos.status');
     Route::post('/ingresos/{ingreso}/facturas', [IngresoController::class, "storeFactura"])->name("ingresos.facturas.store");
     Route::delete('/ingresos/{ingreso}/facturas', [IngresoController::class, "destroyFactura"])->name("ingresos.facturas.destroy");
@@ -88,6 +88,6 @@ Route::apiResource('/clientes', ClienteController::class);
 
 Route::get('/tablaPresupuestos', [ClienteController::class, 'tablaPresupuestos'])->name('tabla.presupuestos');;
 
-Route::get("/clientesAgrupados",[ClienteController::class, 'clientesAgrupados']);
+Route::get("/clientesAgrupados", [ClienteController::class, 'clientesAgrupados']);
 
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);

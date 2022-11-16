@@ -102,15 +102,22 @@ const create = () => {
             }, 500);
         }).catch(error => {
             form.hasErrors = true;
-            if (error.hasOwnProperty("response") && error.response.data.hasOwnProperty('errors')) {
-                const errors = error.response.data.errors
-                for (let error in errors) {
-                    form.errors[error] = errors[error][0]
-                }
-                form.error = error.response.data.message
-            } else {
-                form.error = "Error CREATE DEPOSITO"
-            };
+            if (error.hasOwnProperty("response")) {
+
+                if (error.response.data.hasOwnProperty('errors')) {
+                    const errors = error.response.data.errors
+                    for (let error in errors) {
+                        form.errors[error] = errors[error][0]
+                    }
+                    form.error = error.response.data.message
+                } else {
+                    if (error.response.data.hasOwnProperty("message")) {
+                        form.error = error.response.data.message
+                    } else {
+                        form.error = "Error CREATE DEPOSITO"
+                    }
+                };
+            }
         }).then(() => { // always
             form.processing = false;
             setTimeout(() => {
@@ -140,15 +147,21 @@ const update = () => {
             }, 500);
         }).catch(error => {
             form.hasErrors = true;
-            if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('errors')) {
-                const errors = error.response.data.errors
-                for (let error in errors) {
-                    form.errors[error] = errors[error][0]
-                }
-                form.error = error.response.data.message
-            } else {
-                form.error = "ERROR UPDATE DEPOSITO"
-            };
+            if (error.hasOwnProperty('response')) {
+                if (error.response.data.hasOwnProperty('errors')) {
+                    const errors = error.response.data.errors
+                    for (let error in errors) {
+                        form.errors[error] = errors[error][0]
+                    }
+                    form.error = error.response.data.message
+                } else {
+                    if (error.response.data.hasOwnProperty("message")) {
+                        form.error = error.response.data.message
+                    } else {
+                        form.error = "ERROR UPDATE DEPOSITO"
+                    }
+                };
+            }
         }).then(() => { // always
             form.processing = false;
             setTimeout(() => {

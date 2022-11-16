@@ -7,7 +7,7 @@ import TableComponent from '@/Components/Table.vue';
 import FormDepositoModal from './FormDepositoModal.vue';
 import ItemDepositoDetails from './ItemDepositoDetails.vue';
 
-const emit = defineEmits(["close", "updateDepositos", "addFactura"])
+const emit = defineEmits(["close", "updateDepositos", "deleteDeposito", "addFactura"])
 const props = defineProps({
     show: {
         type: Boolean,
@@ -52,6 +52,21 @@ const changeStatus = (depositoChange) => {
 }
 
 
+const deleteDeposito = (deposito) => {
+    axios.delete(route('ingresos.destroy', deposito.id))
+        .then(() => {
+            emit("deleteDeposito");
+        }).catch(error => {
+            let message;
+            if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
+                message = error.response.data.message
+            } else {
+                message = "Error DELETE OC"
+            };
+            alert(message);
+        });
+}
+
 // EN MODALS FUNCTION
 //Facturas del catalogo disponible
 const getFacturas = async () => {
@@ -94,17 +109,20 @@ watch(props, () => {
                     <tr>
                         <th>
                             <h3 class="mb-1">Deposito</h3>
-                            <ButtonAdd class="h-5" @click="showFormDeposito()" />
+                            <ButtonAdd v-if="$page.props.can['deposito.create']" class="h-5"
+                                @click="showFormDeposito()" />
                         </th>
                         <th>CANTIDAD</th>
                         <th>FACTURA</th>
                         <th>BANCO</th>
-                        <th></th>
+                        <th v-if="$page.props.can['deposito.edit']"></th>
+                        <th v-if="$page.props.can['deposito.cerrar']">CERRAR</th>
+                        <th v-if="$page.props.can['deposito.delete']">ELIMINAR</th>
                     </tr>
                 </template>
                 <template #tbody>
                     <ItemDepositoDetails v-for="deposito in depositos" :key="deposito.nombre" :deposito="deposito"
-                        :facturas="listFacturas" @edit="showFormDeposito($event)"
+                        :facturas="listFacturas" @edit="showFormDeposito($event)" @delete="deleteDeposito($event)"
                         @add-factura="emit('addFactura', $event)" @change-status="changeStatus($event)" />
                 </template>
             </TableComponent>

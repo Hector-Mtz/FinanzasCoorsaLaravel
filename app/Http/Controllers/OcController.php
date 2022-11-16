@@ -41,6 +41,7 @@ class OcController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('ocs.create');
         $newOc = $request->validate([
             'nombre' => ["required", "string", "unique:ocs,nombre"],
             'cantidad' => ["required", "numeric"],
@@ -77,6 +78,7 @@ class OcController extends Controller
      */
     public function update(Request $request, Oc $oc)
     {
+        $this->authorize('ocs.edit');
         $newOc = $request->validate([
             'nombre' => ["required", "string", "unique:ocs,nombre," . $oc->id . ",id"],
             'cantidad' => ["required", "numeric"],
@@ -106,11 +108,46 @@ class OcController extends Controller
         $oc->update($newOc);
         return response()->json($oc);
     }
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Oc  $oc
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Oc $oc)
+    {
+        $this->authorize('ocs.delete');
+        if ($oc->factura_id !== null) {
+            $factura = Factura::select('facturas.*')->selectRaw("ifnull(sum(ocs.cantidad),0) total_ocs")
+                ->leftJoin('ocs', 'facturas.id', "=", "ocs.factura_id")
+                ->groupBy(
+                    "facturas.id",
+                    "facturas.cantidad",
+                    "facturas.status_id",
+                    "facturas.referencia",
+                    "facturas.fechaDePago"
+                )
+                ->firstWhere("facturas.id", "=", $oc->factura_id);
+            $newTotalOcs = $factura->total_ocs - $oc->cantidad;
+            if ($factura->cantidad < $newTotalOcs) {
+                @throw ValidationException::withMessages([
+                    'cantidad' => "Inconsistencia en la Factura:" . $factura->referencia
+                ]);
+                return;
+            }
+        }
+
+        $oc->delete();
+        return response()->json([
+            'message' => 'Eliminado'
+        ]);
+    }
 
 
     public function catalogos()
     {
-        $ocs = Oc::select("ocs.id", "ocs.nombre","ocs.cantidad")
+        $ocs = Oc::select("ocs.id", "ocs.nombre", "ocs.cantidad")
             ->whereNull('factura_id');
         if (request()->has("search")) {
             $search = strtr(request("search"), array("'" => "\\'", "%" => "\\%"));

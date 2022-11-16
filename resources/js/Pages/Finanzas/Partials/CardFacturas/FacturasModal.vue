@@ -41,8 +41,34 @@ const showFormFactura = (facturaSelect) => {
 const getOcs = async () => {
     const resp = await axios.get(route('ocs.catalogos'));
     listOcs.value = resp.data;//ocs del catalogo disponible
-    console.log(listOcs);
 }
+
+const deleteFactura = (facturaSelected) => {
+    const facturaIndex = props.facturas.findIndex(facturaFind => {
+        return facturaFind.id === facturaSelected.id;
+    })
+    axios.delete(route('facturas.destroy', facturaSelected.id))
+        .then(() => {
+            emit('addFactura');
+            Inertia.visit(route('ventas.index'), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['totalOcs'],
+            })
+        }).catch(error => {
+            console.log(error);
+            if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
+                alert(error.response.data.message)
+            } else {
+                alert("ERROR DELETE FACTURA");
+            }
+        })
+}
+
+
+
+
+
 const close = () => {
     emit('close');
 };
@@ -57,8 +83,8 @@ watch(props, () => {
 <template>
     <DialogModal :show="show" @close="close()">
         <template #title>
-            <div class="flex flex-row" >
-                <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3" >
+            <div class="flex flex-row">
+                <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
                     <span class="block font-bold text-center text-white">
                         Facturas
                     </span>
@@ -78,23 +104,27 @@ watch(props, () => {
                     <tr>
                         <th>
                             <h3 class="mb-1">FACTURA</h3>
-                            <ButtonAdd class="h-5" @click="showFormFactura()" />
+                            <ButtonAdd v-if="$page.props.can['facturas.create']" class="h-5"
+                                @click="showFormFactura()" />
                         </th>
                         <th>CANTIDAD</th>
                         <th>TOTAL OCS</th>
                         <th>OCS</th>
                         <th>FECHA</th>
-                        <!-- <th></th> -->
+                        <th v-if="$page.props.can['facturas.edit']"></th>
+                        <th v-if="$page.props.can['facturas.delete']"></th>
                     </tr>
                 </template>
                 <template #tbody>
                     <ItemFacturaDetails v-for="(factura, index) in props.facturas" :key="factura.id + '' + index"
-                        :factura="factura" :ocs="listOcs" @addOc="emit('addOc', $event)" />
+                        :factura="factura" :ocs="listOcs" @edit="showFormFactura($event)"
+                        @delete="deleteFactura($event)" @addOc="emit('addOc', $event)" />
                 </template>
             </TableComponent>
             <!-- MODALS -->
             <FormFacturaModal :show="showingFormFactura" :type-form="typeForm" :factura="factura"
-                @add-factura="emit('addFactura')" @close="showingFormFactura = false" />
+                @add-factura="emit('addFactura')" @edit-factura="emit('addFactura')"
+                @close="showingFormFactura = false" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

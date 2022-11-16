@@ -1,7 +1,5 @@
 <script setup>
-import { type } from '@amcharts/amcharts5';
 import { computed, onMounted, ref, watch } from 'vue';
-import { formatoMoney } from "../../js/utils/conversiones";
 
 const emit = defineEmits(['update:modelValue', 'value']);
 
@@ -31,8 +29,8 @@ const props = defineProps({
         default: ''
     },
     'cantidad': {
-        default:'nombre',
-        type:String
+        default: 'nombre',
+        type: String
     }
 })
 

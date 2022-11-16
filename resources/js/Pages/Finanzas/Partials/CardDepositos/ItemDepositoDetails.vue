@@ -6,9 +6,10 @@ import ButtonAdd from "@/Components/ButtonAdd.vue";
 import JetInputError from '@/Jetstream/InputError.vue';
 import SuccessButton from '@/Components/SuccessButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
+import ButtonPres from '@/Components/ButtonPres.vue';
 import { formatoMoney } from "../../../../utils/conversiones";
 
-const emit = defineEmits(['addFactura', 'edit', 'changeStatus']);
+const emit = defineEmits(['addFactura', 'edit', 'delete', 'changeStatus']);
 
 const facturaIdAdd = ref("")
 const props = defineProps({
@@ -43,7 +44,7 @@ const addFactura = () => {
         <td>
             <span v-for="factura  in props.deposito.facturas" :key="factura.referencia"> #{{ factura.referencia }}
             </span>
-            <div class="flex flex-row justify-center">
+            <div v-if="$page.props.can['deposito.factura.create']" class="flex flex-row justify-center">
                 <ListDataInput class="w-50" v-model="facturaIdAdd" list="facturas-catalogo" name-option="referencia"
                     :options="props.facturas" />
                 <ButtonAdd class="ml-1 h-7" @click="addFactura()" />
@@ -51,29 +52,36 @@ const addFactura = () => {
             <JetInputError :message="props.deposito.error" class="mt-2" />
         </td>
         <td>{{ props.deposito.banco }}</td>
-        <td>
-            <div class="flex justify-between">
-
-                <SuccessButton @click="emit('edit', props.deposito)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path
-                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                    </svg>
-                </SuccessButton>
-                <DangerButton @click="emit('changeStatus', props.deposito)" class="w-8 px-0 py-0 ml-2">
-                    <svg v-if="props.deposito.status_id === 1" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-                    </svg>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                </DangerButton>
-            </div>
-
+        <td v-if="$page.props.can['deposito.edit']">
+            <SuccessButton @click="emit('edit', props.deposito)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+            </SuccessButton>
+        </td>
+        <td v-if="$page.props.can['deposito.cerrar']">
+            <ButtonPres @click="emit('changeStatus', props.deposito)" class="py-1 rounded-full">
+                <svg v-if="props.deposito.status_id === 1" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                </svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </ButtonPres>
+        </td>
+        <td v-if="$page.props.can['deposito.delete']">
+            <DangerButton @click="emit('delete', props.deposito)">
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" style="fill:white" viewBox="0 0 96 96"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <path
+                        d="m24,78c0,4.968 4.029,9 9,9h30c4.968,0 9-4.032 9-9l6-48h-60l6,48zm33-39h6v39h-6v-39zm-12,0h6v39h-6v-39zm-12,0h6v39h-6v-39zm43.5-21h-19.5c0,0-1.344-6-3-6h-12c-1.659,0-3,6-3,6h-19.5c-2.487,0-4.5,2.013-4.5,4.5s0,4.5 0,4.5h66c0,0 0-2.013 0-4.5s-2.016-4.5-4.5-4.5z" />
+                </svg>
+            </DangerButton>
         </td>
     </tr>
 </template>

@@ -120,7 +120,7 @@ watch(props, () => {
                     <tr>
                         <th>
                             <h3 class="mb-1">FACTURAS</h3>
-                            <div class="flex flex-row justify-center">
+                            <div v-if="$page.props.can['deposito.factura.create']" class="flex flex-row justify-center">
                                 <ListDataInput class="w-50" v-model="facturaIdAdd" :value="textFactura"
                                     list="facturas-catalogo" name-option="referencia" :options="listFacturas" />
                                 <ButtonAdd class="ml-1 h-7" @click="addFactura()" />

@@ -29,7 +29,6 @@ const ocIdAdd = ref("")
 // ocs del catalogo disponible
 const getOcs = async () => {
     const resp = await axios.get(route('ocs.catalogos'));
-    console.log(resp.data);
     listOcs.value = resp.data;
 }
 
@@ -117,7 +116,7 @@ watch(props, () => {
                     <tr>
                         <th>
                             <h3 class="mb-1">OCS</h3>
-                            <div class="flex flex-row justify-center">
+                            <div v-if="$page.props.can['facturas.oc.create']" class="flex flex-row justify-center">
                                 <ListDataInputOCS class="w-50" v-model="ocIdAdd" :value="textOcs" list="ocs-catalogo"
                                     :options="listOcs" />
                                 <ButtonAdd class="ml-1 h-7" @click="addOc()" />

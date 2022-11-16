@@ -60,7 +60,6 @@ const addOc = (form) => {
         });
 }
 
-
 // End Methos Modal
 
 const changeTab = (status_id) => {

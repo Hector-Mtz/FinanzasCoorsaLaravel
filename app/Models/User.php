@@ -28,7 +28,7 @@ class User extends Authenticatable
         'email',
         'password',
         'banco_id',
-        
+
     ];
 
     /**
@@ -59,5 +59,57 @@ class User extends Authenticatable
      */
     protected $appends = [
         'profile_photo_url',
+        'is_admin',
     ];
+
+    public function getIsAdminAttribute()
+    {
+        return $this->role_id === 1; // admin
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(role::class, 'role_id');
+    }
+
+    /**
+     * Determina si puede authenticarse
+     */
+    public function canAccess()
+    {
+        $can = true;
+        if (!$this->is_admin) {
+            if ($this->role === null) {
+                return false;
+            }
+            return  $this->role->permissions()->where('permissions.plataforma_id', '=', 1)
+                ->where('permissions.is_acceso', 1)->exists();
+        }
+
+        return $can;
+    }
+
+    public function getCansAttribute()
+    {
+        $cans = array();
+        if ($this->is_admin) {
+            $permissions = Permission::select('id', 'nombre')
+                ->where('plataforma_id', '=', 1)->get();
+        } else {
+            if ($this->role === null) {
+                return $cans;
+            }
+            $permissions = $this->role->permissions()
+                ->where('plataforma_id', '=', 1)->get();
+        }
+        foreach ($permissions as $permission) {
+            $cans[$permission->nombre] =   $this->can($permission->nombre);
+        }
+        return $cans;
+    }
+
+    public function hasPermission(Int $idPermission)
+    {
+        return $this->role->permissions()->where('permissions.id', $idPermission)->exists();
+    }
 }

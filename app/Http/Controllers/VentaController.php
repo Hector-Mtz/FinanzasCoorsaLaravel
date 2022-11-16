@@ -9,6 +9,7 @@ use App\Models\Oc;
 use App\Models\Venta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class VentaController extends Controller
@@ -72,6 +73,8 @@ class VentaController extends Controller
      */
     public function store(Request $request)
     {
+        //Authorization
+        $this->authorize('ventas.create');
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
             "nombre" =>  ["required", "max:100"],
@@ -101,6 +104,8 @@ class VentaController extends Controller
      */
     public function update(Request $request, Venta $venta)
     {
+        //Authorization
+        $this->authorize('ventas.edit');
         $newVenta = $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
             "nombre" =>  ["required", "max:100"],
@@ -139,7 +144,8 @@ class VentaController extends Controller
      */
     public function destroy($venta)
     {
-        //
+        //Authorization
+        $this->authorize('ventas.delete');
         $ventaAEliminar = Venta::find($venta);
         $ventaAEliminar->delete();
         return redirect()->back();
@@ -181,8 +187,17 @@ class VentaController extends Controller
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
-            ->groupBy('ventas.id', 'day', 'cecos.nombre', 'servicios.nombre',
-             'montos.cantidad','ventas.periodos','ventas.cantidad','ventas.iva' , 'ventas.comentario')
+            ->groupBy(
+                'ventas.id',
+                'day',
+                'cecos.nombre',
+                'servicios.nombre',
+                'montos.cantidad',
+                'ventas.periodos',
+                'ventas.cantidad',
+                'ventas.iva',
+                'ventas.comentario'
+            )
             ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
             ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
             ->get();
