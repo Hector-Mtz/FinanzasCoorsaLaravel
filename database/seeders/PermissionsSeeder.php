@@ -185,7 +185,14 @@ class PermissionsSeeder extends Seeder
             'updated_at' => now(),
         ]);
         DB::table('permissions')->insert([
-            'nombre' => "deposito.factura.relation",
+            'nombre' => "deposito.factura.create",
+            'plataforma_id' => 1,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "deposito.factura.delete",
             'plataforma_id' => 1,
             'is_acceso' => 0,
             'created_at' => now(),

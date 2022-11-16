@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+use function GuzzleHttp\Promise\queue;
+
 class IngresoController extends Controller
 {
     /**
@@ -95,6 +97,7 @@ class IngresoController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('deposito.create');
         $newIngreso = $request->validate([
             'nombre' => ['required', 'unique:ingresos,nombre'],
             'cantidad' => ['required', 'numeric'],
@@ -119,6 +122,7 @@ class IngresoController extends Controller
      */
     public function update(Request $request, Ingreso $ingreso)
     {
+        $this->authorize('deposito.edit');
         $newIngreso = $request->validate([
             'nombre' => ['required', 'unique:ingresos,nombre,' . $ingreso->id . ',id'],
             'cantidad' => ['required', 'numeric'],
@@ -141,6 +145,35 @@ class IngresoController extends Controller
         ]);
     }
 
+
+    public function destroy(Ingreso $ingreso)
+    {
+        $this->authorize('deposito.delete');
+        try {
+            DB::beginTransaction();
+
+            Factura::where('ingreso_id', '=', $ingreso->id)
+                ->update([
+                    'ingreso_id' => null
+                ]);
+            $ingreso->delete();
+            DB::commit();
+            return response()->json([
+                'meesage' => 'Ingreso DELETED'
+            ]);
+            //No esposible actualizar en caso de que la cantidad sea menor al total de facturas total
+        } catch (QueryException $e) {
+            @throw ValidationException::withMessages([
+                'message' => $e->getMessage(),
+            ]);
+            return;
+        }
+
+        return response()->json([
+            'message' => 'Actualizado.'
+        ]);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -150,8 +183,7 @@ class IngresoController extends Controller
      */
     public function changeStatus(Ingreso $ingreso)
     {
-
-
+        $this->authorize('deposito.cerrar');
         $ingreso->status_id = $ingreso->status_id === 1 ? 2 : 1;
         $ingreso->save();
 
@@ -163,10 +195,10 @@ class IngresoController extends Controller
 
     public function storeFactura(Request $request, Ingreso $ingreso)
     {
+        $this->authorize('deposito.factura.create');
         $request->validate([
             'factura_id' => ["required", "exists:facturas,id"],
         ]);
-
         $facturas = Factura::selectRaw("ifnull(sum(facturas.cantidad),0) as total")
             ->where('ingreso_id', '=', $ingreso->id)
             ->first();
@@ -209,6 +241,7 @@ class IngresoController extends Controller
      */
     public function destroyFactura(Request $request, Ingreso $ingreso)
     {
+        $this->authorize('deposito.factura.delete');
         $request->validate([
             'factura_id' => ["required", "exists:ocs,id"],
         ]);

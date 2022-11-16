@@ -168,7 +168,8 @@ watch(searchText, (newSearch) => {
         </div>
         <!--Modals -->
         <DepositosModal :show="showingDepositos" :depositos="depositos" @update-depositos="updateDepositos($event)"
-            @add-factura="addFacturaToDeposito($event)" @close="showingDepositos = false" />
+            @delete-deposito="updateDepositos()" @add-factura="addFacturaToDeposito($event)"
+            @close="showingDepositos = false" />
         <FacturasDepositoModal :show="showingFacturas" :deposito="deposito" @add-factura="addFacturaToDeposito($event)"
             @update-depositos="updateDepositos()" @close="closeFacturasDeposito" />
         <!--Ends Modals-->
