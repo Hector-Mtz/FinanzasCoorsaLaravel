@@ -37,7 +37,7 @@ class AuthServiceProvider extends ServiceProvider
         );
 
         try {
-            permission::where('plataforma_id', '=', 2)->get(['id', 'nombre'])
+            permission::where('plataforma_id', '=', 1)->get(['id', 'nombre'])
                 ->map(function ($permission) {
                     Gate::define(
                         $permission->nombre,
