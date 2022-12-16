@@ -51,7 +51,7 @@ const changeDate = (newDate) => {
  
         <div class="py-12 fondo_general" >
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-xl sm:rounded-lg">
+                <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     <div class="datetexts">
                       <div class="dashboard_texts">
                         <div class="texts_dash">
