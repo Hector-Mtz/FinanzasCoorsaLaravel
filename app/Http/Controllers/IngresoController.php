@@ -66,8 +66,8 @@ class IngresoController extends Controller
         )
             ->join('bancos', 'ingresos.banco_id', '=', 'bancos.id')
             ->leftJoin('facturas', 'ingresos.id', '=', 'facturas.ingreso_id')
-            ->with('facturas:id,referencia,ingreso_id,cantidad,fechaDePago')
-            ->whereNull('facturas.referencia');
+            ->with('facturas:id,referencia,ingreso_id,cantidad,fechaDePago');
+            /*->whereNull('facturas.referencia');*/
         if ($hasStatus) {
             $ingresos->where("ingresos.status_id", "=", request('status_id'));
         }
