@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('noticias', function (Blueprint $table) {
+        Schema::create('noticia_descrs', function (Blueprint $table) {
             $table->id();
-            $table->string('titulo');
+            $table->string('descripcion');
+            $table->foreignId('noticia_id')->constrained('noticias');
             $table->string('image');
-            $table->foreignId('empleado_id')->constrained('users');
-            $table->boolean('activo')->default(1)->nullable(false);
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('noticias');
+        Schema::dropIfExists('noticia_descrs');
     }
 };
