@@ -46,8 +46,6 @@ export default {
             movimiento: { state: "PRESUPUESTO" },
             SalidaMovimiento:false,
             data: [],
-            modalData:modalDatos,
-            agrupacionModal:[],
             productos:[],
             idMovimientoForm:0,
             nombreMovimiento:"",
@@ -78,6 +76,10 @@ export default {
             minGridDistance: 20,
             inversed: true,
         });
+        
+        yRenderer.labels.template.setAll({
+        fill: am5.color(0xffffff),
+       });
 
         //console.log(this.filtros);
         yRenderer.grid.template.set("visible", false);
@@ -98,6 +100,11 @@ export default {
             opposite: true,
         });
         xRenderer.grid.template.set("visible", false);
+
+        xRenderer.labels.template.setAll({
+        fill: am5.color(0xffffff),
+        });
+
         if(this.filtros.grupoType2)
         {
           //console.log(this.filtros);
@@ -151,23 +158,31 @@ export default {
                 })
             });
         });
-        //DECLARACION DE COLORES PARA ASIGNARA
-        var colors = {
-            critical: am5.color(13238529),
-            bad: am5.color(14776877),
-            medium: am5.color(14801197),
-            good: am5.color(6143524),
-            verygood: am5.color(752899)
-        };
-        // Set data
-        // https://www.amcharts.com/docs/v5/charts/xy-chart/#Setting_data
+
+        var scrollableContainer = chart.chartContainer.children.unshift(am5.Container.new(root, {
+        width: am5.p100, height: am5.p100, 
+        verticalScrollbar: am5.Scrollbar.new(root, {
+        orientation: "vertical",
+        dx:5
+        }),
+        horizontalScrollbar: am5.Scrollbar.new(root, {
+        orientation: "horizontal",
+        dx:5
+        })
+       }))
+
+       chart.yAxesAndPlotContainer.set("height", 8000);
+       chart.yAxesAndPlotContainer.set("paddingBottom", 10)
+       scrollableContainer.children.push(chart.yAxesAndPlotContainer);
         //PARTE A SECCIONAR0
+        console.log(this.cantidades);
         this.datosGrafica = this.cantidades;
         data = this.datosGrafica;
+        this.colors(data);
         //console.log(this.movimiento.state);
         //console.log("Ante del filtro",data);
         data = data.filter((cantidad) => cantidad.Movimiento === this.movimiento.state )
-        //console.log(data);
+        console.log(data);
         series.data.setAll(data);
         ejey = [];
         ejex = [];
@@ -201,8 +216,8 @@ export default {
                      
                      label.setAll({
                        text: auxiliarGrupo.grupoCliente,
-                       dx: -100,
-                       dy:-50,
+                       dx: -250,
+                       dy:0,
                        fontWeight: "bold",
                        tooltipText: auxiliarGrupo.grupoCliente,
                        rotation:270  });
@@ -325,6 +340,7 @@ export default {
                       }
               
                       this.datosGrafica = datos;
+                      this.colors(datos);
                       yAxis.data.setAll(ejey);
                       xAxis.data.setAll(ejex);
                       this.cambiar(this.movimiento.state);
@@ -374,6 +390,7 @@ export default {
                            //yRenderer.labels.template.setAll({ text: ceco.nombre }) //enmascara
                         }            
                           this.datosGrafica = datos;
+                          this.colors(datos);
                           yAxis.data.setAll(ejey);
                           xAxis.data.setAll(ejex);
                           this.cambiar(this.movimiento.state);
@@ -437,6 +454,7 @@ export default {
                  //console.log(datos);
                  //console.log("Datos Response:", datos);
                  this.datosGrafica =datos;
+                 this.colors (this.datosGrafica);
                  this.cambiar(this.movimiento.state);
              })
              .catch(function (error)
@@ -509,6 +527,113 @@ export default {
             }
             series.data.setAll(data);
         } ,
+
+        colors: function(data)
+        {
+         //DECLARACION DE COLORES PARA ASIGNARA conforme el gasto entre, sacar porcentaje
+         var colors = {
+             critical: am5.color(13238529), //-20%
+             bad: am5.color(14776877), //-30%
+             medium: am5.color(14801197), //-40%
+             good: am5.color(6143524), //-60%
+             verygood: am5.color(752899) //+80%
+           };
+           //Tomamos el primer elemento del array para setearle los tipos de movimientos a comparar
+           let auxData = {...data[0]};  
+            auxData.movimientos = {
+              "PRESUPUESTO": 0,
+              "SUPLEMENTO": 0,
+              "GASTO": 0,
+            };
+
+            let arrayElementos = [];
+            data.forEach(salida => //recorremos el array
+                   {
+                    if(auxData.Cliente === salida.Cliente && auxData.GrupoConcepto === salida.GrupoConcepto)
+                    {
+                        auxData.movimientos[salida.Movimiento] = salida.Cantidad;
+                        
+                        let porcentaje = 0;
+                        if(auxData.movimientos["GASTO"] == 0)
+                        {
+                          porcentaje = (auxData.movimientos["PRESUPUESTO"]/auxData.movimientos["PRESUPUESTO"])*100 ;
+                        }
+                        else
+                        {
+                          porcentaje = (auxData.movimientos["GASTO"]/auxData.movimientos["PRESUPUESTO"])*100
+                        }
+
+                        if(porcentaje < 20)
+                        {
+                          salida.columnSettings = {fill: colors.critical};
+                        }
+                        if(porcentaje >=20 && porcentaje < 30)
+                        {
+                          salida.columnSettings = {fill: colors.bad};
+                        }
+                        if(porcentaje>=30 && porcentaje<60)
+                        {
+                          salida.columnSettings = {fill: colors.medium};
+                        }
+                        if(porcentaje>=60 && porcentaje<80)
+                        {
+                          salida.columnSettings = {fill: colors.good};
+                        }
+                        if(porcentaje>=80)
+                        {
+                          salida.columnSettings = {fill: colors.verygood};
+                        }
+                    }
+                    else
+                    {
+                        //Tenemos el total
+                        auxData.Cantidad = auxData.movimientos['PRESUPUESTO']; 
+                        let porcentaje = 0; 
+                        if(auxData.movimientos['GASTO']==0)
+                        {
+                          porcentaje = (auxData.movimientos["PRESUPUESTO"]/auxData.movimientos["PRESUPUESTO"])*100 ;
+                        }
+                        else
+                        {
+                         porcentaje =(auxData.movimientos['GASTO']/auxData.Cantidad)*100;
+                        }
+
+
+                        if(porcentaje < 20)
+                        {
+                          salida.columnSettings = {fill: colors.critical};
+                        }
+                        if(porcentaje >=20 && porcentaje < 30)
+                        {
+                          salida.columnSettings = {fill: colors.bad};
+                        }
+                        if(porcentaje>=30 && porcentaje<60)
+                        {
+                          salida.columnSettings = {fill: colors.medium};
+                        }
+                        if(porcentaje>=60 && porcentaje<80)
+                        {
+                          salida.columnSettings = {fill: colors.good};
+                        }
+                        if(porcentaje>=80)
+                        {
+                          salida.columnSettings = {fill: colors.verygood};
+                        }
+                      //console.log(auxData)//muestra los objetos que llevamos
+                      arrayElementos.push(auxData);//hacemos el push al array para guardar los objetos
+                    
+                      auxData = salida;
+                      console.log(auxData);
+                      auxData.movimientos = 
+                      {
+                        "PRESUPUESTO": 0,
+                        "SUPLEMENTO": 0,
+                        "GASTO": 0,
+                      };
+                      auxData.movimientos[salida.Movimiento] = salida.Cantidad
+                    }
+                  });   
+        },
 
         closeModalSalida:function()
         {

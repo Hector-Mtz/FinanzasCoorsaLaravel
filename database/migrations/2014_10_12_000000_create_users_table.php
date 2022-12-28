@@ -38,6 +38,7 @@ return new class extends Migration
             $table->double('bono_asistencia', 7, 2)->nullable(true);
             $table->double('despensa', 7, 2)->nullable(true);
             $table->double('fondo_ahorro', 7, 2)->nullable(true);
+            $table->string('horario')->nullable(true);
             $table->string('alergias', 60)->nullable(true);
             $table->string('enfermedades_cronicas', 60)->nullable(true);
             $table->foreignId('direccion_id')->nullable()->constrained('direcciones');
@@ -53,6 +54,7 @@ return new class extends Migration
             $table->string('fotografia')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('banderaCard')->nullable(true)->default(0);
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
