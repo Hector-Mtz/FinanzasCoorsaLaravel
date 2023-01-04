@@ -8,6 +8,7 @@ use App\Http\Controllers\ConceptoController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\GrupoConceptoController;
 use App\Http\Controllers\IngresoController;
+use App\Http\Controllers\LineasNegocioController;
 use App\Http\Controllers\MontoController;
 use App\Http\Controllers\OcController;
 use App\Http\Controllers\ServicioController;
@@ -76,6 +77,7 @@ Route::middleware([
     Route::apiResource('/servicios', ServicioController::class)->except('show');
     Route::apiResource('/grupo-conceptos', GrupoConceptoController::class)->except('show');
     Route::apiResource('/clientes/{cliente}/cecos', CecoController::class)->except('show');
+    Route::apiResource('/lineas-negocios', LineasNegocioController::class)->except('show');
     Route::apiResource('/grupo-conceptos/{grupo_concepto}/conceptos', ConceptoController::class)->except('show');
     Route::apiResource('/servicios/{servicio}/montos', MontoController::class)->except('show');
 

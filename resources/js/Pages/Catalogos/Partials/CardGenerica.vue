@@ -9,7 +9,7 @@ import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 import ListObjModal from './ListObjModal.vue';
 import SubcatalogoModal from './SubcatalogoModal.vue';
 
-defineEmits(['reload'])
+const emits = defineEmits(['reload', 'showSubCatalogo'])
 
 const props = defineProps({
     data: {
@@ -22,7 +22,7 @@ const props = defineProps({
     },
     subRoute: {
         type: String,
-        required: true
+        required: false
     },
     title: {
         type: String,
@@ -34,8 +34,14 @@ const showingSubCatalogo = ref(false);
 const object = ref({});
 
 const showSubCatalogo = (obj) => {
-    object.value = obj;
-    showingSubCatalogo.value = true;
+    if (!!props.subRoute) {
+        object.value = obj;
+        showingSubCatalogo.value = true;
+    } else {
+        emits('showSubCatalogo', obj)
+
+    }
+
 }
 
 
@@ -60,6 +66,7 @@ const showSubCatalogo = (obj) => {
                     <div v-else>
                         <ItemObjectShow v-for="obj in data.data" :key="obj.id" :data="obj"
                             @onShow="showSubCatalogo($event)">
+
                             #{{ obj.nombre }}
                         </ItemObjectShow>
                     </div>
@@ -72,11 +79,13 @@ const showSubCatalogo = (obj) => {
             <ListObjModal :title="props.title" :routeName="props.routeName" :show="showingList" :listObj="data.data"
                 @add="$emit('reload')" @close="showingList = false" />
 
-            <SubcatalogoModal :title="subRoute === 'montos' ? 'Precios' : subRoute" :routeName="subRoute" :object="object"
-                :show="showingSubCatalogo" @close="showingSubCatalogo = false" />
+            <SubcatalogoModal v-if="!!subRoute" :title="subRoute === 'montos' ? 'Precios' : subRoute"
+                :routeName="subRoute" :object="object" :show="showingSubCatalogo" @close="showingSubCatalogo = false" />
+            <slot name="modals" />
             <!--Ends Modals-->
         </div>
     </Card>
 </template>
 <style lang="scss" scoped>
+
 </style>

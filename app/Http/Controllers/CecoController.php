@@ -20,7 +20,7 @@ class CecoController extends Controller
             'direction' => 'in:desc,asc'
         ]);
 
-        $cecos =  $cliente->cecos()->select('cecos.id', 'cecos.nombre');
+        $cecos =  $cliente->cecos()->select('cecos.id', 'cecos.nombre', 'cecos.lineas_negocio_id');
         if ($request->has('search')) {
             $search =  strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
             $cecos->where('cecos.nombre', 'like', '%' . $search . '%');
@@ -43,7 +43,8 @@ class CecoController extends Controller
     public function store(Request $request, Cliente $cliente)
     {
         $newCeco = $request->validate([
-            'nombre' => 'unique:cecos,nombre'
+            'nombre' => 'unique:cecos,nombre',
+            'lineas_negocio_id' => 'required|exists:lineas_negocios,id'
         ]);
 
         return response()->json($cliente->cecos()->create($newCeco));
@@ -63,6 +64,7 @@ class CecoController extends Controller
     {
         $newCeco = $request->validate([
             'nombre' => 'unique:cecos,nombre,' . $ceco->id . ',id',
+            'lineas_negocio_id' => 'required|exists:lineas_negocios,id'
         ]);
         $ceco->update($newCeco);
 
