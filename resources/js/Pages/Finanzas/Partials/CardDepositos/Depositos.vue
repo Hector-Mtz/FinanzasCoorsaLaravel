@@ -132,7 +132,7 @@ watch(searchText, (newSearch) => {
                 </span>
             </div>
             <!-- Lista de clientes -->
-            <div class="-mx-2 overflow-hidden overflow-y-auto" style="max-height: 65vh;">
+            <div class="-mx-2 overflow-hidden overflow-x-auto overflow-y-auto" style="max-height: 65vh;">
                 <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente"
                     :total="cliente.ingresos.length">
                     <div
