@@ -201,17 +201,16 @@ class IngresoController extends Controller
         ]);
         $facturas = Factura::selectRaw("ifnull(sum(facturas.cantidad),0) as total")
             ->where('ingreso_id', '=', $ingreso->id)
+            ->orWhere('facturas.id', '=', $request->factura_id)
             ->first();
         //Nueva Factura a actualizar
         $factura = Factura::find($request->factura_id);
 
-        $totalFacturas =  $facturas->total + $factura->cantidad;
+        $totalFacturas =  $facturas->total;
 
         if ($ingreso->cantidad < $totalFacturas) {
-
             @throw ValidationException::withMessages([
                 'message' => 'Monto insuficiente. : ' . $totalFacturas . '> ' . $ingreso->cantidad . ' = ' . ($totalFacturas >  $ingreso->cantidad),
-                'ingreso' => var_dump($ingreso),
                 'totalFacturas' => var_dump($totalFacturas)
             ]);
             return;
