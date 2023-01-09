@@ -207,9 +207,12 @@ class IngresoController extends Controller
 
         $totalFacturas =  $facturas->total + $factura->cantidad;
 
-        if ($totalFacturas > $ingreso->cantidad) {
+        if ($ingreso->cantidad < $totalFacturas) {
+
             @throw ValidationException::withMessages([
                 'message' => 'Monto insuficiente. : ' . $totalFacturas . '> ' . $ingreso->cantidad . ' = ' . ($totalFacturas >  $ingreso->cantidad),
+                'ingreso' => var_dump($ingreso),
+                'totalFacturas' => var_dump($totalFacturas)
             ]);
             return;
         } else {
