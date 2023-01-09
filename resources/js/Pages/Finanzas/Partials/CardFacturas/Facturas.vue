@@ -146,7 +146,7 @@ watch(searchText, (newSearch) => {
             </div>
             <div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3">
                 <span class="text-lg font-bold text-white">
-                    Total: {{ formatoMoney(totalFacturas.total) }}
+                    Total: {{ formatoMoney(totalFacturas.total.toFixed(2)) }}
                 </span>
             </div>
         </div>

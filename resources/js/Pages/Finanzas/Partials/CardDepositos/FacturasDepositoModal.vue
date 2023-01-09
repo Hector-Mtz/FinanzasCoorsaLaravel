@@ -75,7 +75,9 @@ const totalFacturas = computed(() => {
     props.deposito.facturas.forEach(fact => {
         total += fact.cantidad;
     });
-    return total;
+
+
+    return formatoMoney(total.toFixed(2));
 })
 
 
