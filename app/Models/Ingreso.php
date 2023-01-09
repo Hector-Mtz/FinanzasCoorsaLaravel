@@ -16,6 +16,15 @@ class Ingreso extends Model
         'status_id',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'cantidad' => 'float',
+    ];
+
 
     public function facturas()
     {

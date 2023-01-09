@@ -209,7 +209,7 @@ class IngresoController extends Controller
 
         if ($totalFacturas > $ingreso->cantidad) {
             @throw ValidationException::withMessages([
-                'message' => 'Monto insuficiente. : ' . $totalFacturas . '> ' . $ingreso->cantidad,
+                'message' => 'Monto insuficiente. : ' . $totalFacturas . '> ' . $ingreso->cantidad . ' = ' . ($totalFacturas >  $ingreso->cantidad),
             ]);
             return;
         } else {
