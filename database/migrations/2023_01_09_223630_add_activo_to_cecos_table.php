@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('cecos', function (Blueprint $table) {
-            $table->boolean('activo_erp')->default(1);
-            $table->boolean('activo_finanzas')->default(1);
+            $table->boolean('activo_erp')->default(1)->after('ubicacione_id');
+            $table->boolean('activo_finanzas')->default(1)->after('activo_erp');
         });
     }
 
