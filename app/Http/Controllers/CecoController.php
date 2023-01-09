@@ -20,7 +20,7 @@ class CecoController extends Controller
             'direction' => 'in:desc,asc'
         ]);
 
-        $cecos =  $cliente->cecos()->select('cecos.id', 'cecos.nombre', 'cecos.lineas_negocio_id');
+        $cecos =  $cliente->cecos()->select('cecos.id', 'cecos.nombre', 'cecos.lineas_negocio_id', 'cecos.activo_finanzas');
         if ($request->has('search')) {
             $search =  strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
             $cecos->where('cecos.nombre', 'like', '%' . $search . '%');
@@ -44,7 +44,8 @@ class CecoController extends Controller
     {
         $newCeco = $request->validate([
             'nombre' => 'unique:cecos,nombre',
-            'lineas_negocio_id' => 'required|exists:lineas_negocios,id'
+            'lineas_negocio_id' => 'required|exists:lineas_negocios,id',
+            'activo_finanzas' => 'required|boolean'
         ]);
 
         return response()->json($cliente->cecos()->create($newCeco));
@@ -64,7 +65,8 @@ class CecoController extends Controller
     {
         $newCeco = $request->validate([
             'nombre' => 'unique:cecos,nombre,' . $ceco->id . ',id',
-            'lineas_negocio_id' => 'required|exists:lineas_negocios,id'
+            'lineas_negocio_id' => 'required|exists:lineas_negocios,id',
+            'activo_finanzas' => 'required|boolean'
         ]);
         $ceco->update($newCeco);
 
@@ -88,6 +90,7 @@ class CecoController extends Controller
     public function catalogo()
     {
         $cecos = Ceco::select("id", "nombre")
+            ->where('cecos.activo_finanzas', '=', 1)
             ->get();
         return response()->json($cecos);
     }

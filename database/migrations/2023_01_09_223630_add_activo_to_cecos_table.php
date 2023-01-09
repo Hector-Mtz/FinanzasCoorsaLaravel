@@ -13,11 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cecos', function (Blueprint $table) {
-            $table->id();
-            $table->string('nombre', 60)->unique();
-            $table->foreignId('cliente_id')->constrained('clientes');
-            $table->timestamps();
+        Schema::table('cecos', function (Blueprint $table) {
+            $table->boolean('activo_erp')->default(1);
+            $table->boolean('activo_finanzas')->default(1);
         });
     }
 
@@ -28,6 +26,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cecos');
+        Schema::table('cecos', function (Blueprint $table) {
+            $table->dropColumn('activo_erp');
+            $table->dropColumn('activo_finanzas');
+        });
     }
 };

@@ -12,6 +12,11 @@ class Ceco extends Model
     protected $fillable = [
         'nombre',
         'cliente_id',
-        'lineas_negocio_id'
+        'lineas_negocio_id',
+        'activo_finanzas'
+    ];
+
+    protected $casts = [
+        'activo_finanzas' => 'boolean'
     ];
 }

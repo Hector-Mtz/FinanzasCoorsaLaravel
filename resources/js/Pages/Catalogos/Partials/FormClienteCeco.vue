@@ -1,4 +1,5 @@
 <script setup>
+
 import { computed, reactive } from 'vue';
 
 import axios from 'axios';
@@ -14,6 +15,7 @@ import Input from '@/Components/Input.vue';
 import ListDataInput from '@/Components/ListDataInput.vue';
 import SpinProgress from '@/Components/SpinProgress.vue';
 import SelectComponent from '@/Components/SelectComponent.vue';
+import SwitchButton from '@/Components/SwitchButton.vue';
 
 const emit = defineEmits(["close", "add", "edit"])
 const props = defineProps({
@@ -49,6 +51,7 @@ const props = defineProps({
 const form = reactive({
     "nombre": "",
     "lineas_negocio_id": "",
+    "activo_finanzas": true,
     'hasErrors': false,
     'errors': [],
     'error': "",
@@ -63,6 +66,7 @@ const titleModal = computed(() => {
     } else {
         form.nombre = props.ceco.nombre;
         form.lineas_negocio_id = props.ceco.lineas_negocio_id;
+        form.activo_finanzas = props.ceco.activo_finanzas;
         return "Actualizar " + props.title.slice(0, -1)
     }
 })
@@ -190,9 +194,12 @@ const update = () => {
                         </SelectComponent>
                         <JetInputError :message="form.errors.lineas_negocio_id" class="mt-2" />
                     </div>
-
-
-
+                    <div>
+                        <JetLabel for="lineas_negocio_id" value="Activo:" />
+                        <SwitchButton id="lineas_negocio_id" name="lineas_negocio_id"
+                            v-model:checked="form.activo_finanzas" required />
+                        <JetInputError :message="form.errors.lineas_negocio_id" class="mt-2" />
+                    </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">
                     <JetButton type="submit" :disabled="form.processing">
