@@ -226,5 +226,118 @@ class PermissionsSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        // Permisos RH
+        DB::table('permissions')->insert([
+            'nombre' => "user-activos.show",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "user-activos.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "user-activos.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "user-inactivos.show",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "user-inactivos.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "user-inactivos.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "users.update-finiquito",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "departamentos.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('permissions')->insert([
+            'nombre' => "puestos.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('permissions')->insert([
+            'nombre' => "puestos.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('permissions')->insert([
+            'nombre' => "puestos.delete",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('permissions')->insert([
+            'nombre' => "plantilla-autorizada.show",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('permissions')->insert([
+            'nombre' => "plantilla-autorizada.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('permissions')->insert([
+            'nombre' => "ubicaciones.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "ubicaciones.edit",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
