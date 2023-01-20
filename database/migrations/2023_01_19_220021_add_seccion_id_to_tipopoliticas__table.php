@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::table('tipopoliticas', function (Blueprint $table) {
             //
-            $table->string('color')->nullable()->after('logo');
+            $table->unsignedBigInteger('seccion_id');
+            $table->foreign('seccion_id')->references('id')->on('seccion_politicas') ->nullable()->before('color');
         });
     }
 
@@ -28,7 +29,8 @@ return new class extends Migration
     {
         Schema::table('tipopoliticas', function (Blueprint $table) {
             //
-            $table->dropForeign('color');
+            $table->dropForeign('seccion_id');
+            $table->dropColumn('seccion_id');
         });
     }
 };

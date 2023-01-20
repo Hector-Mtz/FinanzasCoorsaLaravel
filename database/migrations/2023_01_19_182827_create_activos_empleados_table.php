@@ -13,9 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('tipopoliticas', function (Blueprint $table) {
-            //
-            $table->string('color')->nullable()->after('logo');
+        Schema::create('activos_empleados', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('empleado_id')->constrained('users');
+            $table->foreignId('activo_id')->constrained('activos_items'); 
+            $table->boolean('status');
+            $table->timestamps();
         });
     }
 
@@ -26,9 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('tipopoliticas', function (Blueprint $table) {
-            //
-            $table->dropForeign('color');
-        });
+        Schema::dropIfExists('activos_empleados');
     }
 };

@@ -13,9 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('tipopoliticas', function (Blueprint $table) {
-            //
-            $table->string('color')->nullable()->after('logo');
+        Schema::create('activos_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tipo_activo')->constrained('tipos_activos');
+            $table->date('fecha');
+            $table->boolean('status');
+            $table->timestamps();
         });
     }
 
@@ -26,9 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('tipopoliticas', function (Blueprint $table) {
-            //
-            $table->dropForeign('color');
-        });
+        Schema::dropIfExists('activos_items');
     }
 };
