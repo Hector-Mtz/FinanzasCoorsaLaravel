@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::table('tipopoliticas', function (Blueprint $table) {
             //
-            $table->unsignedBigInteger('seccion_id');
-            $table->foreign('seccion_id')->references('id')->on('seccion_politicas') ->nullable()->before('color');
+            $table->unsignedBigInteger('seccion_id')->nullable()->before('color');
+            $table->foreign('seccion_id')->references('id')->on('seccion_politicas');
         });
     }
 
