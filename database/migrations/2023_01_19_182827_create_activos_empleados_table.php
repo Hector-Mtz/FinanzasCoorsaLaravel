@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('empleado_id')->constrained('users');
             $table->foreignId('activo_id')->constrained('activos_items'); 
             $table->boolean('status');
+            $table->date('fecha');
             $table->timestamps();
         });
     }

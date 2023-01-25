@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('tipopoliticas', function (Blueprint $table) {
+        Schema::table('tipo_activo_campos', function (Blueprint $table) {
             //
-            $table->string('color')->nullable()->after('logo');
+            $table->boolean('principal')->nullable()->after('campo');
         });
     }
 
@@ -26,9 +26,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('tipopoliticas', function (Blueprint $table) {
+        Schema::table('tipo_activo_campos', function (Blueprint $table) {
             //
-            $table->dropColumn('color');
+            $table->dropColumn('principal');
         });
     }
 };

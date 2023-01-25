@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('tipopoliticas', function (Blueprint $table) {
+        Schema::table('tipo_activo_campos', function (Blueprint $table) {
             //
-            $table->string('color')->nullable()->after('logo');
+            $table->unsignedBigInteger('tipo_input_id')->nullable()->before('campo');
+            $table->foreign('tipo_input_id')->references('id')->on('tipo_inputs');
         });
     }
 
@@ -26,9 +27,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('tipopoliticas', function (Blueprint $table) {
+        Schema::table('tipo_activo_campos', function (Blueprint $table) {
             //
-            $table->dropColumn('color');
+            $table->dropForeign('tipo_input_id');
+            $table->dropColumn('tipo_input_id');
         });
     }
 };
