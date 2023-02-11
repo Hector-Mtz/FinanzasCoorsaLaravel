@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('evientrega_activoempleados', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('evidencia_entrega_id')->constrained('evidencia_entregas');
             $table->foreignId('activo_empleado_id')->constrained('activos_empleados');
             $table->timestamps();
         });
