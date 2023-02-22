@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('calificacions', function (Blueprint $table) {
+        Schema::create('parametros', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('empleado_id')->constrained('users');
-            $table->foreignId('ceco_id')->constrained('cecos');
-            $table->string('documento');
-            $table->date('fecha');
+            $table->foreignId('proceso_id')->constrained('procesos');
+            $table->foreignId('user_id')->constrained('users');
+            $table->string('name', 60)->unique();
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('calificacions');
+        Schema::dropIfExists('parametros');
     }
 };

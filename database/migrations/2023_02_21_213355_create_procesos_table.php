@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('documentos_calificacion_mes', function (Blueprint $table) {
+        Schema::create('procesos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('departamentos_auditoria_id')->constrained('departamentos_auditorias');
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('departamento_auditoria_id')->constrained('departamentos_auditorias');
-            $table->string('documento_url');
-            $table->integer('calificacion');
-            $table->date('mes');
-            $table->date('fecha_creacion');
+            $table->string('name', 60)->unique();
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('documentos_calificacion_mes');
+        Schema::dropIfExists('procesos');
     }
 };
