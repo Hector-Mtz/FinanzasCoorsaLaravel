@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('calificacions', function (Blueprint $table) {
+        Schema::create('calificacion_mes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('empleado_id')->constrained('users');
-            $table->foreignId('ceco_id')->constrained('cecos');
-            $table->string('documento');
-            $table->date('fecha');
+            $table->foreignId('parametro_id')->constrained('parametros');
+            $table->foreignId('user_id')->constrained('users');
+            $table->float('calificacion', 3, 1)->default(0.0);
+            $table->integer('ponderacion')->default(1);
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('calificacions');
+        Schema::dropIfExists('calificacion_mes');
     }
 };

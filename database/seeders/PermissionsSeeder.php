@@ -339,5 +339,111 @@ class PermissionsSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        DB::table('permissions')->insert([
+            'nombre' => "departamentos_auditorias.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "departamentos_auditorias.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "departamentos_auditorias.delete",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "procesos.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "procesos.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "procesos.delete",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('permissions')->insert([
+            'nombre' => "parametros.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "parametros.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "parametros.delete",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "calificacion_mes.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "calificacion_mes.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "calificacion_mes.delete",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "documentos_mes.create",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "documentos_mes.update",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('permissions')->insert([
+            'nombre' => "documentos_mes.delete",
+            'plataforma_id' => 2,
+            'is_acceso' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
