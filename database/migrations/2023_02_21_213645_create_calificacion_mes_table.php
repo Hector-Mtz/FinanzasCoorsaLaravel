@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('parametro_id')->constrained('parametros');
             $table->foreignId('user_id')->constrained('users');
             $table->float('calificacion', 3, 1)->default(0.0);
+            $table->integer('ponderacion')->default(1);
             $table->timestamps();
         });
     }
