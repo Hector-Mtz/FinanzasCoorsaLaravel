@@ -106,7 +106,6 @@ async function getDaysStatus() {
     const responses = await Promise.all(axiosDaysStatus);
 
     var total = 0;
-    var subtotal = 0;
     // Genera el titulo de la data
     const daysStatus = responses.map((resp, index) => {
         // Se recorren los attributos
@@ -117,13 +116,15 @@ async function getDaysStatus() {
             resp.data[d].forEach((obj) => {
                 total += obj.total;
                 // subtotal += obj.subtotal;
-                obj.total = formatoMoney(obj.total);
-                // obj.subtotal = formatoMoney(obj.subtotal);
+                obj.total = '$' + formatoMoney(obj.total.toFixed(2));
+                if (obj.hasOwnProperty('subtotal')) {
+                    obj.subtotal = '$' + formatoMoney(obj.subtotal.toFixed(2));
+                }
             });
             resp.data[d].data = resp.data[d];
             resp.data[d].title = formatoMoney(total.toFixed(2));
         }
-        total = formatoMoney(total);
+        // total = formatoMoney(total);
         return { data: resp.data, color: colors[index], serie: series[index] }
     });
     specialDays.value = daysStatus;
@@ -201,8 +202,7 @@ watch(props, () => {
                             </span>
                         </td>
                         <td class="w-3/12">
-                            <span @click="addStatus('c')" class="action-ventas"
-                                :class="{ 'bg-yellow-300': isActive('c') }">
+                            <span @click="addStatus('c')" class="action-ventas" :class="{ 'bg-yellow-300': isActive('c') }">
                                 C
                             </span>
                         </td>

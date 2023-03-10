@@ -65,7 +65,7 @@ const close = () => {
                 <template #thead>
                     <tr class="uppercase">
                         <th v-for="header in headerTable" :key="header">
-                            {{header}}
+                            {{ header }}
                         </th>
                     </tr>
                 </template>
