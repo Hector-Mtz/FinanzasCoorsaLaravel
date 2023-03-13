@@ -13,7 +13,8 @@ class Venta extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'iva' => 'boolean'
+        'iva' => 'boolean',
+        'revisado' => 'boolean',
     ];
 
     public function ceco()

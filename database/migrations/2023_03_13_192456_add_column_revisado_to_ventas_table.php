@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('procesos', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('departamentos_auditoria_id')->constrained('departamentos_auditorias');
-            $table->foreignId('user_id')->constrained('users');
-            $table->string('name', 60)->unique();
-            $table->timestamps();
+        Schema::table('ventas', function (Blueprint $table) {
+            $table->boolean('revisado')->default(0);
         });
     }
 
@@ -29,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('procesos');
+        Schema::table('ventas', function (Blueprint $table) {
+            $table->boolean('revisado')->default(0);
+        });
     }
 };

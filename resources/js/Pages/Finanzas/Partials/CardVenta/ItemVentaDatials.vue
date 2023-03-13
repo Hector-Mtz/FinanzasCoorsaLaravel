@@ -2,10 +2,11 @@
 import { computed, ref } from "vue";
 import { formatoMoney, IVA } from "../../../../utils/conversiones";
 import SuccessButton from "@/Components/SuccessButton.vue";
+import SwitchButton from "@/Components/SwitchButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import { Inertia } from "@inertiajs/inertia";
 import { usePage } from "@inertiajs/inertia-vue3";
-const emit = defineEmits(['edit', 'activeIva'])
+const emit = defineEmits(['edit', 'activeIva', 'changeRevisado'])
 
 const props = defineProps({
     venta: {
@@ -48,7 +49,7 @@ const eliminarVenta = (id) => {
 
 </script>
 <template>
-    <tr>
+    <tr :class="{ 'bg-blue-500': venta.revisado }">
         <td>{{ ventaShow.ceco + "-" + ventaShow.servicio }}</td>
         <td>{{ ventaShow.comentario }}</td>
         <td>
@@ -64,6 +65,7 @@ const eliminarVenta = (id) => {
         <td>${{ ventaShow.total }}</td>
         <td>{{ ventaShow.fechaInicial }}</td>
         <td v-if="$page.props.can['ventas.edit']">
+            <SwitchButton v-model:checked="venta.revisado" @change="$emit('changeRevisado', venta)" />
             <SuccessButton v-if="isEditable" @click="emit('edit', props.venta)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                     <path

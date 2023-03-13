@@ -54,6 +54,23 @@ const activeIva = (ventaId) => {
         });
 }
 
+
+const changeRevisado = (venta) => {
+    axios.put(route('ventas.revisado', venta.id), {
+        revisado: venta.revisado
+    }).
+        then(() => {
+
+        }).catch(err => {
+            venta.revisado = !venta.revisado;
+            if (err.hasOwnProperty('errors') && err.response.data.hasOwnProperty('errors')) {
+                alert(err.response.data.message)
+            } else {
+                alert("ERROR ACTIVE IVA")
+            }
+        });
+}
+
 const search = (newSearch) => {
     const params = pickBy({ search: newSearch })
     Inertia.visit(route('ventas.index'), {
@@ -87,7 +104,6 @@ const close = () => {
 
 </script>
 <template>
-
     <DialogModal :show="show" @close="close()" maxWidth="6xl">
         <template #title>
             <div class="flex flex-row">
@@ -118,7 +134,7 @@ const close = () => {
                         <th>TOTAL IVA</th>
                         <th>TOTAL</th>
                         <th>FECHA INICIAL</th>
-                        <th v-if="$page.props.can['ventas.edit']"></th>
+                        <th v-if="$page.props.can['ventas.edit']">REVISADO</th>
                         <th v-if="$page.props.can['ventas.delete']"></th>
                     </tr>
                     <tr>
@@ -130,7 +146,8 @@ const close = () => {
                 </template>
                 <template #tbody>
                     <ItemVentaDatials v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta"
-                        @edit="showFormVentas($event)" @activeIva="activeIva($event)" />
+                        @edit="showFormVentas($event)" @activeIva="activeIva($event)"
+                        @changeRevisado="changeRevisado($event)" />
                 </template>
             </TableComponent>
             <!-- MODALS -->

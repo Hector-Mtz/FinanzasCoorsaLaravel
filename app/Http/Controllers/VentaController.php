@@ -137,6 +137,25 @@ class VentaController extends Controller
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Venta  $venta
+     * @return \Illuminate\Http\Response
+     */
+    public function changeRevisado(Venta $venta)
+    {
+        request()->validate([
+            'revisado' => ['required', 'boolean']
+        ]);
+        $venta->revisado = request('revisado');
+        $venta->save();
+        return response()->json([
+            'message' => 'ok'
+        ]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Venta  $venta
