@@ -199,7 +199,7 @@ class VentaController extends Controller
             'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
         ]);
 
-        $ventas = Venta::select('ventas.id')
+        $ventas = Venta::select('ventas.id', 'ventas.revisado')
             ->selectRaw('concat(cecos.nombre,"-",servicios.nombre) as nombre,montos.cantidad * ventas.periodos * ventas.cantidad AS subtotal, ifnull(montos.cantidad * ventas.periodos * ventas.cantidad
                + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0),0) as total')
             ->selectRaw('day(ventas.fechaInicial) as day,ventas.comentario')

@@ -1,12 +1,11 @@
 <script setup>
-import { computed } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
+import { computed } from "vue";
+import { Inertia } from "@inertiajs/inertia";
 
-import DialogModal from '@/Components/DialogModal.vue';
-import TableComponent from '@/Components/Table.vue';
+import DialogModal from "@/Components/DialogModal.vue";
+import TableComponent from "@/Components/Table.vue";
 
-
-const emit = defineEmits(["close", "addOc"])
+const emit = defineEmits(["close", "addOc"]);
 const props = defineProps({
     show: {
         type: Boolean,
@@ -14,13 +13,13 @@ const props = defineProps({
     },
     dataCalendar: {
         type: Object,
-        required: true
+        required: true,
     },
-})
+});
 
 const headerTable = computed(() => {
     if (props.dataCalendar.data.lenght == 0) {
-        return ['', 'Cantidad']
+        return ["", "Cantidad"];
     }
     let keyData;
     const auxHeader = [];
@@ -30,31 +29,32 @@ const headerTable = computed(() => {
             case "day":
                 break;
             default:
-                auxHeader.push(keyData)
+                auxHeader.push(keyData);
                 break;
         }
     }
     return auxHeader;
-})
+});
 
 const close = () => {
-
-    emit('close');
+    emit("close");
 };
-
-
 </script>
 <template>
     <DialogModal :show="show" @close="close()">
         <template #title>
             <div class="flex flex-row">
                 <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
-                    <span class="block font-bold text-center text-white uppercase">
+                    <span
+                        class="block font-bold text-center text-white uppercase"
+                    >
                         {{ dataCalendar.serie }}
                     </span>
                 </div>
                 <div class="px-4 py-1 border-gray-600">
-                    <span class="block font-bold text-center text-white uppercase">
+                    <span
+                        class="block font-bold text-center text-white uppercase"
+                    >
                         {{ dataCalendar.date }}
                     </span>
                 </div>
@@ -65,14 +65,22 @@ const close = () => {
                 <template #thead>
                     <tr class="uppercase">
                         <th v-for="header in headerTable" :key="header">
-                            {{ header }}
+                            <template v-if="header != 'revisado'">
+                                {{ header }}
+                            </template>
                         </th>
                     </tr>
                 </template>
                 <template #tbody>
                     <tr v-for="(obj, index) in dataCalendar.data" :key="index">
-                        <td v-for="header in headerTable" :key="header + index">
-                            {{ obj[header] }}
+                        <td
+                            v-for="header in headerTable"
+                            :key="header + index"
+                            :class="{ 'bg-blue-500': obj.revisado }"
+                        >
+                            <template v-if="header != 'revisado'">
+                                {{ obj[header] }}
+                            </template>
                         </td>
                     </tr>
                 </template>
