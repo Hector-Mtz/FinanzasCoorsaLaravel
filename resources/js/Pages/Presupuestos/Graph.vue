@@ -12,7 +12,9 @@ import ButtonPres from '../../Components/ButtonPres.vue';
 import moment from 'moment';
 import ModalSalidaMovimiento from './Components/ModalSalidaMovimiento.vue';
 
-//comentarioooo
+//comentariooo
+
+///comentario programador jr
 
 //variables GLOBALES
 //cambio aaa
