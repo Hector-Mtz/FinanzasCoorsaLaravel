@@ -3,128 +3,114 @@
 @tailwind utilities;
 
 body {
-    background-color: #010E1D;
+    background-color: #010e1d;
 }
 
-:root{
+:root {
     --blanco: #fff;
-    --letrasLogin:gray;
-    --aqua: #40BB6E;
-    --fuentePrincipal: 'Montserrat'!important;
-    --borderColor:#26458D;
-    --azul1:#111F2E;
-    --vemergent:#687FA4;
-    --vemergent2:#3E5A7E;
+    --letrasLogin: gray;
+    --aqua: #40bb6e;
+    --fuentePrincipal: "Montserrat" !important;
+    --borderColor: #26458d;
+    --azul1: #111f2e;
+    --vemergent: #687fa4;
+    --vemergent2: #3e5a7e;
 }
 
-.tabs-header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.active {
-    border-color: #010E1D;
-}
-
-.fondo_menu{
-    background-image: url('../img/LOGIN.jpg');
+.fondo_menu {
+    background-image: url("../img/LOGIN.jpg");
     background-size: cover;
     background-repeat: no-repeat;
-
 }
 
-.fondo_general{
-    background-color: #010E1D ;
+.fondo_general {
+    background-color: #010e1d;
 }
 
-.fondo_item{
-    background-color: #111F2E;
+.fondo_item {
+    background-color: #111f2e;
 }
 
-.card{
+.card {
     margin-left: 38rem;
     background: transparent;
 }
 
-.logoinicio{
+.logoinicio {
     margin-left: 37rem;
 }
 
-.text-input{
+.text-input {
     color: var(--blanco);
-    font-size:40px ;
+    font-size: 40px;
     font-weight: bold;
 }
 
-.ingresarLogin{
-    border: var(--aqua) 5px solid ;
-    border-radius:5%;
+.ingresarLogin {
+    border: var(--aqua) 5px solid;
+    border-radius: 5%;
     text-align: center;
 }
 
-.labelLogin{
-    color:var(--blanco)
+.labelLogin {
+    color: var(--blanco);
 }
 
-.dashboard_texts{
- float: left;
- margin: 10px;
+.dashboard_texts {
+    float: left;
+    margin: 10px;
 }
 
-.dashboard_text{
+.dashboard_text {
     font-family: var(--fuentePrincipal);
     font-size: 20px;
     font-weight: bold;
     float: left;
 }
-.dashboard_text2{
-  color: var(--aqua);
-  font-weight: bold;
-  font-size: 14px;
+.dashboard_text2 {
+    color: var(--aqua);
+    font-weight: bold;
+    font-size: 14px;
 }
 
-.cliente_module{
+.cliente_module {
     background: transparent;
 }
 
 .inputLogin {
-  border-radius: 5%;
+    border-radius: 5%;
 }
 
-
-.datepicker{
+.datepicker {
     float: left;
 }
 
-
-.datetexts{
+.datetexts {
     display: flex;
     justify-items: center;
     justify-content: center;
 }
 
-.group
-{
-  display: flex;
-  margin-bottom: 1rem;
+.group {
+    display: flex;
+    margin-bottom: 1rem;
 }
 
-.buttonCECO{
+.buttonCECO {
     transform: rotate(270deg);
     color: var(--blanco);
     font-family: var(--fuentePrincipal);
     padding: 1rem;
-    border-radius: 15%  15% 0% 0%;
+    border-radius: 15% 15% 0% 0%;
     border: 0.2rem solid var(--borderColor);
     margin-left: 0rem;
     margin-top: 0.5rem;
 }
 
-.buttonCON
-{
+.buttonCON {
     color: var(--blanco);
     font-family: var(--fuentePrincipal);
-    border-radius: 0%  15% 0% 0%;
+    border-radius: 0% 15% 0% 0%;
     border: 0.2rem solid var(--borderColor);
     padding: 0.4rem;
     margin-bottom: 2rem;
@@ -132,8 +118,7 @@ body {
     margin-left: -0.5rem;
 }
 
-.dropbtn
-{
+.dropbtn {
     color: var(--blanco);
     font-family: var(--fuentePrincipal);
     border: 0.2rem solid var(--borderColor);
@@ -141,12 +126,13 @@ body {
     margin-left: -3.5rem;
     margin-top: 2.7rem;
     padding-right: 2.6rem;
-    border-radius:15% 0% 15% 0%;
+    border-radius: 15% 0% 15% 0%;
     text-align: center;
-    text-align:center;
+    text-align: center;
 }
 
-.dropbtn:hover, .dropbtn:focus {
+.dropbtn:hover,
+.dropbtn:focus {
     background-color: var(--azul1);
 }
 
@@ -164,7 +150,7 @@ body {
     color: white;
     min-width: 110px;
     overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     border-radius: 10%;
 }
 
@@ -176,27 +162,28 @@ body {
     z-index: 2;
 }
 
-.dropdown a:hover {background-color: #f1f1f1}
+.dropdown a:hover {
+    background-color: #f1f1f1;
+}
 
 .show {
-    display:inline-grid;
+    display: inline-grid;
     z-index: 2;
 }
 
-
-.modalPart1{
+.modalPart1 {
     background-color: var(--vemergent2);
 }
 
-.borderModal{
-    border-color: #687FA4;
+.borderModal {
+    border-color: #687fa4;
 }
 
-.buttonReturn{
+.buttonReturn {
     margin-left: 1rem;
 }
 
-.button_submenu{
+.button_submenu {
     display: flex;
     margin-left: 15rem;
 }
@@ -205,7 +192,7 @@ body {
 
 .watch {
     padding: 10%;
-    background-color: #BB1313;
+    background-color: #bb1313;
     border-radius: 50%;
     padding-left: 11px;
     padding-right: 12px;
@@ -219,125 +206,111 @@ body {
     padding-right: 12px;
 }
 
-
 .buttonAdd {
     background: transparent;
     color: white;
 }
 
-.buttonAdd:hover{
+.buttonAdd:hover {
     font-weight: bold;
-    background-color: #40BB6E;
+    background-color: #40bb6e;
 }
 
-.buttonRemove
-{
+.buttonRemove {
     font-weight: bold;
     background: transparent;
     color: white;
 }
 
-.buttonRemove:hover
-{
+.buttonRemove:hover {
     background-color: #d14242;
     color: white;
 }
 
 .tabs-header {
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 }
 
-.tab {
-    padding: 3px;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}
-.tab:hover {
-    border-color: #010E1D;
-}
+
+
 
 #tabla {
- margin-left: 2rem;
- margin-right: 2rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
 }
 
-#tabla thead{
-
+#tabla thead {
 }
 
-#tabla thead tr th{
+#tabla thead tr th {
     border: 3px solid var(--vemergent);
     border-radius: 2px;
     align-items: center;
     width: 1%;
     color: white;
-    background-color:var(--vemergent2);
+    background-color: var(--vemergent2);
     text-align: center;
 }
 
-#tabla tbody tr td{
+#tabla tbody tr td {
     border: 3px solid var(--vemergent);
     border-radius: 2px;
     align-content: center;
     width: 1%;
     color: white;
-    background-color:var(--vemergent2);
+    background-color: var(--vemergent2);
     text-align: center;
 }
 
 .formNewGastos {
-    margin:1rem;
+    margin: 1rem;
     display: grid;
-    grid-template-columns: repeat(2,50%);
+    grid-template-columns: repeat(2, 50%);
 }
 
-.labelForm{
+.labelForm {
     color: var(--blanco);
     font-family: var(--fuentePrincipal);
 }
 
-#tabla2
-{
-  margin: 10px;
+#tabla2 {
+    margin: 10px;
 }
 
-#tabla2 thead tr th
-{
+#tabla2 thead tr th {
     border: 3px solid var(--vemergent);
     border-radius: 2px;
     align-items: center;
     width: 1%;
     color: white;
-    background-color:var(--vemergent2);
+    background-color: var(--vemergent2);
     text-align: center;
 }
 
-#tabla2 tbody tr td{
+#tabla2 tbody tr td {
     border: 3px solid var(--vemergent);
     border-radius: 2px;
     align-content: center;
     width: 1%;
     color: white;
-    background-color:var(--vemergent2);
+    background-color: var(--vemergent2);
     text-align: center;
 }
 
 .sentButtonModal1 {
-    float:right;
+    float: right;
     width: min-content;
     margin-top: 2rem;
-    grid-column:1/3 ;
+    grid-column: 1/3;
     grid-row: 4/5;
     margin-left: 6rem;
     float: left;
 }
 
-.buttonModalAdd1{
-    grid-row:4/5;
-    margin-top:2rem;
+.buttonModalAdd1 {
+    grid-row: 4/5;
+    margin-top: 2rem;
     margin-left: 2.1rem;
     grid-column: 1/2;
     margin-left: 2rem;
@@ -351,12 +324,8 @@ body {
     grid-column: 2/3;
 }
 
-
-.active {
-    border-color: #010E1D;
-}
 .active-picker {
-    background-color: #687FA4;
+    background-color: #687fa4;
 }
 
 .item-picker {
@@ -377,14 +346,16 @@ body {
 .table-ingresos tbody tr td {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    border-top: 3px solid #010E1D;
+    border-top: 3px solid #010e1d;
 }
 .ring-button {
-    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;
-    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
-    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
+        var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
+        calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
+        var(--tw-shadow, 0 0 #0000) !important;
 }
-
 
 .tab {
     overflow: hidden;
