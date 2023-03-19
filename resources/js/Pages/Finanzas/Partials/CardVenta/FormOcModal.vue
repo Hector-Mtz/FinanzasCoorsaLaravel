@@ -1,24 +1,24 @@
 <script setup>
-import { computed, reactive } from 'vue';
-
-import axios from 'axios';
-
-import JetLabel from '@/Jetstream/Label.vue';
-import JetButton from '@/Jetstream/Button.vue';
-import JetInputError from '@/Jetstream/InputError.vue';
-
-import DialogModal from '@/Components/DialogModal.vue';
-import Input from '@/Components/Input.vue';
-import ListDataInput from '@/Components/ListDataInput.vue';
-import SpinProgress from '@/Components/SpinProgress.vue';
-import SelectComponent from '@/Components/SelectComponent.vue';
-import { Inertia } from '@inertiajs/inertia';
+import { computed, reactive } from "vue";
+import axios from "axios";
+import JetButton from "@/Jetstream/Button.vue";
+import JetInputError from "@/Jetstream/InputError.vue";
+import cerrar from "../../../../../img/elementos/cerrar.png";
+import DialogModal from "@/Components/DialogModal.vue";
+import Input from "@/Components/Input.vue";
+import SpinProgress from "@/Components/SpinProgress.vue";
+import { Inertia } from "@inertiajs/inertia";
 
 const emit = defineEmits(["close", "addOc", "editOc"]);
 
 let nowDate = new Date();
 const month = nowDate.getMonth() + 1;
-nowDate = nowDate.getFullYear() + '-' + (month < 10 ? '0' + month : month) + '-' + (nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate.getDate());
+nowDate =
+    nowDate.getFullYear() +
+    "-" +
+    (month < 10 ? "0" + month : month) +
+    "-" +
+    (nowDate.getDate() < 10 ? "0" + nowDate.getDate() : nowDate.getDate());
 const props = defineProps({
     show: {
         type: Boolean,
@@ -26,49 +26,46 @@ const props = defineProps({
     },
     typeForm: {
         type: String,
-        default: 'create'
+        default: "create",
     },
     oc: {
         type: Object,
-        required: false
+        required: false,
     },
     venta: {
         type: Object,
-        required: false
-    }
+        required: false,
+    },
 });
 
-
-
-
 const form = reactive({
-    'nombre': "",
-    'cantidad': "",
-    'fecha_alta': nowDate,
-    'status_id': "",
-    'venta_id': "",
-    'hasErrors': false,
-    'errors': [],
-    'error': "",
-    'recentlySuccessful': false,
-    'processing': false,
+    nombre: "",
+    cantidad: "",
+    fecha_alta: nowDate,
+    status_id: "",
+    venta_id: "",
+    hasErrors: false,
+    errors: [],
+    error: "",
+    recentlySuccessful: false,
+    processing: false,
 });
 
 const titleModal = computed(() => {
-    if (props.typeForm === 'create') {
+    if (props.typeForm === "create") {
         restForm();
         form.fecha_alta = nowDate;
 
-        return "Nueva Oc"
+        return "Nueva Oc";
     } else {
         form.nombre = props.oc.nombre;
         form.cantidad = props.oc.cantidad;
-        form.fecha_alta = props.oc.fecha_alta.split('/').reverse().join('-');
+        form.fecha_alta = props.oc.fecha_alta.split("/").reverse().join("-");
         form.status_id = props.oc.status_id;
         form.venta_id = props.oc.venta_id;
-        return "Actualizar Oc"
+        return "Actualizar Oc";
     }
-})
+});
 
 function restForm() {
     form.nombre = "";
@@ -86,10 +83,8 @@ const close = () => {
     form.hasErrors = false;
     form.errors = {};
     form.error = "";
-    emit('close');
+    emit("close");
 };
-
-
 
 const createOrUpdate = () => {
     if (props.typeForm === "create") {
@@ -97,13 +92,11 @@ const createOrUpdate = () => {
     } else {
         update();
     }
-}
-
-
+};
 
 const create = () => {
-    axios.post(route('ocs.store'), form,
-        {
+    axios
+        .post(route("ocs.store"), form, {
             onUploadProgress: () => {
                 form.processing = true;
             },
@@ -112,126 +105,158 @@ const create = () => {
             emit("addOc", resp.data);
             form.recentlySuccessful = true;
             restForm();
-            Inertia.visit(route('ventas.index'), {
+            Inertia.visit(route("ventas.index"), {
                 preserveState: true,
                 preserveScroll: true,
-                only: ['totalOcs'],
-            })
+                only: ["totalOcs"],
+            });
             setTimeout(() => {
                 close();
             }, 500);
-        }).catch(error => {
+        })
+        .catch((error) => {
             form.hasErrors = true;
-            if (error.response.data.hasOwnProperty('errors')) {
-                const errors = error.response.data.errors
+            if (error.response.data.hasOwnProperty("errors")) {
+                const errors = error.response.data.errors;
                 for (let error in errors) {
-                    form.errors[error] = errors[error][0]
+                    form.errors[error] = errors[error][0];
                 }
-                form.error = error.response.data.message
+                form.error = error.response.data.message;
             } else {
-                if (error.response.data.hasOwnProperty('message')) {
-                    form.error = error.response.data.message
+                if (error.response.data.hasOwnProperty("message")) {
+                    form.error = error.response.data.message;
                 } else {
-                    form.error = "Error CREATE OC"
+                    form.error = "Error CREATE OC";
                 }
-            };
-        }).then(() => { // always
+            }
+        })
+        .then(() => {
+            // always
             form.processing = false;
             setTimeout(() => {
                 form.recentlySuccessful = false;
             }, 500);
         });
-}
+};
 const update = () => {
-    axios.put(route('ocs.update', props.oc.id), form,
-        {
+    axios
+        .put(route("ocs.update", props.oc.id), form, {
             onUploadProgress: () => {
                 form.processing = true;
             },
         })
         .then((resp) => {
             emit("editOc", resp.data);
-            form.recentlySuccessful = true
+            form.recentlySuccessful = true;
             restForm();
-            Inertia.visit(route('ventas.index'), {
+            Inertia.visit(route("ventas.index"), {
                 preserveState: true,
                 preserveScroll: true,
-                only: ['totalOcs'],
-            })
+                only: ["totalOcs"],
+            });
             setTimeout(() => {
                 close();
             }, 500);
-        }).catch(error => {
+        })
+        .catch((error) => {
             form.hasErrors = true;
-            if (error.response.data.hasOwnProperty('errors')) {
-                const errors = error.response.data.errors
+            if (error.response.data.hasOwnProperty("errors")) {
+                const errors = error.response.data.errors;
                 for (let error in errors) {
-                    form.errors[error] = errors[error][0]
+                    form.errors[error] = errors[error][0];
                 }
-                form.error = error.response.data.message
+                form.error = error.response.data.message;
             } else {
-                if (error.response.data.hasOwnProperty('message')) {
-                    form.error = error.response.data.message
+                if (error.response.data.hasOwnProperty("message")) {
+                    form.error = error.response.data.message;
                 } else {
-                    form.error = "ERROR UPDATE OC"
+                    form.error = "ERROR UPDATE OC";
                 }
-            };
-        }).then(() => { // always
+            }
+        })
+        .then(() => {
+            // always
             form.processing = false;
             setTimeout(() => {
                 form.recentlySuccessful = false;
             }, 500);
         });
-}
-
-
-
-
+};
 </script>
 <template>
-    <DialogModal :show="show" @close="close()">
+    <DialogModal :maxWidth="'xl'" :show="show" @close="close()">
         <template #title>
-            <div class="border-b-4 border-gray-600">
+            <div class="flex justify-start relative">
                 <div class="px-4 py-1 text-center">
-                    <span class="font-bold text-white">
+                    <span class="font-bold text-3xl">
                         {{ titleModal }}
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
+                </div>
+                <div
+                    class="absolute left-[94%] top-[5%] hover:cursor-pointer"
+                    @click="close"
+                >
+                    <img :src="cerrar" alt="" />
                 </div>
             </div>
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
+                <div class="grid px-4 gap-2 mt-4 mb-12">
                     <div>
-                        <JetLabel for="nombre" value="Nombre:" />
-                        <Input id="nombre" name="nombre" type="text" v-model="form.nombre" required maxlength="30" />
-                        <JetInputError :message="form.errors.nombre" class="mt-2" />
+                        <Input
+                            id="nombre"
+                            name="nombre"
+                            type="text"
+                            placeholder="NOMBRE"
+                            v-model="form.nombre"
+                            required
+                            maxlength="30"
+                        />
+                        <JetInputError
+                            :message="form.errors.nombre"
+                            class="mt-2"
+                        />
                     </div>
                     <div>
-                        <JetLabel for="cantidad" value="Cantidad:" />
-                        <Input id="cantidad" name="cantidad" type="text" pattern="^\d*(\.\d{0,2})?$"
-                            v-model="form.cantidad" required maxlength="30" />
-                        <JetInputError :message="form.errors.cantidad" class="mt-2" />
+                        <Input
+                            id="fecha_alta"
+                            name="fecha_alta"
+                            type="date"
+                            placeholder="FECHA INICIAL"
+                            min="2000-01-02"
+                            v-model="form.fecha_alta"
+                            required
+                        />
+                        <JetInputError
+                            :message="form.errors.fecha_alta"
+                            class="mt-2"
+                        />
                     </div>
-                    <div>
-                        <JetLabel for="fecha_alta" value="Fecha Alta:" />
-                        <Input id="fecha_alta" name="fecha_alta" type="date" min="2000-01-02" v-model="form.fecha_alta"
-                            required />
-                        <JetInputError :message="form.errors.fecha_alta" class="mt-2" />
+                    <div class="w-96">
+                        <Input
+                            id="cantidad"
+                            name="cantidad"
+                            type="text"
+                            pattern="^\d*(\.\d{0,2})?$"
+                            placeholder="CANTIDAD"
+                            v-model="form.cantidad"
+                            required
+                            maxlength="30"
+                        />
+                        <JetInputError
+                            :message="form.errors.cantidad"
+                            class="mt-2"
+                        />
                     </div>
                 </div>
-                <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">
+                <div class="flex justify-end px-10 py-2">
                     <JetButton type="submit" :disabled="form.processing">
                         <SpinProgress :inprogress="form.processing" />
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-6 h-5 "
-                            viewBox="0 0 16 16">
-                            <path
-                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                        </svg>Guardar
+                        Agregar
                     </JetButton>
                 </div>
-
             </form>
         </template>
     </DialogModal>

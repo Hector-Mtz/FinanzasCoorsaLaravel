@@ -1,15 +1,16 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { pickBy } from 'lodash';
-import ButtonAdd from '@/Components/ButtonAdd.vue';
-import DialogModal from '@/Components/DialogModal.vue';
-import ItemVentaDatials from './ItemVentaDatials.vue';
-import TableComponent from '@/Components/Table.vue';
-import FormVentaModal from './FormVentaModal.vue';
-import InputSearch from '@/Components/InputSearch.vue';
-import { Inertia } from '@inertiajs/inertia';
+import { ref, watch } from "vue";
+import { pickBy } from "lodash";
+import ButtonAdd from "@/Components/ButtonAdd.vue";
+import DialogModal from "@/Components/DialogModal.vue";
+import ItemVentaDatials from "./ItemVentaDatials.vue";
+import TableComponent from "@/Components/Table.vue";
+import FormVentaModal from "./FormVentaModal.vue";
+import InputSearch from "@/Components/InputSearchVentas.vue";
+import { Inertia } from "@inertiajs/inertia";
+import mas from "../../../../../img/elementos/+.png";
 
-const emit = defineEmits(["close",])
+const emit = defineEmits(["close"]);
 const props = defineProps({
     show: {
         type: Boolean,
@@ -18,7 +19,7 @@ const props = defineProps({
     ventas: {
         type: Object,
         required: true,
-    }
+    },
 });
 const searchText = ref("");
 const showingFormVenta = ref(false);
@@ -28,62 +29,65 @@ const typeForm = ref("create");
 // MODALS FUNCITON
 const showFormVentas = (ventaSelect) => {
     if (ventaSelect === undefined) {
-        typeForm.value = "create"
+        typeForm.value = "create";
     } else {
-        typeForm.value = "update"
-        venta.value = ventaSelect
+        typeForm.value = "update";
+        venta.value = ventaSelect;
     }
-    showingFormVenta.value = true
-}
+    showingFormVenta.value = true;
+};
 // EN MODALS FUNCTION
 
 const activeIva = (ventaId) => {
-    axios.put(route('ventas.iva', ventaId)).
-        then(() => {
-            Inertia.visit(route('ventas.index'), {
+    axios
+        .put(route("ventas.iva", ventaId))
+        .then(() => {
+            Inertia.visit(route("ventas.index"), {
                 preserveScroll: true,
                 preserveState: true,
-                only: ['clientes', 'totalVentas', 'errors'],
-            })
-        }).catch(err => {
-            if (err.hasOwnProperty('errors') && err.response.data.hasOwnProperty('errors')) {
-                alert(err.response.data.message)
+                only: ["clientes", "totalVentas", "errors"],
+            });
+        })
+        .catch((err) => {
+            if (
+                err.hasOwnProperty("errors") &&
+                err.response.data.hasOwnProperty("errors")
+            ) {
+                alert(err.response.data.message);
             } else {
-                alert("ERROR ACTIVE IVA")
+                alert("ERROR ACTIVE IVA");
             }
         });
-}
-
+};
 
 const changeRevisado = (venta) => {
-    axios.put(route('ventas.revisado', venta.id), {
-        revisado: venta.revisado
-    }).
-        then(() => {
-
-        }).catch(err => {
+    axios
+        .put(route("ventas.revisado", venta.id), {
+            revisado: venta.revisado,
+        })
+        .then(() => {})
+        .catch((err) => {
             venta.revisado = !venta.revisado;
-            if (err.hasOwnProperty('errors') && err.response.data.hasOwnProperty('errors')) {
-                alert(err.response.data.message)
+            if (
+                err.hasOwnProperty("errors") &&
+                err.response.data.hasOwnProperty("errors")
+            ) {
+                alert(err.response.data.message);
             } else {
-                alert("ERROR ACTIVE IVA")
+                alert("ERROR ACTIVE IVA");
             }
         });
-}
+};
 
 const search = (newSearch) => {
-    const params = pickBy({ search: newSearch })
-    Inertia.visit(route('ventas.index'), {
+    const params = pickBy({ search: newSearch });
+    Inertia.visit(route("ventas.index"), {
         data: params,
         preserveState: true,
         preserveScroll: true,
-        only: ['clientes',
-            'totalVentasStatus',
-        ],
-    })
-
-}
-
+        only: ["clientes", "totalVentasStatus"],
+    });
+};
 
 let timeout;
 watch(searchText, (newSearch) => {
@@ -92,41 +96,46 @@ watch(searchText, (newSearch) => {
     }
     //Bounce de busqueda
     timeout = setTimeout(() => {
-        search(newSearch)
+        search(newSearch);
     }, 300);
-
 });
 
-
 const close = () => {
-    emit('close');
+    emit("close");
 };
-
 </script>
 <template>
     <DialogModal :show="show" @close="close()" maxWidth="6xl">
         <template #title>
-            <div class="flex flex-row">
-                <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
-
-                    <span class="block font-bold text-center text-white">
-                        Ventas
-                    </span>
-                </div>
-                <div class="flex-1 px-2 py-1">
-                    <div class="flex justify-center">
-                        <ButtonAdd v-if="$page.props.can['ventas.create']" @click="showFormVentas()"
-                            class="text-sm text-white h-7">
-                            Agregar
-                        </ButtonAdd>
+            <div
+                class="flex text-fuente-500 gap-4 items-center justify-between px-8 mb-8 py-2"
+            >
+                <div class="flex gap-4 pl-8 items-center">
+                    <div class="">
+                        <span class="block font-bold text-start text-3xl">
+                            Ventas
+                        </span>
+                    </div>
+                    <div class="">
+                        <div class="flex justify-center">
+                            <ButtonAdd
+                                v-if="$page.props.can['ventas.create']"
+                                @click="showFormVentas()"
+                                class="text-sm text-white h-7"
+                            />
+                        </div>
                     </div>
                 </div>
+
+                <InputSearch v-model="searchText" class="w-96" />
             </div>
         </template>
         <template #content>
             <TableComponent>
                 <template #thead>
-                    <tr>
+                    <tr
+                        class="text-fuente-500 text-md border-b-[2px] border-aqua-500"
+                    >
                         <th>CLIENTE</th>
                         <th>COMENTARIO</th>
                         <th>IVA</th>
@@ -139,20 +148,26 @@ const close = () => {
                     </tr>
                     <tr>
                         <td colspan="5"></td>
-                        <td colspan="2">
-                            <InputSearch v-model="searchText" />
-                        </td>
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemVentaDatials v-for="(venta, index) in props.ventas" :key="venta.id + '' + index" :venta="venta"
-                        @edit="showFormVentas($event)" @activeIva="activeIva($event)"
-                        @changeRevisado="changeRevisado($event)" />
+                    <ItemVentaDatials
+                        v-for="(venta, index) in props.ventas"
+                        :key="venta.id + '' + index"
+                        :venta="venta"
+                        @edit="showFormVentas($event)"
+                        @activeIva="activeIva($event)"
+                        @changeRevisado="changeRevisado($event)"
+                    />
                 </template>
             </TableComponent>
             <!-- MODALS -->
-            <FormVentaModal :show="showingFormVenta" :type-form="typeForm" :venta="venta"
-                @close="showingFormVenta = false" />
+            <FormVentaModal
+                :show="showingFormVenta"
+                :type-form="typeForm"
+                :venta="venta"
+                @close="showingFormVenta = false"
+            />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

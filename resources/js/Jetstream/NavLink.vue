@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue';
-import { Link } from '@inertiajs/inertia-vue3';
+import { computed } from "vue";
+import { Link } from "@inertiajs/inertia-vue3";
 
 const props = defineProps({
     href: String,
@@ -9,13 +9,13 @@ const props = defineProps({
 
 const classes = computed(() => {
     return props.active
-        ? 'inline-flex items-center px-1 pt-1 border-b-2 border-indigo-400 text-sm font-medium leading-5 text-gray-300 focus:outline-none focus:border-indigo-700 transition'
-        : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition';
+        ? "inline-flex items-center px-8 pt-1 border-b-2 border-aqua-500 text-lg font-medium leading-5 text-white focus:outline-none focus:border-aqua-500 transition"
+        : "inline-flex items-center px-8 pt-1 border-b-2 border-transparent text-lg font-medium leading-5 text-nav-500 hover:text-nav-500/80 hover:border-aqua-500/60 focus:outline-none focus:text-nav-500/70 focus:border-aqua-500/60 transition";
 });
 </script>
 
 <template>
     <Link :href="href" :class="classes">
-    <slot />
+        <slot />
     </Link>
 </template>

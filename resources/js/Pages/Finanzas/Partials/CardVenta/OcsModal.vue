@@ -1,13 +1,14 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch } from "vue";
 import { formatoMoney } from "../../../../utils/conversiones";
-import ButtonAdd from '@/Components/ButtonAdd.vue';
-import DialogModal from '@/Components/DialogModal.vue';
-import TableComponent from '@/Components/Table.vue';
-import FormOcModal from './FormOcModal.vue';
-import ItemOc from './ItemOc.vue';
+import ButtonAdd from "@/Components/ButtonAdd.vue";
+import DialogModal from "@/Components/DialogModal.vue";
+import TableComponent from "@/Components/Table.vue";
+import FormOcModal from "./FormOcModal.vue";
+import ItemOc from "./ItemOc.vue";
+import cerrar from "../../../../../img/elementos/cerrar.png";
 
-const emit = defineEmits(["close", "showAddVenta"])
+const emit = defineEmits(["close", "showAddVenta"]);
 const props = defineProps({
     show: {
         type: Boolean,
@@ -15,35 +16,35 @@ const props = defineProps({
     },
     venta: {
         type: Object,
-        required: true
+        required: true,
     },
-})
+});
 
-const ocs = ref([])
-const showingFormOc = ref(false)
+const ocs = ref([]);
+const showingFormOc = ref(false);
 const oc = ref({ id: -1 });
 const typeForm = ref("create");
 
 const title = computed(() => {
     switch (props.venta) {
         case "1":
-            return "Por Pagar"
+            return "Por Pagar";
         case "2":
-            return "Cerrado"
+            return "Cerrado";
         default:
-            return "Por Pagar"
+            return "Por Pagar";
     }
-})
-
+});
 
 const getOcs = async () => {
-    const resp = await axios.get(route('ocs.index') + `?venta_id=${props.venta.id}`);
+    const resp = await axios.get(
+        route("ocs.index") + `?venta_id=${props.venta.id}`
+    );
     ocs.value = resp.data;
-}
+};
 
 // Methos Modal
 const showFormOc = (ocSelected) => {
-
     if (ocSelected != undefined) {
         oc.value = ocSelected;
         typeForm.value = "update";
@@ -52,132 +53,174 @@ const showFormOc = (ocSelected) => {
         typeForm.value = "create";
     }
     showingFormOc.value = true;
-}
+};
 
 const addOc = (newOc) => {
     ocs.value.unshift(newOc);
-}
-
+};
 
 const editOc = (newOc) => {
-    const findIndex = ocs.value.findIndex(ocFind => {
+    const findIndex = ocs.value.findIndex((ocFind) => {
         return newOc.id == ocFind.id;
-    })
+    });
     if (findIndex !== -1) {
-
         ocs.value[findIndex] = newOc;
     }
-}
-
+};
 
 const deleteOc = (ocSelected) => {
-    const ocIndex = ocs.value.findIndex(ocFind => {
+    const ocIndex = ocs.value.findIndex((ocFind) => {
         return ocFind.id === ocSelected.id;
-    })
-    axios.delete(route('ocs.destroy', ocSelected.id))
+    });
+    axios
+        .delete(route("ocs.destroy", ocSelected.id))
         .then(() => {
             ocs.value.splice(ocIndex, 1);
-            Inertia.visit(route('ventas.index'), {
+            Inertia.visit(route("ventas.index"), {
                 preserveState: true,
                 preserveScroll: true,
-                only: ['totalOcs'],
-            })
-        }).catch(error => {
-
-            if (error.response.data.hasOwnProperty('message')) {
-                alert(error.response.data.message)
+                only: ["totalOcs"],
+            });
+        })
+        .catch((error) => {
+            if (error.response.data.hasOwnProperty("message")) {
+                alert(error.response.data.message);
             } else {
                 alert("ERROR DELETE OC");
             }
         });
-}
+};
 
 // End Methos Modal
 
 const close = () => {
     ocs.value = [];
-    emit('close');
+    emit("close");
 };
 
 watch(props, () => {
     if (props.show == true) {
         getOcs();
     }
-})
-
+});
 </script>
 <template>
-    <DialogModal :show="show" @close="close()">
+    <DialogModal :maxWidth="'xl'" :show="show" @close="close()">
         <template #title>
-            <div class="flex flex-row">
-                <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
-                    <span class="block font-bold text-center text-white">
+            <div class="flex flex-row py-4 gap-8">
+                <div class="px-4 py-1 basis-1/3">
+                    <span
+                        class="block font-bold text-center text-fuente-500 text-3xl"
+                    >
                         {{ title }}
                     </span>
                 </div>
                 <div class="flex-1 px-2 py-1">
-                    <div class="flex justify-center">
-                        <span class="block font-bold text-center text-gray-300">
-                            Fecha Incial {{ venta.fechaInicial }}
+                    <div
+                        class="flex justify-center items-center gap-4 border-[2px] border-aqua-500 w-fit px-8 rounded-xl py-1"
+                    >
+                        <span
+                            class="block font-light text-center text-sm text-fuente-500"
+                        >
+                            Fecha Incial
+                        </span>
+                        <span>
+                            {{ venta.fechaInicial }}
                         </span>
                     </div>
                 </div>
-            </div>
-            <div class="flex flex-row">
-                <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
-                    <span class="block font-bold text-gray-300">
-                        Subtotal:
-                        ${{ formatoMoney(venta.monto) }}
-                    </span>
-                </div>
-                <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
-                    <span lass="block font-bold text-center text-gray-300">
-                        <p class="text-gray-300" v-if="venta.iva == true">
-                            IVA:
-                            ${{ formatoMoney(Math.round(venta.monto * 0.16)) }}
-                        </p>
-                        <p class="text-gray-300" v-if="venta.iva == false">
-                            IVA:
-                            ${{ 0 }}
-                        </p>
-                    </span>
-                </div>
-                <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
-                    <span class="block font-bold text-center text-gray-300">
-                        Total:
-                        ${{ formatoMoney(venta.monto + (venta.monto * 0.16)) }}
-                    </span>
+                <div
+                    class="absolute left-[94%] top-[5%] hover:cursor-pointer"
+                    @click="close"
+                >
+                    <img :src="cerrar" alt="" />
                 </div>
             </div>
-            <div class="px-4 py-1 border-t-4 border-r-4 border-gray-600 basis-1/3">
-                <span class="block font-bold text-gray-300">
-                    COMENTARIO:
-                    {{ venta.comentario }}
-                </span>
+            <div
+                class="mt-4 flex flex-row px-4 justify-between text-center gap-4 text-fuente-500"
+            >
+                <div
+                    class="py-1 basis-1/3 border-[2px] border-aqua-500 rounded-xl"
+                >
+                    <span class="block text-xs text-start px-[2.6rem]">
+                        Subtotal
+                    </span>
+                    <span class="font-bold text-3xl"
+                        >${{ formatoMoney(venta.monto) }}</span
+                    >
+                </div>
+                <div
+                    class="py-1 basis-1/3 border-[2px] border-aqua-500 rounded-xl"
+                >
+                    <span lass="block font-bold text-center tetx-black">
+                        <p v-if="venta.iva == true" class="flex flex-col">
+                            <span class="text-xs text-start px-[2.6rem]"
+                                >IVA</span
+                            >
+                            <span class="font-bold text-3xl px-4">
+                                ${{
+                                    formatoMoney(Math.round(venta.monto * 0.16))
+                                }}</span
+                            >
+                        </p>
+                        <p class="tetx-black" v-if="venta.iva == false">
+                            <span class="text-xs text-start px-[2.6rem]"
+                                >IVA</span
+                            >
+                            <span class="font-bold text-3xl"> ${{ 0 }}</span>
+                        </p>
+                    </span>
+                </div>
+                <div
+                    class="py-1 basis-1/3 border-[2px] border-aqua-500 rounded-xl"
+                >
+                    <span class="block text-xs text-start px-[2.6rem]">
+                        Total
+                    </span>
+                    <span class="font-bold text-3xl">
+                        ${{ formatoMoney(venta.monto + venta.monto * 0.16) }}
+                    </span>
+                </div>
             </div>
         </template>
         <template #content>
-            <TableComponent>
+            <TableComponent class="mt-4">
                 <template #thead>
-                    <tr>
-                        <th>
+                    <tr class="border-b-[2px] border-aqua-500 text-fuente-500">
+                        <th class="flex justify-evenly items-center text-lg">
                             <h3 class="mb-1">OC</h3>
-                            <ButtonAdd v-if="$page.props.can['ocs.create']" class="h-5" @click="showFormOc()" />
+                            <ButtonAdd
+                                v-if="$page.props.can['ocs.create']"
+                                class="h-6 shadow-gray-300 shadow-md"
+                                @click="showFormOc()"
+                            />
                         </th>
-                        <th>CANTIDAD</th>
-                        <th>FECHA</th>
+                        <th class="text-lg">CANTIDAD</th>
+                        <th class="text-lg">FECHA</th>
                         <th v-if="$page.props.can['ocs.edit']"></th>
                         <th v-if="$page.props.can['ocs.delete']"></th>
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemOc v-for="oc in ocs" :key="oc.id" :oc="oc" @edit="showFormOc($event)"
-                        @delete="deleteOc($event)" />
+                    <ItemOc
+                        v-for="oc in ocs"
+                        :key="oc.id"
+                        :oc="oc"
+                        @edit="showFormOc($event)"
+                        @delete="deleteOc($event)"
+                    />
                 </template>
             </TableComponent>
             <!--Modals-->
-            <FormOcModal :show="showingFormOc" :type-form="typeForm" :venta="props.venta" :oc="oc"
-                @add-oc="addOc($event)" @edit-oc="editOc($event)" @close="showingFormOc = false" />
+            <FormOcModal
+                :show="showingFormOc"
+                :type-form="typeForm"
+                :venta="props.venta"
+                :oc="oc"
+                @add-oc="addOc($event)"
+                @edit-oc="editOc($event)"
+                @close="showingFormOc = false"
+            />
             <!-- Ends Mondals -->
         </template>
     </DialogModal>
