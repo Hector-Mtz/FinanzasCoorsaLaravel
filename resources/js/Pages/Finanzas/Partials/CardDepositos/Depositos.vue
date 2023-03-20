@@ -116,7 +116,7 @@ watch(searchText, (newSearch) => {
 
 </script>
 <template>
-    <div class="text-white">
+    <div class="text-fuente-500">
         <div class="flex justify-around">
             <InputSearch v-model="searchText" />
             <ButtonAdd class="h-7" @click="showingDepositos = true" />
@@ -161,7 +161,7 @@ watch(searchText, (newSearch) => {
                 </ItemCliente>
             </div>
             <div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3">
-                <span class="text-lg font-bold text-white">
+                <span class="text-lg font-bold text-fuente-500">
                     Total: {{ formatoMoney(totalIngresos.total.toFixed(2)) }}
                 </span>
             </div>

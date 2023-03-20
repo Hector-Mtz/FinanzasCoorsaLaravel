@@ -176,16 +176,16 @@ watch(props, () => {
 </script>
 <template>
     <div class="max-h-screen mx-8 overflow-x-auto">
-        <CalendarHeader class="text-white " :month="props.date.month" :year="props.date.year"
+        <CalendarHeader class="text-fuente-500" :month="props.date.month" :year="props.date.year"
             @change-date="emit('changeDate', $event)" />
         <!-- Interacion -->
-        <div class="py-2 text-white border-b-2 border-gray-900">
+        <div class="py-2 border-b-2 border-gray-900 text-fuente-500">
             <table class="w-full">
                 <thead>
                     <tr class="text-center">
                         <td class="w-3/12">
                             <span @click="addStatus('ventas')" class="action-ventas"
-                                :class="{ 'bg-yellow-700': isActive('ventas') }">
+                                :class="{ 'bg-yellow-700': isActive('ventas') }"> 
                                 VENTAS
                             </span>
                         </td>
@@ -229,7 +229,7 @@ watch(props, () => {
         <!-- End Interacion -->
         <div class="px-4 py-2">
             <Calendar :month="props.date.month" :special-days="specialDays" :year="props.date.year"
-                @on-special-days="showCalendarModal($event)" class="text-white">
+                @on-special-days="showCalendarModal($event)" class="text-fuente-500">
             </Calendar>
         </div>
         <!--Modals-->

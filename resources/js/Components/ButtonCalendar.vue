@@ -31,7 +31,7 @@ const buttonCalendar = ref(null)
         <template #trigger>
             <div class="w-36">
                 <button ref="buttonCalendar" :type="type"
-                    class="items-center inline-block w-full px-4 py-2 text-xs font-semibold text-white uppercase transition border border-blue-800 rounded-2xl hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 ring-button disabled:opacity-25">
+                    class="items-center inline-block w-full px-4 py-2 text-xs font-semibold uppercase transition border border-blue-800 text-fuente-500 rounded-2xl hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 ring-button disabled:opacity-25">
                     <slot />
                     {{ monthText[month] }} {{ year }}
                 </button>

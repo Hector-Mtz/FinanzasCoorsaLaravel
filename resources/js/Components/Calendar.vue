@@ -98,7 +98,7 @@ const weeks = computed(() => {
                     <div v-for="(data, indexData) in day.plusData" :key="dayIndex + '-' + indexData">
                         <div @click="$emit('onSpecialDays', data)" class="w-full my-1 rounded-lg"
                             :style="{ 'background-color': data.color }">
-                            <span class="py-1 text-white cursor-pointer">{{ data.title }} </span>
+                            <span class="py-1 cursor-pointer text-fuente-500">{{ data.title }} </span>
                         </div>
                     </div>
                 </div>
