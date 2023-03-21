@@ -21,7 +21,7 @@ defineExpose({ focus: () => input.value.focus() });
 
 <template>
     <div
-        class="relative text-fuente-500 border-[2px] border-aqua-500 max-h-18 text-xl rounded-lg"
+        class="relative text-fuente-500 border-[2px] border-gris-900 max-h-18 text-xl rounded-lg"
     >
         <input
             type="search"
@@ -32,7 +32,10 @@ defineExpose({ focus: () => input.value.focus() });
             :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)"
         />
-        <button type="submit" class="absolute top-[5px] left-40">
+        <button
+            type="submit"
+            class="flex justify-end w-full absolute top-[.5rem] right-[.2rem]"
+        >
             <img :src="search" alt="" />
         </button>
     </div>

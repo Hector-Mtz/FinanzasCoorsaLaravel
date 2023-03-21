@@ -44,16 +44,16 @@ const close = () => {
     <DialogModal :show="show" @close="close()">
         <template #title>
             <div class="flex flex-row">
-                <div class="px-4 py-1 border-r-4 border-gray-600 basis-1/3">
+                <div class="px-4 py-1">
                     <span
-                        class="block font-bold text-center text-white uppercase"
+                        class="block font-bold text-center text-fuente-500 text-[22px] uppercase"
                     >
                         {{ dataCalendar.serie }}
                     </span>
                 </div>
                 <div class="px-4 py-1 border-gray-600">
                     <span
-                        class="block font-bold text-center text-white uppercase"
+                        class="block font-bold text-center text-fuente-500 border-2 border-aqua-500 rounded-3xl text-xl px-4"
                     >
                         {{ dataCalendar.date }}
                     </span>

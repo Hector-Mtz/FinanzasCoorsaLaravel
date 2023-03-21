@@ -2,7 +2,7 @@
 import { computed, reactive, ref } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 import AppLayout from "@/Layouts/AppLayout.vue";
-
+import cal from "../../../img/elementos/calendario.png";
 import Card from "../../Components/Card.vue";
 import Calendar from "../../Components/Calendar.vue";
 import CalendarHeader from "../../Components/CalendarHeader.vue";
@@ -89,11 +89,6 @@ const chageComponent = () => {
         </template>
 
         <div class="px-3 py-3">
-            <ButtonCalendar
-                :month="date.month"
-                :year="date.year"
-                @change-date="changeDate($event)"
-            />
             <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <Card>
                     <Ventas
@@ -102,10 +97,12 @@ const chageComponent = () => {
                         class="border-b-[1px] border-white"
                     />
                     <div
-                        class="flex flex-col px-4 py-2 mt-4 font-bold basis-1/3 text-fuente-500"
+                        class="flex flex-col px-4 py-2 mt-4 font-bold text-fuente-500"
                     >
-                        <span class="text-sm uppercase"> Total </span>
-                        <span class="text-3xl">
+                        <span class="text-[12px] uppercase font-medium">
+                            Total
+                        </span>
+                        <span class="text-[28px]">
                             $
                             {{
                                 formatoMoney(totalVentasStatus.total.toFixed(2))
@@ -114,109 +111,186 @@ const chageComponent = () => {
                     </div>
                 </Card>
                 <div
-                    class="grid col-span-2 text-fuente-500 bg-white/[6%] px-4 py-4 rounded-2xl"
+                    class="grid col-span-2 px-4 py-4 bg-white text-fuente-500 rounded-2xl"
                 >
-                    <table class="mb-4 md:mx-auto">
+                    <table class="mx-2 mb-4">
                         <thead>
-                            <tr class="text-center">
-                                <td class="w-3/12">
-                                    <span> VENTAS </span>
-                                </td>
-                                <td class="w-3/12">
-                                    <span> PC </span>
-                                </td>
-                                <td class="w-3/12">
-                                    <span> PP </span>
-                                </td>
-                                <td class="w-3/12">
-                                    <span> C </span>
+                            <tr>
+                                <td class="flex justify-between py-4">
+                                    <span
+                                        class="text-fuente-500 text-[26px] font-semibold"
+                                        >Reporte Anual</span
+                                    >
+
+                                    <ButtonCalendar
+                                        :year="date.year"
+                                        @change-date="changeDate($event)"
+                                    >
+                                        <template #a>
+                                            <button
+                                                @click="
+                                                    changeIndexMes(year - 1)
+                                                "
+                                                class="hover:opacity-40"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="w-5 h-5 text-gray-900"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="#1D96F1"
+                                                    stroke-width="2"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 19l-7-7 7-7"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </template>
+                                        <template #b>
+                                            <button
+                                                @click="
+                                                    changeIndexMes(year + 1)
+                                                "
+                                                class="hover:opacity-40"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="w-5 h-5 text-gray-900"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="#1D96F1"
+                                                    stroke-width="2"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M9 5l7 7-7 7"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </template>
+                                    </ButtonCalendar>
                                 </td>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-center">
-                                <td class="p-2">
-                                    ${{
-                                        formatoMoney(
-                                            props.totalVentas.total.toFixed(2)
-                                        )
-                                    }}
+                            <tr class="flex gap-2 py-4 text-center">
+                                <td
+                                    class="w-3/12 px-4 py-1 text-white shadow-md bg-ventas rounded-xl shadow-gray-400"
+                                >
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[13px] uppercase font-normal"
+                                        >
+                                            VENTAS
+                                        </span>
+                                        <span class="font-bold text-[16px]"
+                                            >${{
+                                                formatoMoney(
+                                                    props.totalVentas.total.toFixed(
+                                                        2
+                                                    )
+                                                )
+                                            }}</span
+                                        >
+                                    </div>
                                 </td>
-                                <td class="p-2">
-                                    ${{
-                                        formatoMoney(
-                                            props.totalOcs.pc.toFixed(2)
-                                        )
-                                    }}
+                                <td
+                                    class="w-3/12 px-4 py-1 text-white shadow-md bg-pc rounded-xl shadow-gray-400"
+                                >
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[13px] uppercase font-normal"
+                                        >
+                                            Por Cobrar
+                                        </span>
+                                        <span class="font-bold text-[16px]"
+                                            >${{
+                                                formatoMoney(
+                                                    props.totalOcs.pc.toFixed(2)
+                                                )
+                                            }}</span
+                                        >
+                                    </div>
                                 </td>
-                                <td class="p-2">
-                                    ${{
-                                        formatoMoney(
-                                            props.totalOcs.pp.toFixed(2)
-                                        )
-                                    }}
+                                <td
+                                    class="w-3/12 px-4 py-1 text-white shadow-md bg-pp rounded-xl shadow-gray-400"
+                                >
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[13px] uppercase font-normal"
+                                        >
+                                            Por Pagar
+                                        </span>
+                                        <span class="font-bold text-[16px]"
+                                            >${{
+                                                formatoMoney(
+                                                    props.totalOcs.pp.toFixed(2)
+                                                )
+                                            }}</span
+                                        >
+                                    </div>
                                 </td>
-                                <td class="p-2">
-                                    ${{
-                                        formatoMoney(
-                                            props.totalOcs.c.toFixed(2)
-                                        )
-                                    }}
+                                <td
+                                    class="w-3/12 px-4 py-1 text-white shadow-md bg-cobrado rounded-xl shadow-gray-400"
+                                >
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[13px] uppercase font-normal"
+                                        >
+                                            Cobrado
+                                        </span>
+                                        <span class="font-bold text-[16px]"
+                                            >${{
+                                                formatoMoney(
+                                                    props.totalOcs.c.toFixed(2)
+                                                )
+                                            }}</span
+                                        >
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4">
-                                    <svg
-                                        class="mx-auto"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="66.22"
-                                        height="23.82"
-                                        viewBox="0 0 66.22 23.82"
+                                <td
+                                    colspan="4"
+                                    class="flex items-center justify-between"
+                                >
+                                    <span
+                                        class="text-fuente-500 text-[26px] font-semibold"
+                                        >Calendario</span
                                     >
-                                        <g
-                                            data-name="Grupo 89"
-                                            transform="translate(-2229.56 -1215.34)"
-                                        >
-                                            <path
-                                                id="Trazado_155"
-                                                data-name="Trazado 155"
-                                                d="M0,0H66.22"
-                                                transform="translate(2229.56 1216.84)"
-                                                fill="none"
-                                                stroke="#40bb6e"
-                                                stroke-width="3"
-                                            />
-                                            <path
-                                                id="Trazado_154"
-                                                data-name="Trazado 154"
-                                                d="M2241.166,1216.973l22.187,22.187,22.168-22.168"
-                                                fill="#40bb6e"
-                                            />
-                                        </g>
-                                    </svg>
+                                    <img
+                                        :src="cal"
+                                        alt="calendario"
+                                        class="w-[26px] h-[26px]"
+                                    />
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
-                    <Card>
-                        <VentasCalendar
-                            :date="date"
-                            @change-date="changeDate($event)"
-                            :totalVentas="props.totalVentas"
-                            :totalOcs="props.totalOcs"
-                        />
-                    </Card>
+                    <VentasCalendar
+                        :date="date"
+                        @change-date="changeDate($event)"
+                        :totalVentas="props.totalVentas"
+                        :totalOcs="props.totalOcs"
+                    />
                 </div>
                 <Card>
                     <div
-                        class="flex flex-row items-center my-1 text-fuente-500"
+                        class="flex items-center justify-between my-1 mb-4 text-fuente-500"
                     >
+                        <h1 class="ml-2 text-[26px] font-semibold">
+                            {{ componentFactDep.title }}
+                        </h1>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             @click="chageComponent()"
-                            class="w-8 h-8 text-green-600 hover:text-green-800"
+                            class="w-6 h-6 text-aqua-500 hover:text-aqua-500/70"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -225,12 +299,9 @@ const chageComponent = () => {
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M7 16l-4-4m0 0l4-4m-4 4h18"
+                                d="M9 5l7 7-7 7"
                             />
                         </svg>
-                        <h1 class="ml-2 text-lg">
-                            {{ componentFactDep.title }}
-                        </h1>
                     </div>
                     <Facturas
                         v-if="componentFactDep.component === 'Facturas'"

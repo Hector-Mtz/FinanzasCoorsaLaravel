@@ -12,7 +12,7 @@ const props = defineProps({
 </script>
 <template>
     <div
-        class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden bg-[#F2F2F2] shadow-xl sm:rounded-lg"
+        class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden bg-[#F2F2F2] sm:rounded-lg"
     >
         <span class="text-sm">
             <slot />

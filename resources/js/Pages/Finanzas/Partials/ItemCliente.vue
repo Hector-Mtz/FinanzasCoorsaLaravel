@@ -40,12 +40,12 @@ const proxyChecked = computed({
                 class="flex items-center justify-between cursor-pointer select-none tab-label"
                 :for="'check-' + cliente.id"
             >
-                <span class="uppercase text-xs font-light">
+                <span class="uppercase text-xs font-medium">
                     {{ props.cliente.nombre }}
                 </span>
                 <div class="flex items-center justify-self-end">
                     <div
-                        class="px-1 text-sm bg-aqua-500 w-12 text-center rounded-full text-white"
+                        class="px-1 text-sm bg-aqua-500 w-12 text-center rounded-full text-white shadow-md shadow-gray-400"
                     >
                         {{ total }}
                     </div>
@@ -57,7 +57,7 @@ const proxyChecked = computed({
                             data-reactid="266"
                             fill="none"
                             height="24"
-                            stroke="#58BFB9"
+                            stroke="#1D96F1"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"

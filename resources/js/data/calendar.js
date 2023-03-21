@@ -11,14 +11,6 @@ export const listMonths = [
     "Octubre",
     "Noviembre",
     "Diciembre",
-]
+];
 
-export const listDaysSem = [
-    "D",
-    "L",
-    "M",
-    "M",
-    "J",
-    "V",
-    "S",
-]
+export const listDaysSem = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"];
