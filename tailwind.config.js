@@ -23,17 +23,28 @@ module.exports = {
                     500: "#C6C6C6",
                 },
                 aqua: {
-                    500: "#58BFB9",
+                    500: "#1D96F1",
                 },
                 fuente: {
                     500: "#0A0F2C",
                 },
                 gris: {
                     500: "#F2F2F2",
+                    900: "#9B9B9B",
                 },
                 rojo: {
                     500: "#d9435e",
                 },
+                verde: {
+                    500: "#00D05A",
+                },
+                ventas: "#44BFFC",
+                pc: "#697FEA",
+                pp: "#B66BF5",
+                cobrado: "#56D0C1",
+            },
+            backgroundImage: {
+                fondo: 'url("/resources/img/elementos/fondo.jpg")',
             },
         },
     },

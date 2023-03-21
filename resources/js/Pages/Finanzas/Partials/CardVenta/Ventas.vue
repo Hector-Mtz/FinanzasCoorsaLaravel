@@ -70,44 +70,55 @@ watch(searchText, (newSearch) => {
 });
 </script>
 <template>
-    <div class="text-fuente-500 gap-4 flex flex-col">
-        <div class="flex justify-between">
-            <h1 class="text-2xl font-semibold">Ventas</h1>
-            <img :src="monedas" alt="" />
+    <div
+        class="text-fuente-500 gap-4 flex flex-col border-b-[1px] border-gris-500 pb-2"
+    >
+        <div class="flex justify-between items-center">
+            <h1 class="text-[26px] font-semibold">Ventas</h1>
+            <img :src="monedas" alt="" class="h-[25px]" />
         </div>
         <div class="flex justify-around">
             <InputSearch v-model="searchText" />
             <ButtonAdd class="h-7" @click="emit('showVentas')" />
         </div>
-        <div class="w-full">
+        <div class="w-full h-">
             <!-- Header Tabs -->
             <div
-                class="flex justify-between border-[1px] border-aqua-500 rounded-3xl h-fit"
+                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center"
             >
                 <Tab
-                    :class="{ 'bg-aqua-500 hover:bg-aqua-500/90': tab === '' }"
-                    class="tab"
+                    :class="{
+                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
+                            tab === '',
+                    }"
+                    class="tab flex items-center"
                     @click="changeTab('')"
                 >
                     TODAS
                 </Tab>
                 <Tab
-                    :class="{ 'bg-aqua-500 hover:bg-aqua-500/90': tab === '1' }"
-                    class="tab"
+                    :class="{
+                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
+                            tab === '1',
+                    }"
+                    class="tab flex items-center"
                     @click="changeTab('1')"
                 >
                     ABIERTAS
                 </Tab>
                 <Tab
-                    :class="{ 'bg-aqua-500 hover:bg-aqua-500/90': tab === '2' }"
-                    class="tab"
+                    :class="{
+                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
+                            tab === '2',
+                    }"
+                    class="tab flex items-center"
                     @click="changeTab('2')"
                 >
                     CERRADAS
                 </Tab>
             </div>
             <!-- Lista de clientes -->
-            <div class="overflow-y-auto pt-4" style="max-height: 65vh">
+            <div class="overflow-y-auto pt-4" style="max-height: 41.2vh">
                 <ItemCliente
                     v-for="cliente in props.clientes"
                     :key="cliente.id"

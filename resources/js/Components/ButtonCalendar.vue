@@ -1,39 +1,37 @@
 <script setup>
 import { ref } from "vue";
-import { listMonths } from "../data/calendar";
 import PickerCalendar from "./PickerCalendar.vue";
-
 
 const emit = defineEmits(["changeDate"]);
 const props = defineProps({
     type: {
         type: String,
-        default: 'button',
-    },
-    month: {
-        type: Number,
-        required: true
+        default: "button",
     },
     year: {
         type: Number,
-        required: true
-    }
+        required: true,
+    },
 });
-const monthText = ref(listMonths);
-const buttonCalendar = ref(null)
-
-
+const buttonCalendar = ref(null);
 </script>
 
 <template>
-    <PickerCalendar @changeDate="emit('changeDate', $event)" :refComponent="buttonCalendar" :month="props.month"
-        :year="props.year">
+    <PickerCalendar
+        @changeDate="emit('changeDate', $event)"
+        :refComponent="buttonCalendar"
+        :year="props.year"
+    >
         <template #trigger>
-            <div class="w-36">
-                <button ref="buttonCalendar" :type="type"
-                    class="items-center inline-block w-full px-4 py-2 text-xs font-semibold uppercase transition border border-blue-800 text-fuente-500 rounded-2xl hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 ring-button disabled:opacity-25">
-                    <slot />
-                    {{ monthText[month] }} {{ year }}
+            <div class="">
+                <button
+                    ref="buttonCalendar"
+                    :type="type"
+                    class="items-center w-full px-4 py-2 text-[15px] font-semibold uppercase transition text-fuente-500 rounded-2xl bg-gris-500 disabled:opacity-25 flex justify-between gap-4"
+                >
+                    <slot name="a" />
+                    {{ year }}
+                    <slot name="b" />
                 </button>
             </div>
         </template>

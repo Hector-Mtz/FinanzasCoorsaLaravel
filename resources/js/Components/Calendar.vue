@@ -1,27 +1,25 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { listDaysSem } from '../data/calendar';
+import { ref, computed } from "vue";
+import { listDaysSem } from "../data/calendar";
 
-
-defineEmits(['onSpecialDays']);
+defineEmits(["onSpecialDays"]);
 
 const props = defineProps({
     month: {
         type: Number,
-        required: true
+        required: true,
     },
     year: {
         type: Number,
-        default: 2022
+        default: 2022,
     },
     specialDays: {
         type: Object,
         default: [],
-    }
+    },
 });
 
-
-const diasText = ref(listDaysSem)
+const diasText = ref(listDaysSem);
 const weeks = computed(() => {
     const fechaInicial = new Date(props.year, props.month);
     let days = [];
@@ -29,18 +27,20 @@ const weeks = computed(() => {
     let start = 0;
     const auxWeek = [];
     const lastDay = new Date(props.year, props.month + 1, 0).getDate();
-    for (let day = 1; day <= lastDay; day++) { // i reresenta el dia
-        fechaInicial.setDate(day)
-        semanaDay = fechaInicial.getDay()
-        if (start === 0) { // esto es para recorrer los dias (unicamente lo deberia realizar la primvera vez)
-            start = semanaDay + 1;// ya que empieza en 0
+    for (let day = 1; day <= lastDay; day++) {
+        // i reresenta el dia
+        fechaInicial.setDate(day);
+        semanaDay = fechaInicial.getDay();
+        if (start === 0) {
+            // esto es para recorrer los dias (unicamente lo deberia realizar la primvera vez)
+            start = semanaDay + 1; // ya que empieza en 0
         }
-        let plusData = [] // data adicional a los dias
-        props.specialDays.forEach(specialDay => {
+        let plusData = []; // data adicional a los dias
+        props.specialDays.forEach((specialDay) => {
             if (specialDay.data[day] !== undefined) {
                 plusData.push({
                     ...specialDay,
-                    date: day + '/' + (props.month + 1) + '/' + props.year,
+                    date: day + "/" + (props.month + 1) + "/" + props.year,
                     data: specialDay.data[day],
                     title: specialDay.data[day].title,
                 });
@@ -58,12 +58,13 @@ const weeks = computed(() => {
         });
 
         days.push({ dayText: day, plusData: plusData });
-        if (semanaDay == 6) { // Al finnzalizar la semana agragamos sus respectivos dias
+        if (semanaDay == 6) {
+            // Al finnzalizar la semana agragamos sus respectivos dias
             auxWeek.push({
                 days: [...days],
-                start
+                start,
             });
-            start = 1
+            start = 1;
             days = [];
         }
     }
@@ -75,30 +76,45 @@ const weeks = computed(() => {
 
     // console.log(auxWeek);
     return auxWeek;
-})
-
-
+});
 </script>
 
 <template>
     <div class="w-full calendar">
-        <div class="grid-calendar">
+        <div
+            class="grid grid-cols-7 gap-[5px] text-center text-gris-900 text-[13px] font-bold uppercase"
+        >
             <div v-for="diaText in diasText" :key="diaText">
                 {{ diaText }}
             </div>
         </div>
-        <div class="grid-calendar-week">
+        <div class="grid grid-rows-[7] gap-[5px]">
             <!-- Weeks -->
-            <div class="grid-calendar" v-for="(week, indexWeek) in weeks" :key="indexWeek">
+            <div
+                class="grid grid-cols-7 gap-[5px] text-center text-[14px] font-normal text-[#1A1E3A]"
+                v-for="(week, indexWeek) in weeks"
+                :key="indexWeek"
+            >
                 <!-- Days -->
-                <div v-for="(day, dayIndex) in week.days" :key="dayIndex"
-                    :class="{ ['col-start-' + week.start]: dayIndex == 0 }">
+                <div
+                    v-for="(day, dayIndex) in week.days"
+                    :key="dayIndex"
+                    :class="{ ['col-start-' + week.start]: dayIndex == 0 }"
+                >
                     {{ day.dayText }}
                     <!-- Special Days -->
-                    <div v-for="(data, indexData) in day.plusData" :key="dayIndex + '-' + indexData">
-                        <div @click="$emit('onSpecialDays', data)" class="w-full my-1 rounded-lg"
-                            :style="{ 'background-color': data.color }">
-                            <span class="py-1 cursor-pointer text-fuente-500">{{ data.title }} </span>
+                    <div
+                        v-for="(data, indexData) in day.plusData"
+                        :key="dayIndex + '-' + indexData"
+                    >
+                        <div
+                            @click="$emit('onSpecialDays', data)"
+                            class="w-full my-1 px-1 py-1 rounded-lg text-white text-[13px] font-semibold text-ellipsis overflow-hidden"
+                            :style="{ 'background-color': data.color }"
+                        >
+                            <span class="py-1 cursor-pointer"
+                                >${{ data.title }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -106,47 +122,3 @@ const weeks = computed(() => {
         </div>
     </div>
 </template>
-
-<style lang="css" scoped>
-.grid-calendar-week {
-    display: grid;
-    grid-template-rows: repeat(7, auto);
-    row-gap: 5px;
-}
-
-.grid-calendar {
-
-    text-align: center;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    column-gap: 5px;
-}
-
-.col-start-1 {
-    grid-column-start: 1;
-}
-
-.col-start-2 {
-    grid-column-start: 2;
-}
-
-.col-start-3 {
-    grid-column-start: 3;
-}
-
-.col-start-4 {
-    grid-column-start: 4;
-}
-
-.col-start-5 {
-    grid-column-start: 5;
-}
-
-.col-start-6 {
-    grid-column-start: 6;
-}
-
-.col-start-7 {
-    grid-column-start: 7;
-}
-</style>

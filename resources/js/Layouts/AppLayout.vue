@@ -9,6 +9,7 @@ import JetDropdownLink from "@/Jetstream/DropdownLink.vue";
 import JetNavLink from "@/Jetstream/NavLink.vue";
 import JetResponsiveNavLink from "@/Jetstream/ResponsiveNavLink.vue";
 import perfil from "../../img/elementos/perfil.png";
+import fondo from "@/resources/img/elementos/fondo.jpg";
 
 defineProps({
     title: String,
@@ -39,7 +40,7 @@ const logout = () => {
 
         <JetBanner />
 
-        <div class="min-h-screen bg-[#F2F2F2]">
+        <div class="min-h-screen bg-fondo">
             <nav class="border-b border-[#707070] bg-fuente-500">
                 <!-- Primary Navigation Menu -->
                 <div
@@ -557,14 +558,14 @@ const logout = () => {
             </nav>
 
             <!-- Page Heading -->
-            <header v-if="$slots.header" class="shadow bg-[#F2F2F2]">
+            <header v-if="$slots.header" class="">
                 <div class="px-4 py-6 mx-auto max-w-screen sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>
 
             <!-- Page Content -->
-            <main class="bg-[#F2F2F2]">
+            <main class="">
                 <slot />
             </main>
         </div>
