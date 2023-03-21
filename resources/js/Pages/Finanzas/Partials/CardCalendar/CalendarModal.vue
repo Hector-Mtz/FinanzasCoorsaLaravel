@@ -63,7 +63,9 @@ const close = () => {
         <template #content>
             <TableComponent>
                 <template #thead>
-                    <tr class="uppercase">
+                    <tr
+                        class="uppercase border-b-2 border-aqua-500 text-[15px] font-semibold"
+                    >
                         <th v-for="header in headerTable" :key="header">
                             <template v-if="header != 'revisado'">
                                 {{ header }}
