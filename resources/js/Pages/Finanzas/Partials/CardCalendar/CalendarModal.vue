@@ -53,7 +53,7 @@ const close = () => {
                 </div>
                 <div class="px-4 py-1 border-gray-600">
                     <span
-                        class="block font-bold text-center text-fuente-500 border-2 border-aqua-500 rounded-3xl text-xl px-4"
+                        class="block px-4 text-xl font-bold text-center border-2 text-fuente-500 border-aqua-500 rounded-3xl"
                     >
                         {{ dataCalendar.date }}
                     </span>
