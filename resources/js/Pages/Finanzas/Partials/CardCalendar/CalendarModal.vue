@@ -1,7 +1,7 @@
 <script setup>
-import { computed } from "vue";
-import { Inertia } from "@inertiajs/inertia";
-
+import { computed, ref } from "vue";
+import clos from "../../../../../img/elementos/cerrar.png";
+import InputSearch from "@/Components/InputSearch.vue";
 import DialogModal from "@/Components/DialogModal.vue";
 import TableComponent from "@/Components/Table.vue";
 
@@ -16,6 +16,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+const searchText = ref("");
 
 const headerTable = computed(() => {
     if (props.dataCalendar.data.lenght == 0) {
@@ -41,22 +43,37 @@ const close = () => {
 };
 </script>
 <template>
-    <DialogModal :show="show" @close="close()">
+    <DialogModal :show="show" @close="close()" :maxWidth="'8xl'">
         <template #title>
-            <div class="flex flex-row">
-                <div class="px-4 py-1">
-                    <span
-                        class="block font-bold text-center text-fuente-500 text-[22px] uppercase"
-                    >
-                        {{ dataCalendar.serie }}
-                    </span>
+            <div class="flex justify-between items-center mb-4 relative">
+                <div class="flex">
+                    <div class="px-4 py-1">
+                        <span
+                            class="block font-bold text-center text-fuente-500 text-[22px] uppercase"
+                        >
+                            {{ dataCalendar.serie }}
+                        </span>
+                    </div>
+                    <div class="px-4 py-1 border-gray-600">
+                        <span
+                            class="block font-bold text-center text-fuente-500 border-2 border-aqua-500 rounded-3xl text-xl px-4"
+                        >
+                            {{ dataCalendar.date }}
+                        </span>
+                    </div>
                 </div>
-                <div class="px-4 py-1 border-gray-600">
-                    <span
-                        class="block font-bold text-center text-fuente-500 border-2 border-aqua-500 rounded-3xl text-xl px-4"
-                    >
-                        {{ dataCalendar.date }}
-                    </span>
+                <div class="flex gap-16">
+                    <InputSearch
+                        v-model="searchText"
+                        class="flex items-center"
+                    />
+
+                    <img
+                        :src="clos"
+                        alt=""
+                        class="h-[17px] w-[17px] hover:cursor-pointer"
+                        @click="close()"
+                    />
                 </div>
             </div>
         </template>
@@ -66,24 +83,33 @@ const close = () => {
                     <tr
                         class="uppercase border-b-2 border-aqua-500 text-[15px] font-semibold"
                     >
-                        <th v-for="header in headerTable" :key="header">
-                            <template v-if="header != 'revisado'">
+                        <template v-for="header in headerTable" :key="header">
+                            <th
+                                v-if="header != 'revisado'"
+                                class="pb-2 text-center first:text-start"
+                            >
                                 {{ header }}
-                            </template>
-                        </th>
+                            </th>
+                        </template>
                     </tr>
                 </template>
                 <template #tbody>
                     <tr v-for="(obj, index) in dataCalendar.data" :key="index">
-                        <td
+                        <template
                             v-for="header in headerTable"
                             :key="header + index"
-                            :class="{ 'bg-blue-500': obj.revisado }"
                         >
-                            <template v-if="header != 'revisado'">
+                            <td
+                                v-if="header != 'revisado'"
+                                :class="{
+                                    'bg-blue-500 border-y-[1px] border-y-white':
+                                        obj.revisado,
+                                }"
+                                class="text-center text-[18px] font-light py-1 first:text-start last:text-start"
+                            >
                                 {{ obj[header] }}
-                            </template>
-                        </td>
+                            </td>
+                        </template>
                     </tr>
                 </template>
             </TableComponent>

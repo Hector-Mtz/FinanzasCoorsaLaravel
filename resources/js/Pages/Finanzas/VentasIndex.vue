@@ -124,6 +124,7 @@ const chageComponent = () => {
 
                                     <ButtonCalendar
                                         :year="date.year"
+                                        :month="date.month"
                                         @change-date="changeDate($event)"
                                     >
                                         <template #a>

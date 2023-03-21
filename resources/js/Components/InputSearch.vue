@@ -21,7 +21,7 @@ defineExpose({ focus: () => input.value.focus() });
 
 <template>
     <div
-        class="relative text-white border-[1px] border-gris-900 max-h-6 rounded-lg"
+        class="relative text-fuente-500 border-[2px] border-gris-900 max-h-6 rounded-lg flex justify-center"
     >
         <input
             type="search"
@@ -34,7 +34,7 @@ defineExpose({ focus: () => input.value.focus() });
         />
         <button
             type="submit"
-            class="w-full flex justify-end absolute top-[.3rem] right-[.2rem]"
+            class="flex justify-end absolute top-[.3rem] right-[.2rem]"
         >
             <img :src="search" alt="" />
         </button>

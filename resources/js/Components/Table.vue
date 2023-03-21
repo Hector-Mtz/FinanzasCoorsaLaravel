@@ -1,6 +1,6 @@
 <template>
-    <div class="mx-auto max-w-7xl">
-        <div class="inline-block min-w-full align-middle bg-white border-r-4">
+    <div class="">
+        <div class="inline-block min-w-full align-middle bg-white">
             <div class="overflow-hidden overflow-x-auto overflow-y-auto text-black">
                 <table class="min-w-full custome-table">
                     <thead class="text-sm">

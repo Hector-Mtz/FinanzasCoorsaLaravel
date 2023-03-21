@@ -46,6 +46,9 @@ module.exports = {
             backgroundImage: {
                 fondo: 'url("/resources/img/elementos/fondo.jpg")',
             },
+            maxWidth: {
+                '8xl': '90%'
+            }
         },
     },
 
