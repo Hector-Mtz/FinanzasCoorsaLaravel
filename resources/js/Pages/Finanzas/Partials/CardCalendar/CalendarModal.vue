@@ -94,7 +94,11 @@ const close = () => {
                     </tr>
                 </template>
                 <template #tbody>
-                    <tr v-for="(obj, index) in dataCalendar.data" :key="index">
+                    <tr
+                        v-for="(obj, index) in dataCalendar.data"
+                        :key="index"
+                        class="rounded-lg"
+                    >
                         <template
                             v-for="header in headerTable"
                             :key="header + index"
