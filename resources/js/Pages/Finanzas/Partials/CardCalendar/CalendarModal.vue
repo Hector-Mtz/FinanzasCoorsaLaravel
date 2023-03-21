@@ -106,10 +106,10 @@ const close = () => {
                             <td
                                 v-if="header != 'revisado'"
                                 :class="{
-                                    'bg-blue-500 border-y-[1px] border-y-white':
+                                    'bg-blue-500 border-y-[1px] border-y-white text-white':
                                         obj.revisado,
                                 }"
-                                class="text-center text-[18px] font-light py-1 first:text-start last:text-start"
+                                class="text-center text-[18px] font-light py-1 first:text-start last:text-start px-2"
                             >
                                 {{ obj[header] }}
                             </td>
