@@ -155,6 +155,7 @@ async function getTotalsMonth() {
 
 const showCalendarModal = (data) => {
     dataCalendar.value = data;
+    console.log(data);
     showingModal.value = true;
 }
 
@@ -233,7 +234,6 @@ watch(props, () => {
             </Calendar>
         </div>
         <!--Modals-->
-
         <CalendarModal :data-calendar="dataCalendar" :show="showingModal" @close="showingModal = false" />
         <!--End Modals-->
     </div>

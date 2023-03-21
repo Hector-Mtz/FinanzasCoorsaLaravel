@@ -102,7 +102,7 @@ const chageComponent = () => {
                         class="border-b-[1px] border-white"
                     />
                     <div
-                        class="px-4 py-2 mt-4 basis-1/3 flex flex-col font-bold text-fuente-500"
+                        class="flex flex-col px-4 py-2 mt-4 font-bold basis-1/3 text-fuente-500"
                     >
                         <span class="text-sm uppercase"> Total </span>
                         <span class="text-3xl">

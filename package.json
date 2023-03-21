@@ -25,12 +25,14 @@
     "dependencies": {
         "@amcharts/amcharts4": "^4.10.29",
         "@amcharts/amcharts5": "^5.2.10",
+        "@projectstorm/react-diagrams": "^7.0.2",
         "bootstrap": "^5.2.0",
         "bootstrap-vue": "^2.22.0",
         "moment": "^2.29.4",
         "prop-types": "^15.8.1",
         "react": "^18.2.0",
         "react-datepicker": "^4.8.0",
-        "vue-sidebar-menu": "^5.2.4"
+        "vue-sidebar-menu": "^5.2.4",
+        "vuera": "^0.2.7"
     }
 }
