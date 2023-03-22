@@ -1,16 +1,17 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref } from "vue";
 
 defineProps({
     modelValue: String | Number,
+    placeholder: String,
 });
 
-defineEmits(['update:modelValue']);
+defineEmits(["update:modelValue"]);
 
 const textarea = ref(null);
 
 onMounted(() => {
-    if (textarea.value.hasAttribute('autofocus')) {
+    if (textarea.value.hasAttribute("autofocus")) {
         textarea.value.focus();
     }
 });
@@ -19,7 +20,11 @@ defineExpose({ focus: () => textarea.value.focus() });
 </script>
 
 <template>
-    <textarea ref="textarea"
-        class="w-full py-1 text-sm text-white bg-gray-800 border-gray-300 rounded-md shadow-sm focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50 disabled:bg-gray-300"
-        :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"></textarea>
+    <textarea
+        ref="textarea"
+        class="w-full py-1 text-fuente-500 border-aqua-500 rounded-md shadow-sm focus:border-aqua-500 focus:ring focus:ring-aqua-500/20 focus:ring-opacity-50 disabled:bg-aqua-500/20"
+        :value="modelValue"
+        @input="$emit('update:modelValue', $event.target.value)"
+        :placeholder="placeholder"
+    ></textarea>
 </template>
