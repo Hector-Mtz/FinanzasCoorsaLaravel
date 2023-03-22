@@ -4,8 +4,7 @@ import { computed, reactive } from "vue";
 import axios from "axios";
 
 import { Inertia } from "@inertiajs/inertia";
-
-import JetLabel from "@/Jetstream/Label.vue";
+import folder from "../../../../../img/elementos/agregar-documento.png";
 import JetButton from "@/Jetstream/Button.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
 import cerrar from "../../../../../img/elementos/cerrar.png";
@@ -166,28 +165,35 @@ const update = () => {
 };
 </script>
 <template>
-    <DialogModal :show="show" @close="close()">
+    <DialogModal :show="show" @close="close()" :maxWidth="'lg'">
         <template #title>
             <div>
-                <div class="px-4 py-1 text-start">
+                <div class="px-4 py-4 text-start">
                     <span class="font-bold text-fuente-500 text-[32px]">
                         {{ titleModal }}
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
                 </div>
+                <img
+                    :src="cerrar"
+                    alt=""
+                    class="absolute left-[30rem] top-[1rem] hover:cursor-pointer"
+                    @click="close()"
+                />
             </div>
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
+                <div class="flex flex-col gap-2 px-4 py-2 text-sm mb-8">
                     <div>
-                        <JetLabel for="referencia" value="Referencia:" />
                         <Input
+                            placeholder="Referencia"
                             id="referencia"
                             name="referencia"
                             type="text"
                             v-model="form.referencia"
                             required
+                            class="text-[14px] font-light uppercase"
                             maxlength="30"
                         />
                         <JetInputError
@@ -196,35 +202,44 @@ const update = () => {
                         />
                     </div>
                     <div>
-                        <JetLabel for="cantidad" value="Cantidad:" />
                         <Input
-                            id="cantidad"
-                            name="cantidad"
-                            type="text"
-                            pattern="^\d*(\.\d{0,2})?$"
-                            v-model="form.cantidad"
-                            required
-                            maxlength="30"
-                        />
-                        <JetInputError
-                            :message="form.errors.cantidad"
-                            class="mt-2"
-                        />
-                    </div>
-                    <div>
-                        <JetLabel for="fechaDePago" value="Fecha De Pago:" />
-                        <Input
+                            placeholder="Fecha de PAgo"
                             id="fechaDePago"
                             name="fecha_final"
                             type="date"
                             v-model="form.fechaDePago"
                             required
                             :min="form.fechaInicial"
+                            class="text-[14px] font-light uppercase"
                         />
                         <JetInputError
                             :message="form.errors.fechaDePago"
                             class="mt-2"
                         />
+                    </div>
+                    <div class="flex justify-between">
+                        <div>
+                            <Input
+                                placeholder="Cantidad"
+                                id="cantidad"
+                                name="cantidad"
+                                type="text"
+                                pattern="^\d*(\.\d{0,2})?$"
+                                v-model="form.cantidad"
+                                required
+                                maxlength="30"
+                                class="text-[14px] font-light uppercase w-[220px]"
+                            />
+                            <JetInputError
+                                :message="form.errors.cantidad"
+                                class="mt-2"
+                            />
+                        </div>
+                        <div
+                            class="w-[74px] h-[35px] bg-aqua-500 grid place-content-center rounded-2xl hover:cursor-pointer"
+                        >
+                            <img :src="folder" alt="" class="" />
+                        </div>
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">
