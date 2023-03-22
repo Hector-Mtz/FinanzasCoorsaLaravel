@@ -321,17 +321,6 @@ body {
     grid-column: 2/3;
 }
 
-.active-picker {
-    background-color: #687fa4;
-}
-
-.item-picker {
-    padding: 0.25rem 0.5rem;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 0.5rem;
-}
-
 .table-ingresos {
     overflow: hidden;
     margin-right: 0.5rem;

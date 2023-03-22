@@ -220,7 +220,8 @@ class VentaController extends Controller
                 'ventas.periodos',
                 'ventas.cantidad',
                 'ventas.iva',
-                'ventas.comentario'
+                'ventas.comentario',
+                'ventas.revisado'
             )
             ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
             ->whereYear('ventas.fechaInicial', '=', $validadData['year'])

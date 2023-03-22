@@ -8,6 +8,10 @@ const props = defineProps({
         type: String,
         default: "button",
     },
+    month: {
+        type: Number,
+        required: true,
+    },
     year: {
         type: Number,
         required: true,
@@ -21,6 +25,7 @@ const buttonCalendar = ref(null);
         @changeDate="emit('changeDate', $event)"
         :refComponent="buttonCalendar"
         :year="props.year"
+        :month="props.month"
     >
         <template #trigger>
             <div class="">
