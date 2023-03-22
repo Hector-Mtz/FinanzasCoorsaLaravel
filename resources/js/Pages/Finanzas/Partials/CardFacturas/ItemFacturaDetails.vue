@@ -1,12 +1,12 @@
 <script setup>
 import { ref } from "vue";
-
+import ModalButton from "@/Components/ModalButton.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
 import ListDataInputOCS from "../../../../Components/ListDataInputOCS.vue";
-import DangerButton from "../../../../Components/DangerButton.vue";
-import SuccessButton from "../../../../Components/SuccessButton.vue";
+import del from "../.././../../../img/elementos/eliminar.png";
+import edit from "../.././../../../img/elementos/editar.png";
 
 const emit = defineEmits(["addOc", "edit", "delete"]);
 
@@ -61,32 +61,14 @@ const addOc = () => {
         </td>
         <td>{{ props.factura.fechaDePago }}</td>
         <td v-if="$page.props.can['facturas.edit']">
-            <SuccessButton @click="emit('edit', props.factura)">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                >
-                    <path
-                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                    />
-                </svg>
-            </SuccessButton>
+            <ModalButton @click="emit('edit', props.factura)">
+                <img :src="edit" alt="" />
+            </ModalButton>
         </td>
         <td v-if="$page.props.can['facturas.delete']">
-            <DangerButton @click="emit('delete', props.factura)">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    class="w-3 h-3"
-                    viewBox="0 0 16 16"
-                >
-                    <path
-                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"
-                    />
-                </svg>
-            </DangerButton>
+            <ModalButton @click="emit('delete', props.factura)">
+                <img :src="del" alt="" />
+            </ModalButton>
         </td>
     </tr>
 </template>

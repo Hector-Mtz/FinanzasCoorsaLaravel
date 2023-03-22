@@ -190,6 +190,7 @@ watch(props, () => {
                             :class="{ 'bg-pc text-white': isActive('pc') }"
                         >
                             <span> PC </span>
+                            <span>${{ totalsVentas.pc }}</span>
                         </td>
                         <td
                             @click="addStatus('pp')"
@@ -209,6 +210,58 @@ watch(props, () => {
                         </td>
                     </tr>
                 </thead>
+                <tbody>
+                    <tr class="flex gap-2 py-4 text-center">
+                        <td
+                            class="w-3/12 px-4 py-1 text-white shadow-md bg-ventas rounded-xl shadow-gray-400"
+                        >
+                            <div class="flex flex-col">
+                                <span class="text-[13px] uppercase font-normal">
+                                    VENTAS
+                                </span>
+                                <span class="font-bold text-[16px]"
+                                    >${{ totalsVentas.ventas }}</span
+                                >
+                            </div>
+                        </td>
+                        <td
+                            class="w-3/12 px-4 py-1 text-white shadow-md bg-pc rounded-xl shadow-gray-400"
+                        >
+                            <div class="flex flex-col">
+                                <span class="text-[13px] uppercase font-normal">
+                                    Por Cobrar
+                                </span>
+                                <span class="font-bold text-[16px]"
+                                    >${{ totalsVentas.pc }}</span
+                                >
+                            </div>
+                        </td>
+                        <td
+                            class="w-3/12 px-4 py-1 text-white shadow-md bg-pp rounded-xl shadow-gray-400"
+                        >
+                            <div class="flex flex-col">
+                                <span class="text-[13px] uppercase font-normal">
+                                    Por Pagar
+                                </span>
+                                <span class="font-bold text-[16px]"
+                                    >${{ totalsVentas.pp }}</span
+                                >
+                            </div>
+                        </td>
+                        <td
+                            class="w-3/12 px-4 py-1 text-white shadow-md bg-cobrado rounded-xl shadow-gray-400"
+                        >
+                            <div class="flex flex-col">
+                                <span class="text-[13px] uppercase font-normal">
+                                    Cobrado
+                                </span>
+                                <span class="font-bold text-[16px]"
+                                    >${{ totalsVentas.c }}</span
+                                >
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         <!-- End Interacion -->
