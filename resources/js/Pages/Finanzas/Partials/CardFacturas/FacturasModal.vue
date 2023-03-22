@@ -83,7 +83,7 @@ watch(props, () => {
 <template>
     <DialogModal :show="show" @close="close()" :maxWidth="'4xl'">
         <template #title>
-            <div class="flex justify-between items-center py-4 max-w-[52rem]">
+            <div class="flex justify-between items-center py-6 max-w-[52rem]">
                 <div class="flex justify-around items-center gap-4 px-4 py-1">
                     <span
                         class="block font-semibold text-[28px] text-center text-fuente-500"
@@ -115,15 +115,21 @@ watch(props, () => {
                     <tr
                         class="text-[15px] font-semibold border-b-2 border-aqua-500"
                     >
-                        <th>
+                        <th class="pb-2">
                             <h3 class="mb-1">FACTURA</h3>
                         </th>
-                        <th>CANTIDAD</th>
-                        <th>TOTAL OCS</th>
-                        <th>OCS</th>
-                        <th>FECHA</th>
-                        <th v-if="$page.props.can['facturas.edit']"></th>
-                        <th v-if="$page.props.can['facturas.delete']"></th>
+                        <th class="pb-2">CANTIDAD</th>
+                        <th class="pb-2">TOTAL OCS</th>
+                        <th class="pb-2">OCS</th>
+                        <th class="pb-2">FECHA</th>
+                        <th
+                            class="pb-2"
+                            v-if="$page.props.can['facturas.edit']"
+                        ></th>
+                        <th
+                            class="pb-2"
+                            v-if="$page.props.can['facturas.delete']"
+                        ></th>
                     </tr>
                 </template>
                 <template #tbody>
