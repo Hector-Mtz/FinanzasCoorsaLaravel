@@ -216,6 +216,9 @@ onBeforeMount(() => {
                         </SelectComponent>
                         <JetInputError :message="form.errors.fechaDePago" class="mt-2" />
                     </div>
+                    <div>
+                        <JetLabel for="fecha" value="Fecha" />
+                    </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">
                     <JetButton type="submit" :disabled="form.processing">
