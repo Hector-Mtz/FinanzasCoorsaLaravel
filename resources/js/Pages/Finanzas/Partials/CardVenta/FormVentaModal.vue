@@ -7,7 +7,7 @@ import JetLabel from "@/Jetstream/Label.vue";
 import JetButton from "@/Jetstream/Button.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
 import DialogModal from "@/Components/DialogModal.vue";
-
+import cerrar from "../../../../../img/elementos/cerrar.png";
 import Input from "@/Components/Input.vue";
 import ListDataInput from "@/Components/ListDataInput.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
@@ -145,12 +145,18 @@ watch(props, () => {
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
                 </div>
+                <img
+                    :src="cerrar"
+                    alt=""
+                    @click="close()"
+                    class="absolute top-[1rem] left-[40rem] hover:cursor-pointer"
+                />
             </div>
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
                 <div
-                    class="grid grid-cols-2 gap-2 px-4 py-2 text-[14px] font-light uppercase text-fuente-500"
+                    class="grid grid-cols-2 gap-x-2 gap-y-4 px-4 py-2 text-[14px] font-light uppercase text-fuente-500"
                 >
                     <div>
                         <Input
