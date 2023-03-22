@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 use function GuzzleHttp\Promise\queue;
@@ -97,14 +98,36 @@ class IngresoController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('deposito.create');
-        $newIngreso = $request->validate([
-            'nombre' => ['required', 'unique:ingresos,nombre'],
-            'cantidad' => ['required', 'numeric'],
-            'banco_id' => ['required', 'exists:bancos,id']
-        ]);
 
-        $ingreso = Ingreso::create($newIngreso);
+        $this->authorize('deposito.create');
+        $request->validate([
+               'nombre' => ['required', 'unique:ingresos,nombre'],
+               'cantidad' => ['required', 'numeric'],
+               'banco_id' => ['required', 'exists:bancos,id'],
+               
+           ]);
+
+        $urlDoc = "";
+
+        if($request->has('documento'))
+        {
+            $file = $request['documento'];
+            return $file;
+
+            $nombre_original = $file->getClientOriginalName();
+            $ruta_file = $file->storeAs('ingresos/docs', $nombre_original , 'gcs');
+            $urlDoc = Storage::disk('gcs')->url($ruta_file);
+        }
+
+        return $request;
+
+        $ingreso = Ingreso::create(
+            ['nombre' =>$request['nombre'],
+             'cantidad' => $request['cantidad'],
+             'banco_id' => $request['banco_id'],
+             'documento' => $urlDoc
+            ]
+        );
 
         return response()->json($ingreso);
     }

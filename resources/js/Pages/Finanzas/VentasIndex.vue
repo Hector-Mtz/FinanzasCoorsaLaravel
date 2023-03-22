@@ -121,7 +121,7 @@ const chageComponent = () => {
                                         class="text-fuente-500 text-[26px] font-semibold"
                                         >Reporte Anual</span
                                     >
-
+                       <!-- 
                                     <ButtonCalendar
                                         :year="date.year"
                                         :month="date.month"
@@ -174,6 +174,7 @@ const chageComponent = () => {
                                             </button>
                                         </template>
                                     </ButtonCalendar>
+                        -->
                                 </td>
                             </tr>
                         </thead>
