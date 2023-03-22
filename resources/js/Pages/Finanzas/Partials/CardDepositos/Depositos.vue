@@ -1,28 +1,25 @@
 <script setup>
-import { computed, onBeforeMount, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch } from "vue";
 
-import { Inertia } from '@inertiajs/inertia';
-import { pickBy } from 'lodash'
+import { Inertia } from "@inertiajs/inertia";
+import { pickBy } from "lodash";
+import Tab from "../../../../Components/Tab.vue";
+import ButtonAdd from "@/Components/ButtonAdd.vue";
+import InputSearch from "@/Components/InputSearch.vue";
+import ItemObjectShow from "@/Components/ItemObjectShow.vue";
+import DepositosModal from "./DepositosModal.vue";
+import ItemCliente from "../ItemCliente.vue";
+import ItemIngresoC from "./ItemIngresoC.vue";
+import FacturasDepositoModal from "./FacturasDepositoModal.vue";
 
-import ButtonAdd from '@/Components/ButtonAdd.vue';
-import InputSearch from '@/Components/InputSearch.vue';
-import ItemObjectShow from '@/Components/ItemObjectShow.vue';
-import DepositosModal from './DepositosModal.vue';
-import ItemCliente from '../ItemCliente.vue';
-import ItemIngresoC from './ItemIngresoC.vue';
-import FacturasDepositoModal from './FacturasDepositoModal.vue';
+import { formatoMoney } from "../../../../utils/conversiones";
 
-import { formatoMoney } from '../../../../utils/conversiones';
+const emit = defineEmits([""]);
 
-
-
-
-const emit = defineEmits([''])
-
-const clientes = ref([])
-const totalIngresos = ref({ total: 0 })
-const tab = ref("1") // Referencia al id
-const searchText = ref("")
+const clientes = ref([]);
+const totalIngresos = ref({ total: 0 });
+const tab = ref("1"); // Referencia al id
+const searchText = ref("");
 const showingDepositos = ref(false);
 const showingFacturas = ref(false);
 const deposito = ref({});
@@ -31,76 +28,80 @@ const deposito = ref({});
 
 const updateDepositos = () => {
     search(searchText.value);
-}
+};
 const addFacturaToDeposito = (form) => {
     // esto es para el error
     const findedIndex = depositos.value.findIndex((dep) => {
-        return dep.id == form.deposito_id
-    })
-    axios.post(route('ingresos.facturas.store', form.deposito_id), form)
+        return dep.id == form.deposito_id;
+    });
+    axios
+        .post(route("ingresos.facturas.store", form.deposito_id), form)
         .then(() => {
             search(searchText.value);
-            Inertia.visit(route('ventas.index'), {
+            Inertia.visit(route("ventas.index"), {
                 preserveState: true,
                 preserveScroll: true,
-                only: ['totalOcs'],
+                only: ["totalOcs"],
             });
-
-        }).catch(error => {
-            if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('message')) {
-                depositos.value[findedIndex].error = error.response.data.message
+        })
+        .catch((error) => {
+            if (
+                error.hasOwnProperty("response") &&
+                error.response.data.hasOwnProperty("message")
+            ) {
+                depositos.value[findedIndex].error =
+                    error.response.data.message;
             } else {
-                depositos.value[findedIndex].error = "Error SET FACTURA"
-            };
+                depositos.value[findedIndex].error = "Error SET FACTURA";
+            }
         });
-}
+};
 
 const showFacturas = (newDeposito) => {
     deposito.value = newDeposito;
-    showingFacturas.value = true
-}
+    showingFacturas.value = true;
+};
 
 const closeFacturasDeposito = () => {
     deposito.value = {};
-    showingFacturas.value = false
-}
+    showingFacturas.value = false;
+};
 // End Methos Modal
 
 const changeTab = (status_id) => {
-    tab.value = status_id
+    tab.value = status_id;
     if (searchText.value !== "") {
-        searchText.value = ""
-        search()
+        searchText.value = "";
+        search();
     } else {
-        search(searchText.value)
+        search(searchText.value);
     }
-}
+};
 const search = async (newSearch) => {
-    const params = pickBy({ status_id: tab.value, search: newSearch })
-    const resp = await axios.get(route('ingresos.index'), { params })
+    const params = pickBy({ status_id: tab.value, search: newSearch });
+    const resp = await axios.get(route("ingresos.index"), { params });
     clientes.value = resp.data.clientesIngresos;
     totalIngresos.value = resp.data.totalIngresos;
-}
+};
 
 onBeforeMount(() => {
     search();
-})
-
+});
 
 const depositos = computed(() => {
     let auxDepositos = [];
-    clientes.value.forEach(cliente => {
+    clientes.value.forEach((cliente) => {
         auxDepositos = auxDepositos.concat(cliente.ingresos);
     });
     // DEBIDO A QUE NO ACTUALIZA LAS FACTURAS DENTRO DEL MODAL
     if (showingFacturas.value) {
         const findedIndex = auxDepositos.findIndex((dep) => {
-            return dep.id == deposito.value.id
+            return dep.id == deposito.value.id;
         });
         deposito.value = auxDepositos[findedIndex];
     }
     return auxDepositos;
-})
+});
 
 let timeout;
 watch(searchText, (newSearch) => {
@@ -109,52 +110,71 @@ watch(searchText, (newSearch) => {
     }
     //Bounce de busqueda
     timeout = setTimeout(() => {
-        search(newSearch)
+        search(newSearch);
     }, 500);
 });
-
-
 </script>
 <template>
-    <div class="text-fuente-500">
-        <div class="flex justify-around">
-            <InputSearch v-model="searchText" />
+    <div class="text-fuente-500 flex flex-col gap-4 pb-2">
+        <div class="flex justify-around items-center">
+            <InputSearch v-model="searchText" class="px-2" />
             <ButtonAdd class="h-7" @click="showingDepositos = true" />
         </div>
         <div class="w-full">
             <!-- Header Tabs -->
-            <div class="mx-5 tabs-header">
-                <span :class="{ 'active': tab === '1' }" class="tab" @click="changeTab('1')">
+            <div
+                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center"
+            >
+                <Tab
+                    :class="{
+                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
+                            tab === '1',
+                    }"
+                    class="tab"
+                    @click="changeTab('1')"
+                >
                     ABIERTAS
-                </span>
-                <span :class="{ 'active': tab === '2' }" class="tab" @click="changeTab('2')">
+                </Tab>
+                <Tab
+                    :class="{
+                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
+                            tab === '2',
+                    }"
+                    class="tab"
+                    @click="changeTab('2')"
+                >
                     CERRADAS
-                </span>
+                </Tab>
             </div>
             <!-- Lista de clientes -->
-            <div class="-mx-2 overflow-hidden overflow-y-auto" style="max-height: 65vh;">
-                <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente"
-                    :total="cliente.ingresos.length">
+            <div
+                class="-mx-2 overflow-hidden overflow-y-auto"
+                style="max-height: 65vh"
+            >
+                <ItemCliente
+                    v-for="cliente in clientes"
+                    :key="cliente.id"
+                    :cliente="cliente"
+                    :total="cliente.ingresos.length"
+                >
                     <div
-                        class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden overflow-x-auto bg-gray-900 shadow-xl sm:rounded-lg">
+                        class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden overflow-x-auto bg-gris-500 shadow-xl sm:rounded-lg"
+                    >
                         <table class="table-ingresos">
                             <thead>
-                                <tr>
-                                    <th>
-                                        Núm. Deposito
-                                    </th>
-                                    <th>
-                                        Cantidad
-                                    </th>
-                                    <th>
-                                        Factura
-                                    </th>
+                                <tr class="text-[9px] font-bold">
+                                    <th>Núm. Deposito</th>
+                                    <th>Cantidad</th>
+                                    <th>Factura</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <ItemIngresoC v-for="(ingreso, index) in cliente.ingresos"
-                                    :key="ingreso.id + '-' + index" :ingreso="ingreso"
-                                    @on-show="showFacturas($event)" />
+                                <ItemIngresoC
+                                    v-for="(ingreso, index) in cliente.ingresos"
+                                    :key="ingreso.id + '-' + index"
+                                    :ingreso="ingreso"
+                                    @on-show="showFacturas($event)"
+                                />
                             </tbody>
                         </table>
                     </div>
@@ -167,15 +187,23 @@ watch(searchText, (newSearch) => {
             </div>
         </div>
         <!--Modals -->
-        <DepositosModal :show="showingDepositos" :depositos="depositos" @update-depositos="updateDepositos($event)"
-            @delete-deposito="updateDepositos()" @add-factura="addFacturaToDeposito($event)"
-            @close="showingDepositos = false" />
-        <FacturasDepositoModal :show="showingFacturas" :deposito="deposito" @add-factura="addFacturaToDeposito($event)"
-            @update-depositos="updateDepositos()" @close="closeFacturasDeposito" />
+        <DepositosModal
+            :show="showingDepositos"
+            :depositos="depositos"
+            @update-depositos="updateDepositos($event)"
+            @delete-deposito="updateDepositos()"
+            @add-factura="addFacturaToDeposito($event)"
+            @close="showingDepositos = false"
+        />
+        <FacturasDepositoModal
+            :show="showingFacturas"
+            :deposito="deposito"
+            @add-factura="addFacturaToDeposito($event)"
+            @update-depositos="updateDepositos()"
+            @close="closeFacturasDeposito"
+        />
         <!--Ends Modals-->
     </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

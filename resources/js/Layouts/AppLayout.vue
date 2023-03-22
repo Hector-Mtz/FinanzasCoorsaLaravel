@@ -9,7 +9,6 @@ import JetDropdownLink from "@/Jetstream/DropdownLink.vue";
 import JetNavLink from "@/Jetstream/NavLink.vue";
 import JetResponsiveNavLink from "@/Jetstream/ResponsiveNavLink.vue";
 import perfil from "../../img/elementos/perfil.png";
-import fondo from "@/resources/img/elementos/fondo.jpg";
 
 defineProps({
     title: String,
