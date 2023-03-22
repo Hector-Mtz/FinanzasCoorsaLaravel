@@ -81,7 +81,7 @@ const changeYear = (newYear) => {
             <div
                 id="pickerCalendar"
                 ref="pickerCalendar"
-                class="bg-gris-500 rounded-xl text-fuente-500 absolute z-[1000] w-[20em] top-[100rem]"
+                class="bg-gris-500 rounded-xl text-fuente-500 absolute z-[1000] w-[20em] shadow-md shadow-gray-400"
             >
                 <transition leave-active-class="duration-200">
                     <div v-show="open">
