@@ -8,6 +8,7 @@ import ItemOcFactura from "./ItemOcFactura.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
 import { Inertia } from "@inertiajs/inertia";
 import ListDataInputOCS from "../../../../Components/ListDataInputOCS.vue";
+import cerrar from "../../../../../img/elementos/cerrar.png";
 
 const emit = defineEmits(["close", "addOc"]);
 const props = defineProps({
@@ -92,7 +93,9 @@ watch(props, () => {
 <template>
     <DialogModal :show="show" @close="close()">
         <template #title>
-            <div class="flex justify-between text-[28px] font-semibold my-6">
+            <div
+                class="flex justify-between text-[28px] font-semibold my-6 max-w-[38.5rem]"
+            >
                 <div class="px-4 py-1">
                     <span class="block text-center text-fuente-500">
                         #{{ props.factura.referencia }}
@@ -115,6 +118,12 @@ watch(props, () => {
                         {{ props.factura.fechaDePago }}
                     </span>
                 </div>
+                <img
+                    :src="cerrar"
+                    alt=""
+                    class="absolute left-[40rem] top-[1rem] hover:cursor-pointer"
+                    @click="close()"
+                />
             </div>
             <div class="flex flex-col mb-4">
                 <h3 class="text-[15px] font-semibold uppercase">Agregar OC</h3>
