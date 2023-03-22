@@ -13,10 +13,12 @@ const props = defineProps({
 });
 </script>
 <template>
-    <tr class="text-[9px] font-medium">
-        <td>#{{ ingreso.nombre }}</td>
-        <td>${{ formatoMoney(ingreso.cantidad) }}</td>
-        <td>
+    <tr class="text-[10.5px] text-fuente-500 font-normal">
+        <td class="px-[0.5rem] py-[.2rem]">#{{ ingreso.nombre }}</td>
+        <td class="px-[0.5rem] py-[.2rem]">
+            ${{ formatoMoney(ingreso.cantidad) }}
+        </td>
+        <td class="px-[0.5rem] py-[.2rem]">
             <DangerButton class="h-5" @click="emit('onShow', props.ingreso)">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

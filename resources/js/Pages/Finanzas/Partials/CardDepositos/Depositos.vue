@@ -160,12 +160,16 @@ watch(searchText, (newSearch) => {
                     <div
                         class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden overflow-x-auto bg-gris-500 shadow-xl sm:rounded-lg"
                     >
-                        <table class="table-ingresos">
+                        <table class="overflow-hidden mr-[.5rem] w-full">
                             <thead>
-                                <tr class="text-[9px] font-bold">
-                                    <th>Núm. Deposito</th>
-                                    <th>Cantidad</th>
-                                    <th>Factura</th>
+                                <tr
+                                    class="text-[9px] font-bold px-2 border-b-[1px] border-aqua-500"
+                                >
+                                    <th class="pb-1 px-[0.5rem]">
+                                        Núm. Deposito
+                                    </th>
+                                    <th class="pb-1 px-[0.5rem]">Cantidad</th>
+                                    <th class="pb-1 px-[0.5rem]">Factura</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -180,9 +184,10 @@ watch(searchText, (newSearch) => {
                     </div>
                 </ItemCliente>
             </div>
-            <div class="px-4 py-1 border-t-4 border-gray-600 basis-1/3">
-                <span class="text-lg font-bold text-fuente-500">
-                    Total: {{ formatoMoney(totalIngresos.total.toFixed(2)) }}
+            <div class="px-4 py-1 flex flex-col">
+                <span class="text-[12px] font-medium uppercase">Total</span>
+                <span class="text-[28px] font-bold text-fuente-500">
+                    $ {{ formatoMoney(totalIngresos.total.toFixed(2)) }}
                 </span>
             </div>
         </div>

@@ -36,7 +36,7 @@ const addOc = () => {
 };
 </script>
 <template>
-    <tr class="text-fuente-500 text-[18px] font-light">
+    <tr class="text-fuente-500 text-[18px] font-light table-ingresos">
         <td>#{{ props.factura.referencia }}</td>
         <td>${{ formatoMoney(props.factura.cantidad) }}</td>
         <td>${{ formatoMoney(props.factura.total_ocs) }}</td>

@@ -322,8 +322,6 @@ body {
 }
 
 .table-ingresos {
-    overflow: hidden;
-    margin-right: 0.5rem;
 }
 .table-ingresos thead tr th {
     padding-left: 0.5rem;

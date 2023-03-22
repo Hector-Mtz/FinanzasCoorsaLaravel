@@ -291,7 +291,7 @@ const chageComponent = () => {
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             @click="chageComponent()"
-                            class="w-6 h-6 text-aqua-500 hover:text-aqua-500/70"
+                            class="w-6 h-6 text-aqua-500 hover:text-aqua-500/70 hover:cursor-pointer"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
