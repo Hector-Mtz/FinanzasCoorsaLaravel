@@ -104,9 +104,10 @@ class IngresoController extends Controller
             'nombre' => ['required', 'unique:ingresos,nombre'],
             'cantidad' => ['required', 'numeric'],
             'banco_id' => ['required', 'exists:bancos,id'],
-
+            'created_at' => ['required']
         ]);
 
+        /*
         $urlDoc = "";
 
         if ($request->has('documento')) {
@@ -119,13 +120,13 @@ class IngresoController extends Controller
         }
 
         return $request;
-
+       */
         $ingreso = Ingreso::create(
             [
                 'nombre' => $request['nombre'],
                 'cantidad' => $request['cantidad'],
                 'banco_id' => $request['banco_id'],
-                'documento' => $urlDoc
+                'created_at' => $request['created_at']
             ]
         );
 
@@ -146,22 +147,30 @@ class IngresoController extends Controller
     public function update(Request $request, Ingreso $ingreso)
     {
         $this->authorize('deposito.edit');
-        $newIngreso = $request->validate([
+        $request->validate([
             'nombre' => ['required', 'unique:ingresos,nombre,' . $ingreso->id . ',id'],
             'cantidad' => ['required', 'numeric'],
-            'banco_id' => ['required', 'exists:bancos,id']
+            'banco_id' => ['required', 'exists:bancos,id'],
+            'created_at' =>  ['required']
         ]);
         $facturas = Factura::selectRaw("ifnull(sum(facturas.cantidad),0) as total")
             ->where('ingreso_id', '=', $ingreso->id)
             ->first();
         //No esposible actualizar en caso de que la cantidad sea menor al total de facturas total
-        if ($newIngreso['cantidad']  < $facturas->total) {
+        if ($request['cantidad']  < $facturas->total) {
             @throw ValidationException::withMessages([
                 'cantidad' => 'Monto insuficiente. Deposito en uso',
             ]);
             return;
         }
-        $ingreso->update($newIngreso);
+        $ingreso->update(
+            [
+                'nombre' => $request['nombre'],
+                'cantidad' => $request['cantidad'],
+                'banco_id' => $request['banco_id'],
+                'created_at' => $request['created_at']
+            ]
+        );
 
         return response()->json([
             'message' => 'Actualizado.'

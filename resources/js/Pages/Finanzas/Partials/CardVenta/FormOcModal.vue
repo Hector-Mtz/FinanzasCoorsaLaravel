@@ -4,6 +4,7 @@ import axios from "axios";
 import JetButton from "@/Jetstream/Button.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
 import cerrar from "../../../../../img/elementos/cerrar.png";
+import folder from "../../../../../img/elementos/agregar-documento.png";
 import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
@@ -203,7 +204,7 @@ const update = () => {
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div class="grid px-4 gap-2 mt-4 mb-12">
+                <div class="grid px-4 gap-x-2 mt-4 mb-12 gap-y-6">
                     <div>
                         <Input
                             id="nombre"
@@ -234,27 +235,35 @@ const update = () => {
                             class="mt-2"
                         />
                     </div>
-                    <div class="w-96">
-                        <Input
-                            id="cantidad"
-                            name="cantidad"
-                            type="text"
-                            pattern="^\d*(\.\d{0,2})?$"
-                            placeholder="CANTIDAD"
-                            v-model="form.cantidad"
-                            required
-                            maxlength="30"
-                        />
-                        <JetInputError
-                            :message="form.errors.cantidad"
-                            class="mt-2"
-                        />
+                    <div class="flex justify-between">
+                        <div>
+                            <Input
+                                id="cantidad"
+                                name="cantidad"
+                                type="text"
+                                pattern="^\d*(\.\d{0,2})?$"
+                                placeholder="CANTIDAD"
+                                v-model="form.cantidad"
+                                required
+                                maxlength="30"
+                            />
+                            <JetInputError
+                                :message="form.errors.cantidad"
+                                class="mt-2"
+                            />
+                        </div>
+                        <div
+                            class="grid place-content-center h-[35px] w-[75px] bg-aqua-500 rounded-xl"
+                        >
+                            <img :src="folder" alt="" />
+                        </div>
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">
                     <JetButton type="submit" :disabled="form.processing">
                         <SpinProgress :inprogress="form.processing" />
-                        Agregar
+                        <template v-if="form.nombre === ''"> Agregar </template>
+                        <template v-else>Actualizar</template>
                     </JetButton>
                 </div>
             </form>

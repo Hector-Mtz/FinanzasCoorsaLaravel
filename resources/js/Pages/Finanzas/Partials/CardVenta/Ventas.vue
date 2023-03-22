@@ -78,7 +78,7 @@ watch(searchText, (newSearch) => {
             <img :src="monedas" alt="" class="h-[25px]" />
         </div>
         <div class="flex justify-around">
-            <InputSearch v-model="searchText" />
+            <InputSearch v-model="searchText" class="px-2 py-1" />
             <ButtonAdd class="h-7" @click="emit('showVentas')" />
         </div>
         <div class="w-full h-">

@@ -19,7 +19,6 @@ const props = defineProps({
     },
     oc: {
         type: Object,
-        required: true,
     },
 });
 

@@ -21,7 +21,7 @@ defineExpose({ focus: () => input.value.focus() });
 
 <template>
     <div
-        class="relative text-fuente-500 border-[2px] border-gris-900 max-h-6 rounded-lg flex justify-center"
+        class="relative text-fuente-500 border-[2px] border-gris-900 max-h-6 rounded-lg flex justify-center items-center"
     >
         <input
             type="search"

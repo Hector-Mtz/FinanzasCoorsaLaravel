@@ -1,102 +1,105 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from "vue";
 
-const emit = defineEmits(['update:modelValue', 'value']);
-
+const emit = defineEmits(["update:modelValue", "value"]);
 
 const props = defineProps({
-    'modelValue': {
-        require: true
+    modelValue: {
+        require: true,
     },
-    'list': {
-        require: true
+    list: {
+        require: true,
     },
-    'disabled': {
-        default: false
+    disabled: {
+        default: false,
     },
-    'options': {
-        default: []
+    options: {
+        default: [],
     },
-    'keyOption': {
+    keyOption: {
         type: String,
-        default: 'id'
+        default: "id",
     },
-    'nameOption': {
+    nameOption: {
         type: String,
-        default: 'nombre'
+        default: "nombre",
     },
-    'value': {
-        default: ''
+    value: {
+        default: "",
     },
-    'cantidad': {
-        default: 'nombre',
-        type: String
-    }
-})
-
+    cantidad: {
+        default: "nombre",
+        type: String,
+    },
+});
 
 const valueText = ref("");
 
 const changeText = (text) => {
-    valueText.value = text
-}
-
-
+    valueText.value = text;
+};
 
 const error = computed(() => {
     if (valueText.value !== "" || props.modelValue != "") {
         if (valueText.value !== "") {
-            const selectOpcion = props.options.find(opcion => {
-                return opcion[props.nameOption] == valueText.value
+            const selectOpcion = props.options.find((opcion) => {
+                return opcion[props.nameOption] == valueText.value;
             });
             if (selectOpcion !== undefined) {
-                emit('update:modelValue', selectOpcion[props.keyOption]);
+                emit("update:modelValue", selectOpcion[props.keyOption]);
             } else {
-                emit('update:modelValue', "");
+                emit("update:modelValue", "");
                 return true;
             }
         } else {
-            const selectOpcion = props.options.find(opcion => {
-                return opcion[props.keyOption] == props.modelValue
+            const selectOpcion = props.options.find((opcion) => {
+                return opcion[props.keyOption] == props.modelValue;
             });
             if (selectOpcion !== undefined) {
-                valueText.value = selectOpcion[props.nameOption]
+                valueText.value = selectOpcion[props.nameOption];
             }
         }
     } else {
-        emit('update:modelValue', '');
+        emit("update:modelValue", "");
     }
-    return false
-})
-
+    return false;
+});
 
 const inputlist = ref(null);
 
-watch((props), () => {
-    valueText.value = props.value
-})
+watch(props, () => {
+    valueText.value = props.value;
+});
 
 onMounted(() => {
-    if (inputlist.value.hasAttribute('autofocus')) {
+    if (inputlist.value.hasAttribute("autofocus")) {
         inputlist.value.focus();
     }
 });
 
 defineExpose({ focus: () => inputlist.value.focus() });
-
 </script>
 <template>
-    <div class="text-gray-600">
-        <input type="text" :list="list"
-            class="w-full py-1 text-sm text-white bg-gray-800 border-gray-300 rounded-md shadow-sm focus:border-gray-300 focus:ring focus:ring-gray-200 focus:ring-opacity-50 disabled:bg-gray-300"
-            :class="{ 'border-red-400': error, 'text-red-400': error }" :value="valueText"
-            @keyup="emit('value', valueText)" @input="changeText($event.target.value)" ref="inputlist"
-            :disabled="disabled">
+    <div class="">
+        <input
+            type="text"
+            :list="list"
+            class="w-full py-1 text-sm text-fuente-500 border-aqua-500 rounded-md shadow-sm focus:border-aqua-500 focus:ring focus:ring-aqua-500/20 focus:ring-opacity-50 disabled:bg-aqua-500/50"
+            :class="{ 'border-red-400': error, 'text-red-400': error }"
+            :value="valueText"
+            @keyup="emit('value', valueText)"
+            @input="changeText($event.target.value)"
+            ref="inputlist"
+            :disabled="disabled"
+        />
         <datalist :id="list">
-            <option v-for="opcion in props.options" :key="opcion[props.keyOption]" :value="opcion[props.nameOption]">
-                {{ opcion[props.nameOption] + '-' + opcion.cantidad }}
+            <option
+                v-for="opcion in props.options"
+                :key="opcion[props.keyOption]"
+                :value="opcion[props.nameOption]"
+            >
+                {{ opcion[props.nameOption] + "-" + opcion.cantidad }}
             </option>
         </datalist>
     </div>
 </template>
-

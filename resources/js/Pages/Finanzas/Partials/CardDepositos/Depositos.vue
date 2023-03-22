@@ -149,7 +149,7 @@ watch(searchText, (newSearch) => {
             <!-- Lista de clientes -->
             <div
                 class="-mx-2 overflow-hidden overflow-y-auto"
-                style="max-height: 65vh"
+                style="max-height: 41.1vh"
             >
                 <ItemCliente
                     v-for="cliente in clientes"

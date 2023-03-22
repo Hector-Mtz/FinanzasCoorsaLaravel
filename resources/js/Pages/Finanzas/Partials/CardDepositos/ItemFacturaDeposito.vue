@@ -1,30 +1,29 @@
 <script setup>
 import { formatoMoney } from "../../../../utils/conversiones";
-import DangerButton from "@/Components/DangerButton.vue";
+import ModalButton from "@/Components/ModalButton.vue";
+import del from "../../../../../img/elementos/eliminar.png";
 
-const emit = defineEmits(['remove'])
+const emit = defineEmits(["remove"]);
 const props = defineProps({
     factura: {
         type: Object,
-        required: true
+        required: true,
     },
-})
-
-
+});
 </script>
 <template>
-    <tr>
-        <td>
-            <DangerButton v-if="$page.props.can['deposito.factura.delete']" @click="emit('remove')" class="px-1 py-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3" viewBox="0 0 16 16">
-                    <path
-                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                </svg>
-            </DangerButton>
-            #{{ props.factura.referencia }}
+    <tr class="text-[18px] font-light">
+        <td class="px-2 pt-2">#{{ props.factura.referencia }}</td>
+        <td class="px-2 pt-2">${{ formatoMoney(props.factura.cantidad) }}</td>
+        <td class="px-2 pt-2">{{ props.factura.fechaDePago }}</td>
+        <td class="px-2 pt-2">
+            <ModalButton
+                v-if="$page.props.can['deposito.factura.delete']"
+                @click="emit('remove')"
+                class="px-1 py-0"
+            >
+                <img :src="del" alt="" />
+            </ModalButton>
         </td>
-        <td>${{ formatoMoney(props.factura.cantidad) }}</td>
-        <td>{{ props.factura.fechaDePago }}</td>
     </tr>
 </template>
-

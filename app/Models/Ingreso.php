@@ -14,6 +14,8 @@ class Ingreso extends Model
         'cantidad',
         'banco_id',
         'status_id',
+        'documento',
+        'created_at',
     ];
 
     /**
