@@ -77,14 +77,17 @@ const changeYear = (newYear) => {
         </div>
         <!-- Full Screen Dropdown Overlay -->
         <div v-show="open" class="fixed inset-0 z-40" @click="open = false" />
-        <teleport to="body">
+        <teleport to="footer">
             <div
                 id="pickerCalendar"
                 ref="pickerCalendar"
                 class="bg-gris-500 rounded-xl text-fuente-500 absolute z-[1000] w-[20em] shadow-md shadow-gray-400"
             >
                 <transition leave-active-class="duration-200">
-                    <div v-show="open">
+                    <div
+                        v-show="open"
+                        class="absolute top-[14rem] left-[12.1rem] bg-gris-500 rounded-xl text-fuente-500 shadow-md w-[20em] shadow-gray-400"
+                    >
                         <div
                             class="flex justify-center items-center p-[5px] my-[10px] border-b-2 border-aqua-500"
                         >

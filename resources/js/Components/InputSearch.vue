@@ -32,10 +32,7 @@ defineExpose({ focus: () => input.value.focus() });
             :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)"
         />
-        <button
-            type="submit"
-            class="flex justify-end absolute top-[.3rem] right-[.2rem]"
-        >
+        <button type="submit" class="flex justify-end items-center">
             <img :src="search" alt="" />
         </button>
     </div>
