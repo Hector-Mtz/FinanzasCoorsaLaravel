@@ -113,7 +113,7 @@ watch(searchText, (newSearch) => {
 <template>
     <div class="text-fuente-500 flex flex-col gap-4 pb-2">
         <div class="flex justify-around">
-            <InputSearch v-model="searchText" />
+            <InputSearch v-model="searchText" class="px-2 py-1" />
             <ButtonAdd class="h-7" @click="showingFacturas = true" />
         </div>
         <div class="w-full">

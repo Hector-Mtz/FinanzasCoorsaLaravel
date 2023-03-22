@@ -7,10 +7,10 @@ import axios from "axios";
 import JetLabel from "@/Jetstream/Label.vue";
 import JetButton from "@/Jetstream/Button.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
-
+import cerrar from "../../../../../img/elementos/cerrar.png";
+import folder from "../../../../../img/elementos/agregar-documento.png";
 import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
-import ListDataInput from "@/Components/ListDataInput.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
 import SelectComponent from "@/Components/SelectComponent.vue";
 
@@ -184,21 +184,29 @@ onBeforeMount(() => {
 <template>
     <DialogModal :show="show" @close="close()">
         <template #title>
-            <div class="">
-                <div class="px-4 py-1 text-center">
-                    <span class="font-bold text-fuente-500">
+            <div class="flex items-center">
+                <div class="px-4 py-1 text-center my-6">
+                    <span class="font-semibold text-[32px] text-fuente-500">
                         {{ titleModal }}
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
                 </div>
+                <img
+                    :src="cerrar"
+                    alt=""
+                    @click="close()"
+                    class="absolute top-[1rem] left-[40rem] hover:cursor-pointer"
+                />
             </div>
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
+                <div
+                    class="grid gap-x-2 gap-y-4 px-4 py-2 text-[14px] font-light"
+                >
                     <div>
-                        <JetLabel for="nombre" value="Núm Deposito:" />
                         <Input
+                            placeholder="Numero de Deposito"
                             id="nombre"
                             name="nombre"
                             type="text"
@@ -212,8 +220,8 @@ onBeforeMount(() => {
                         />
                     </div>
                     <div>
-                        <JetLabel for="cantidad" value="Cantidad:" />
                         <Input
+                            placeholder="Cantidad"
                             id="cantidad"
                             name="cantidad"
                             type="text"
@@ -228,8 +236,8 @@ onBeforeMount(() => {
                         />
                     </div>
                     <div>
-                        <JetLabel for="banco_id" value="Banco:" />
                         <SelectComponent v-model="form.banco_id">
+                            <option value="" selected disabled>Banco</option>
                             <option
                                 v-for="banco in listBancos"
                                 :key="banco.id"
@@ -243,19 +251,22 @@ onBeforeMount(() => {
                             class="mt-2"
                         />
                     </div>
-                    <div>
-                        <JetLabel for="fecha" value="Fecha" />
-                        <!--Fecha de creación-->
-                        <Input
-                            id="fecha"
-                            name="fecha"
-                            type="datetime-local"
-                            v-model="form.created_at"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <JetLabel for="documento" value="Documento" />
+                    <div class="flex justify-between gap-8 items-center">
+                        <div>
+                            <!--Fecha de creación-->
+                            <Input
+                                id="fecha"
+                                name="fecha"
+                                type="datetime-local"
+                                v-model="form.created_at"
+                                required
+                            />
+                        </div>
+                        <div
+                            class="w-[74px] h-[35px] grid place-content-center bg-aqua-500 rounded-xl"
+                        >
+                            <img :src="folder" alt="" />
+                        </div>
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">

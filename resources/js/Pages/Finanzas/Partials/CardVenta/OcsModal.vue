@@ -105,32 +105,32 @@ watch(props, () => {
 });
 </script>
 <template>
-    <DialogModal :maxWidth="'xl'" :show="show" @close="close()">
+    <DialogModal :maxWidth="'2xl'" :show="show" @close="close()">
         <template #title>
-            <div class="flex flex-row py-4 gap-8">
-                <div class="px-4 py-1 basis-1/3">
+            <div class="flex justify-between py-4 gap-8 my-6">
+                <div class="px-4 py-1">
                     <span
-                        class="block font-bold text-center text-fuente-500 text-3xl"
+                        class="block font-semibold text-center text-fuente-500 text-[28px]"
                     >
                         {{ title }}
                     </span>
                 </div>
-                <div class="flex-1 px-2 py-1">
+                <div class="px-2 py-1">
                     <div
                         class="flex justify-center items-center gap-4 border-[2px] border-aqua-500 w-fit px-8 rounded-xl py-1"
                     >
                         <span
-                            class="block font-light text-center text-sm text-fuente-500"
+                            class="block font-light text-center text-[11px] text-fuente-500"
                         >
                             Fecha Incial
                         </span>
-                        <span>
+                        <span class="text-[28px] font-semibold">
                             {{ venta.fechaInicial }}
                         </span>
                     </div>
                 </div>
                 <div
-                    class="absolute left-[94%] top-[5%] hover:cursor-pointer"
+                    class="absolute left-[95.5%] top-[5%] hover:cursor-pointer"
                     @click="close"
                 >
                     <img :src="cerrar" alt="" />
@@ -139,9 +139,7 @@ watch(props, () => {
             <div
                 class="mt-4 flex flex-row px-4 justify-between text-center gap-4 text-fuente-500"
             >
-                <div
-                    class="py-1 basis-1/3 border-[2px] border-aqua-500 rounded-xl"
-                >
+                <div class="py-1 px-2 border-[2px] border-aqua-500 rounded-xl">
                     <span class="block text-xs text-start px-[2.6rem]">
                         Subtotal
                     </span>
@@ -149,9 +147,7 @@ watch(props, () => {
                         >${{ formatoMoney(venta.monto) }}</span
                     >
                 </div>
-                <div
-                    class="py-1 basis-1/3 border-[2px] border-aqua-500 rounded-xl"
-                >
+                <div class="py-1 px-2 border-[2px] border-aqua-500 rounded-xl">
                     <span lass="block font-bold text-center tetx-black">
                         <p v-if="venta.iva == true" class="flex flex-col">
                             <span class="text-xs text-start px-[2.6rem]"
@@ -171,9 +167,7 @@ watch(props, () => {
                         </p>
                     </span>
                 </div>
-                <div
-                    class="py-1 basis-1/3 border-[2px] border-aqua-500 rounded-xl"
-                >
+                <div class="py-1 px-2 border-[2px] border-aqua-500 rounded-xl">
                     <span class="block text-xs text-start px-[2.6rem]">
                         Total
                     </span>

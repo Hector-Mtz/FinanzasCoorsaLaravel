@@ -7,7 +7,7 @@ import { Inertia } from "@inertiajs/inertia";
 import { usePage } from "@inertiajs/inertia-vue3";
 import edit from "../../../../../img/elementos/editar.png";
 import del from "../../../../../img/elementos/eliminar.png";
-
+import ConfirmarModal from "./ConfirmarModal.vue";
 const emit = defineEmits(["edit", "activeIva", "changeRevisado"]);
 
 const props = defineProps({
@@ -49,9 +49,23 @@ const activeIva = () => {
 const eliminarVenta = (id) => {
     Inertia.delete(route("ventas.destroy", id));
 };
+
+const show = ref(false);
+const showing = () => {
+    show.value = true;
+};
+const closeConf = () => {
+    show.value = false;
+};
 </script>
 <template>
-    <tr class="text-light" :class="{ 'bg-blue-500': venta.revisado }">
+    <tr
+        class="text-light"
+        :class="{
+            'bg-aqua-500 text-white border-y-[1px] border-white':
+                venta.revisado,
+        }"
+    >
         <td>{{ ventaShow.ceco + "-" + ventaShow.servicio }}</td>
         <td>{{ ventaShow.comentario }}</td>
         <td>

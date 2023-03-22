@@ -13,6 +13,7 @@ import ListDataInput from "@/Components/ListDataInput.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
 import SelectComponent from "@/Components/SelectComponent.vue";
 import TextArea from "../../../../Components/TextArea.vue";
+import folder from "../../../../../img/elementos/agregar-documento.png";
 
 const emit = defineEmits(["close"]);
 const props = defineProps({
@@ -156,7 +157,7 @@ watch(props, () => {
         <template #content>
             <form @submit.prevent="createOrUpdate()">
                 <div
-                    class="grid grid-cols-2 gap-x-2 gap-y-4 px-4 py-2 text-[14px] font-light uppercase text-fuente-500"
+                    class="grid grid-cols-2 gap-x-2 gap-y-6 px-4 py-2 text-[14px] font-light uppercase text-fuente-500"
                 >
                     <div>
                         <Input
@@ -313,11 +314,19 @@ watch(props, () => {
                             class="mt-2"
                         />
                     </div>
+                    <div
+                        class="w-[75px] h-[35px] grid place-content-center bg-aqua-500 justify-self-end col-span-2 rounded-xl"
+                    >
+                        <img :src="folder" alt="" />
+                    </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">
                     <JetButton type="submit" :disabled="form.processing">
                         <SpinProgress :inprogress="form.processing" />
-                        Agregar
+                        <template v-if="form.monto_id === ''">
+                            Agregar
+                        </template>
+                        <template v-else> Actualizar </template>
                     </JetButton>
                 </div>
             </form>

@@ -184,7 +184,7 @@ const update = () => {
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div class="flex flex-col gap-2 px-4 py-2 text-sm mb-8">
+                <div class="flex flex-col gap-x-2 gap-y-6 px-4 py-2 mb-8">
                     <div>
                         <Input
                             placeholder="Referencia"
@@ -245,7 +245,10 @@ const update = () => {
                 <div class="flex justify-end px-10 py-2">
                     <JetButton type="submit" :disabled="form.processing">
                         <SpinProgress :inprogress="form.processing" />
-                        Agregar
+                        <template v-if="form.referencia === ''">
+                            Agregar
+                        </template>
+                        <template v-else> Actualizar</template>
                     </JetButton>
                 </div>
             </form>
