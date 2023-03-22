@@ -38,6 +38,7 @@ const form = reactive({
     "cantidad": "",
     "banco_id": "",
     'hasErrors': false,
+    'created_at': "",
     'errors': [],
     'error': "",
     'recentlySuccessful': false,
@@ -52,6 +53,7 @@ const titleModal = computed(() => {
         form.nombre = props.deposito.nombre;
         form.cantidad = props.deposito.cantidad;
         form.banco_id = props.deposito.banco_id;
+        form.created_at = props.deposito.created_at
         return "Actualizar Deposito"
     }
 })
@@ -62,7 +64,8 @@ function restForm() {
     form.banco_id = "";
     form.hasErrors = false;
     form.errors = [];
-    form.error = ""
+    form.error = "",
+    form.created_at = ""
 }
 
 const close = () => {
@@ -217,7 +220,11 @@ onBeforeMount(() => {
                         <JetInputError :message="form.errors.fechaDePago" class="mt-2" />
                     </div>
                     <div>
-                        <JetLabel for="fecha" value="Fecha" />
+                        <JetLabel for="fecha" value="Fecha" /> <!--Fecha de creación-->
+                        <Input id="fecha" name="fecha" type="datetime-local" v-model="form.created_at" required />
+                    </div>
+                    <div>
+                        <JetLabel for="documento" value="Documento" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">
