@@ -2,11 +2,11 @@
     <div class="">
         <div class="inline-block min-w-full align-middle bg-white">
             <div class="overflow-hidden overflow-x-auto overflow-y-auto text-black">
-                <table class="min-w-full custome-table">
+                <table class="min-w-full divide-y divide-gray-200 table-fixed custome-table">
                     <thead class="text-sm">
                         <slot name="thead" />
                     </thead>
-                    <tbody class="text-sm text-center ">
+                    <tbody class="overflow-x-auto text-sm text-center">
                         <slot name="tbody" />
                     </tbody>
                 </table>

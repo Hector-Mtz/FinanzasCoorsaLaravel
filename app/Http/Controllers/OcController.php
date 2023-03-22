@@ -204,55 +204,37 @@ class OcController extends Controller
         ]);
         switch ($validadData['status']) {
             case "pc":
-                $daysStatus =  Oc::select('ocs.id', 
-                    'ocs.nombre', 
+                $daysStatus =  Oc::select(
+                    'ocs.id',
+                    'ocs.nombre',
                     'ocs.cantidad as total',
-                    'ventas.nombre as ventas_nombre',
-                    'ventas.cantidad AS ventas_cantidad',
-                    'facturas.referencia AS factura_referencia',
-                    'facturas.cantidad AS factura_cantidad'.
-                    'ingresos.nombre AS ingreso_nombre',
-                    'ingresos.cantidad AS ingreso_cantidad')
+                    'ventas.nombre as  venta'
+                )
                     ->selectRaw('day(ocs.created_at) as day')
+                    ->join('ventas', 'ocs.venta_id', 'ventas.id')
                     ->whereNull('ocs.factura_id')
                     ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
                     ->whereYear('ocs.fecha_alta', '=', $validadData['year'])
-                    ->leftJoin('ventas', 'ocs.venta_id', 'ventas.id')
-                    ->leftJoin('facturas', 'ocs.factura_id', 'facturas.id')
-                    ->leftJoin('ingresos','facturas.ingreso_id', 'ingresos.id')
                     ->get();
                 break;
             case "pp":
-                $daysStatus =  Factura::select('facturas.id', 
-                'facturas.referencia as referencia', 
-                'facturas.cantidad as total',
-                'ocs.nombre AS ocs_name',
-                'ocs.cantidad AS ocs_cantidad',
-                'ventas.nombre AS ventas_nombre',
-                'ventas.cantidad AS venta_cantidad'
-                )
-                    ->selectRaw('day(facturas.fechaDePago) as day')
+                $daysStatus =  Factura::select(
+                    'facturas.id',
+                    'facturas.referencia as referencia',
+                    'facturas.cantidad as total',
+                )->selectRaw('day(facturas.fechaDePago) as day')
                     ->whereNull('facturas.ingreso_id')
                     ->whereMonth('facturas.fechaDePago', '=', $validadData['month'])
                     ->whereYear('facturas.fechaDePago', '=', $validadData['year'])
-                    ->leftJoin('ocs', 'ocs.factura_id', 'facturas.id')
-                    ->leftJoin('ventas', 'ocs.venta_id', 'ventas.id')
                     ->get();
                 break;
             case "c":
-                $daysStatus =  Ingreso::select('ingresos.id', 
-                'ingresos.nombre', 
-                'ingresos.cantidad as total',
-                'facturas.referencia AS factura_referencia',
-                'facturas.cantidad AS factura_cantidad',
-                'ventas.nombre AS venta_name',
-                'ventas.cantidad AS venta_cantidad',
-                'ocs.nombre AS oc_name',
-                'ocs.cantidad AS oc_cantidad')
+                $daysStatus =  Ingreso::select(
+                    'ingresos.id',
+                    'ingresos.nombre',
+                    'ingresos.cantidad as total',
+                )
                     ->selectRaw('day(ingresos.created_at) as day')
-                    ->leftJoin('facturas', 'facturas.ingreso_id', 'ingresos.id')
-                    ->leftJoin('ocs', 'ocs.factura_id', 'facturas.id')
-                    ->leftJoin('ventas', 'ocs.venta_id', 'ventas.id')
                     ->whereMonth('ingresos.created_at', '=', $validadData['month'])
                     ->whereYear('ingresos.created_at', '=', $validadData['year'])
                     ->get();

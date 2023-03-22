@@ -21,4 +21,9 @@ class Venta extends Model
     {
         return $this->belongsTo(Ceco::class, 'ceco_id');
     }
+
+    public function ocs()
+    {
+        return $this->hasMany(Oc::class, 'venta_id');
+    }
 }

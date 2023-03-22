@@ -53,6 +53,7 @@ Route::middleware([
     Route::apiResource('/ventas', VentaController::class)->except('show');
     Route::put('/ventas/{venta}/iva', [VentaController::class, 'activeIva'])->name('ventas.iva');
     Route::put('/ventas/{venta}/revisado', [VentaController::class, 'changeRevisado'])->name('ventas.revisado');
+    Route::get('/ventas/{venta}/ocs', [VentaController::class, 'ocsIndex'])->name('ventas.ocs.index');
     Route::get('/ventas/totals', [VentaController::class, 'totals'])->name('ventas.totals');
     Route::get('/ventas/months', [VentaController::class, 'ventasMonth'])->name('ventas.month');
     Route::apiResource('/ocs', OcController::class)->except('show');
@@ -65,11 +66,13 @@ Route::middleware([
     Route::get('/facturas/catalogos', [FacturaController::class, 'catalogos'])->name('facturas.catalogos');
     Route::post('/facturas/{factura}/ocs', [FacturaController::class, "storeOc"])->name("facturas.ocs.store");
     Route::delete('/facturas/{factura}/ocs', [FacturaController::class, "destroyOc"])->name("facturas.ocs.destroy");
+    Route::get('/facturas/{factura}/ocs', [FacturaController::class, "ocsIndex"])->name("facturas.ocs.index");
 
     Route::apiResource('/ingresos', IngresoController::class)->except('show');
     Route::put('/ingresos/{ingreso}/status', [IngresoController::class, 'changeStatus'])->name('ingresos.status');
     Route::post('/ingresos/{ingreso}/facturas', [IngresoController::class, "storeFactura"])->name("ingresos.facturas.store");
     Route::delete('/ingresos/{ingreso}/facturas', [IngresoController::class, "destroyFactura"])->name("ingresos.facturas.destroy");
+    Route::get('/ingresos/{ingreso}/facturas', [IngresoController::class, "facturasIndex"])->name("ingresos.facturas.index");
 
     Route::apiResource('bancos', BancoController::class)->only('index');
 

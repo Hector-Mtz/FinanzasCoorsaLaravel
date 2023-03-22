@@ -1,10 +1,9 @@
 <script setup>
-import { computed, reactive } from "vue";
+import { computed, ref } from "vue";
 import cerrar from "../../../../../img/elementos/cerrar.png";
 import DialogModal from "@/Components/DialogModal.vue";
 import TableComponent from "@/Components/Table.vue";
 import InputSearch from "@/Components/InputSearch.vue";
-import SubModal from "./SubModal.vue";
 
 const emit = defineEmits(["close", "addOc"]);
 const props = defineProps({
@@ -17,56 +16,7 @@ const props = defineProps({
         required: true,
     },
 });
-const subModal = reactive({
-    showing: false,
-    ruta: "",
-})
 
-const showSubModal = (obj) => {
-    let ruta = "";
-    console.log(props.dataCalendar.serie);
-    switch (props.dataCalendar.serie) {
-        case "ventas":
-            ruta = "ventas.ocs.index";
-            break;
-        case "pp":
-            ruta = "facturas.ocs.index";
-            break;
-        case "c":
-            ruta = "ingresos.facturas.index";
-            break;
-        default:
-            return; // Nodeberia abrir un submodal
-    }
-
-    subModal.ruta = route(ruta, obj.id);
-    subModal.showing = true;
-}
-
-const closeSubModal = () => {
-    subModal.ruta = "";
-    subModal.showing = false;
-}
-
-
-const headerTable = computed(() => {
-    if (props.dataCalendar.data.lenght == 0) {
-        return ["", "Cantidad"];
-    }
-    let keyData;
-    const auxHeader = [];
-    for (keyData in props.dataCalendar.data[0]) {
-        switch (keyData) {
-            case "id":
-            case "day":
-                break;
-            default:
-                auxHeader.push(keyData);
-                break;
-        }
-    }
-    return auxHeader;
-});
 
 const close = () => {
     emit("close");
@@ -79,7 +29,7 @@ const close = () => {
                 <div class="flex">
                     <div class="px-4 py-1">
                         <span class="block font-bold text-center text-fuente-500 text-[26px] uppercase">
-                            {{ dataCalendar.serie }}
+                            POR COBRAR
                         </span>
                     </div>
                     <div class="px-4 py-1 border-gray-600">
@@ -89,27 +39,21 @@ const close = () => {
                         </span>
                     </div>
                 </div>
-                <div>
-                    <!-- <InputSearch v-model="searchText" class="flex items-center p-4 w-80" /> -->
-                </div>
-                <img :src="cerrar" alt="" class="absolute left-[87.5rem] w-[17px] h-[17px] hover:cursor-pointer"
-                    @click="close()" />
             </div>
         </template>
         <template #content>
             <TableComponent>
                 <template #thead>
                     <tr class="uppercase border-b-2 border-aqua-500 text-[15px] font-semibold">
-                        <th class="flex justify-center" v-if="dataCalendar.serie !== 'pc'"></th>
-                        <th v-for="(header, index) in headerTable" :key="header" class="pb-4">
-                            {{ header }}
-                        </th>
+                        <th class=""></th>
+                        <th class="">NOMBRE</th>
+                        <th class="">TOTAL</th>
                     </tr>
                 </template>
                 <template #tbody>
-                    <tr v-for="(obj, index) in dataCalendar.data" :key="index">
-                        <td class="flex justify-center" v-if="dataCalendar.serie !== 'pc'">
-                            <span class="block w-full hover:opacity-60" @click="showSubModal(obj)">
+                    <tr v-for="(pc, index) in dataCalendar.data" :key="'pc-'+index">
+                        <td>
+                            <span class="block w-full hover:opacity-60">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-5 h-5 mx-auto"
                                     viewBox="0 0 16 16">
                                     <path
@@ -118,15 +62,13 @@ const close = () => {
                                         d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
                                 </svg>
                             </span>
+
                         </td>
-                        <td v-for="(header) in headerTable" :key="header + index" :class="{ 'bg-aqua-500': obj.revisado }">
-                            {{ obj[header] }}
-                        </td>
+                        <td>{{ pc.nombre }}</td>
+                        <td>{{ pc.total }}</td>
                     </tr>
                 </template>
             </TableComponent>
-
-            <SubModal :show="subModal.showing" :ruta="subModal.ruta" @close="closeSubModal()" />
         </template>
     </DialogModal>
 </template>

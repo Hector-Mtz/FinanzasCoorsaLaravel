@@ -5,6 +5,7 @@ import CalendarHeader from "@/Components/CalendarHeader.vue";
 import Calendar from "@/Components/Calendar.vue";
 import CalendarModal from "./CalendarModal.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
+import VentasDateModal from "./VentasDateModal.vue";
 
 const emit = defineEmits(["changeDate"]);
 
@@ -29,6 +30,7 @@ const totalsVentas = ref({
 const showsStatus = reactive(["ventas"]); // Ya que debe ser profundo el watch
 const specialDays = ref([]);
 const showingModal = ref(false);
+const showingVentasModal = ref(false);
 const dataCalendar = ref([]);
 
 // no es renderizable
@@ -150,8 +152,15 @@ async function getTotalsMonth() {
 
 const showCalendarModal = (data) => {
     dataCalendar.value = data;
-    console.log(data);
-    showingModal.value = true;
+    switch (data.serie) {
+        case "ventas":
+            showingVentasModal.value = true;
+            break;
+        default:
+            showingModal.value = true;
+            break;
+    }
+
 };
 
 // show status months
@@ -175,88 +184,63 @@ watch(props, () => {
             <table class="w-full">
                 <thead>
                     <tr class="flex justify-around gap-16 px-4 text-center">
-                        <td
-                            class="hover:cursor-pointer hover:bg-ventas/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
+                        <td class="hover:cursor-pointer hover:bg-ventas/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
                             :class="{
                                 'bg-ventas text-white': isActive('ventas'),
-                            }"
-                            @click="addStatus('ventas')"
-                        >
+                            }" @click="addStatus('ventas')">
                             <span> VENTAS </span>
                         </td>
-                        <td
-                            @click="addStatus('pc')"
+                        <td @click="addStatus('pc')"
                             class="hover:cursor-pointer hover:bg-pc/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
-                            :class="{ 'bg-pc text-white': isActive('pc') }"
-                        >
+                            :class="{ 'bg-pc text-white': isActive('pc') }">
                             <span> PC </span>
                         </td>
-                        <td
-                            @click="addStatus('pp')"
+                        <td @click="addStatus('pp')"
                             class="hover:cursor-pointer hover:bg-pp/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
-                            :class="{ 'bg-pp text-white': isActive('pp') }"
-                        >
+                            :class="{ 'bg-pp text-white': isActive('pp') }">
                             <span> PP </span>
                         </td>
-                        <td
-                            @click="addStatus('c')"
+                        <td @click="addStatus('c')"
                             class="hover:cursor-pointer hover:bg-cobrado/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
                             :class="{
                                 'bg-cobrado text-white': isActive('c'),
-                            }"
-                        >
+                            }">
                             <span> C </span>
                         </td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="flex gap-2 py-4 text-center">
-                        <td
-                            class="w-3/12 px-4 py-1 text-white shadow-md bg-ventas rounded-xl shadow-gray-400"
-                        >
+                        <td class="w-3/12 px-4 py-1 text-white shadow-md bg-ventas rounded-xl shadow-gray-400">
                             <div class="flex flex-col">
                                 <span class="text-[13px] uppercase font-normal">
                                     VENTAS
                                 </span>
-                                <span class="font-bold text-[16px]"
-                                    >${{ totalsVentas.ventas }}</span
-                                >
+                                <span class="font-bold text-[16px]">${{ totalsVentas.ventas }}</span>
                             </div>
                         </td>
-                        <td
-                            class="w-3/12 px-4 py-1 text-white shadow-md bg-pc rounded-xl shadow-gray-400"
-                        >
+                        <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pc rounded-xl shadow-gray-400">
                             <div class="flex flex-col">
                                 <span class="text-[13px] uppercase font-normal">
                                     Por Cobrar
                                 </span>
-                                <span class="font-bold text-[16px]"
-                                    >${{ totalsVentas.pc }}</span
-                                >
+                                <span class="font-bold text-[16px]">${{ totalsVentas.pc }}</span>
                             </div>
                         </td>
-                        <td
-                            class="w-3/12 px-4 py-1 text-white shadow-md bg-pp rounded-xl shadow-gray-400"
-                        >
+                        <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pp rounded-xl shadow-gray-400">
                             <div class="flex flex-col">
                                 <span class="text-[13px] uppercase font-normal">
                                     Por Pagar
                                 </span>
-                                <span class="font-bold text-[16px]"
-                                    >${{ totalsVentas.pp }}</span
-                                >
+                                <span class="font-bold text-[16px]">${{ totalsVentas.pp }}</span>
                             </div>
                         </td>
-                        <td
-                            class="w-3/12 px-4 py-1 text-white shadow-md bg-cobrado rounded-xl shadow-gray-400"
-                        >
+                        <td class="w-3/12 px-4 py-1 text-white shadow-md bg-cobrado rounded-xl shadow-gray-400">
                             <div class="flex flex-col">
                                 <span class="text-[13px] uppercase font-normal">
                                     Cobrado
                                 </span>
-                                <span class="font-bold text-[16px]"
-                                    >${{ totalsVentas.c }}</span
-                                >
+                                <span class="font-bold text-[16px]">${{ totalsVentas.c }}</span>
                             </div>
                         </td>
                     </tr>
@@ -265,28 +249,16 @@ watch(props, () => {
         </div>
         <!-- End Interacion -->
         <div class="px-4 py-2 mt-4 bg-gris-500 rounded-xl">
-            <CalendarHeader
-                class="text-fuente-500 border-b-[1px] border-b-gris-900 mb-4"
-                :month="props.date.month"
-                :year="props.date.year"
-                @change-date="emit('changeDate', $event)"
-            />
-            <Calendar
-                :month="props.date.month"
-                :special-days="specialDays"
-                :year="props.date.year"
-                @on-special-days="showCalendarModal($event)"
-                class="text-fuente-500"
-            >
+            <CalendarHeader class="text-fuente-500 border-b-[1px] border-b-gris-900 mb-4" :month="props.date.month"
+                :year="props.date.year" @change-date="emit('changeDate', $event)" />
+            <Calendar :month="props.date.month" :special-days="specialDays" :year="props.date.year"
+                @on-special-days="showCalendarModal($event)" class="text-fuente-500">
             </Calendar>
         </div>
         <!--Modals-->
 
-        <CalendarModal
-            :data-calendar="dataCalendar"
-            :show="showingModal"
-            @close="showingModal = false"
-        />
+        <CalendarModal :data-calendar="dataCalendar" :show="showingModal" @close="showingModal = false" />
+        <VentasDateModal :data-calendar="dataCalendar" :show="showingVentasModal" @close="showingVentasModal = false" />
         <!--End Modals-->
     </div>
 </template>

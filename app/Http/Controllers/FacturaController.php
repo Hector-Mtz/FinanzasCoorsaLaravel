@@ -270,4 +270,25 @@ class FacturaController extends Controller
             ->whereNull('facturas.ingreso_id')->get();
         return response()->json($facturas);
     }
+
+
+    /**
+     * 
+     */
+    /**
+     * Get ocs by Venta
+     */
+    public function ocsIndex(Factura $factura)
+    {
+        $ocs = $factura->ocs()->select(
+            "ocs.id",
+            "ocs.nombre as oc",
+        )
+            ->selectRaw("CONCAT('$',FORMAT(ocs.cantidad,2,'en_US')) as cantidad");
+        if (request()->has("search")) {
+            $search = strtr(request("search"), array("'" => "\\'", "%" => "\\%"));
+            $ocs->where("ocs.nombre", "like", "%" . $search . "%");
+        }
+        return response()->json($ocs->get());
+    }
 }

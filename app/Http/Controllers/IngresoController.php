@@ -101,31 +101,31 @@ class IngresoController extends Controller
 
         $this->authorize('deposito.create');
         $request->validate([
-               'nombre' => ['required', 'unique:ingresos,nombre'],
-               'cantidad' => ['required', 'numeric'],
-               'banco_id' => ['required', 'exists:bancos,id'],
-               
-           ]);
+            'nombre' => ['required', 'unique:ingresos,nombre'],
+            'cantidad' => ['required', 'numeric'],
+            'banco_id' => ['required', 'exists:bancos,id'],
+
+        ]);
 
         $urlDoc = "";
 
-        if($request->has('documento'))
-        {
+        if ($request->has('documento')) {
             $file = $request['documento'];
             return $file;
 
             $nombre_original = $file->getClientOriginalName();
-            $ruta_file = $file->storeAs('ingresos/docs', $nombre_original , 'gcs');
+            $ruta_file = $file->storeAs('ingresos/docs', $nombre_original, 'gcs');
             $urlDoc = Storage::disk('gcs')->url($ruta_file);
         }
 
         return $request;
 
         $ingreso = Ingreso::create(
-            ['nombre' =>$request['nombre'],
-             'cantidad' => $request['cantidad'],
-             'banco_id' => $request['banco_id'],
-             'documento' => $urlDoc
+            [
+                'nombre' => $request['nombre'],
+                'cantidad' => $request['cantidad'],
+                'banco_id' => $request['banco_id'],
+                'documento' => $urlDoc
             ]
         );
 
@@ -276,5 +276,23 @@ class IngresoController extends Controller
         return response()->json([
             'message' => 'Eliminado'
         ]);
+    }
+
+
+    /**
+     * Get Facturas by Venta
+     */
+    public function facturasIndex(Ingreso $ingreso)
+    {
+        $facturas = $ingreso->facturas()->select(
+            "facturas.id",
+            "facturas.referencia as factura",
+        )
+            ->selectRaw("CONCAT('$',FORMAT(facturas.cantidad,2,'en_US')) as cantidad,
+            ventas.nombre as venta,
+            ocs.nombre as oc")
+            ->leftJoin('ocs', 'facturas.id', '=', 'ocs.factura_id')
+            ->leftJoin('ventas', 'ocs.venta_id', '=', 'ventas.id');
+        return response()->json($facturas->get());
     }
 }

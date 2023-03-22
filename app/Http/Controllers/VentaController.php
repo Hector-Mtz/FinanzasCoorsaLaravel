@@ -199,9 +199,7 @@ class VentaController extends Controller
             'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
         ]);
 
-        $ventas = Venta::select('ventas.id', 'ventas.revisado',
-         'ocs.nombre AS ocs_name', 'ocs.cantidad AS ocs_cantidad',
-         'facturas.referencia AS factura_ref', 'facturas.cantidad AS facturas_cantidad')
+        $ventas = Venta::select('ventas.id', 'ventas.revisado')
             ->selectRaw('concat(cecos.nombre,"-",servicios.nombre) as nombre,
             montos.cantidad * ventas.periodos * ventas.cantidad AS subtotal,
              ifnull(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0),0) as total')
@@ -209,19 +207,12 @@ class VentaController extends Controller
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
-            ->leftjoin('ocs', 'ocs.venta_id', 'ventas.id')
-            ->leftjoin('facturas', 'facturas.id', 'ocs.factura_id')
             ->groupBy(
                 'ventas.id',
                 'day',
                 'cecos.nombre',
                 'servicios.nombre',
                 'montos.cantidad',
-                'ventas.periodos',
-                'ventas.cantidad',
-                'ventas.iva',
-                'ventas.comentario',
-                'ventas.revisado'
             )
             ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
             ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
@@ -248,5 +239,23 @@ class VentaController extends Controller
         $status['pp'] =  $facturas->total;
         $status['c'] = $ingreso->total;
         return $status;
+    }
+
+    /**
+     * Get ocs by Venta
+     */
+    public function ocsIndex(Venta $venta)
+    {
+        $ocs = $venta->ocs()->select(
+            "ocs.id",
+            "ocs.nombre as oc",
+        )
+            ->selectRaw("CONCAT('$',FORMAT(ocs.cantidad,2,'en_US')) as cantidad, facturas.referencia as factura")
+            ->leftJoin("facturas", 'ocs.factura_id', "=", "facturas.id");
+        if (request()->has("search")) {
+            $search = strtr(request("search"), array("'" => "\\'", "%" => "\\%"));
+            $ocs->where("ocs.nombre", "like", "%" . $search . "%");
+        }
+        return response()->json($ocs->get());
     }
 }
