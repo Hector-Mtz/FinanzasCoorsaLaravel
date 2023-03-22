@@ -190,7 +190,6 @@ watch(props, () => {
                             :class="{ 'bg-pc text-white': isActive('pc') }"
                         >
                             <span> PC </span>
-                            <span>${{ totalsVentas.pc }}</span>
                         </td>
                         <td
                             @click="addStatus('pp')"
