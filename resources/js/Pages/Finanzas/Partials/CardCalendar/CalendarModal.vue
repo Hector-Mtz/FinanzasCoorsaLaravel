@@ -72,7 +72,8 @@ const close = () => {
                 <img
                     :src="cerrar"
                     alt=""
-                    class="absolute left-[87.5rem] w-[17px] h-[17px]"
+                    class="absolute left-[87.5rem] w-[17px] h-[17px] hover:cursor-pointer"
+                    @click="close()"
                 />
             </div>
         </template>

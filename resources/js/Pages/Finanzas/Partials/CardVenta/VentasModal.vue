@@ -8,7 +8,7 @@ import TableComponent from "@/Components/Table.vue";
 import FormVentaModal from "./FormVentaModal.vue";
 import InputSearch from "@/Components/InputSearchVentas.vue";
 import { Inertia } from "@inertiajs/inertia";
-import mas from "../../../../../img/elementos/+.png";
+import cerrar from "../../../../../img/elementos/cerrar.png";
 
 const emit = defineEmits(["close"]);
 const props = defineProps({
@@ -108,7 +108,7 @@ const close = () => {
     <DialogModal :show="show" @close="close()" maxWidth="6xl">
         <template #title>
             <div
-                class="flex text-fuente-500 gap-4 items-center justify-between px-8 mb-8 py-2"
+                class="flex text-fuente-500 gap-4 items-center justify-between px-8 mb-8 py-2 max-w-[69rem]"
             >
                 <div class="flex gap-4 pl-8 items-center">
                     <div class="">
@@ -127,7 +127,14 @@ const close = () => {
                     </div>
                 </div>
 
-                <InputSearch v-model="searchText" class="w-96" />
+                <InputSearch v-model="searchText" class="w-96 px-2 py-1" />
+
+                <img
+                    :src="cerrar"
+                    alt=""
+                    class="absolute left-[70rem] hover:cursor-pointer"
+                    @click="close()"
+                />
             </div>
         </template>
         <template #content>
