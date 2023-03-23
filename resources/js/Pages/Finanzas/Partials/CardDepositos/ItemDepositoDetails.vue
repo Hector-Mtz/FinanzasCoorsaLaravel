@@ -72,10 +72,10 @@ const addFactura = () => {
         <td>
             <div v-if="deposito.documento">
                 <a
-                    class="inline-flex items-center justify-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition bg-blue-500 border border-transparent rounded-3xl disabled:opacity-25"
-                    v-if="!deposito.documento.endsWith('.svg')"
+                    v-if="deposito.documento.endsWith('.svg') || deposito.documento.endsWith('.png') || deposito.documento.endsWith('.pdf') || deposito.documento.endsWith('.jpg')"
+                    data-fancybox
                     :href="deposito.documento"
-                    download
+                    class="inline-flex items-center justify-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition bg-blue-500 border border-transparent rounded-3xl disabled:opacity-25"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -92,10 +92,10 @@ const addFactura = () => {
                     </svg>
                 </a>
                 <a
-                    v-else
-                    data-fancybox
-                    :href="deposito.documento"
                     class="inline-flex items-center justify-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition bg-blue-500 border border-transparent rounded-3xl disabled:opacity-25"
+                    :href="deposito.documento"
+                    download
+                    v-else
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

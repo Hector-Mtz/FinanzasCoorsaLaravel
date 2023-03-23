@@ -103,10 +103,11 @@ const closeConf = () => {
         <td>
             <div v-if="ventaShow.documento">
                 <a
-                    class="inline-flex items-center justify-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition bg-blue-500 border border-transparent rounded-3xl disabled:opacity-25"
-                    v-if="!ventaShow.documento.endsWith('.svg')"
+                v-if="ventaShow.documento.endsWith('.svg') || ventaShow.documento.endsWith('.png') || ventaShow.documento.endsWith('.pdf') || ventaShow.documento.endsWith('.jpg')"
+                    
+                    data-fancybox
                     :href="ventaShow.documento"
-                    download
+                    class="inline-flex items-center justify-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition bg-blue-500 border border-transparent rounded-3xl disabled:opacity-25"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -123,10 +124,10 @@ const closeConf = () => {
                     </svg>
                 </a>
                 <a
-                    v-else
-                    data-fancybox
-                    :href="ventaShow.documento"
                     class="inline-flex items-center justify-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition bg-blue-500 border border-transparent rounded-3xl disabled:opacity-25"
+                v-else
+                    :href="ventaShow.documento"
+                    download
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
