@@ -112,22 +112,38 @@ class FacturaController extends Controller
         $urlContenido = null;
         if($request->has('documento'))
         {
-            $contenido = $request['documento'];  
-            $nombreCont = $contenido->getClientOriginalName();
-            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
-            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
+            if($request['documento'] !== null)
+            {
+                $contenido = $request['documento'];  
+                $nombreCont = $contenido->getClientOriginalName();
+                $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+                $urlContenido = Storage::disk('gcs')->url($ruta_documento);
+    
+                $factura = Factura::create(
+                    [
+                     'cantidad' => $request['cantidad'],
+                     'referencia' => $request['referencia'],
+                     'fechaDePago' => $request['fechaDePago'],
+                     'documento' => $urlContenido,
+                    ]
+                );
+    
+                $factura->total_ocs = 0;
+                $factura->ocs = [];
+            }
+            else
+            {
+                $factura = Factura::create(
+                    [ 'cantidad' => $request['cantidad'],
+                      'referencia' => $request['referencia'],
+                      'fechaDePago' => $request['fechaDePago'],
+                    ]
+                );
+    
+                $factura->total_ocs = 0;
+                $factura->ocs = [];
+            }
 
-            $factura = Factura::create(
-                [
-                 'cantidad' => $request['cantidad'],
-                 'referencia' => $request['referencia'],
-                 'fechaDePago' => $request['fechaDePago'],
-                 'documento' => $urlContenido,
-                ]
-            );
-
-            $factura->total_ocs = 0;
-            $factura->ocs = [];
             //return response()->json($factura);
         }
         else

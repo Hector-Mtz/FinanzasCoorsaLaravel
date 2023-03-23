@@ -102,6 +102,9 @@ const reVisit = () =>
           preserveScroll: true,
           only: ['totalOcs'],
       }); 
+
+    close();
+    form.reset();
 }
 
 
