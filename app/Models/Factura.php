@@ -18,6 +18,7 @@ class Factura extends Model
         "fechaDePago",
         "cliente_id",
         "ingreso_id",
+        "documento",
     ];
 
 

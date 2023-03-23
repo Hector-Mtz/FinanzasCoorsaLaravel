@@ -1,5 +1,6 @@
 <script setup>
 import { computed, reactive } from "vue";
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 
 import axios from "axios";
 
@@ -12,6 +13,7 @@ import cerrar from "../../../../../img/elementos/cerrar.png";
 import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
+import DropZone from '@/Components/DropZone.vue';
 
 const emit = defineEmits(["close", "addFactura", "editFactura"]);
 const props = defineProps({
@@ -29,10 +31,11 @@ const props = defineProps({
     },
 });
 
-const form = reactive({
+const form = useForm({
     cantidad: "",
     referencia: "",
     fechaDePago: "",
+    documento:"",
     hasErrors: false,
     errors: [],
     error: "",
@@ -56,6 +59,7 @@ function restForm() {
     form.cantidad = "";
     form.referencia = "";
     form.fechaDePago = "";
+    form.documento = "";
 }
 
 const close = () => {
@@ -71,6 +75,13 @@ const createOrUpdate = () => {
 };
 
 const create = () => {
+    form.post(route('facturas.store'),
+    {
+        preserveScroll:true,
+        preserveState:true,
+        onSuccess:() => restForm()
+    })
+    /*
     axios
         .post(route("facturas.store"), form, {
             onUploadProgress: () => {
@@ -118,6 +129,7 @@ const create = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
+        */
 };
 const update = () => {
     axios
@@ -225,6 +237,9 @@ const update = () => {
                             :message="form.errors.fechaDePago"
                             class="mt-2"
                         />
+                    </div>
+                    <div>
+                        <JetLabel for="documento" value="Documento" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">

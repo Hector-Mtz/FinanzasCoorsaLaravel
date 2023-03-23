@@ -126,8 +126,8 @@ class IngresoController extends Controller
             );
         }
 
-
-        return response()->json($ingreso);
+        return redirect()->back();
+       // return response()->json($ingreso);
     }
 
 
@@ -141,7 +141,6 @@ class IngresoController extends Controller
      */
     public function update(Request $request, Ingreso $ingreso)
     {
-        return $request;
         $this->authorize('deposito.edit');
         $request->validate([
             'nombre' => ['required', 'unique:ingresos,nombre,' . $ingreso->id . ',id'],
@@ -159,17 +158,41 @@ class IngresoController extends Controller
             ]);
             return;
         }
-        $ingreso->update(
-            ['nombre' =>$request['nombre'],
-             'cantidad' => $request['cantidad'],
-             'banco_id' => $request['banco_id'],
-             'created_at' => $request['created_at']
-            ]
-        );
+        
+        $urlContenido = null;
+        if($request->has('documento'))
+        {
+            $contenido = $request['documento'];  
+            $nombreCont = $contenido->getClientOriginalName();
+            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
+            Ingreso::where('ingresos.id','=', $ingreso->id)
+            ->update([
+                'nombre' =>$request['nombre'],
+                'cantidad' => $request['cantidad'],
+                'banco_id' => $request['banco_id'],
+                'created_at' => $request['created_at'],
+                'documento' => $urlContenido
+            ]);
+        }
+        else
+        {
+            Ingreso::where('ingresos.id','=', $ingreso->id)
+            ->udpate([
+                'nombre' =>$request['nombre'],
+                'cantidad' => $request['cantidad'],
+                'banco_id' => $request['banco_id'],
+                'created_at' => $request['created_at']
+            ]);
+        }
+
+        return redirect()->back();
+      /*
         return response()->json([
             'message' => 'Actualizado.'
         ]);
+        */
     }
 
 

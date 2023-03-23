@@ -171,6 +171,15 @@ const create = () => {
     
 }
 const update = () => {
+
+    form.post(route('ingresos.update', props.deposito.id),
+    {
+        onProgress:() => form.processing = true,
+        onSuccess:() => emit("addDeposito"),
+        onFinish:()=> reVisit()
+    });
+
+ /*
     axios.put(route('ingresos.update', props.deposito.id), form,
         {
             onUploadProgress: () => {
@@ -213,6 +222,7 @@ const update = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
+        */
 }
 
 

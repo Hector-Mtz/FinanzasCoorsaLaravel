@@ -26,6 +26,7 @@ const closeConf = () => {
         <td>#{{ props.oc.nombre }}</td>
         <td>${{ formatoMoney(props.oc.cantidad) }}</td>
         <td>{{ props.oc.fecha_alta }}</td>
+        <td></td>
         <td v-if="$page.props.can['ocs.edit']">
             <ModalButton @click="emit('edit', props.oc)">
                 <img :src="edit" alt="" />
