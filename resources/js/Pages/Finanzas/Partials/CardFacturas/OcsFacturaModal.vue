@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
-
+import { formatoMoney } from "../../../../utils/conversiones";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
 import DialogModal from "@/Components/DialogModal.vue";
 import TableComponent from "@/Components/Table.vue";
@@ -106,7 +106,7 @@ watch(props, () => {
                 >
                     <span class="text-[11px] font-normal">Total</span>
                     <span class="text-center text-fuente-500">
-                        $ {{ props.factura.cantidad }}
+                        $ {{ formatoMoney(props.factura.cantidad) }}
                     </span>
                 </div>
 
@@ -149,7 +149,11 @@ watch(props, () => {
                         <th>OC</th>
                         <th class="flex justify-center gap-4 min-w-fit">
                             <span>CANTIDAD</span>
-                            <span>${{ props.factura.total_ocs }}</span>
+                            <span
+                                >${{
+                                    formatoMoney(props.factura.total_ocs)
+                                }}</span
+                            >
                         </th>
                         <th>FECHA</th>
                     </tr>
