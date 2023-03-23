@@ -60,6 +60,7 @@ const addOc = (newOc) => {
 };
 
 const editOc = (newOc) => {
+    close();
     const findIndex = ocs.value.findIndex((ocFind) => {
         return newOc.id == ocFind.id;
     });

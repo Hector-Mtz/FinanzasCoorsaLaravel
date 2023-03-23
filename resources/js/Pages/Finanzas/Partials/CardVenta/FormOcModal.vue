@@ -11,6 +11,12 @@ import SpinProgress from "@/Components/SpinProgress.vue";
 import { Inertia } from "@inertiajs/inertia";
 import DropZone from '@/Components/DropZone.vue';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+import { Fancybox } from '@fancyapps/ui/dist/fancybox/fancybox.esm.js';
+import '@fancyapps/ui/dist/fancybox/fancybox.css';
+
+Fancybox.bind("[data-fancybox]", {
+  // Your custom options
+});
 
 const emit = defineEmits(["close", "addOc", "editOc"]);
 
@@ -159,7 +165,13 @@ const update = () => {
     form.post(route("ocs.update", props.oc.id),
     {
         preserveScroll:true,
-        preserveState:true
+        preserveState:true,
+        onFinish:() =>  Inertia.visit(route("ventas.index"), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ["totalOcs"],
+            }),
+        onSuccess:() => {emit("editOc", props.oc), close()}
     });
     
     /*

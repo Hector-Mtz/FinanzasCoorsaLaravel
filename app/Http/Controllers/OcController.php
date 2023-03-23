@@ -118,11 +118,13 @@ class OcController extends Controller
      */
     public function update(Request $request, Oc $oc)
     {
+        
         $this->authorize('ocs.edit');
         $newOc = $request->validate([
             'nombre' => ["required", "string", "unique:ocs,nombre," . $oc->id . ",id"],
             'cantidad' => ["required", "numeric"],
             'fecha_alta' => ["required", "date"],
+            
         ]);
 
         if ($oc->factura_id !== null) {
@@ -141,12 +143,52 @@ class OcController extends Controller
                 @throw ValidationException::withMessages([
                     'cantidad' => "La cantidad supera a la factura"
                 ]);
-                return;
+                return redirect()->back();
             }
         }
 
-        $oc->update($newOc);
-        return response()->json($oc);
+        $urlContenido = null;
+        if($request->has('documento'))
+        {
+           if($request['documento'] !== null)
+           {
+            $contenido = $request['documento'];  
+            $nombreCont = $contenido->getClientOriginalName();
+            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+            $urlContenido = Storage::disk('gcs')->url($ruta_documento);      
+
+            Oc::where('ocs.id','=',$oc->id)
+              ->update([
+                'nombre' => $request['nombre'],
+                'cantidad' => $request['cantidad'],
+                'fecha_alta' => $request['fecha_alta'],
+                'venta_id' => $request['venta_id'],
+                'documento' => $urlContenido
+              ]);
+           }
+           else
+           {
+              Oc::where('ocs.id','=',$oc->id)
+              ->update([
+                'nombre' => $request['nombre'],
+                'cantidad' => $request['cantidad'],
+                'fecha_alta' => $request['fecha_alta'],
+                'venta_id' => $request['venta_id']
+              ]);
+           }
+        }
+        else
+        {
+            Oc::where('ocs.id','=',$oc->id)
+            ->update([
+              'nombre' => $request['nombre'],
+              'cantidad' => $request['cantidad'],
+              'fecha_alta' => $request['fecha_alta'],
+              'venta_id' => $request['venta_id']
+            ]);
+        }
+        return redirect()->back();
+        //return response()->json($oc);
     }
     /**
      * Update the specified resource in storage.
