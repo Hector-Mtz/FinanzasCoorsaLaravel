@@ -107,33 +107,28 @@ class IngresoController extends Controller
             'created_at' => ['required']
         ]);
 
-        /*
-        $urlDoc = "";
+        $urlContenido = null;
+        $ingreso = null;
+        if($request->has('documento'))
+        {
+            $contenido = $request['documento'];  
+            $nombreCont = $contenido->getClientOriginalName();
+            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
-        if ($request->has('documento')) {
-            $file = $request['documento'];
-            return $file;
-
-            $nombre_original = $file->getClientOriginalName();
-            $ruta_file = $file->storeAs('ingresos/docs', $nombre_original, 'gcs');
-            $urlDoc = Storage::disk('gcs')->url($ruta_file);
+            $ingreso = Ingreso::create(
+                ['nombre' =>$request['nombre'],
+                 'cantidad' => $request['cantidad'],
+                 'banco_id' => $request['banco_id'],
+                 'created_at' => $request['created_at'],
+                 'documento' => $urlContenido
+                ]
+            );
         }
 
-        return $request;
-       */
-        $ingreso = Ingreso::create(
-            [
-                'nombre' => $request['nombre'],
-                'cantidad' => $request['cantidad'],
-                'banco_id' => $request['banco_id'],
-                'created_at' => $request['created_at']
-            ]
-        );
-
-        return response()->json($ingreso);
+        return redirect()->back();
+       // return response()->json($ingreso);
     }
-
-
 
 
 
@@ -163,18 +158,41 @@ class IngresoController extends Controller
             ]);
             return;
         }
-        $ingreso->update(
-            [
-                'nombre' => $request['nombre'],
+        
+        $urlContenido = null;
+        if($request->has('documento'))
+        {
+            $contenido = $request['documento'];  
+            $nombreCont = $contenido->getClientOriginalName();
+            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
+
+            Ingreso::where('ingresos.id','=', $ingreso->id)
+            ->update([
+                'nombre' =>$request['nombre'],
+                'cantidad' => $request['cantidad'],
+                'banco_id' => $request['banco_id'],
+                'created_at' => $request['created_at'],
+                'documento' => $urlContenido
+            ]);
+        }
+        else
+        {
+            Ingreso::where('ingresos.id','=', $ingreso->id)
+            ->udpate([
+                'nombre' =>$request['nombre'],
                 'cantidad' => $request['cantidad'],
                 'banco_id' => $request['banco_id'],
                 'created_at' => $request['created_at']
-            ]
-        );
+            ]);
+        }
 
+        return redirect()->back();
+      /*
         return response()->json([
             'message' => 'Actualizado.'
         ]);
+        */
     }
 
 

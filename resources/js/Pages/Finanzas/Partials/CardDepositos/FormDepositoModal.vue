@@ -1,8 +1,8 @@
 <script setup>
-import { computed, onBeforeMount, reactive, ref } from "vue";
-import { Inertia } from "@inertiajs/inertia";
-
-import axios from "axios";
+import { computed, onBeforeMount, reactive, ref } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+import axios from 'axios';
 
 import JetLabel from "@/Jetstream/Label.vue";
 import JetButton from "@/Jetstream/Button.vue";
@@ -14,7 +14,12 @@ import Input from "@/Components/Input.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
 import SelectComponent from "@/Components/SelectComponent.vue";
 
-const emit = defineEmits(["close", "addDeposito", "editDeposito"]);
+import ListDataInput from '@/Components/ListDataInput.vue';
+
+
+import DropZone from '@/Components/DropZone.vue';
+
+const emit = defineEmits(["close", "addDeposito", "editDeposito"])
 const props = defineProps({
     show: {
         type: Boolean,
@@ -32,16 +37,17 @@ const props = defineProps({
 
 const listBancos = ref([]);
 
-const form = reactive({
-    nombre: "",
-    cantidad: "",
-    banco_id: "",
-    hasErrors: false,
-    created_at: "",
-    errors: [],
-    error: "",
-    recentlySuccessful: false,
-    processing: false,
+const form = useForm({
+    "nombre": "",
+    "cantidad": "",
+    "banco_id": "",
+    'hasErrors': false,
+    'created_at': "",
+    'errors': [],
+    'error': "",
+    'recentlySuccessful': false,
+    'processing': false,
+    'documento': null
 });
 
 const titleModal = computed(() => {
@@ -70,22 +76,57 @@ const close = () => {
     emit("close");
 };
 
+
+let documentoReactive = ref(null);
+const setFile = (file) => 
+{
+    const newFile = file.target.files[0];
+    form.documento = file.target.files[0];
+
+}
+
 const createOrUpdate = () => {
     if (props.typeForm === "create") {
         create();
     } else {
         update();
     }
-};
+}
+
+
+const reVisit = () => 
+{
+    Inertia.visit(route('ventas.index'),
+        {
+          preserveState: true,
+          preserveScroll: true,
+          only: ['totalOcs'],
+      }); 
+}
+
 
 const create = () => {
-    axios
-        .post(route("ingresos.store"), form, {
+
+    form.post(route('ingresos.store'),
+    {
+       onProgress:() => form.processing = true,
+       onSuccess:() => emit("addDeposito"),
+       onFinish:()=> reVisit()
+
+    });
+    
+/*
+    axios.post(route('ingresos.store'), form,
+        {
             onUploadProgress: () => {
                 form.processing = true;
             },
+            headers: {
+             'Content-Type': 'multipart/form-data'
+            }
         })
         .then((resp) => {
+            console.log(resp);
             emit("addDeposito", resp.data);
             form.recentlySuccessful = true;
             restForm();
@@ -123,10 +164,27 @@ const create = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
-};
+
+
+    let formData = new FormData();
+    let documento = document.querySelector('#documento');
+    formData.append('documento', documento.files[0]);
+*/
+
+    
+}
 const update = () => {
-    axios
-        .put(route("ingresos.update", props.deposito.id), form, {
+
+    form.post(route('ingresos.update', props.deposito.id),
+    {
+        onProgress:() => form.processing = true,
+        onSuccess:() => emit("addDeposito"),
+        onFinish:()=> reVisit()
+    });
+
+ /*
+    axios.put(route('ingresos.update', props.deposito.id), form,
+        {
             onUploadProgress: () => {
                 form.processing = true;
             },
@@ -170,7 +228,9 @@ const update = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
-};
+        */
+}
+
 
 const getBancos = async () => {
     const resp = await axios.get(route("bancos.index"));
@@ -185,7 +245,7 @@ onBeforeMount(() => {
     <DialogModal :show="show" @close="close()">
         <template #title>
             <div class="flex items-center">
-                <div class="px-4 py-1 text-center my-6">
+                <div class="px-4 py-1 my-6 text-center">
                     <span class="font-semibold text-[32px] text-fuente-500">
                         {{ titleModal }}
                     </span>
@@ -251,22 +311,13 @@ onBeforeMount(() => {
                             class="mt-2"
                         />
                     </div>
-                    <div class="flex justify-between gap-8 items-center">
-                        <div>
-                            <!--Fecha de creación-->
-                            <Input
-                                id="fecha"
-                                name="fecha"
-                                type="datetime-local"
-                                v-model="form.created_at"
-                                required
-                            />
-                        </div>
-                        <div
-                            class="w-[74px] h-[35px] grid place-content-center bg-aqua-500 rounded-xl"
-                        >
-                            <img :src="folder" alt="" />
-                        </div>
+                    <div>
+                        <JetLabel for="fecha" value="Fecha" /> <!--Fecha de creación-->
+                        <Input id="fecha" name="fecha" type="datetime-local" v-model="form.created_at" required />
+                    </div>
+                    <div>
+                        <JetLabel for="documento" value="Documento" />
+                        <DropZone id="documento" v-model="form.documento" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">

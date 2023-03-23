@@ -9,6 +9,18 @@ class Venta extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'monto_id' ,
+        'nombre' ,
+        'fechaInicial' ,
+        'fechaFinal' ,
+        'periodos' ,
+        'cantidad',
+        'comentario',
+        'tipo_id' ,
+        'ceco_id',
+        'documento'
+    ];
 
     protected $guarded = ['id'];
 

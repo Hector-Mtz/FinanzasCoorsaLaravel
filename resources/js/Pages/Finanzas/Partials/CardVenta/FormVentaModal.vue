@@ -15,7 +15,9 @@ import SelectComponent from "@/Components/SelectComponent.vue";
 import TextArea from "../../../../Components/TextArea.vue";
 import folder from "../../../../../img/elementos/agregar-documento.png";
 
-const emit = defineEmits(["close"]);
+import DropZone from '@/Components/DropZone.vue';
+
+const emit = defineEmits(["close"])
 const props = defineProps({
     show: {
         type: Boolean,
@@ -32,17 +34,18 @@ const props = defineProps({
 });
 
 const form = useForm({
-    monto_id: "",
-    nombre: "",
-    comentario: "",
-    fechaInicial: "",
-    fechaFinal: "",
-    periodos: "",
-    tipo_id: "",
-    cantidad: "",
-    ceco_id: "",
-    servicio_id: "",
-});
+    "monto_id": "",
+    "nombre": "",
+    "comentario": "",
+    "fechaInicial": "",
+    "fechaFinal": "",
+    "periodos": "",
+    "tipo_id": "",
+    "cantidad": "",
+    "ceco_id": "",
+    "servicio_id": "",
+    "documento":""
+})
 
 const listServicios = ref([]);
 const listCecos = ref([]);
@@ -60,19 +63,21 @@ const titleModal = computed(() => {
         form.cantidad = "";
         form.ceco_id = "";
         form.servicio_id = "";
-        return "Nueva Venta";
+        form.documento = "";
+        return "Nueva Venta"
     } else {
-        form.monto_id = props.venta.monto_id;
-        form.nombre = props.venta.nombre;
-        form.comentario = props.venta.comentario;
-        form.fechaInicial = props.venta.fechaInicial;
-        form.fechaFinal = props.venta.fechaFinal;
-        form.periodos = props.venta.periodos;
-        form.tipo_id = props.venta.tipo_id;
-        form.cantidad = props.venta.cantidad;
-        form.ceco_id = props.venta.ceco_id;
-        form.servicio_id = props.venta.servicio_id;
-        return "Actualizar Venta";
+        form.monto_id = props.venta.monto_id
+        form.nombre = props.venta.nombre
+        form.comentario = props.venta.comentario
+        form.fechaInicial = props.venta.fechaInicial
+        form.fechaFinal = props.venta.fechaFinal
+        form.periodos = props.venta.periodos
+        form.tipo_id = props.venta.tipo_id
+        form.cantidad = props.venta.cantidad
+        form.ceco_id = props.venta.ceco_id
+        form.servicio_id = props.venta.servicio_id
+        form.documento = props.venta.documento
+        return "Actualizar Venta"
     }
 });
 
@@ -119,7 +124,7 @@ const create = () => {
     });
 };
 const update = () => {
-    form.put(route("ventas.update", props.venta.id), {
+    form.post(route('ventas.update', props.venta.id), {
         preserveScroll: true,
         preserveState: true,
         only: ["clientes", "totalVentas", "errors"],
@@ -318,6 +323,10 @@ watch(props, () => {
                         class="w-[75px] h-[35px] grid place-content-center bg-aqua-500 justify-self-end col-span-2 rounded-xl"
                     >
                         <img :src="folder" alt="" />
+                    </div>
+                    <div>
+                       <JetLabel for="documento" value="Documento:" />
+                       <DropZone v-model="form.documento" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">

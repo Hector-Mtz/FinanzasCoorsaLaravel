@@ -107,10 +107,10 @@ watch(props, () => {
 <template>
     <DialogModal :maxWidth="'2xl'" :show="show" @close="close()">
         <template #title>
-            <div class="flex justify-between py-4 gap-8 my-6">
-                <div class="px-4 py-1">
+            <div class="flex flex-row gap-8 py-4">
+                <div class="px-4 py-1 basis-1/3">
                     <span
-                        class="block font-semibold text-center text-fuente-500 text-[28px]"
+                        class="block text-3xl font-bold text-center text-fuente-500"
                     >
                         {{ title }}
                     </span>
@@ -120,7 +120,7 @@ watch(props, () => {
                         class="flex justify-center items-center gap-4 border-[2px] border-aqua-500 w-fit px-8 rounded-xl py-1"
                     >
                         <span
-                            class="block font-light text-center text-[11px] text-fuente-500"
+                            class="block text-sm font-light text-center text-fuente-500"
                         >
                             Fecha Incial
                         </span>
@@ -137,13 +137,13 @@ watch(props, () => {
                 </div>
             </div>
             <div
-                class="mt-4 flex flex-row px-4 justify-between text-center gap-4 text-fuente-500"
+                class="flex flex-row justify-between gap-4 px-4 mt-4 text-center text-fuente-500"
             >
                 <div class="py-1 px-2 border-[2px] border-aqua-500 rounded-xl">
                     <span class="block text-xs text-start px-[2.6rem]">
                         Subtotal
                     </span>
-                    <span class="font-bold text-3xl"
+                    <span class="text-3xl font-bold"
                         >${{ formatoMoney(venta.monto) }}</span
                     >
                 </div>
@@ -153,7 +153,7 @@ watch(props, () => {
                             <span class="text-xs text-start px-[2.6rem]"
                                 >IVA</span
                             >
-                            <span class="font-bold text-3xl px-4">
+                            <span class="px-4 text-3xl font-bold">
                                 ${{
                                     formatoMoney(Math.round(venta.monto * 0.16))
                                 }}</span
@@ -163,7 +163,7 @@ watch(props, () => {
                             <span class="text-xs text-start px-[2.6rem]"
                                 >IVA</span
                             >
-                            <span class="font-bold text-3xl"> ${{ 0 }}</span>
+                            <span class="text-3xl font-bold"> ${{ 0 }}</span>
                         </p>
                     </span>
                 </div>
@@ -171,7 +171,7 @@ watch(props, () => {
                     <span class="block text-xs text-start px-[2.6rem]">
                         Total
                     </span>
-                    <span class="font-bold text-3xl">
+                    <span class="text-3xl font-bold">
                         ${{ formatoMoney(venta.monto + venta.monto * 0.16) }}
                     </span>
                 </div>
@@ -181,16 +181,17 @@ watch(props, () => {
             <TableComponent class="mt-4">
                 <template #thead>
                     <tr class="border-b-[2px] border-aqua-500 text-fuente-500">
-                        <th class="flex justify-evenly items-center text-lg">
+                        <th class="flex items-center text-lg justify-evenly">
                             <h3 class="mb-1">OC</h3>
                             <ButtonAdd
                                 v-if="$page.props.can['ocs.create']"
-                                class="h-6 shadow-gray-300 shadow-md"
+                                class="h-6 shadow-md shadow-gray-300"
                                 @click="showFormOc()"
                             />
                         </th>
                         <th class="text-lg">CANTIDAD</th>
                         <th class="text-lg">FECHA</th>
+                        <th class="text-lg">Documento</th>
                         <th v-if="$page.props.can['ocs.edit']"></th>
                         <th v-if="$page.props.can['ocs.delete']"></th>
                     </tr>

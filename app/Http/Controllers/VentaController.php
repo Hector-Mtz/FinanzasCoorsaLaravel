@@ -10,6 +10,7 @@ use App\Models\Venta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class VentaController extends Controller
@@ -75,7 +76,7 @@ class VentaController extends Controller
     {
         //Authorization
         $this->authorize('ventas.create');
-        $newVenta = $request->validate([
+      $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
             "nombre" =>  ["required", "max:100"],
             "fechaInicial" =>  ["required", "date"],
@@ -87,8 +88,41 @@ class VentaController extends Controller
             "ceco_id" =>  ["required", "exists:cecos,id"],
         ]);
 
+        $urlContenido = null;
+        if($request->has('documento'))
+        {
+            $contenido = $request['documento'];  
+            $nombreCont = $contenido->getClientOriginalName();
+            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
-        Venta::create($newVenta);
+            Venta::create([
+                'monto_id' => $request['monto_id'],
+                'nombre' => $request['nombre'],
+                'fechaInicial' => $request['fechaInicial'],
+                'fechaFinal' => $request['fechaFinal'],
+                'periodos' => $request['periodos'],
+                'cantidad' =>$request['cantidad'],
+                'comentario' => $request['comentario'],
+                'tipo_id' => $request['tipo_id'],
+                'ceco_id' => $request['ceco_id'],
+                'documento' => $urlContenido
+            ]);
+        }
+        else
+        {
+            Venta::create([
+                'monto_id' => $request['monto_id'],
+                'nombre' => $request['nombre'],
+                'fechaInicial' => $request['fechaInicial'],
+                'fechaFinal' => $request['fechaFinal'],
+                'periodos' => $request['periodos'],
+                'cantidad' =>$request['cantidad'],
+                'comentario' => $request['comentario'],
+                'tipo_id' => $request['tipo_id'],
+                'ceco_id' => $request['ceco_id']
+            ]);
+        }
 
         return redirect()->back();
     }
@@ -106,7 +140,8 @@ class VentaController extends Controller
     {
         //Authorization
         $this->authorize('ventas.edit');
-        $newVenta = $request->validate([
+        /*
+        $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
             "nombre" =>  ["required", "max:100"],
             "fechaInicial" =>  ["required", "date"],
@@ -117,7 +152,50 @@ class VentaController extends Controller
             "tipo_id" =>  ["required", "exists:tipos,id"],
             "ceco_id" =>  ["required", "exists:cecos,id"],
         ]);
-        $venta->update($newVenta);
+        */
+
+        $urlContenido = null;
+        if($request->has('documento'))
+        {
+            $contenido = $request['documento'];  
+            $nombreCont = $contenido->getClientOriginalName();
+            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
+
+            Venta::where('ventas.id','=' ,$venta->id)
+            ->update(
+                [
+                    'monto_id' => $request['monto_id'],
+                    'nombre' => $request['nombre'],
+                    'fechaInicial' => $request['fechaInicial'],
+                    'fechaFinal' => $request['fechaFinal'],
+                    'periodos' => $request['periodos'],
+                    'cantidad' =>$request['cantidad'],
+                    'comentario' => $request['comentario'],
+                    'tipo_id' => $request['tipo_id'],
+                    'ceco_id' => $request['ceco_id'],
+                    'documento' => $urlContenido
+                ]
+            );
+        }
+        else
+        {
+            Venta::where('ventas.id','=' ,$venta->id)
+            ->update(
+                [
+                    'monto_id' => $request['monto_id'],
+                    'nombre' => $request['nombre'],
+                    'fechaInicial' => $request['fechaInicial'],
+                    'fechaFinal' => $request['fechaFinal'],
+                    'periodos' => $request['periodos'],
+                    'cantidad' =>$request['cantidad'],
+                    'comentario' => $request['comentario'],
+                    'tipo_id' => $request['tipo_id'],
+                    'ceco_id' => $request['ceco_id']
+                ]);
+        }
+
+
         return redirect()->back();
     }
     /**

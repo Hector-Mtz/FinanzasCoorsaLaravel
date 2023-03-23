@@ -50,12 +50,13 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::apiResource('/ventas', VentaController::class)->except('show');
+    Route::apiResource('/ventas', VentaController::class)->except('show','update');
     Route::put('/ventas/{venta}/iva', [VentaController::class, 'activeIva'])->name('ventas.iva');
     Route::put('/ventas/{venta}/revisado', [VentaController::class, 'changeRevisado'])->name('ventas.revisado');
     Route::get('/ventas/{venta}/ocs', [VentaController::class, 'ocsIndex'])->name('ventas.ocs.index');
     Route::get('/ventas/totals', [VentaController::class, 'totals'])->name('ventas.totals');
     Route::get('/ventas/months', [VentaController::class, 'ventasMonth'])->name('ventas.month');
+    Route::post('/ventas/{venta}', [VentaController::class, 'update'])->name('ventas.update');
     Route::apiResource('/ocs', OcController::class)->except('show');
     Route::get('/ocs/catalogos', [OcController::class, "catalogos"])->name("ocs.catalogos");
     Route::get('/ocs/totals-status', [OcController::class, "totalesStatus"])->name("ocs.totals-status");
@@ -68,11 +69,11 @@ Route::middleware([
     Route::delete('/facturas/{factura}/ocs', [FacturaController::class, "destroyOc"])->name("facturas.ocs.destroy");
     Route::get('/facturas/{factura}/ocs', [FacturaController::class, "ocsIndex"])->name("facturas.ocs.index");
 
-    Route::apiResource('/ingresos', IngresoController::class)->except('show');
+    Route::apiResource('/ingresos', IngresoController::class)->except('show','update');
     Route::put('/ingresos/{ingreso}/status', [IngresoController::class, 'changeStatus'])->name('ingresos.status');
     Route::post('/ingresos/{ingreso}/facturas', [IngresoController::class, "storeFactura"])->name("ingresos.facturas.store");
     Route::delete('/ingresos/{ingreso}/facturas', [IngresoController::class, "destroyFactura"])->name("ingresos.facturas.destroy");
-    Route::get('/ingresos/{ingreso}/facturas', [IngresoController::class, "facturasIndex"])->name("ingresos.facturas.index");
+    Route::post('/ingresos/{ingreso}', [IngresoController::class, "update"])->name("ingresos.update");
 
     Route::apiResource('bancos', BancoController::class)->only('index');
 

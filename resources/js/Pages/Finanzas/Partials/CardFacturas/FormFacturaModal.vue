@@ -1,5 +1,6 @@
 <script setup>
 import { computed, reactive } from "vue";
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 
 import axios from "axios";
 
@@ -11,6 +12,7 @@ import cerrar from "../../../../../img/elementos/cerrar.png";
 import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
+import DropZone from '@/Components/DropZone.vue';
 
 const emit = defineEmits(["close", "addFactura", "editFactura"]);
 const props = defineProps({
@@ -28,10 +30,11 @@ const props = defineProps({
     },
 });
 
-const form = reactive({
+const form = useForm({
     cantidad: "",
     referencia: "",
     fechaDePago: "",
+    documento:"",
     hasErrors: false,
     errors: [],
     error: "",
@@ -55,6 +58,7 @@ function restForm() {
     form.cantidad = "";
     form.referencia = "";
     form.fechaDePago = "";
+    form.documento = "";
 }
 
 const close = () => {
@@ -70,6 +74,13 @@ const createOrUpdate = () => {
 };
 
 const create = () => {
+    form.post(route('facturas.store'),
+    {
+        preserveScroll:true,
+        preserveState:true,
+        onSuccess:() => restForm()
+    })
+    /*
     axios
         .post(route("facturas.store"), form, {
             onUploadProgress: () => {
@@ -117,6 +128,7 @@ const create = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
+        */
 };
 const update = () => {
     axios
@@ -184,7 +196,7 @@ const update = () => {
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div class="flex flex-col gap-x-2 gap-y-6 px-4 py-2 mb-8">
+                <div class="flex flex-col px-4 py-2 mb-8 gap-x-2 gap-y-6">
                     <div>
                         <Input
                             placeholder="Referencia"
@@ -217,29 +229,8 @@ const update = () => {
                             class="mt-2"
                         />
                     </div>
-                    <div class="flex justify-between">
-                        <div>
-                            <Input
-                                placeholder="Cantidad"
-                                id="cantidad"
-                                name="cantidad"
-                                type="text"
-                                pattern="^\d*(\.\d{0,2})?$"
-                                v-model="form.cantidad"
-                                required
-                                maxlength="30"
-                                class="text-[14px] font-light uppercase w-[220px]"
-                            />
-                            <JetInputError
-                                :message="form.errors.cantidad"
-                                class="mt-2"
-                            />
-                        </div>
-                        <div
-                            class="w-[74px] h-[35px] bg-aqua-500 grid place-content-center rounded-2xl hover:cursor-pointer"
-                        >
-                            <img :src="folder" alt="" class="" />
-                        </div>
+                    <div>
+                        <JetLabel for="documento" value="Documento" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">
