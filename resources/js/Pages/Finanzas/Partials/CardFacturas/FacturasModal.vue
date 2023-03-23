@@ -84,7 +84,7 @@ watch(props, () => {
     <DialogModal :show="show" @close="close()" :maxWidth="'4xl'">
         <template #title>
             <div class="flex justify-between items-center py-6 max-w-[52rem]">
-                <div class="flex justify-around items-center gap-4 px-4 py-1">
+                <div class="flex items-center justify-around gap-4 px-4 py-1">
                     <span
                         class="block font-semibold text-[28px] text-center text-fuente-500"
                     >
@@ -122,6 +122,7 @@ watch(props, () => {
                         <th class="pb-2">TOTAL OCS</th>
                         <th class="pb-2">OCS</th>
                         <th class="pb-2">FECHA</th>
+                        <th class="pb-2">DOCUMENTO</th>
                         <th
                             class="pb-2"
                             v-if="$page.props.can['facturas.edit']"

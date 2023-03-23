@@ -19,6 +19,7 @@ class Oc extends Model
         'venta_id',
         'factura_id',
         'fecha_alta',
+        'documento'
     ];
 
     public function fechaAlta(): Attribute

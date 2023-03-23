@@ -319,11 +319,6 @@ watch(props, () => {
                             class="mt-2"
                         />
                     </div>
-                    <div
-                        class="w-[75px] h-[35px] grid place-content-center bg-aqua-500 justify-self-end col-span-2 rounded-xl"
-                    >
-                        <img :src="folder" alt="" />
-                    </div>
                     <div>
                        <JetLabel for="documento" value="Documento:" />
                        <DropZone v-model="form.documento" />

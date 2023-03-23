@@ -8,6 +8,7 @@ use App\Models\Oc;
 use App\Models\Venta;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 use function GuzzleHttp\Promise\queue;
@@ -42,14 +43,52 @@ class OcController extends Controller
     public function store(Request $request)
     {
         $this->authorize('ocs.create');
-        $newOc = $request->validate([
+        $request->validate([
             'nombre' => ["required", "string", "unique:ocs,nombre"],
             'cantidad' => ["required", "numeric"],
             'venta_id' => ["required", "exists:ventas,id"],
             'fecha_alta' => ["required", "date"],
         ]);
         try {
-            $oc = Oc::create($newOc);
+
+            $urlContenido = null;
+            if($request->has('documento'))
+            {
+                 if($request['documento'] !== null)
+                 {
+                    $contenido = $request['documento'];  
+                    $nombreCont = $contenido->getClientOriginalName();
+                    $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+                    $urlContenido = Storage::disk('gcs')->url($ruta_documento);
+
+                   $newOc = Oc::create([
+                       'nombre' => $request['nombre'],
+                       'cantidad' => $request['cantidad'],
+                       'fecha_alta' => $request['fecha_alta'],
+                       'venta_id' => $request['venta_id'],
+                       'documento' => $urlContenido
+                    ]);
+                 }
+                 else
+                 {
+                    $newOc = Oc::create([
+                        'nombre' => $request['nombre'],
+                        'cantidad' => $request['cantidad'],
+                        'fecha_alta' => $request['fecha_alta'],
+                        'venta_id' => $request['venta_id'],
+                     ]);
+                 }
+            }
+            else
+            {
+                $newOc = Oc::create([
+                    'nombre' => $request['nombre'],
+                    'cantidad' => $request['cantidad'],
+                    'fecha_alta' => $request['fecha_alta'],
+                    'venta_id' => $request['venta_id'],
+                 ]);
+            }
+
             $venta = Venta::select('ventas.id', 'ventas.cantidad', 'ventas.periodos')
                 ->selectRaw('count(ocs.id) as total_ocs')
                 ->leftJoin('ocs', 'ventas.id', '=', 'ocs.venta_id')
@@ -60,7 +99,8 @@ class OcController extends Controller
                 $venta->status_id = 2;
                 $venta->save();
             }
-            return response()->json($oc);
+          
+            return redirect()->back();
         } catch (QueryException $e) {
             @throw ValidationException::withMessages([
                 'nombre' => $e->getMessage()

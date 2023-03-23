@@ -111,6 +111,8 @@ class IngresoController extends Controller
         $ingreso = null;
         if($request->has('documento'))
         {
+           if($request['documento'] !== null)
+           {
             $contenido = $request['documento'];  
             $nombreCont = $contenido->getClientOriginalName();
             $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
@@ -122,6 +124,26 @@ class IngresoController extends Controller
                  'banco_id' => $request['banco_id'],
                  'created_at' => $request['created_at'],
                  'documento' => $urlContenido
+                ]
+            );
+           }
+           else
+           {
+            $ingreso = Ingreso::create(
+                ['nombre' =>$request['nombre'],
+                 'cantidad' => $request['cantidad'],
+                 'banco_id' => $request['banco_id'],
+                 'created_at' => $request['created_at'],
+                ]
+            );
+           }
+        }
+        else{
+            $ingreso = Ingreso::create(
+                ['nombre' =>$request['nombre'],
+                 'cantidad' => $request['cantidad'],
+                 'banco_id' => $request['banco_id'],
+                 'created_at' => $request['created_at'],
                 ]
             );
         }

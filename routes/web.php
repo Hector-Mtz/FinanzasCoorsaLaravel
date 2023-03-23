@@ -57,17 +57,19 @@ Route::middleware([
     Route::get('/ventas/totals', [VentaController::class, 'totals'])->name('ventas.totals');
     Route::get('/ventas/months', [VentaController::class, 'ventasMonth'])->name('ventas.month');
     Route::post('/ventas/{venta}', [VentaController::class, 'update'])->name('ventas.update');
-    Route::apiResource('/ocs', OcController::class)->except('show');
+    Route::apiResource('/ocs', OcController::class)->except('show', 'update');
     Route::get('/ocs/catalogos', [OcController::class, "catalogos"])->name("ocs.catalogos");
     Route::get('/ocs/totals-status', [OcController::class, "totalesStatus"])->name("ocs.totals-status");
     Route::get('/ocs/months', [OcController::class, "ocMonth"])->name("ocs.month");
+    Route::post('/ocs/{oc}', [OcController::class, 'update'])->name('ocs.update');
 
 
-    Route::apiResource('/facturas', FacturaController::class)->except('show');
+    Route::apiResource('/facturas', FacturaController::class)->except('show','update');
     Route::get('/facturas/catalogos', [FacturaController::class, 'catalogos'])->name('facturas.catalogos');
     Route::post('/facturas/{factura}/ocs', [FacturaController::class, "storeOc"])->name("facturas.ocs.store");
     Route::delete('/facturas/{factura}/ocs', [FacturaController::class, "destroyOc"])->name("facturas.ocs.destroy");
     Route::get('/facturas/{factura}/ocs', [FacturaController::class, "ocsIndex"])->name("facturas.ocs.index");
+    Route::post('/facturas/{factura}', [FacturaController::class, 'update'])->name('facturas.update');
 
     Route::apiResource('/ingresos', IngresoController::class)->except('show','update');
     Route::put('/ingresos/{ingreso}/status', [IngresoController::class, 'changeStatus'])->name('ingresos.status');

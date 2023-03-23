@@ -9,6 +9,8 @@ import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
 import { Inertia } from "@inertiajs/inertia";
+import DropZone from '@/Components/DropZone.vue';
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 
 const emit = defineEmits(["close", "addOc", "editOc"]);
 
@@ -39,7 +41,7 @@ const props = defineProps({
     },
 });
 
-const form = reactive({
+const form = useForm({
     nombre: "",
     cantidad: "",
     fecha_alta: nowDate,
@@ -50,6 +52,7 @@ const form = reactive({
     error: "",
     recentlySuccessful: false,
     processing: false,
+    documento:null
 });
 
 const titleModal = computed(() => {
@@ -78,6 +81,7 @@ function restForm() {
     form.hasErrors = false;
     form.errors = {};
     form.error = "";
+    form.documento = null;
 }
 
 const close = () => {
@@ -96,6 +100,17 @@ const createOrUpdate = () => {
 };
 
 const create = () => {
+    form.post(route('ocs.store'),{
+       preserveScroll:true,
+       preserveState:true,
+       onFinish:()=>  Inertia.visit(route("ventas.index"), {
+                preserveState: true,
+                preserveScroll: true,
+                only: ["totalOcs"],
+            }),
+        onSuccess:() => {close(), form.reset()} ,
+    });
+    /*
     axios
         .post(route("ocs.store"), form, {
             onUploadProgress: () => {
@@ -138,8 +153,16 @@ const create = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
+        */
 };
 const update = () => {
+    form.post(route("ocs.update", props.oc.id),
+    {
+        preserveScroll:true,
+        preserveState:true
+    });
+    
+    /*
     axios
         .put(route("ocs.update", props.oc.id), form, {
             onUploadProgress: () => {
@@ -182,14 +205,15 @@ const update = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
+        */
 };
 </script>
 <template>
     <DialogModal :maxWidth="'xl'" :show="show" @close="close()">
         <template #title>
-            <div class="flex justify-start relative">
+            <div class="relative flex justify-start">
                 <div class="px-4 py-1 text-center">
-                    <span class="font-bold text-3xl">
+                    <span class="text-3xl font-bold">
                         {{ titleModal }}
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
@@ -204,7 +228,7 @@ const update = () => {
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div class="grid px-4 gap-x-2 mt-4 mb-12 gap-y-6">
+                <div class="grid px-4 mt-4 mb-12 gap-x-2 gap-y-6">
                     <div>
                         <Input
                             id="nombre"
@@ -252,10 +276,8 @@ const update = () => {
                                 class="mt-2"
                             />
                         </div>
-                        <div
-                            class="grid place-content-center h-[35px] w-[75px] bg-aqua-500 rounded-xl"
-                        >
-                            <img :src="folder" alt="" />
+                        <div>
+                           <DropZone v-model="form.documento" />
                         </div>
                     </div>
                 </div>

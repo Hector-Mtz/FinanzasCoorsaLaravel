@@ -117,26 +117,34 @@ class FacturaController extends Controller
             $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
             $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
-            $ingreso = Factura::create(
-                ['nombre' =>$request['nombre'],
+            $factura = Factura::create(
+                [
                  'cantidad' => $request['cantidad'],
-                 'banco_id' => $request['banco_id'],
-                 'created_at' => $request['created_at'],
-                 'documento' => $urlContenido
+                 'referencia' => $request['referencia'],
+                 'fechaDePago' => $request['fechaDePago'],
+                 'documento' => $urlContenido,
                 ]
             );
+
+            $factura->total_ocs = 0;
+            $factura->ocs = [];
+            //return response()->json($factura);
         }
         else
         {
+            $factura = Factura::create(
+                [ 'cantidad' => $request['cantidad'],
+                  'referencia' => $request['referencia'],
+                  'fechaDePago' => $request['fechaDePago'],
+                ]
+            );
 
+            $factura->total_ocs = 0;
+            $factura->ocs = [];
+            //return response()->json($factura);
         }
 
-        $factura = Factura::create([
-
-        ]);
-        $factura->total_ocs = 0;
-        $factura->ocs = [];
-        return response()->json($factura);
+        return redirect()->back();
     }
 
 
@@ -151,14 +159,42 @@ class FacturaController extends Controller
     public function update(Request $request, Factura $factura)
     {
         $this->authorize('facturas.edit');
-        $newFactura = $request->validate([
+        $request->validate([
             "cantidad" => ["required", "numeric"],
             "referencia" => ["required", "unique:facturas,referencia," . $factura->id . ",id"],
             "fechaDePago" => ["required", "date"],
+            "documento" => ["required"]
         ]);
 
-        $factura->update($newFactura);
-        return response()->json($factura);
+        $urlContenido = null;
+        if($request->has('documento'))
+        {
+            $contenido = $request['documento'];  
+            $nombreCont = $contenido->getClientOriginalName();
+            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
+
+            Factura::where('facturas.id', '=', $factura->id)->
+            update([
+                'cantidad' => $request['cantidad'],
+                'referencia' => $request['referencia'],
+                'fechaDePago' => $request['fechaDePago'],
+                'documento' => $urlContenido,
+            ]);
+        }
+        else
+        {
+            Factura::where('facturas.id', '=', $factura->id)->
+            update([
+                    'cantidad' => $request['cantidad'],
+                   'referencia' => $request['referencia'],
+                  'fechaDePago' => $request['fechaDePago'],
+            ]);
+        }
+
+        return redirect()->back();
+       // $factura->update();
+        //return response()->json($factura);
     }
 
     /**

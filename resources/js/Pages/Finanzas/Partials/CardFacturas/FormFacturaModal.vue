@@ -60,6 +60,14 @@ function restForm() {
     form.referencia = "";
     form.fechaDePago = "";
     form.documento = "";
+
+    if (props.typeForm === "create") {
+        close();
+        emit("addFactura");
+    } else {
+        close();
+        emit("editFactura")
+    }
 }
 
 const close = () => {
@@ -79,8 +87,14 @@ const create = () => {
     {
         preserveScroll:true,
         preserveState:true,
-        onSuccess:() => restForm()
-    })
+        onSuccess:() => restForm(),
+        onFinish: () =>  Inertia.visit(route("ventas.index"),
+        {
+           preserveScroll:true,
+           preserveState:true,
+           only:["totalOcs"]
+        })
+    });
     /*
     axios
         .post(route("facturas.store"), form, {
@@ -132,6 +146,19 @@ const create = () => {
         */
 };
 const update = () => {
+    form.post(route("facturas.update", props.factura.id),
+    {
+        onSuccess:() => restForm(),
+        onFinish: () =>  Inertia.visit(route("ventas.index"),
+        {
+           preserveScroll:true,
+           preserveState:true,
+           only:["totalOcs"]
+        }),
+        preserveScroll:true,
+        preserveState:true
+    });
+    /*
     axios
         .put(route("facturas.update", props.factura.id), form, {
             onUploadProgress: () => {
@@ -175,6 +202,7 @@ const update = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
+        */
 };
 </script>
 <template>
@@ -199,6 +227,7 @@ const update = () => {
             <form @submit.prevent="createOrUpdate()">
                 <div class="flex flex-col px-4 py-2 mb-8 gap-x-2 gap-y-6">
                     <div>
+                        <JetLabel for="referencia" value="Referencia"/>
                         <Input
                             placeholder="Referencia"
                             id="referencia"
@@ -215,6 +244,7 @@ const update = () => {
                         />
                     </div>
                     <div>
+                        <JetLabel for="fechaDePago" value="Fecha de pago"/>
                         <Input
                             placeholder="Fecha de PAgo"
                             id="fechaDePago"
@@ -223,6 +253,22 @@ const update = () => {
                             v-model="form.fechaDePago"
                             required
                             :min="form.fechaInicial"
+                            class="text-[14px] font-light uppercase"
+                        />
+                        <JetInputError
+                            :message="form.errors.fechaDePago"
+                            class="mt-2"
+                        />
+                    </div>
+                    <div>
+                        <JetLabel for="cantidad" value="Cantidad"/>
+                        <Input
+                            placeholder="Cantidad"
+                            name="cantidad"
+                            type="number"
+                            v-model="form.cantidad"
+                            required
+                            :min="form.cantidad"
                             class="text-[14px] font-light uppercase"
                         />
                         <JetInputError
