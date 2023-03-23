@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onBeforeMount, reactive, ref } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
-
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import axios from 'axios';
 
 import JetLabel from '@/Jetstream/Label.vue';
@@ -13,6 +13,8 @@ import Input from '@/Components/Input.vue';
 import ListDataInput from '@/Components/ListDataInput.vue';
 import SpinProgress from '@/Components/SpinProgress.vue';
 import SelectComponent from '@/Components/SelectComponent.vue';
+
+import DropZone from '@/Components/DropZone.vue';
 
 const emit = defineEmits(["close", "addDeposito", "editDeposito"])
 const props = defineProps({
@@ -33,7 +35,7 @@ const props = defineProps({
 
 const listBancos = ref([]);
 
-const form = reactive({
+const form = useForm({
     "nombre": "",
     "cantidad": "",
     "banco_id": "",
@@ -43,6 +45,7 @@ const form = reactive({
     'error': "",
     'recentlySuccessful': false,
     'processing': false,
+    'documento': null
 });
 
 const titleModal = computed(() => {
@@ -73,6 +76,13 @@ const close = () => {
 };
 
 
+let documentoReactive = ref(null);
+const setFile = (file) => 
+{
+    const newFile = file.target.files[0];
+    form.documento = file.target.files[0];
+
+}
 
 const createOrUpdate = () => {
     if (props.typeForm === "create") {
@@ -83,15 +93,39 @@ const createOrUpdate = () => {
 }
 
 
+const reVisit = () => 
+{
+    Inertia.visit(route('ventas.index'),
+        {
+          preserveState: true,
+          preserveScroll: true,
+          only: ['totalOcs'],
+      }); 
+}
+
 
 const create = () => {
+
+    form.post(route('ingresos.store'),
+    {
+       onProgress:() => form.processing = true,
+       onSuccess:() => emit("addDeposito"),
+       onFinish:()=> reVisit()
+
+    });
+    
+/*
     axios.post(route('ingresos.store'), form,
         {
             onUploadProgress: () => {
                 form.processing = true;
             },
+            headers: {
+             'Content-Type': 'multipart/form-data'
+            }
         })
         .then((resp) => {
+            console.log(resp);
             emit("addDeposito", resp.data);
             form.recentlySuccessful = true;
             restForm();
@@ -127,6 +161,14 @@ const create = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
+
+
+    let formData = new FormData();
+    let documento = document.querySelector('#documento');
+    formData.append('documento', documento.files[0]);
+*/
+
+    
 }
 const update = () => {
     axios.put(route('ingresos.update', props.deposito.id), form,
@@ -225,6 +267,7 @@ onBeforeMount(() => {
                     </div>
                     <div>
                         <JetLabel for="documento" value="Documento" />
+                        <DropZone id="documento" v-model="form.documento" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">

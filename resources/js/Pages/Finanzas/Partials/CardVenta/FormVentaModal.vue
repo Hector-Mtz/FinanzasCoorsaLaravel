@@ -13,6 +13,7 @@ import ListDataInput from '@/Components/ListDataInput.vue';
 import SpinProgress from '@/Components/SpinProgress.vue';
 import SelectComponent from '@/Components/SelectComponent.vue';
 import TextArea from '../../../../Components/TextArea.vue';
+import DropZone from '@/Components/DropZone.vue';
 
 const emit = defineEmits(["close"])
 const props = defineProps({
@@ -41,6 +42,7 @@ const form = useForm({
     "cantidad": "",
     "ceco_id": "",
     "servicio_id": "",
+    "documento":""
 })
 
 const listServicios = ref([]);
@@ -59,6 +61,7 @@ const titleModal = computed(() => {
         form.cantidad = "";
         form.ceco_id = "";
         form.servicio_id = "";
+        form.documento = "";
         return "Nueva Venta"
     } else {
         form.monto_id = props.venta.monto_id
@@ -71,6 +74,7 @@ const titleModal = computed(() => {
         form.cantidad = props.venta.cantidad
         form.ceco_id = props.venta.ceco_id
         form.servicio_id = props.venta.servicio_id
+        form.documento = props.venta.documento
         return "Actualizar Venta"
     }
 })
@@ -125,7 +129,7 @@ const create = () => {
     })
 }
 const update = () => {
-    form.put(route('ventas.update', props.venta.id), {
+    form.post(route('ventas.update', props.venta.id), {
         preserveScroll: true,
         preserveState: true,
         only: ['clientes', 'totalVentas', 'errors'],
@@ -221,6 +225,10 @@ watch(props, () => {
                         <TextArea id="comentario" name="comentario" v-model="form.comentario" maxlength="255" />
                         <JetInputError :message="form.errors.periodos" class="mt-2" />
                     </div>
+                    <div>
+                       <JetLabel for="documento" value="Documento:" />
+                       <DropZone v-model="form.documento" />
+                    </div>
                 </div>
                 <div class="flex justify-end px-10 py-2 border-gray-600 border-y-4">
                     <JetButton type="submit" :disabled="form.processing">
@@ -232,7 +240,6 @@ watch(props, () => {
                         </svg>Guardar
                     </JetButton>
                 </div>
-
             </form>
         </template>
     </DialogModal>

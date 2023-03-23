@@ -7,6 +7,12 @@ import { Inertia } from "@inertiajs/inertia";
 import { usePage } from "@inertiajs/inertia-vue3";
 import edit from "../../../../../img/elementos/editar.png";
 import del from "../../../../../img/elementos/eliminar.png";
+import { Fancybox } from '@fancyapps/ui/dist/fancybox/fancybox.esm.js';
+import '@fancyapps/ui/dist/fancybox/fancybox.css';
+
+Fancybox.bind("[data-fancybox]", {
+  // Your custom options
+});
 
 const emit = defineEmits(["edit", "activeIva", "changeRevisado"]);
 
@@ -80,6 +86,38 @@ const eliminarVenta = (id) => {
         <td>${{ ventaShow.iva }}</td>
         <td>${{ ventaShow.total }}</td>
         <td>{{ ventaShow.fechaInicial }}</td>
+        <td>
+            <div v-if="ventaShow.documento">
+                <a  class="inline-flex items-center justify-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition bg-blue-500 border border-transparent rounded-3xl disabled:opacity-25"
+                   v-if="!ventaShow.documento.endsWith('.svg')" :href="ventaShow.documento" download >
+                         <svg
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="currentColor"
+                         class="h-4"
+                         viewBox="0 0 16 16"
+                     >
+                         <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                         <path
+                             d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"
+                         />
+                     </svg>
+                   </a>
+                   <a v-else  data-fancybox :href="ventaShow.documento"  class="inline-flex items-center justify-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition bg-blue-500 border border-transparent rounded-3xl disabled:opacity-25"  
+                   >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          class="h-4"
+                          viewBox="0 0 16 16"
+                      >
+                          <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                          <path
+                              d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"
+                          />
+                      </svg>
+                   </a>
+            </div>
+        </td>
         <td v-if="$page.props.can['ventas.edit']" class="flex items-center">
             <SwitchButton
                 v-model:checked="venta.revisado"

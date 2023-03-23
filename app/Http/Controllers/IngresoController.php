@@ -107,33 +107,28 @@ class IngresoController extends Controller
                'created_at' => ['required']
            ]);
 
-           /*
-        $urlDoc = "";
-
+        $urlContenido = null;
+        $ingreso = null;
         if($request->has('documento'))
         {
-            $file = $request['documento'];
-            return $file;
+            $contenido = $request['documento'];  
+            $nombreCont = $contenido->getClientOriginalName();
+            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
-            $nombre_original = $file->getClientOriginalName();
-            $ruta_file = $file->storeAs('ingresos/docs', $nombre_original , 'gcs');
-            $urlDoc = Storage::disk('gcs')->url($ruta_file);
+            $ingreso = Ingreso::create(
+                ['nombre' =>$request['nombre'],
+                 'cantidad' => $request['cantidad'],
+                 'banco_id' => $request['banco_id'],
+                 'created_at' => $request['created_at'],
+                 'documento' => $urlContenido
+                ]
+            );
         }
 
-        return $request;
-       */  
-        $ingreso = Ingreso::create(
-            ['nombre' =>$request['nombre'],
-             'cantidad' => $request['cantidad'],
-             'banco_id' => $request['banco_id'],
-             'created_at' => $request['created_at']
-            ]
-        );
 
         return response()->json($ingreso);
     }
-
-
 
 
 
@@ -146,6 +141,7 @@ class IngresoController extends Controller
      */
     public function update(Request $request, Ingreso $ingreso)
     {
+        return $request;
         $this->authorize('deposito.edit');
         $request->validate([
             'nombre' => ['required', 'unique:ingresos,nombre,' . $ingreso->id . ',id'],

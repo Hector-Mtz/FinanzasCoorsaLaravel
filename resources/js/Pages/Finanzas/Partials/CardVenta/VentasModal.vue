@@ -110,9 +110,9 @@ const close = () => {
             <div
                 class="flex text-fuente-500 gap-4 items-center justify-between px-8 mb-8 py-2 max-w-[69rem]"
             >
-                <div class="flex gap-4 pl-8 items-center">
+                <div class="flex items-center gap-4 pl-8">
                     <div class="">
-                        <span class="block font-bold text-start text-3xl">
+                        <span class="block text-3xl font-bold text-start">
                             Ventas
                         </span>
                     </div>
@@ -127,7 +127,7 @@ const close = () => {
                     </div>
                 </div>
 
-                <InputSearch v-model="searchText" class="w-96 px-2 py-1" />
+                <InputSearch v-model="searchText" class="px-2 py-1 w-96" />
 
                 <img
                     :src="cerrar"
@@ -150,6 +150,7 @@ const close = () => {
                         <th>TOTAL IVA</th>
                         <th>TOTAL</th>
                         <th>FECHA INICIAL</th>
+                        <th>DOCUMENTO</th>
                         <th v-if="$page.props.can['ventas.edit']">REVISADO</th>
                         <th v-if="$page.props.can['ventas.delete']"></th>
                     </tr>

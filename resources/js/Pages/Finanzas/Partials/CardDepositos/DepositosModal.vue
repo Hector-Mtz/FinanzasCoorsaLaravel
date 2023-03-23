@@ -115,6 +115,7 @@ watch(props, () => {
                         <th>CANTIDAD</th>
                         <th>FACTURA</th>
                         <th>BANCO</th>
+                        <th>DOCUMENTO</th>
                         <th v-if="$page.props.can['deposito.edit']"></th>
                         <th v-if="$page.props.can['deposito.cerrar']">CERRAR</th>
                         <th v-if="$page.props.can['deposito.delete']">ELIMINAR</th>
