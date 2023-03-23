@@ -48,8 +48,8 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit">
-            <div>
-                <h1 class="text-input">Ingresar</h1>
+            <div class="text-[14px] font-light text-white">
+                <h1 class="text-[40px] font-semibold">Ingresar</h1>
                 <InputLogin
                     id="email"
                     v-model="form.email"
@@ -79,7 +79,7 @@ const submit = () => {
                         v-model:checked="form.remember"
                         name="remember"
                     />
-                    <span class="ml-2 text-sm labelLogin">Recordar</span>
+                    <span class="ml-2 text-[14px] text-white">Recordar</span>
                 </label>
             </div>
 
@@ -87,7 +87,7 @@ const submit = () => {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900"
+                    class="underline text-sm text-gris-500 hover:text-gris-900"
                 >
                     Forgot your password?
                 </Link>
