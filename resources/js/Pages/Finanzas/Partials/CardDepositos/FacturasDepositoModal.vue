@@ -109,7 +109,7 @@ watch(props, () => {
                     <div class="flex justify-between gap-4">
                         <span class="text-[11px] font-normal"> Total </span>
                         <span>
-                            {{ formatoMoney(props.deposito.cantidad) }}</span
+                            $ {{ formatoMoney(props.deposito.cantidad) }}</span
                         >
                     </div>
                 </div>

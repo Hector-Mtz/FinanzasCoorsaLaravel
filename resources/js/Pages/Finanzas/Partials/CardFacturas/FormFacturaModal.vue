@@ -1,6 +1,6 @@
 <script setup>
 import { computed, reactive } from "vue";
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 
 import axios from "axios";
 
@@ -13,7 +13,7 @@ import cerrar from "../../../../../img/elementos/cerrar.png";
 import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
-import DropZone from '@/Components/DropZone.vue';
+import DropZone from "@/Components/DropZone.vue";
 
 const emit = defineEmits(["close", "addFactura", "editFactura"]);
 const props = defineProps({
@@ -35,7 +35,7 @@ const form = useForm({
     cantidad: "",
     referencia: "",
     fechaDePago: "",
-    documento:"",
+    documento: "",
     hasErrors: false,
     errors: [],
     error: "",
@@ -246,7 +246,7 @@ const update = () => {
                     <div>
                         <JetLabel for="fechaDePago" value="Fecha de pago"/>
                         <Input
-                            placeholder="Fecha de PAgo"
+                            placeholder="Fecha de Pago"
                             id="fechaDePago"
                             name="fecha_final"
                             type="date"
@@ -284,7 +284,7 @@ const update = () => {
                 <div class="flex justify-end px-10 py-2">
                     <JetButton type="submit" :disabled="form.processing">
                         <SpinProgress :inprogress="form.processing" />
-                        <template v-if="form.referencia === ''">
+                        <template v-if="props.typeForm === 'create'">
                             Agregar
                         </template>
                         <template v-else> Actualizar</template>
