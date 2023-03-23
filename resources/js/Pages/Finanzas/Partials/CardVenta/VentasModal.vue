@@ -152,7 +152,9 @@ const close = () => {
                         <th>FECHA INICIAL</th>
                         <th>DOCUMENTO</th>
                         <th v-if="$page.props.can['ventas.edit']">REVISADO</th>
-                        <th v-if="$page.props.can['ventas.delete']"></th>
+                        <th v-if="$page.props.can['ventas.delete']">
+                            borrar
+                        </th>
                     </tr>
                     <tr>
                         <td colspan="5"></td>

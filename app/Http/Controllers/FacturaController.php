@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class FacturaController extends Controller
@@ -102,13 +103,37 @@ class FacturaController extends Controller
     public function store(Request $request)
     {
         $this->authorize('facturas.create');
-        $newFactura = $request->validate([
+         $request->validate([
             "cantidad" => ["required", "numeric"],
             "referencia" => ["required", "unique:facturas,referencia"],
             "fechaDePago" => ["required", "date"],
         ]);
 
-        $factura = Factura::create($newFactura);
+        $urlContenido = null;
+        if($request->has('documento'))
+        {
+            $contenido = $request['documento'];  
+            $nombreCont = $contenido->getClientOriginalName();
+            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
+
+            $ingreso = Factura::create(
+                ['nombre' =>$request['nombre'],
+                 'cantidad' => $request['cantidad'],
+                 'banco_id' => $request['banco_id'],
+                 'created_at' => $request['created_at'],
+                 'documento' => $urlContenido
+                ]
+            );
+        }
+        else
+        {
+
+        }
+
+        $factura = Factura::create([
+
+        ]);
         $factura->total_ocs = 0;
         $factura->ocs = [];
         return response()->json($factura);

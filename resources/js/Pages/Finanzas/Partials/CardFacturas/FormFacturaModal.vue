@@ -7,6 +7,7 @@ import axios from "axios";
 import { Inertia } from "@inertiajs/inertia";
 import folder from "../../../../../img/elementos/agregar-documento.png";
 import JetButton from "@/Jetstream/Button.vue";
+import JetLabel from "@/Jetstream/Label.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
 import cerrar from "../../../../../img/elementos/cerrar.png";
 import DialogModal from "@/Components/DialogModal.vue";
@@ -231,6 +232,7 @@ const update = () => {
                     </div>
                     <div>
                         <JetLabel for="documento" value="Documento" />
+                        <DropZone v-model="form.documento" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">
