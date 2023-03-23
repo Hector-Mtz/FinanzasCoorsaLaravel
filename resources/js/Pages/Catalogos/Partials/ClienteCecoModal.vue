@@ -4,11 +4,13 @@ import { ref, watch, watchEffect } from "vue";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
 import DialogModal from "@/Components/DialogModal.vue";
 import TableComponent from "@/Components/Table.vue";
-import SuccessButton from "@/Components/SuccessButton.vue";
+import ModalButton from "@/Components/ModalButton.vue";
 import PaginationAxios from "../../../Components/PaginationAxios.vue";
 import { pickBy } from "lodash";
 import InputSearch from "../../../Components/InputSearch.vue";
 import FormClienteCeco from "./FormClienteCeco.vue";
+import cerrar from "../../../../img/elementos/cerrar.png";
+import edit from "../../../../img/elementos/editar.png";
 
 const emit = defineEmits(["close"]);
 const props = defineProps({
@@ -84,27 +86,38 @@ watchEffect(() => {
 });
 </script>
 <template>
-    <DialogModal :show="show" @close="close()">
+    <DialogModal :show="show" @close="close()" :maxWidth="'3xl'">
         <template #title>
-            <div class="flex flex-row">
-                <div class="px-4 py-1">
-                    <span class="block font-bold text-center text-fuente-500">
+            <div class="flex items-center my-6 gap-14">
+                <div class="px-4 py-1 flex items-center">
+                    <span
+                        class="block font-semibold text-[28px] text-fuente-500 w-fit"
+                    >
                         {{ props.cliente.nombre }}
                     </span>
-                    <InputSearch v-model="searchText" />
+                    <ButtonAdd class="h-[25px] w-[35px]" @click="showForm()" />
                 </div>
-                <div class="flex-1 px-2 py-1">
+                <div class="px-2 py-1">
                     <div
                         class="flex flex-col items-center justify-center gap-1 text-fuente-500"
                     >
                         <span
-                            class="block font-bold text-center text-fuente-500"
+                            class="block font-normal text-center text-fuente-500"
                         >
                             {{ props.title }}
                         </span>
-                        <ButtonAdd class="h-5" @click="showForm()" />
+                        <InputSearch
+                            v-model="searchText"
+                            class="px-2 py-1 w-80"
+                        />
                     </div>
                 </div>
+                <img
+                    :src="cerrar"
+                    alt=""
+                    class="absolute left-[95.5%] top-[5%] hover:cursor-pointer"
+                    @click="close"
+                />
             </div>
         </template>
         <template #content>
@@ -119,18 +132,9 @@ watchEffect(() => {
                         </td>
                         <td>
                             <div class="flex justify-center">
-                                <SuccessButton @click="showForm(subcatalogo)">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-4 h-4"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                    >
-                                        <path
-                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                        />
-                                    </svg>
-                                </SuccessButton>
+                                <ModalButton @click="showForm(subcatalogo)">
+                                    <img :src="edit" alt="" />
+                                </ModalButton>
                             </div>
                         </td>
                     </tr>

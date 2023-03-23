@@ -8,10 +8,9 @@ import { Inertia } from "@inertiajs/inertia";
 import JetLabel from "@/Jetstream/Label.vue";
 import JetButton from "@/Jetstream/Button.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
-
+import cerrar from "../../../../img/elementos/cerrar.png";
 import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
-import ListDataInput from "@/Components/ListDataInput.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
 import SelectComponent from "@/Components/SelectComponent.vue";
 import SwitchButton from "@/Components/SwitchButton.vue";
@@ -166,21 +165,29 @@ const update = () => {
 <template>
     <DialogModal :show="show" @close="close()">
         <template #title>
-            <div class="">
-                <div class="px-4 py-1 text-center">
-                    <span class="font-bold text-fuente-500">
+            <div class="flex items-center justify-between my-6">
+                <div class="px-4 py-1 text-[28px]">
+                    <span class="font-semibold text-fuente-500">
                         {{ titleModal }}
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
                 </div>
+                <img
+                    :src="cerrar"
+                    alt=""
+                    @click="close"
+                    class="absolute left-[95.5%] top-[4%] hover:cursor-pointer"
+                />
             </div>
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div class="grid grid-cols-2 gap-2 px-4 py-2 text-sm">
+                <div
+                    class="grid grid-cols-2 gap-x-2 gap-y-6 px-4 py-2 text-[14px] font-light my-6"
+                >
                     <div>
-                        <JetLabel for="nombre" value="Nombre:" />
                         <Input
+                            placeholder="Nombre"
                             id="nombre"
                             name="nombre"
                             type="text"
@@ -194,18 +201,14 @@ const update = () => {
                         />
                     </div>
                     <div>
-                        <JetLabel
-                            for="lineas_negocio_id"
-                            value="Lineas de negocios:"
-                        />
                         <SelectComponent
                             id="lineas_negocio_id"
                             name="lineas_negocio_id"
                             v-model="form.lineas_negocio_id"
                             required
                         >
-                            <option value="">
-                                Seleciona una Linea de Negocio
+                            <option value="" disabled selected>
+                                Lista de Negocios
                             </option>
                             <option
                                 v-for="linea in lineasNegocios"
@@ -220,7 +223,7 @@ const update = () => {
                             class="mt-2"
                         />
                     </div>
-                    <div>
+                    <div class="flex gap-2">
                         <JetLabel for="lineas_negocio_id" value="Activo:" />
                         <SwitchButton
                             id="lineas_negocio_id"
@@ -237,16 +240,8 @@ const update = () => {
                 <div class="flex justify-end px-10 py-2">
                     <JetButton type="submit" :disabled="form.processing">
                         <SpinProgress :inprogress="form.processing" />
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            class="w-6 h-5"
-                            viewBox="0 0 16 16"
-                        >
-                            <path
-                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
-                            /></svg
-                        >Guardar
+                        <template v-if="form.nombre === ''">Agregar</template>
+                        <template v-else>Actualizar</template>
                     </JetButton>
                 </div>
             </form>

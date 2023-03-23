@@ -120,8 +120,10 @@ watch(searchTextGroup, (newSearch) => {
 <template>
     <AppLayout title="Finanzas">
         <template #header>
-            <div class="flex items-center justify-around">
-                <h2 class="text-xl font-bold leading-tight text-fuente-500">
+            <div class="flex items-center">
+                <h2
+                    class="text-[28px] font-semibold leading-tight text-fuente-500"
+                >
                     Catalogos
                 </h2>
             </div>
@@ -139,7 +141,10 @@ watch(searchTextGroup, (newSearch) => {
                     @showSubCatalogo="showCleinteCecoModal($event)"
                 >
                     <template #search>
-                        <InputSearch v-model="searchTextCliente" />
+                        <InputSearch
+                            v-model="searchTextCliente"
+                            class="px-2 py-1"
+                        />
                     </template>
                     <template #pagination>
                         <PaginationAxios
@@ -169,7 +174,10 @@ watch(searchTextGroup, (newSearch) => {
                     "
                 >
                     <template #search>
-                        <InputSearch v-model="searchTextServ" />
+                        <InputSearch
+                            v-model="searchTextServ"
+                            class="px-2 py-1"
+                        />
                     </template>
                     <template #pagination>
                         <PaginationAxios
@@ -191,7 +199,10 @@ watch(searchTextGroup, (newSearch) => {
                     "
                 >
                     <template #search>
-                        <InputSearch v-model="searchTextGroup" />
+                        <InputSearch
+                            v-model="searchTextGroup"
+                            class="px-2 py-1"
+                        />
                     </template>
                     <template #pagination>
                         <PaginationAxios
@@ -213,7 +224,10 @@ watch(searchTextGroup, (newSearch) => {
                     @showSubCatalogo="showFormLineaNegocioModal($event)"
                 >
                     <template #search>
-                        <InputSearch v-model="searchTextLineasNegocios" />
+                        <InputSearch
+                            v-model="searchTextLineasNegocios"
+                            class="px-2 py-1"
+                        />
                     </template>
                     <template #pagination>
                         <PaginationAxios

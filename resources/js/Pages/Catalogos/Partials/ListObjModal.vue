@@ -5,8 +5,9 @@ import ButtonAdd from "@/Components/ButtonAdd.vue";
 import DialogModal from "@/Components/DialogModal.vue";
 import TableComponent from "@/Components/Table.vue";
 import FormModal from "./FormModal.vue";
-import SuccessButton from "@/Components/SuccessButton.vue";
-
+import ModalButton from "@/Components/ModalButton.vue";
+import cerrar from "../../../../img/elementos/cerrar.png";
+import edit from "../../../../img/elementos/editar.png";
 const emit = defineEmits(["close", "add"]);
 const props = defineProps({
     show: {
@@ -52,49 +53,44 @@ const close = () => {
 };
 </script>
 <template>
-    <DialogModal :show="show" @close="close()">
+    <DialogModal :show="show" @close="close()" :maxWidth="'xl'">
         <template #title>
-            <div class="flex flex-row">
-                <div class="px-4 py-1">
-                    <span class="block font-bold text-center text-fuente-500">
+            <div class="flex justify-between items-center my-6">
+                <div class="px-4 py-1 flex gap-8 items-center">
+                    <span
+                        class="block font-semibold text-[28px] text-center text-fuente-500"
+                    >
                         {{ props.title }}
                     </span>
+                    <ButtonAdd class="h-[25px] w-[35px]" @click="showForm()" />
                 </div>
-                <div class="flex-1 px-2 py-1">
-                    <div
-                        class="flex items-center justify-center gap-1 text-fuente-500"
-                    >
-                        <span
-                            class="block font-bold text-center text-fuente-500"
-                        >
-                            Agregar
-                        </span>
-                        <ButtonAdd class="h-5" @click="showForm()" />
-                    </div>
-                </div>
+                <div
+                    class="flex items-center justify-center gap-1 text-fuente-500"
+                ></div>
+                <img
+                    :src="cerrar"
+                    alt=""
+                    @click="close"
+                    class="absolute top-[1rem] left-[95.5%] hover:cursor-pointer"
+                />
             </div>
         </template>
         <template #content>
             <TableComponent>
                 <template #tbody>
-                    <tr v-for="obj in props.listObj" :key="obj.id">
-                        <td>
+                    <tr
+                        v-for="obj in props.listObj"
+                        :key="obj.id"
+                        class="text-[16px] font-light text-start"
+                    >
+                        <td class="px-4 pt-1">
                             {{ obj.nombre }}
                         </td>
-                        <td>
+                        <td class="px-4 pt-1">
                             <div class="flex justify-center">
-                                <SuccessButton @click="showForm(obj)">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-4 h-4"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                    >
-                                        <path
-                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                        />
-                                    </svg>
-                                </SuccessButton>
+                                <ModalButton @click="showForm(obj)">
+                                    <img :src="edit" alt="" />
+                                </ModalButton>
                             </div>
                         </td>
                     </tr>

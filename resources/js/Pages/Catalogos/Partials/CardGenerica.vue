@@ -46,11 +46,16 @@ const showSubCatalogo = (obj) => {
 <template>
     <Card>
         <div class="px-4 text-fuente-500">
-            <div class="flex justify-around gap-1">
-                <h2 class="text-xl font-bold leading-tight text-fuente-500">
+            <div class="flex justify-around items-center gap-1">
+                <h2
+                    class="text-[22px] font-semibold leading-tight text-fuente-500"
+                >
                     {{ title }}
                 </h2>
-                <ButtonAdd class="h-7" @click="showingList = true" />
+                <ButtonAdd
+                    class="h-[25px] w-[35px]"
+                    @click="showingList = true"
+                />
             </div>
             <div class="flex justify-around my-2">
                 <slot name="search" />
