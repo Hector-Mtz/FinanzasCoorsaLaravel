@@ -8,8 +8,8 @@ import SuccessButton from "@/Components/SuccessButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import ButtonPres from "@/Components/ButtonPres.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
-/* import { Fancybox } from "@fancyapps/ui/dist/fancybox/fancybox.esm.js";
-import "@fancyapps/ui/dist/fancybox/fancybox.css"; */
+import { Fancybox } from "@fancyapps/ui/dist/fancybox/fancybox.esm.js";
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 Fancybox.bind("[data-fancybox]", {
     // Your custom options

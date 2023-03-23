@@ -7,8 +7,8 @@ import { Inertia } from "@inertiajs/inertia";
 import { usePage } from "@inertiajs/inertia-vue3";
 import edit from "../../../../../img/elementos/editar.png";
 import del from "../../../../../img/elementos/eliminar.png";
-/* import { Fancybox } from "@fancyapps/ui/dist/fancybox/fancybox.esm.js";
-import "@fancyapps/ui/dist/fancybox/fancybox.css"; */
+import { Fancybox } from "@fancyapps/ui/dist/fancybox/fancybox.esm.js";
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 Fancybox.bind("[data-fancybox]", {
     // Your custom options
