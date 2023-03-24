@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
+import { pickBy, throttle } from 'lodash'
 import { formatoMoney } from "../../../../utils/conversiones";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
 import DialogModal from "@/Components/DialogModal.vue";
@@ -27,8 +28,9 @@ const textOcs = ref("");
 const ocIdAdd = ref("");
 
 // ocs del catalogo disponible
-const getOcs = async () => {
-    const resp = await axios.get(route("ocs.catalogos"));
+const getOcs = async (search = '') => {
+    const params = pickBy({ search })
+    const resp = await axios.get(route("ocs.catalogos"), { params });
     listOcs.value = resp.data;
 };
 
@@ -89,52 +91,44 @@ watch(props, () => {
         getOcs();
     }
 });
+
+watch(textOcs, throttle(function () {
+    const anyList = listOcs.value.some((oc) => oc.nombre.toLowerCase().includes(textOcs.value.toLowerCase()));
+    if (!anyList) {
+        getOcs(textOcs.value)
+    }
+}, 150));
+
 </script>
 <template>
     <DialogModal :show="show" @close="close()">
         <template #title>
-            <div
-                class="flex justify-between text-[28px] font-semibold my-6 max-w-[38.5rem]"
-            >
+            <div class="flex justify-between text-[28px] font-semibold my-6 max-w-[38.5rem]">
                 <div class="px-4 py-1">
                     <span class="block text-center text-fuente-500">
                         #{{ props.factura.referencia }}
                     </span>
                 </div>
-                <div
-                    class="flex gap-4 justify-between border-2 border-aqua-500 rounded-xl px-2 py-1"
-                >
+                <div class="flex justify-between gap-4 px-2 py-1 border-2 border-aqua-500 rounded-xl">
                     <span class="text-[11px] font-normal">Total</span>
                     <span class="text-center text-fuente-500">
                         $ {{ formatoMoney(props.factura.cantidad) }}
                     </span>
                 </div>
 
-                <div
-                    class="flex gap-4 justify-between border-2 border-aqua-500 rounded-xl px-2 py-1"
-                >
+                <div class="flex justify-between gap-4 px-2 py-1 border-2 border-aqua-500 rounded-xl">
                     <span class="text-[11px] font-normal">Fecha de Pago</span>
                     <span class="text-center text-fuente-500">
                         {{ props.factura.fechaDePago }}
                     </span>
                 </div>
-                <img
-                    :src="cerrar"
-                    alt=""
-                    class="absolute left-[40rem] top-[1rem] hover:cursor-pointer"
-                    @click="close()"
-                />
+                <img :src="cerrar" alt="" class="absolute left-[40rem] top-[1rem] hover:cursor-pointer" @click="close()" />
             </div>
             <div class="flex flex-col mb-4">
                 <h3 class="text-[15px] font-semibold uppercase">Agregar OC</h3>
                 <div v-if="$page.props.can['facturas.oc.create']" class="flex">
-                    <ListDataInputOCS
-                        class="w-50"
-                        v-model="ocIdAdd"
-                        :value="textOcs"
-                        list="ocs-catalogo"
-                        :options="listOcs"
-                    />
+                    <ListDataInputOCS class="w-50" v-model="ocIdAdd" :value="textOcs" @value="textOcs = $event"
+                        list="ocs-catalogo" :options="listOcs" />
                     <ButtonAdd class="ml-1 h-7" @click="addOc()" />
                 </div>
                 <JetInputError :message="props.factura.error" class="mt-2" />
@@ -143,28 +137,20 @@ watch(props, () => {
         <template #content>
             <TableComponent>
                 <template #thead>
-                    <tr
-                        class="border-b-[1px] border-aqua-500 text-[15px] uppercase font-semibold text-start"
-                    >
+                    <tr class="border-b-[1px] border-aqua-500 text-[15px] uppercase font-semibold text-start">
                         <th>OC</th>
                         <th class="flex justify-center gap-4 min-w-fit">
                             <span>CANTIDAD</span>
-                            <span
-                                >${{
-                                    formatoMoney(props.factura.total_ocs)
-                                }}</span
-                            >
+                            <span>${{
+                                formatoMoney(props.factura.total_ocs)
+                            }}</span>
                         </th>
                         <th>FECHA</th>
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemOcFactura
-                        v-for="(oc, index) in props.factura.ocs"
-                        :key="oc.id"
-                        :oc="oc"
-                        @remove="deleteOc(index)"
-                    />
+                    <ItemOcFactura v-for="(oc, index) in props.factura.ocs" :key="oc.id" :oc="oc"
+                        @remove="deleteOc(index)" />
                 </template>
             </TableComponent>
         </template>
