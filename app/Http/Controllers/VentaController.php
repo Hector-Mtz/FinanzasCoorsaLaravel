@@ -317,6 +317,7 @@ class VentaController extends Controller
             ->where('facturas.fechaDePago','LIKE','%'.$fecha_Actual.'%')
             ->first();
         $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
+            ->where('ingresos.created_at','LIKE','%'.$fecha_Actual.'%')
             ->first();
 
         $status['pc'] = $ocs->total;
