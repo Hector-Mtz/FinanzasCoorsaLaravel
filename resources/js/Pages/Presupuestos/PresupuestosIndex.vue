@@ -43,12 +43,13 @@ const changeDate = (newDate) => {
                 >
                     Presupuestos
                 </h2>
-
+<!--
                 <ButtonCalendar
                     :month="date.month"
                     :year="date.year"
                     @change-date="changeDate($event)"
                 />
+-->
             </div>
             <div class="button_submenu">
                 <Button style="float: left">
