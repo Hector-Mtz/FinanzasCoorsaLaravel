@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, reactive } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 import { pickBy } from "lodash";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
@@ -16,10 +16,15 @@ const props = defineProps({
     clientes: {
         type: Object,
     },
+    filters: {
+        type: Object,
+    }
 });
 
-const tab = ref(""); // Referencia al id
-const searchText = ref("");
+const params = reactive({
+    search: props.filters.search,
+    status_id: props.filters.status_id
+})
 const showingOcs = ref(false);
 const ventaSelect = ref({ id: -1 });
 
@@ -35,21 +40,13 @@ const closeOcs = () => {
 // End Methos Modal
 
 const changeTab = (status_id) => {
-    tab.value = status_id;
-    if (searchText.value !== "") {
-        searchText.value = "";
-    } else {
-        const params = pickBy({ status_id });
-        Inertia.visit(route("ventas.index"), {
-            data: params,
-            preserveState: true,
-            preserveScroll: true,
-            only: ["clientes", "totalVentasStatus"],
-        });
+    params.status_id = status_id;
+    if (params.search !== "") {
+        params.search = "";
     }
 };
-const search = (newSearch) => {
-    const params = pickBy({ status_id: tab.value, search: newSearch });
+const search = () => {
+    const params = pickBy(params);
     Inertia.visit(route("ventas.index"), {
         data: params,
         preserveState: true,
@@ -59,78 +56,54 @@ const search = (newSearch) => {
 };
 
 let timeout;
-watch(searchText, (newSearch) => {
+watch(params, () => {
     if (timeout !== undefined) {
         clearTimeout(timeout);
     }
     //Bounce de busqueda
     timeout = setTimeout(() => {
-        search(newSearch);
+        search();
     }, 300);
 });
 </script>
 <template>
-    <div
-        class="text-fuente-500 gap-4 flex flex-col border-b-[1px] border-gris-500 pb-2"
-    >
-        <div class="flex justify-between items-center">
+    <div class="text-fuente-500 gap-4 flex flex-col border-b-[1px] border-gris-500 pb-2">
+        <div class="flex items-center justify-between">
             <h1 class="text-[26px] font-semibold">Ventas</h1>
             <img :src="monedas" alt="" class="h-[25px]" />
         </div>
         <div class="flex justify-around">
-            <InputSearch v-model="searchText" class="px-2 py-1" />
+            <InputSearch v-model="params.search" class="px-2 py-1" />
             <ButtonAdd class="h-7" @click="emit('showVentas')" />
         </div>
         <div class="w-full h-">
             <!-- Header Tabs -->
             <div
-                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center"
-            >
-                <Tab
-                    :class="{
-                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                            tab === '',
-                    }"
-                    class="tab flex items-center"
-                    @click="changeTab('')"
-                >
+                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center">
+                <Tab :class="{
+                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
+                        params.status_id === '',
+                }" class="flex items-center tab" @click="changeTab('')">
                     TODAS
                 </Tab>
-                <Tab
-                    :class="{
-                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                            tab === '1',
-                    }"
-                    class="tab flex items-center"
-                    @click="changeTab('1')"
-                >
+                <Tab :class="{
+                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
+                        params.status_id === '1',
+                }" class="flex items-center tab" @click="changeTab('1')">
                     ABIERTAS
                 </Tab>
-                <Tab
-                    :class="{
-                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                            tab === '2',
-                    }"
-                    class="tab flex items-center"
-                    @click="changeTab('2')"
-                >
+                <Tab :class="{
+                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
+                        params.status_id === '2',
+                }" class="flex items-center tab" @click="changeTab('2')">
                     CERRADAS
                 </Tab>
             </div>
             <!-- Lista de clientes -->
-            <div class="overflow-y-auto pt-4" style="max-height: 41.2vh">
-                <ItemCliente
-                    v-for="cliente in props.clientes"
-                    :key="cliente.id"
-                    :cliente="cliente"
-                    :total="cliente.ventas.length"
-                >
-                    <ItemObjectShow
-                        v-for="venta in cliente.ventas"
-                        :key="venta.id"
-                        :data="venta"
-                        @onShow="showOcs($event)"
-                    >
+            <div class="pt-4 overflow-y-auto" style="max-height: 41.2vh">
+                <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
+                    :total="cliente.ventas.length">
+                    <ItemObjectShow v-for="venta in cliente.ventas" :key="venta.id" :data="venta" @onShow="showOcs($event)">
                         {{ venta.ceco + "-" + venta.servicio }}
                         <br />
                         {{ venta.fechaInicial }}

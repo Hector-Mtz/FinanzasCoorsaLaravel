@@ -31,7 +31,7 @@ class CecoController extends Controller
         } else {
             $cecos->orderBy('cecos.created_at', 'desc');
         }
-        return response()->json($cecos->paginate(15));
+        return response()->json($cecos->paginate(10));
     }
 
     /**

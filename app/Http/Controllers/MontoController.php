@@ -30,7 +30,7 @@ class MontoController extends Controller
         } else {
             $montos->orderBy('montos.created_at', 'desc');
         }
-        return response()->json($montos->paginate(15));
+        return response()->json($montos->paginate(10));
     }
 
 

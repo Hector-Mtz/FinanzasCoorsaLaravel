@@ -89,44 +89,27 @@ watchEffect(() => {
     <DialogModal :show="show" @close="close()" :maxWidth="'3xl'">
         <template #title>
             <div class="flex items-center my-6 gap-14">
-                <div class="px-4 py-1 flex items-center">
-                    <span
-                        class="block font-semibold text-[28px] text-fuente-500 w-fit"
-                    >
+                <div class="flex items-center px-4 py-1">
+                    <span class="block font-semibold text-[28px] text-fuente-500 w-fit">
                         {{ props.cliente.nombre }}
                     </span>
                     <ButtonAdd class="h-[25px] w-[35px]" @click="showForm()" />
                 </div>
                 <div class="px-2 py-1">
-                    <div
-                        class="flex flex-col items-center justify-center gap-1 text-fuente-500"
-                    >
-                        <span
-                            class="block font-normal text-center text-fuente-500"
-                        >
+                    <div class="flex flex-col items-center justify-center gap-1 text-fuente-500">
+                        <span class="block font-normal text-center text-fuente-500">
                             {{ props.title }}
                         </span>
-                        <InputSearch
-                            v-model="searchText"
-                            class="px-2 py-1 w-80"
-                        />
+                        <InputSearch v-model="searchText" class="px-2 py-1 w-80" />
                     </div>
                 </div>
-                <img
-                    :src="cerrar"
-                    alt=""
-                    class="absolute left-[95.5%] top-[5%] hover:cursor-pointer"
-                    @click="close"
-                />
+                <img :src="cerrar" alt="" class="absolute left-[95.5%] top-[5%] hover:cursor-pointer" @click="close" />
             </div>
         </template>
         <template #content>
             <TableComponent>
                 <template #tbody>
-                    <tr
-                        v-for="subcatalogo in listCecos.data"
-                        :key="subcatalogo.id"
-                    >
+                    <tr v-for="subcatalogo in listCecos.data" :key="subcatalogo.id">
                         <td>
                             {{ subcatalogo.nombre }}
                         </td>
@@ -140,19 +123,11 @@ watchEffect(() => {
                     </tr>
                 </template>
             </TableComponent>
-            <PaginationAxios :pagination="listCecos" />
+            <PaginationAxios :pagination="listCecos" @load-page="search(searchText, $event)" />
             <!-- MODALS -->
-            <FormClienteCeco
-                :padre-id="props.cliente.id"
-                :title="props.title"
-                :show="showingForm"
-                :type-form="typeForm"
-                :ceco="ceco"
-                :lineas-negocios="props.lineasNegocios"
-                @add="search(searchText, listCecos.current_page)"
-                @edit="updateObj($event)"
-                @close="showingForm = false"
-            />
+            <FormClienteCeco :padre-id="props.cliente.id" :title="props.title" :show="showingForm" :type-form="typeForm"
+                :ceco="ceco" :lineas-negocios="props.lineasNegocios" @add="search(searchText, listCecos.current_page)"
+                @edit="updateObj($event)" @close="showingForm = false" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

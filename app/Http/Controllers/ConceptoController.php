@@ -30,7 +30,7 @@ class ConceptoController extends Controller
         } else {
             $conceptos->orderBy('conceptos.created_at', 'desc');
         }
-        return response()->json($conceptos->paginate(15));
+        return response()->json($conceptos->paginate(10));
     }
 
 
