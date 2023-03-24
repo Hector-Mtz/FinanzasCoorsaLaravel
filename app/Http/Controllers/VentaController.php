@@ -22,7 +22,6 @@ class VentaController extends Controller
      */
     public function index(Request $request)
     {
-
         $clientes = Cliente::select('clientes.*')
             ->with([
                 'ventas' => function ($query) use ($request) {
@@ -49,10 +48,12 @@ class VentaController extends Controller
             ]);
 
 
+       $fecha_Actual =  date("Y");
 
         //UNO ES PARA EL TOTAL Y OTRA DEPENDE DEL STATUS DONDE SE ENCUENTRE
         $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)),0) as total')
-            ->join('montos', 'ventas.monto_id', '=', 'montos.id');
+            ->join('montos', 'ventas.monto_id', '=', 'montos.id')
+            ->where('ventas.fechaInicial','LIKE','%'.$fecha_Actual.'%');
         $totalVentasStatus = $totalVentas;
         if ($request->status_id != "") {
             $totalVentasStatus->where("ventas.status_id", "=", $request->status_id);
@@ -302,13 +303,18 @@ class VentaController extends Controller
 
     public function totalStatus()
     {
+
+        $fecha_Actual =  date("Y");
+
         $status = collect(['pc' => 0, 'pp' => 0, 'c' => 0]);
 
         $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
             ->whereNull('ocs.factura_id')
+            ->where('ocs.fecha_alta','LIKE','%'.$fecha_Actual.'%')
             ->first();
         $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
             ->whereNull('facturas.ingreso_id')
+            ->where('facturas.fechaDePago','LIKE','%'.$fecha_Actual.'%')
             ->first();
         $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
             ->first();
