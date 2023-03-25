@@ -1,5 +1,8 @@
 <script setup>
 import { ref } from "vue";
+import PaginateItemObject from "../../../Components/PaginateItemObject.vue";
+import PaginationAxios from "../../../Components/PaginationAxios.vue";
+import SkeletonLoader from "../../../Components/SkeletonLoader.vue";
 
 const props = defineProps({
     cliente: {
@@ -10,9 +13,18 @@ const props = defineProps({
         type: Number,
         default: 0,
     },
+    ruta: {
+        type: String,
+        required: true,
+    },
+    filters: {
+        type: Object,
+        default: {}
+    }
 });
 
 const checked = ref(false);
+
 
 
 defineExpose({
@@ -49,10 +61,15 @@ defineExpose({
             </header>
             <div class="overflow-y-auto tab-content">
                 <div v-if="checked" class="px-1 pb-5 ">
+                    <PaginateItemObject :ruta="props.ruta" :filters="props.filters">
+                        <template #default="{ data }">
 
-                    <slot> </slot>
+                            <slot :data="data" />
+                        </template>
+                    </PaginateItemObject>
                 </div>
             </div>
         </div>
     </div>
 </template>
+

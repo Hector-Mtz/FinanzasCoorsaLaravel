@@ -85,10 +85,13 @@ Route::middleware([
     Route::apiResource('bancos', BancoController::class)->only('index');
 
     Route::get('catalogos', [CatalogosController::class, 'index'])->name('catalogos.index');
-    Route::get('clientes/listados', [ClienteController::class, 'listado'])->name('clientes.listado');
     Route::apiResource('/servicios', ServicioController::class)->except('show');
     Route::apiResource('/grupo-conceptos', GrupoConceptoController::class)->except('show');
+    //Clientes
+    Route::get('clientes/listados', [ClienteController::class, 'listado'])->name('clientes.listado');
     Route::apiResource('/clientes/{cliente}/cecos', CecoController::class)->except('show');
+    Route::get('/clientes/{cliente}/ventas', [ClienteController::class, 'ventas'])->name('clientes.ventas.index');
+
     Route::apiResource('/lineas-negocios', LineasNegocioController::class)->except('show');
     Route::apiResource('/grupo-conceptos/{grupo_concepto}/conceptos', ConceptoController::class)->except('show');
     Route::apiResource('/servicios/{servicio}/montos', MontoController::class)->except('show');
@@ -101,7 +104,5 @@ Route::middleware([
 Route::apiResource('/clientes', ClienteController::class);
 
 Route::get('/tablaPresupuestos', [ClienteController::class, 'tablaPresupuestos'])->name('tabla.presupuestos');;
-
-Route::get("/clientesAgrupados", [ClienteController::class, 'clientesAgrupados']);
 
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);

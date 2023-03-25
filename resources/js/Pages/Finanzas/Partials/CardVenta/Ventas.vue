@@ -9,6 +9,7 @@ import ItemCliente from "../ItemCliente.vue";
 import ItemObjectShow from "@/Components/ItemObjectShow.vue";
 import Tab from "../../../../Components/Tab.vue";
 import monedas from "../../../../../img/elementos/monedas-de-un-dolar.png";
+import ItemClientePaginate from "../ItemClientePaginate.vue";
 
 const emit = defineEmits(["showVentas"]);
 
@@ -20,6 +21,7 @@ const props = defineProps({
         type: Object,
     }
 });
+
 
 const params = reactive({
     search: props.filters.search,
@@ -47,7 +49,6 @@ const changeTab = (status_id) => {
 };
 const search = () => {
     const filters = pickBy(params);
-    console.log(filters)
     Inertia.visit(route("finanzas.index"), {
         replace: true,
         data: filters,
@@ -75,10 +76,11 @@ watch(params, throttle(function () {
             <!-- Header Tabs -->
             <div
                 class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center">
+
                 <Tab :class="{
                     'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                        params.status_id === '',
-                }" class="flex items-center tab" @click="changeTab('')">
+                        params.status_id === null,
+                }" class="flex items-center tab" @click="changeTab(null)">
                     TODAS
                 </Tab>
                 <Tab :class="{
@@ -95,15 +97,18 @@ watch(params, throttle(function () {
                 </Tab>
             </div>
             <!-- Lista de clientes -->
-            <div class="pt-4 overflow-y-auto" style="max-height: 41.2vh">
-                <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
-                    :total="cliente.total_ventas">
-                    <ItemObjectShow v-for="venta in cliente.ventas" :key="venta.id" :data="venta" @onShow="showOcs($event)">
-                        {{ venta.ceco + "-" + venta.servicio }}
-                        <br />
-                        {{ venta.fechaInicial }}
-                    </ItemObjectShow>
-                </ItemCliente>
+            <div class="pt-4 overflow-y-auto" style="max-height: 50vh">
+                <ItemClientePaginate v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
+                    :total="cliente.total_ventas" :filters="params" :ruta="route('clientes.ventas.index', cliente.id)">
+                    <template #default="{ data }">
+                        <ItemObjectShow v-for="venta in data" :key="venta.id" :data="venta" @onShow="showOcs($event)">
+                            {{ venta.ceco + "-" + venta.servicio }}
+                            <br />
+                            {{ venta.fechaInicial }}
+                        </ItemObjectShow>
+                    </template>
+
+                </ItemClientePaginate>
             </div>
         </div>
         <!--Modals -->
