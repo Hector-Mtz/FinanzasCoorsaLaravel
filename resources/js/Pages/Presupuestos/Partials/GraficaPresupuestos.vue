@@ -25,8 +25,8 @@ onMounted(() =>
     chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
     
     chart.maskBullets = false;
-    chart.dataFields.children ="children";
-    
+    //chart.dataFields.children ="children";
+
     var xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     var yAxis = chart.yAxes.push(new am4charts.CategoryAxis());
     
@@ -53,6 +53,7 @@ onMounted(() =>
     series.columns.template.events.on("hit", function(ev)
     {
         console.log(ev.target._dataItem._dataContext); //se recupera ejes
+        chart.data = [];
 
     }, this);
 
@@ -61,7 +62,7 @@ onMounted(() =>
     column.strokeWidth = 2;
     column.strokeOpacity = 1;
     column.stroke = am4core.color("#ffffff");
-    //column.tooltipText = "{GrupoConName}, {ClienteName}: {value.workingValue.formatNumber('#.')}";
+    column.tooltipText = "{GrupoConName}, {ClienteName}: {value.workingValue.formatNumber('#.')}";
     column.width = am4core.percent(100);
     column.height = am4core.percent(100);
     column.column.cornerRadius(6, 6, 6, 6);
@@ -82,14 +83,6 @@ onMounted(() =>
     bullet2.fontSize = 20;
     bullet2.interactionsEnabled = false;
 
-    // define colors
-    var colors = {
-        "critical": "#ca0101",
-        "bad": "#e17a2d",
-        "medium": "#e1d92d",
-        "good": "#5dbe24",
-        "verygood": "#0b7d03"
-    };
     
     chart.data = props.arregloValores;
 
@@ -238,8 +231,6 @@ onMounted(() =>
     */
    // enable navigation  
     chart.navigationBar = new am4charts.NavigationBar();
-    chart.legend = new am4charts.Legend();
-
     var baseWidth = Math.min(chart.plotContainer.maxWidth, chart.plotContainer.maxHeight);
     var maxRadius = baseWidth / Math.sqrt(chart.data.length) / 2 - 2; // 2 is jast a margin
    // series.heatRules.push({ min: 10, max: maxRadius, property: "radius", target: bullet1.circle });
