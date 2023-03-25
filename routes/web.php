@@ -93,7 +93,9 @@ Route::middleware([
     Route::get('/tipos/catalogo', [TipoController::class, 'catalogo'])->name('tipos.catalogo');
 });
 
-Route::apiResource('/clientes', ClienteController::class);
+
+
+Route::apiResource('/presupuestos', ClienteController::class);
 
 Route::get('/tablaPresupuestos', [ClienteController::class, 'tablaPresupuestos'])->name('tabla.presupuestos');;
 

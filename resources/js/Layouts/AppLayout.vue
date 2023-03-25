@@ -75,9 +75,9 @@ const logout = () => {
                                     class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex"
                                 >
                                     <JetNavLink
-                                        :href="route('clientes.index')"
+                                        :href="route('presupuestos.index')"
                                         :active="
-                                            route().current('clientes.index')
+                                            route().current('presupuestos.index')
                                         "
                                     >
                                         Presupuestos
@@ -265,7 +265,7 @@ const logout = () => {
                                                 $page.props.jetstream
                                                     .managesProfilePhotos
                                             "
-                                            class="flex transition items-center gap-2 border-2 border-transparent rounded-full"
+                                            class="flex items-center gap-2 transition border-2 border-transparent rounded-full"
                                         >
                                             <img
                                                 class="object-cover w-10 h-10 rounded-full"
@@ -273,7 +273,7 @@ const logout = () => {
                                                 :alt="$page.props.user.name"
                                             />
                                             <h2
-                                                class="text-white text-xl capitalize font-bold"
+                                                class="text-xl font-bold text-white capitalize"
                                             >
                                                 {{ $page.props.user.name }}
                                             </h2>
@@ -402,8 +402,8 @@ const logout = () => {
                         </JetResponsiveNavLink>
 
                         <JetResponsiveNavLink
-                            :href="route('clientes.index')"
-                            :active="route().current('clientes.index')"
+                            :href="route('presupuestos.index')"
+                            :active="route().current('presupuestos.index')"
                         >
                             Presupuestos
                         </JetResponsiveNavLink>
