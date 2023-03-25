@@ -1,12 +1,13 @@
 <script setup>
-import { ref, watch } from "vue";
-import { pickBy } from "lodash";
+import { ref, watch, reactive, watchEffect } from "vue";
+import { pickBy, throttle } from "lodash";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
 import DialogModal from "@/Components/DialogModal.vue";
 import ItemVentaDatials from "./ItemVentaDatials.vue";
 import TableComponent from "@/Components/Table.vue";
 import FormVentaModal from "./FormVentaModal.vue";
 import InputSearch from "@/Components/InputSearchVentas.vue";
+import PaginationAxios from "@/Components/PaginationAxios.vue";
 import { Inertia } from "@inertiajs/inertia";
 import cerrar from "../../../../../img/elementos/cerrar.png";
 
@@ -16,13 +17,16 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-    ventas: {
+    filters: {
         type: Object,
         required: true,
     },
 });
-const searchText = ref("");
+const paramsVentas = reactive({
+    ...props.filters,
+});
 const showingFormVenta = ref(false);
+const ventas = ref({ data: [] });
 const venta = ref({});
 const typeForm = ref("create");
 
@@ -65,7 +69,7 @@ const changeRevisado = (venta) => {
         .put(route("ventas.revisado", venta.id), {
             revisado: venta.revisado,
         })
-        .then(() => {})
+        .then(() => { })
         .catch((err) => {
             venta.revisado = !venta.revisado;
             if (
@@ -79,26 +83,42 @@ const changeRevisado = (venta) => {
         });
 };
 
-const search = (newSearch) => {
-    const params = pickBy({ search: newSearch });
-    Inertia.visit(route("ventas.index"), {
-        data: params,
-        preserveState: true,
-        preserveScroll: true,
-        only: ["clientes", "totalVentasStatus"],
-    });
+/**
+ * Get paginated ventas
+ * @param {string} page 
+ */
+const searchVentas = async (page) => {
+    const params = pickBy({ ...paramsVentas, page })
+    try {
+        const response = await axios.get(route('ventas.index'), {
+            params
+        });
+        ventas.value = response.data.ventas;
+    } catch (error) {
+        if (error.response) {
+            let messageError = '';
+            const messageServer = error.response.data.message
+            if (error.response.status != 500) {
+                messageError = messageServer;
+            } else {
+                messageError = 'Internal Server Error';
+            }
+            alert(messageError)
+        }
+    }
 };
 
-let timeout;
-watch(searchText, (newSearch) => {
-    if (timeout !== undefined) {
-        clearTimeout(timeout);
+watchEffect(() => {
+    if (props.show) {
+        searchVentas();
     }
-    //Bounce de busqueda
-    timeout = setTimeout(() => {
-        search(newSearch);
-    }, 300);
 });
+
+watch(paramsVentas, throttle(function () {
+    if (props.show) {
+        searchVentas();
+    }
+}, 100));
 
 const close = () => {
     emit("close");
@@ -107,9 +127,7 @@ const close = () => {
 <template>
     <DialogModal :show="show" @close="close()" maxWidth="6xl">
         <template #title>
-            <div
-                class="flex text-fuente-500 gap-4 items-center justify-between px-8 mb-8 py-2 max-w-[69rem]"
-            >
+            <div class="flex text-fuente-500 gap-4 items-center justify-between px-8 mb-8 py-2 max-w-[69rem]">
                 <div class="flex items-center gap-4 pl-8">
                     <div class="">
                         <span class="block text-3xl font-bold text-start">
@@ -118,31 +136,20 @@ const close = () => {
                     </div>
                     <div class="">
                         <div class="flex justify-center">
-                            <ButtonAdd
-                                v-if="$page.props.can['ventas.create']"
-                                @click="showFormVentas()"
-                                class="text-sm text-white h-7"
-                            />
+                            <ButtonAdd v-if="$page.props.can['ventas.create']" @click="showFormVentas()"
+                                class="text-sm text-white h-7" />
                         </div>
                     </div>
                 </div>
+                <InputSearch v-model="paramsVentas.search" class="px-2 py-1 w-96" />
 
-                <InputSearch v-model="searchText" class="px-2 py-1 w-96" />
-
-                <img
-                    :src="cerrar"
-                    alt=""
-                    class="absolute left-[70rem] hover:cursor-pointer"
-                    @click="close()"
-                />
+                <img :src="cerrar" alt="" class="absolute left-[70rem] hover:cursor-pointer" @click="close()" />
             </div>
         </template>
         <template #content>
             <TableComponent>
                 <template #thead>
-                    <tr
-                        class="text-fuente-500 text-md border-b-[2px] border-aqua-500"
-                    >
+                    <tr class="text-fuente-500 text-md border-b-[2px] border-aqua-500">
                         <th>CLIENTE</th>
                         <th>COMENTARIO</th>
                         <th>IVA</th>
@@ -160,23 +167,15 @@ const close = () => {
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemVentaDatials
-                        v-for="(venta, index) in props.ventas"
-                        :key="venta.id + '' + index"
-                        :venta="venta"
-                        @edit="showFormVentas($event)"
-                        @activeIva="activeIva($event)"
-                        @changeRevisado="changeRevisado($event)"
-                    />
+                    <ItemVentaDatials v-for="(venta) in ventas.data" :key="venta.id" :venta="venta"
+                        @edit="showFormVentas($event)" @activeIva="activeIva($event)"
+                        @changeRevisado="changeRevisado($event)" />
                 </template>
             </TableComponent>
+            <PaginationAxios :pagination="ventas" @loadPage="searchVentas($event)" />
             <!-- MODALS -->
-            <FormVentaModal
-                :show="showingFormVenta"
-                :type-form="typeForm"
-                :venta="venta"
-                @close="showingFormVenta = false"
-            />
+            <FormVentaModal :show="showingFormVenta" :type-form="typeForm" :venta="venta"
+                @close="showingFormVenta = false" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

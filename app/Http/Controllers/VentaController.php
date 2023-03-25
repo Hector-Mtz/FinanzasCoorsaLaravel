@@ -8,8 +8,6 @@ use App\Models\Ingreso;
 use App\Models\Oc;
 use App\Models\Venta;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -22,50 +20,34 @@ class VentaController extends Controller
      */
     public function index(Request $request)
     {
-        $clientes = Cliente::select('clientes.*')
-            ->with([
-                'ventas' => function ($query) use ($request) {
-                    $query->select(
-                        "ventas.*",
-                        "cecos_ventas.nombre as ceco",
-                        "servicios.nombre as servicio",
-                        "montos.cantidad as monto",
-                        "montos.servicio_id"
-                    )
-                        ->join('montos', 'ventas.monto_id', '=', 'montos.id')
-                        ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
-                        ->join('cecos as cecos_ventas', 'ventas.ceco_id', '=', 'cecos_ventas.id')
-                        ->orderBy('ventas.fechaInicial');
 
-                    if ($request->status_id != "") {
-                        $query->where("ventas.status_id", "=", $request->status_id);
-                    }
-                    if ($request->has("search")) {
-                        $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
-                        $query->where("cecos_ventas.nombre", "like", "%" . $search . "%");
-                    }
-                }
-            ]);
-
-
-       $fecha_Actual =  date("Y");
-
-        //UNO ES PARA EL TOTAL Y OTRA DEPENDE DEL STATUS DONDE SE ENCUENTRE
-        $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)),0) as total')
+        $ventas = Venta::select(
+            "ventas.*",
+            "cecos.nombre as ceco",
+            "servicios.nombre as servicio",
+            "montos.cantidad as monto",
+            "montos.servicio_id"
+        )->selectRaw('(montos.cantidad  * ventas.periodos * ventas.cantidad) sub_total')
+            ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
-            ->where('ventas.fechaInicial','LIKE','%'.$fecha_Actual.'%');
-        $totalVentasStatus = $totalVentas;
+            ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
+            ->orderBy('ventas.fechaInicial');
+
         if ($request->status_id != "") {
-            $totalVentasStatus->where("ventas.status_id", "=", $request->status_id);
+            $ventas->where("ventas.status_id", "=", $request->status_id);
+        }
+        if ($request->has("search")) {
+            $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
+            $ventas->where("cecos.nombre", "like", "%" . $search . "%");
         }
 
-        return Inertia::render('Finanzas/VentasIndex', [
-            'clientes' =>  fn () =>  $clientes->get(),
-            'totalVentas' => fn () =>  $totalVentas->first(),
-            'totalVentasStatus' => fn () =>  $totalVentasStatus->first(),
-            'totalOcs' => fn () => $this->totalStatus(),
+
+
+        return response()->json([
+            'ventas' =>  $ventas->paginate(10),
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -77,7 +59,7 @@ class VentaController extends Controller
     {
         //Authorization
         $this->authorize('ventas.create');
-      $request->validate([
+        $request->validate([
             "monto_id" =>  ["required", "exists:montos,id"],
             "nombre" =>  ["required", "max:100"],
             "fechaInicial" =>  ["required", "date"],
@@ -90,9 +72,8 @@ class VentaController extends Controller
         ]);
 
         $urlContenido = null;
-        if($request->has('documento'))
-        {
-            $contenido = $request['documento'];  
+        if ($request->has('documento')) {
+            $contenido = $request['documento'];
             $nombreCont = $contenido->getClientOriginalName();
             $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
             $urlContenido = Storage::disk('gcs')->url($ruta_documento);
@@ -103,22 +84,20 @@ class VentaController extends Controller
                 'fechaInicial' => $request['fechaInicial'],
                 'fechaFinal' => $request['fechaFinal'],
                 'periodos' => $request['periodos'],
-                'cantidad' =>$request['cantidad'],
+                'cantidad' => $request['cantidad'],
                 'comentario' => $request['comentario'],
                 'tipo_id' => $request['tipo_id'],
                 'ceco_id' => $request['ceco_id'],
                 'documento' => $urlContenido
             ]);
-        }
-        else
-        {
+        } else {
             Venta::create([
                 'monto_id' => $request['monto_id'],
                 'nombre' => $request['nombre'],
                 'fechaInicial' => $request['fechaInicial'],
                 'fechaFinal' => $request['fechaFinal'],
                 'periodos' => $request['periodos'],
-                'cantidad' =>$request['cantidad'],
+                'cantidad' => $request['cantidad'],
                 'comentario' => $request['comentario'],
                 'tipo_id' => $request['tipo_id'],
                 'ceco_id' => $request['ceco_id']
@@ -156,44 +135,42 @@ class VentaController extends Controller
         */
 
         $urlContenido = null;
-        if($request->has('documento'))
-        {
-            $contenido = $request['documento'];  
+        if ($request->has('documento')) {
+            $contenido = $request['documento'];
             $nombreCont = $contenido->getClientOriginalName();
             $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
             $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
-            Venta::where('ventas.id','=' ,$venta->id)
-            ->update(
-                [
-                    'monto_id' => $request['monto_id'],
-                    'nombre' => $request['nombre'],
-                    'fechaInicial' => $request['fechaInicial'],
-                    'fechaFinal' => $request['fechaFinal'],
-                    'periodos' => $request['periodos'],
-                    'cantidad' =>$request['cantidad'],
-                    'comentario' => $request['comentario'],
-                    'tipo_id' => $request['tipo_id'],
-                    'ceco_id' => $request['ceco_id'],
-                    'documento' => $urlContenido
-                ]
-            );
-        }
-        else
-        {
-            Venta::where('ventas.id','=' ,$venta->id)
-            ->update(
-                [
-                    'monto_id' => $request['monto_id'],
-                    'nombre' => $request['nombre'],
-                    'fechaInicial' => $request['fechaInicial'],
-                    'fechaFinal' => $request['fechaFinal'],
-                    'periodos' => $request['periodos'],
-                    'cantidad' =>$request['cantidad'],
-                    'comentario' => $request['comentario'],
-                    'tipo_id' => $request['tipo_id'],
-                    'ceco_id' => $request['ceco_id']
-                ]);
+            Venta::where('ventas.id', '=', $venta->id)
+                ->update(
+                    [
+                        'monto_id' => $request['monto_id'],
+                        'nombre' => $request['nombre'],
+                        'fechaInicial' => $request['fechaInicial'],
+                        'fechaFinal' => $request['fechaFinal'],
+                        'periodos' => $request['periodos'],
+                        'cantidad' => $request['cantidad'],
+                        'comentario' => $request['comentario'],
+                        'tipo_id' => $request['tipo_id'],
+                        'ceco_id' => $request['ceco_id'],
+                        'documento' => $urlContenido
+                    ]
+                );
+        } else {
+            Venta::where('ventas.id', '=', $venta->id)
+                ->update(
+                    [
+                        'monto_id' => $request['monto_id'],
+                        'nombre' => $request['nombre'],
+                        'fechaInicial' => $request['fechaInicial'],
+                        'fechaFinal' => $request['fechaFinal'],
+                        'periodos' => $request['periodos'],
+                        'cantidad' => $request['cantidad'],
+                        'comentario' => $request['comentario'],
+                        'tipo_id' => $request['tipo_id'],
+                        'ceco_id' => $request['ceco_id']
+                    ]
+                );
         }
 
 
@@ -310,14 +287,14 @@ class VentaController extends Controller
 
         $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
             ->whereNull('ocs.factura_id')
-            ->where('ocs.fecha_alta','LIKE','%'.$fecha_Actual.'%')
+            ->where('ocs.fecha_alta', 'LIKE', '%' . $fecha_Actual . '%')
             ->first();
         $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
             ->whereNull('facturas.ingreso_id')
-            ->where('facturas.fechaDePago','LIKE','%'.$fecha_Actual.'%')
+            ->where('facturas.fechaDePago', 'LIKE', '%' . $fecha_Actual . '%')
             ->first();
         $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
-            ->where('ingresos.created_at','LIKE','%'.$fecha_Actual.'%')
+            ->where('ingresos.created_at', 'LIKE', '%' . $fecha_Actual . '%')
             ->first();
 
         $status['pc'] = $ocs->total;

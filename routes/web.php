@@ -6,6 +6,7 @@ use App\Http\Controllers\CecoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ConceptoController;
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\FinanzaController;
 use App\Http\Controllers\GrupoConceptoController;
 use App\Http\Controllers\IngresoController;
 use App\Http\Controllers\LineasNegocioController;
@@ -50,7 +51,11 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::apiResource('/ventas', VentaController::class)->except('show','update');
+    Route::get('finanzas', [FinanzaController::class, 'index'])->name('finanzas.index');
+    Route::apiResource('/ventas', VentaController::class)->except('show', 'update');
+
+
+
     Route::put('/ventas/{venta}/iva', [VentaController::class, 'activeIva'])->name('ventas.iva');
     Route::put('/ventas/{venta}/revisado', [VentaController::class, 'changeRevisado'])->name('ventas.revisado');
     Route::get('/ventas/{venta}/ocs', [VentaController::class, 'ocsIndex'])->name('ventas.ocs.index');
@@ -64,14 +69,14 @@ Route::middleware([
     Route::post('/ocs/{oc}', [OcController::class, 'update'])->name('ocs.update');
 
 
-    Route::apiResource('/facturas', FacturaController::class)->except('show','update');
+    Route::apiResource('/facturas', FacturaController::class)->except('show', 'update');
     Route::get('/facturas/catalogos', [FacturaController::class, 'catalogos'])->name('facturas.catalogos');
     Route::post('/facturas/{factura}/ocs', [FacturaController::class, "storeOc"])->name("facturas.ocs.store");
     Route::delete('/facturas/{factura}/ocs', [FacturaController::class, "destroyOc"])->name("facturas.ocs.destroy");
     Route::get('/facturas/{factura}/ocs', [FacturaController::class, "ocsIndex"])->name("facturas.ocs.index");
     Route::post('/facturas/{factura}', [FacturaController::class, 'update'])->name('facturas.update');
 
-    Route::apiResource('/ingresos', IngresoController::class)->except('show','update');
+    Route::apiResource('/ingresos', IngresoController::class)->except('show', 'update');
     Route::put('/ingresos/{ingreso}/status', [IngresoController::class, 'changeStatus'])->name('ingresos.status');
     Route::post('/ingresos/{ingreso}/facturas', [IngresoController::class, "storeFactura"])->name("ingresos.facturas.store");
     Route::delete('/ingresos/{ingreso}/facturas', [IngresoController::class, "destroyFactura"])->name("ingresos.facturas.destroy");
@@ -80,10 +85,13 @@ Route::middleware([
     Route::apiResource('bancos', BancoController::class)->only('index');
 
     Route::get('catalogos', [CatalogosController::class, 'index'])->name('catalogos.index');
-    Route::get('clientes/listados', [ClienteController::class, 'listado'])->name('clientes.listado');
     Route::apiResource('/servicios', ServicioController::class)->except('show');
     Route::apiResource('/grupo-conceptos', GrupoConceptoController::class)->except('show');
+    //Clientes
+    Route::get('clientes/listados', [ClienteController::class, 'listado'])->name('clientes.listado');
     Route::apiResource('/clientes/{cliente}/cecos', CecoController::class)->except('show');
+    Route::get('/clientes/{cliente}/ventas', [ClienteController::class, 'ventas'])->name('clientes.ventas.index');
+
     Route::apiResource('/lineas-negocios', LineasNegocioController::class)->except('show');
     Route::apiResource('/grupo-conceptos/{grupo_concepto}/conceptos', ConceptoController::class)->except('show');
     Route::apiResource('/servicios/{servicio}/montos', MontoController::class)->except('show');
@@ -98,7 +106,5 @@ Route::middleware([
 Route::apiResource('/presupuestos', ClienteController::class);
 
 Route::get('/tablaPresupuestos', [ClienteController::class, 'tablaPresupuestos'])->name('tabla.presupuestos');;
-
-Route::get("/clientesAgrupados", [ClienteController::class, 'clientesAgrupados']);
 
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);

@@ -91,42 +91,30 @@ watchEffect(() => {
 <template>
     <DialogModal :show="show" @close="close()">
         <template #title>
-            <div class="flex flex-row justify-between items-center my-6 gap-20">
-                <div class="px-4 py-1 flex items-center gap-4">
-                    <span
-                        class="block font-semibold text-[28px] w-min text-fuente-500"
-                    >
+            <div class="flex flex-row items-center justify-between gap-20 my-6">
+                <div class="flex items-center gap-4 px-4 py-1">
+                    <span class="block font-semibold text-[28px] w-min text-fuente-500">
                         {{ props.object.nombre }}
                     </span>
 
                     <ButtonAdd class="h-[25px] w-[35px]" @click="showForm()" />
                 </div>
                 <div class="px-2 py-1">
-                    <div
-                        class="flex flex-col items-center justify-center gap-1 text-fuente-500"
-                    >
+                    <div class="flex flex-col items-center justify-center gap-1 text-fuente-500">
                         <span class="block font-normal text-fuente-500">
                             {{ props.title }}
                         </span>
                         <InputSearch v-model="searchText" class="px-2 py-1" />
                     </div>
                 </div>
-                <img
-                    :src="cerrar"
-                    alt=""
-                    @click="close"
-                    class="absolute hover:cursor-pointer top-[.8rem] left-[95.5%]"
-                />
+                <img :src="cerrar" alt="" @click="close" class="absolute hover:cursor-pointer top-[.8rem] left-[95.5%]" />
             </div>
         </template>
         <template #content>
             <TableComponent>
                 <template #tbody>
                     <template v-if="props.routeName === 'montos'">
-                        <tr
-                            v-for="subcatalogo in listSubCatalogo.data"
-                            :key="subcatalogo.id"
-                        >
+                        <tr v-for="subcatalogo in listSubCatalogo.data" :key="subcatalogo.id">
                             <td>
                                 {{ subcatalogo.cantidad }}
                             </td>
@@ -140,10 +128,7 @@ watchEffect(() => {
                         </tr>
                     </template>
                     <template v-else>
-                        <tr
-                            v-for="subcatalogo in listSubCatalogo.data"
-                            :key="subcatalogo.id"
-                        >
+                        <tr v-for="subcatalogo in listSubCatalogo.data" :key="subcatalogo.id">
                             <td>
                                 {{ subcatalogo.nombre }}
                             </td>
@@ -158,19 +143,12 @@ watchEffect(() => {
                     </template>
                 </template>
             </TableComponent>
-            <PaginationAxios :pagination="listSubCatalogo" />
+            <PaginationAxios :pagination="listSubCatalogo" @load-page="search(searchText, $event)" />
             <!-- MODALS -->
-            <FormSubCatalogoModal
-                :padre-id="props.object.id"
-                :route-name="props.routeName"
-                :title="props.title"
-                :show="showingForm"
-                :type-form="typeForm"
-                :object="subCatalogo"
-                @add="search(searchText, listSubCatalogo.current_page)"
-                @edit="updateObj($event)"
-                @close="showingForm = false"
-            />
+            <FormSubCatalogoModal :padre-id="props.object.id" :route-name="props.routeName" :title="props.title"
+                :show="showingForm" :type-form="typeForm" :object="subCatalogo"
+                @add="search(searchText, listSubCatalogo.current_page)" @edit="updateObj($event)"
+                @close="showingForm = false" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

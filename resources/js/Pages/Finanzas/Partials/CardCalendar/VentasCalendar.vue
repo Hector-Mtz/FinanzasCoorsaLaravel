@@ -11,10 +11,6 @@ const emit = defineEmits(["changeDate"]);
 
 const props = defineProps({
     date: { month: Number, year: Number },
-    totalVentas: {
-        type: Object,
-        required: true,
-    },
     totalOcs: {
         type: Object,
         required: true,
