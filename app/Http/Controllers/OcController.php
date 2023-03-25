@@ -52,41 +52,35 @@ class OcController extends Controller
         try {
 
             $urlContenido = null;
-            if($request->has('documento'))
-            {
-                 if($request['documento'] !== null)
-                 {
-                    $contenido = $request['documento'];  
+            if ($request->has('documento')) {
+                if ($request['documento'] !== null) {
+                    $contenido = $request['documento'];
                     $nombreCont = $contenido->getClientOriginalName();
                     $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
                     $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
-                   $newOc = Oc::create([
-                       'nombre' => $request['nombre'],
-                       'cantidad' => $request['cantidad'],
-                       'fecha_alta' => $request['fecha_alta'],
-                       'venta_id' => $request['venta_id'],
-                       'documento' => $urlContenido
-                    ]);
-                 }
-                 else
-                 {
                     $newOc = Oc::create([
                         'nombre' => $request['nombre'],
                         'cantidad' => $request['cantidad'],
                         'fecha_alta' => $request['fecha_alta'],
                         'venta_id' => $request['venta_id'],
-                     ]);
-                 }
-            }
-            else
-            {
+                        'documento' => $urlContenido
+                    ]);
+                } else {
+                    $newOc = Oc::create([
+                        'nombre' => $request['nombre'],
+                        'cantidad' => $request['cantidad'],
+                        'fecha_alta' => $request['fecha_alta'],
+                        'venta_id' => $request['venta_id'],
+                    ]);
+                }
+            } else {
                 $newOc = Oc::create([
                     'nombre' => $request['nombre'],
                     'cantidad' => $request['cantidad'],
                     'fecha_alta' => $request['fecha_alta'],
                     'venta_id' => $request['venta_id'],
-                 ]);
+                ]);
             }
 
             $venta = Venta::select('ventas.id', 'ventas.cantidad', 'ventas.periodos')
@@ -99,7 +93,7 @@ class OcController extends Controller
                 $venta->status_id = 2;
                 $venta->save();
             }
-          
+
             return redirect()->back();
         } catch (QueryException $e) {
             @throw ValidationException::withMessages([
@@ -118,13 +112,13 @@ class OcController extends Controller
      */
     public function update(Request $request, Oc $oc)
     {
-        
+
         $this->authorize('ocs.edit');
         $newOc = $request->validate([
             'nombre' => ["required", "string", "unique:ocs,nombre," . $oc->id . ",id"],
             'cantidad' => ["required", "numeric"],
             'fecha_alta' => ["required", "date"],
-            
+
         ]);
 
         if ($oc->factura_id !== null) {
@@ -148,44 +142,38 @@ class OcController extends Controller
         }
 
         $urlContenido = null;
-        if($request->has('documento'))
-        {
-           if($request['documento'] !== null)
-           {
-            $contenido = $request['documento'];  
-            $nombreCont = $contenido->getClientOriginalName();
-            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
-            $urlContenido = Storage::disk('gcs')->url($ruta_documento);      
+        if ($request->has('documento')) {
+            if ($request['documento'] !== null) {
+                $contenido = $request['documento'];
+                $nombreCont = $contenido->getClientOriginalName();
+                $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+                $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
-            Oc::where('ocs.id','=',$oc->id)
-              ->update([
-                'nombre' => $request['nombre'],
-                'cantidad' => $request['cantidad'],
-                'fecha_alta' => $request['fecha_alta'],
-                'venta_id' => $request['venta_id'],
-                'documento' => $urlContenido
-              ]);
-           }
-           else
-           {
-              Oc::where('ocs.id','=',$oc->id)
-              ->update([
-                'nombre' => $request['nombre'],
-                'cantidad' => $request['cantidad'],
-                'fecha_alta' => $request['fecha_alta'],
-                'venta_id' => $request['venta_id']
-              ]);
-           }
-        }
-        else
-        {
-            Oc::where('ocs.id','=',$oc->id)
-            ->update([
-              'nombre' => $request['nombre'],
-              'cantidad' => $request['cantidad'],
-              'fecha_alta' => $request['fecha_alta'],
-              'venta_id' => $request['venta_id']
-            ]);
+                Oc::where('ocs.id', '=', $oc->id)
+                    ->update([
+                        'nombre' => $request['nombre'],
+                        'cantidad' => $request['cantidad'],
+                        'fecha_alta' => $request['fecha_alta'],
+                        'venta_id' => $request['venta_id'],
+                        'documento' => $urlContenido
+                    ]);
+            } else {
+                Oc::where('ocs.id', '=', $oc->id)
+                    ->update([
+                        'nombre' => $request['nombre'],
+                        'cantidad' => $request['cantidad'],
+                        'fecha_alta' => $request['fecha_alta'],
+                        'venta_id' => $request['venta_id']
+                    ]);
+            }
+        } else {
+            Oc::where('ocs.id', '=', $oc->id)
+                ->update([
+                    'nombre' => $request['nombre'],
+                    'cantidad' => $request['cantidad'],
+                    'fecha_alta' => $request['fecha_alta'],
+                    'venta_id' => $request['venta_id']
+                ]);
         }
         return redirect()->back();
         //return response()->json($oc);
@@ -292,7 +280,7 @@ class OcController extends Controller
                     'ocs.cantidad as total',
                     'ventas.nombre as  venta'
                 )
-                    ->selectRaw('day(ocs.created_at) as day')
+                    ->selectRaw('day(ocs.fecha_alta) as day')
                     ->join('ventas', 'ocs.venta_id', 'ventas.id')
                     ->whereNull('ocs.factura_id')
                     ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
