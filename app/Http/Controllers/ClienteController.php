@@ -124,6 +124,12 @@ class ClienteController extends Controller
      */
     public function ventas(Request $request, Cliente $cliente)
     {
+        $request->validate([
+            'lineas_negocio_id' => ['nullable', 'exists:lineas_negocios,id'],
+            'fecha_inicio' => ['nullable', 'date'],
+            'fecha_fin' => ['required_with:fecha_inicio', 'date']
+        ]);
+
         $ventas =  $cliente->ventas()->select(
             "ventas.*",
             "cecos.nombre as ceco",
@@ -142,6 +148,17 @@ class ClienteController extends Controller
             $search = "%" . strtr($request->search, array("'" => "\\'", "%" => "\\%")) . "%";
             $ventas->where("cecos.nombre", "like",  $search);
         }
+
+        if ($request->has("lineas_negocio_id")) {
+            $ventas->where("cecos.lineas_negocio_id", "=",  $request->input("lineas_negocio_id"));
+        }
+
+        if ($request->has("fecha_inicio")) {
+            $ventas->where("ventas.fechaInicial", ">=",  $request->input("fecha_inicio"))
+                ->where("ventas.fechaFinal", '<=', $request->input("fecha_fin"));
+        }
+
+
         return response()->json($ventas->paginate(5));
     }
 

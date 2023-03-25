@@ -44,7 +44,7 @@ const form = useForm({
     "cantidad": "",
     "ceco_id": "",
     "servicio_id": "",
-    "documento":""
+    "documento": ""
 })
 
 const listServicios = ref([]);
@@ -151,177 +151,76 @@ watch(props, () => {
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
                 </div>
-                <img
-                    :src="cerrar"
-                    alt=""
-                    @click="close()"
-                    class="absolute top-[1rem] left-[40rem] hover:cursor-pointer"
-                />
+                <img :src="cerrar" alt="" @click="close()" class="absolute top-[1rem] left-[40rem] hover:cursor-pointer" />
             </div>
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div
-                    class="grid grid-cols-2 gap-x-2 gap-y-6 px-4 py-2 text-[14px] font-light uppercase text-fuente-500"
-                >
+                <div class="grid grid-cols-2 gap-x-2 gap-y-6 px-4 py-2 text-[14px] font-light uppercase text-fuente-500">
                     <div>
-                        <Input
-                            placeholder="Nombre"
-                            id="nombre"
-                            name="nombre"
-                            type="text"
-                            v-model="form.nombre"
-                            required
-                            maxlength="30"
-                        />
-                        <JetInputError
-                            :message="form.errors.nombre"
-                            class="mt-2"
-                        />
+                        <Input placeholder="Nombre" id="nombre" name="nombre" type="text" v-model="form.nombre" required
+                            maxlength="30" />
+                        <JetInputError :message="form.errors.nombre" class="mt-2" />
                     </div>
 
                     <div>
-                        <ListDataInput
-                            :placeholder="'CECO'"
-                            v-model="form.ceco_id"
-                            list="cecos"
-                            :options="listCecos"
-                        />
+                        <ListDataInput :placeholder="'CECO'" v-model="form.ceco_id" list="cecos" :options="listCecos" />
 
-                        <JetInputError
-                            :message="form.errors.ceco_id"
-                            class="mt-2"
-                        />
+                        <JetInputError :message="form.errors.ceco_id" class="mt-2" />
                     </div>
                     <div>
-                        <ListDataInput
-                            v-model="form.servicio_id"
-                            list="servicios"
-                            :options="listServicios"
-                            :placeholder="'Servicios'"
-                        />
+                        <ListDataInput v-model="form.servicio_id" list="servicios" :options="listServicios"
+                            :placeholder="'Servicios'" />
                     </div>
                     <div>
-                        <ListDataInput
-                            v-model="form.monto_id"
-                            list="montos"
-                            name-option="cantidad"
-                            :options="listMontos"
-                            :disabled="form.servicio_id == ''"
-                            :placeholder="'Monto'"
-                        />
+                        <ListDataInput v-model="form.monto_id" list="montos" name-option="cantidad" :options="listMontos"
+                            :disabled="form.servicio_id == ''" :placeholder="'Monto'" />
 
-                        <JetInputError
-                            :message="form.errors.monto_id"
-                            class="mt-2"
-                        />
+                        <JetInputError :message="form.errors.monto_id" class="mt-2" />
                     </div>
                     <div>
                         <JetLabel for="fechaInicio" value="Fecha Inicial:" />
-                        <Input
-                            id="fechaInicio"
-                            name="fecha_inicio"
-                            type="date"
-                            v-model="form.fechaInicial"
-                            required
-                        />
+                        <Input id="fechaInicio" name="fecha_inicio" type="date" v-model="form.fechaInicial" required />
 
-                        <JetInputError
-                            :message="form.errors.fechaInicial"
-                            class="mt-2"
-                        />
+                        <JetInputError :message="form.errors.fechaInicial" class="mt-2" />
                     </div>
                     <div>
                         <JetLabel for="fechaFinal" value="Fecha Final:" />
-                        <Input
-                            id="fechaFinal"
-                            name="fecha_final"
-                            type="date"
-                            v-model="form.fechaFinal"
-                            required
-                            :min="form.fechaInicial"
-                        />
-                        <JetInputError
-                            :message="form.errors.fechaFinal"
-                            class="mt-2"
-                        />
+                        <Input id="fechaFinal" name="fecha_final" type="date" v-model="form.fechaFinal" required
+                            :min="form.fechaInicial" />
+                        <JetInputError :message="form.errors.fechaFinal" class="mt-2" />
                     </div>
 
                     <div>
-                        <Input
-                            placeholder="Cantidad"
-                            id="cantidad-1"
-                            name="cantidad-1"
-                            type="number"
-                            v-model="form.cantidad"
-                            required
-                            maxlength="30"
-                        />
-                        <JetInputError
-                            :message="form.errors.cantidad"
-                            class="mt-2"
-                        />
+                        <Input placeholder="Cantidad" id="cantidad-1" name="cantidad-1" type="number"
+                            v-model="form.cantidad" required maxlength="30" />
+                        <JetInputError :message="form.errors.cantidad" class="mt-2" />
                     </div>
                     <div class="text-[14px] font-light">
-                        <SelectComponent
-                            id="tipo"
-                            name="tipo"
-                            v-model="form.tipo_id"
-                            required
-                        >
-                            <option
-                                value=""
-                                disabled
-                                selected
-                                class="text-[14px] font-light"
-                            >
+                        <SelectComponent id="tipo" name="tipo" v-model="form.tipo_id" required>
+                            <option value="" disabled selected class="text-[14px] font-light">
                                 Tipo
                             </option>
-                            <option
-                                v-for="tipo in listTipos"
-                                :key="tipo.nombre"
-                                :value="tipo.id"
-                                class="text-[14px] font-light"
-                            >
+                            <option v-for="tipo in listTipos" :key="tipo.nombre" :value="tipo.id"
+                                class="text-[14px] font-light">
                                 {{ tipo.nombre }}
                             </option>
                         </SelectComponent>
-                        <JetInputError
-                            :message="form.errors.tipo_id"
-                            class="mt-2"
-                        />
+                        <JetInputError :message="form.errors.tipo_id" class="mt-2" />
                     </div>
                     <div>
-                        <Input
-                            id="periodos"
-                            name="periodos"
-                            type="number"
-                            v-model="form.periodos"
-                            required
-                            maxlength="30"
-                            placeholder="Periodos"
-                        />
-                        <JetInputError
-                            :message="form.errors.periodos"
-                            class="mt-2"
-                        />
+                        <Input id="periodos" name="periodos" type="number" v-model="form.periodos" required maxlength="30"
+                            placeholder="Periodos" />
+                        <JetInputError :message="form.errors.periodos" class="mt-2" />
                     </div>
                     <div>
-                        <TextArea
-                            id="comentario"
-                            name="comentario"
-                            v-model="form.comentario"
-                            maxlength="255"
-                            :placeholder="'Comentario'"
-                        />
-                        <JetInputError
-                            :message="form.errors.periodos"
-                            class="mt-2"
-                        />
+                        <TextArea id="comentario" name="comentario" v-model="form.comentario" maxlength="255"
+                            :placeholder="'Comentario'" />
+                        <JetInputError :message="form.errors.periodos" class="mt-2" />
                     </div>
                     <div>
-                       <JetLabel for="documento" value="Documento:" />
-                       <DropZone v-model="form.documento" />
+                        <JetLabel for="documento" value="Documento:" />
+                        <DropZone v-model="form.documento" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">

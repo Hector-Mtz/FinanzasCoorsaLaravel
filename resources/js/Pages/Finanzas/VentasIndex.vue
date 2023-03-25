@@ -39,6 +39,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    lineasNegocios: {
+        type: Object,
+        required: true,
+    },
     filters: {
         type: Object,
         required: true,
@@ -81,10 +85,10 @@ const chageComponent = () => {
 <template>
     <AppLayout title="Finanzas">
     <template #header>
-        <div class="flex items-center">
-            <h2 class="text-4xl font-bold leading-tight text-fuente-500">
-                Finanzas
-            </h2>
+            <div class="flex items-center">
+                <h2 class="text-4xl font-bold leading-tight text-fuente-500">
+                    Finanzas
+                </h2>
             </div>
         </template>
 
@@ -92,7 +96,7 @@ const chageComponent = () => {
             <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <Card>
                     <Ventas :clientes="props.clientes" :filters="props.filters" @show-ventas="showingVentas = true"
-                        class="border-b-[1px] border-white" />
+                        class="border-b-[1px] border-white" :lineas-negocios="props.lineasNegocios" />
                     <div class="flex flex-col px-4 py-2 mt-4 font-bold text-fuente-500">
                         <span class="text-[12px] uppercase font-medium">
                             Total
@@ -112,59 +116,59 @@ const chageComponent = () => {
                                 <td class="flex justify-between py-4">
                                     <span class="text-fuente-500 text-[26px] font-semibold">Reporte Anual</span>
                                     <!-- 
-                                                            <ButtonCalendar
-                                                                :year="date.year"
-                                                                :month="date.month"
-                                                                @change-date="changeDate($event)"
-                                                            >
-                                                                <template #a>
-                                                                    <button
-                                                                        @click="
-                                                                            changeIndexMes(year - 1)
-                                                                        "
-                                                                        class="hover:opacity-40"
+                                                                    <ButtonCalendar
+                                                                        :year="date.year"
+                                                                        :month="date.month"
+                                                                        @change-date="changeDate($event)"
                                                                     >
-                                                                        <svg
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            class="w-5 h-5 text-gray-900"
-                                                                            fill="none"
-                                                                            viewBox="0 0 24 24"
-                                                                            stroke="#1D96F1"
-                                                                            stroke-width="2"
-                                                                        >
-                                                                            <path
-                                                                                stroke-linecap="round"
-                                                                                stroke-linejoin="round"
-                                                                                d="M15 19l-7-7 7-7"
-                                                                            />
-                                                                        </svg>
-                                                                    </button>
-                                                                </template>
-                                                                <template #b>
-                                                                    <button
-                                                                        @click="
-                                                                            changeIndexMes(year + 1)
-                                                                        "
-                                                                        class="hover:opacity-40"
-                                                                    >
-                                                                        <svg
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            class="w-5 h-5 text-gray-900"
-                                                                            fill="none"
-                                                                            viewBox="0 0 24 24"
-                                                                            stroke="#1D96F1"
-                                                                            stroke-width="2"
-                                                                        >
-                                                                            <path
-                                                                                stroke-linecap="round"
-                                                                                stroke-linejoin="round"
-                                                                                d="M9 5l7 7-7 7"
-                                                                            />
-                                                                        </svg>
-                                                                    </button>
-                                                                </template>
-                                                            </ButtonCalendar>
-                                                -->
+                                                                        <template #a>
+                                                                            <button
+                                                                                @click="
+                                                                                    changeIndexMes(year - 1)
+                                                                                "
+                                                                                class="hover:opacity-40"
+                                                                            >
+                                                                                <svg
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    class="w-5 h-5 text-gray-900"
+                                                                                    fill="none"
+                                                                                    viewBox="0 0 24 24"
+                                                                                    stroke="#1D96F1"
+                                                                                    stroke-width="2"
+                                                                                >
+                                                                                    <path
+                                                                                        stroke-linecap="round"
+                                                                                        stroke-linejoin="round"
+                                                                                        d="M15 19l-7-7 7-7"
+                                                                                    />
+                                                                                </svg>
+                                                                            </button>
+                                                                        </template>
+                                                                        <template #b>
+                                                                            <button
+                                                                                @click="
+                                                                                    changeIndexMes(year + 1)
+                                                                                "
+                                                                                class="hover:opacity-40"
+                                                                            >
+                                                                                <svg
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    class="w-5 h-5 text-gray-900"
+                                                                                    fill="none"
+                                                                                    viewBox="0 0 24 24"
+                                                                                    stroke="#1D96F1"
+                                                                                    stroke-width="2"
+                                                                                >
+                                                                                    <path
+                                                                                        stroke-linecap="round"
+                                                                                        stroke-linejoin="round"
+                                                                                        d="M9 5l7 7-7 7"
+                                                                                    />
+                                                                                </svg>
+                                                                            </button>
+                                                                        </template>
+                                                                    </ButtonCalendar>
+                                                        -->
                                 </td>
                             </tr>
                         </thead>

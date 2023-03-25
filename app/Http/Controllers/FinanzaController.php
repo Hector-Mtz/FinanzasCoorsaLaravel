@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\Ingreso;
+use App\Models\LineasNegocio;
 use App\Models\Oc;
 use App\Models\Venta;
 use Illuminate\Http\Request;
@@ -19,6 +20,13 @@ class FinanzaController extends Controller
      */
     public function index(Request $request)
     {
+
+        $request->validate([
+            'lineas_negocio_id' => ['nullable', 'exists:lineas_negocios,id'],
+            'fecha_inicio' => ['nullable', 'date'],
+            'fecha_fin' => ['required_with:fecha_inicio', 'date']
+        ]);
+
         $clientes = Cliente::select('clientes.*')
             ->selectRaw('count(ventas.id) as total_ventas')
             ->join('cecos', 'clientes.id', '=', 'cecos.cliente_id')
@@ -26,32 +34,41 @@ class FinanzaController extends Controller
             ->groupBy('clientes.id')
             ->orderBy('total_ventas', 'desc');
 
-        if ($request->status_id != "") {
-            $clientes->where("ventas.status_id", "=", $request->status_id);
-        }
-
-
         //UNO ES PARA EL TOTAL Y OTRA DEPENDE DEL STATUS DONDE SE ENCUENTRE
         $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)),0) as total')
-            ->join('montos', 'ventas.monto_id', '=', 'montos.id');
+            ->join('montos', 'ventas.monto_id', '=', 'montos.id')
+            ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
         $totalVentasStatus = $totalVentas;
         if ($request->status_id != "") {
+            $clientes->where("ventas.status_id", "=", $request->status_id);
             $totalVentasStatus->where("ventas.status_id", "=", $request->status_id);
         }
         if ($request->has("search")) {
             $search = "%" . strtr($request->search, array("'" => "\\'", "%" => "\\%")) . "%";
             $clientes->where("cecos.nombre", "like",  $search);
-            $totalVentasStatus
-                ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
-                ->where("cecos.nombre", "like",  $search);
+            $totalVentasStatus->where("cecos.nombre", "like",  $search);
         }
+
+        if ($request->has("lineas_negocio_id")) {
+            $clientes->where("cecos.lineas_negocio_id", "=",  $request->input("lineas_negocio_id"));
+            $totalVentasStatus->where("cecos.nombre", "like",  $request->input("lineas_negocio_id"));
+        }
+
+        if ($request->has("fecha_inicio")) {
+            $clientes->where("ventas.fechaInicial", ">=",  $request->input("fecha_inicio"))
+                ->where("ventas.fechaFinal", '<=', $request->input("fecha_fin"));
+            $totalVentasStatus->where("ventas.fechaInicial", ">=",  $request->input("fecha_inicio"))
+                ->where("ventas.fechaFinal", '<=', $request->input("fecha_fin"));
+        }
+
 
         return Inertia::render('Finanzas/VentasIndex', [
             'clientes' =>  fn () =>  $clientes->get(),
             // 'totalVentas' => fn () =>  $totalVentas->first(),
             'totalVentasStatus' => fn () =>  $totalVentasStatus->first(),
             'totalOcs' => fn () => $this->totalStatus(),
-            'filters' => $request->all(['search', 'status_id'])
+            'lineasNegocios' => fn () => LineasNegocio::select('id', 'name')->get(),
+            'filters' => $request->all(['search', 'status_id', 'lineas_negocio_id', 'fecha_inicio', 'fecha_fin'])
         ]);
     }
 

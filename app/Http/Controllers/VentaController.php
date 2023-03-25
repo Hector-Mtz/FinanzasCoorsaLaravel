@@ -20,6 +20,7 @@ class VentaController extends Controller
      */
     public function index(Request $request)
     {
+
         $ventas = Venta::select(
             "ventas.*",
             "cecos.nombre as ceco",
@@ -39,6 +40,8 @@ class VentaController extends Controller
             $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
             $ventas->where("cecos.nombre", "like", "%" . $search . "%");
         }
+
+
 
         return response()->json([
             'ventas' =>  $ventas->paginate(10),
