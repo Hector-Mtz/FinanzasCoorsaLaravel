@@ -31,10 +31,6 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    totalVentas: {
-        type: Object,
-        required: true,
-    },
     totalVentasStatus: {
         type: Object,
         required: true,
@@ -49,18 +45,18 @@ const props = defineProps({
     },
 });
 
-const ventas = computed(() => {
-    let auxVentas = [];
-    props.clientes.forEach((cliente) => {
-        let ventas = cliente.ventas;
-        ventas = ventas.map((venta) => {
-            venta.sub_total = venta.monto * venta.periodos * venta.cantidad;
-            return venta;
-        });
-        auxVentas = auxVentas.concat(ventas);
-    });
-    return auxVentas;
-});
+// const ventas = computed(() => {
+//     let auxVentas = [];
+//     props.clientes.forEach((cliente) => {
+//         let ventas = cliente.ventas;
+//         ventas = ventas.map((venta) => {
+//             venta.sub_total = venta.monto * venta.periodos * venta.cantidad;
+//             return venta;
+//         });
+//         auxVentas = auxVentas.concat(ventas);
+//     });
+//     return auxVentas;
+// });
 
 const changeDate = (newDate) => {
     date.value = newDate;
@@ -85,10 +81,10 @@ const chageComponent = () => {
 <template>
     <AppLayout title="Finanzas">
     <template #header>
-            <div class="flex items-center">
-                <h2 class="text-4xl font-bold leading-tight text-fuente-500">
-                    Finanzas
-                </h2>
+        <div class="flex items-center">
+            <h2 class="text-4xl font-bold leading-tight text-fuente-500">
+                Finanzas
+            </h2>
             </div>
         </template>
 
@@ -116,59 +112,59 @@ const chageComponent = () => {
                                 <td class="flex justify-between py-4">
                                     <span class="text-fuente-500 text-[26px] font-semibold">Reporte Anual</span>
                                     <!-- 
-                                                <ButtonCalendar
-                                                    :year="date.year"
-                                                    :month="date.month"
-                                                    @change-date="changeDate($event)"
-                                                >
-                                                    <template #a>
-                                                        <button
-                                                            @click="
-                                                                changeIndexMes(year - 1)
-                                                            "
-                                                            class="hover:opacity-40"
-                                                        >
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                class="w-5 h-5 text-gray-900"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke="#1D96F1"
-                                                                stroke-width="2"
+                                                            <ButtonCalendar
+                                                                :year="date.year"
+                                                                :month="date.month"
+                                                                @change-date="changeDate($event)"
                                                             >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    d="M15 19l-7-7 7-7"
-                                                                />
-                                                            </svg>
-                                                        </button>
-                                                    </template>
-                                                    <template #b>
-                                                        <button
-                                                            @click="
-                                                                changeIndexMes(year + 1)
-                                                            "
-                                                            class="hover:opacity-40"
-                                                        >
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                class="w-5 h-5 text-gray-900"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke="#1D96F1"
-                                                                stroke-width="2"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    d="M9 5l7 7-7 7"
-                                                                />
-                                                            </svg>
-                                                        </button>
-                                                    </template>
-                                                </ButtonCalendar>
-                                    -->
+                                                                <template #a>
+                                                                    <button
+                                                                        @click="
+                                                                            changeIndexMes(year - 1)
+                                                                        "
+                                                                        class="hover:opacity-40"
+                                                                    >
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            class="w-5 h-5 text-gray-900"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            stroke="#1D96F1"
+                                                                            stroke-width="2"
+                                                                        >
+                                                                            <path
+                                                                                stroke-linecap="round"
+                                                                                stroke-linejoin="round"
+                                                                                d="M15 19l-7-7 7-7"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                </template>
+                                                                <template #b>
+                                                                    <button
+                                                                        @click="
+                                                                            changeIndexMes(year + 1)
+                                                                        "
+                                                                        class="hover:opacity-40"
+                                                                    >
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            class="w-5 h-5 text-gray-900"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            stroke="#1D96F1"
+                                                                            stroke-width="2"
+                                                                        >
+                                                                            <path
+                                                                                stroke-linecap="round"
+                                                                                stroke-linejoin="round"
+                                                                                d="M9 5l7 7-7 7"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                </template>
+                                                            </ButtonCalendar>
+                                                -->
                                 </td>
                             </tr>
                         </thead>
@@ -252,7 +248,7 @@ const chageComponent = () => {
             </div>
         </div>
         <!-- Modals -->
-        <VentasModal :show="showingVentas" :ventas="ventas" @close="closeModalVentas" />
+        <VentasModal :show="showingVentas" :filters="props.filters" @close="closeModalVentas" />
         <!-- END Modals -->
     </AppLayout>
 </template>

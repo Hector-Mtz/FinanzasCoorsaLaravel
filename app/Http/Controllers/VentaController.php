@@ -8,8 +8,6 @@ use App\Models\Ingreso;
 use App\Models\Oc;
 use App\Models\Venta;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -22,57 +20,31 @@ class VentaController extends Controller
      */
     public function index(Request $request)
     {
-        $clientes = Cliente::select('clientes.*')
-            ->selectRaw('count(ventas.id) as total_ventas')
-            ->join('cecos', 'clientes.id', '=', 'cecos.id')
-            ->join('ventas', 'cecos.id', '=', 'ventas.ceco_id')->with([
-                'ventas' => function ($query) use ($request) {
-                    $query->select(
-                        "ventas.*",
-                        "cecos_ventas.nombre as ceco",
-                        "servicios.nombre as servicio",
-                        "montos.cantidad as monto",
-                        "montos.servicio_id"
-                    )
-                        ->join('montos', 'ventas.monto_id', '=', 'montos.id')
-                        ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
-                        ->join('cecos as cecos_ventas', 'ventas.ceco_id', '=', 'cecos_ventas.id')
-                        ->orderBy('ventas.fechaInicial');
+        $ventas = Venta::select(
+            "ventas.*",
+            "cecos.nombre as ceco",
+            "servicios.nombre as servicio",
+            "montos.cantidad as monto",
+            "montos.servicio_id"
+        )->selectRaw('(montos.cantidad  * ventas.periodos * ventas.cantidad) sub_total')
+            ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
+            ->join('montos', 'ventas.monto_id', '=', 'montos.id')
+            ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
+            ->orderBy('ventas.fechaInicial');
 
-                    if ($request->status_id != "") {
-                        $query->where("ventas.status_id", "=", $request->status_id);
-                    }
-                    if ($request->has("search")) {
-                        $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
-                        $query->where("cecos_ventas.nombre", "like", "%" . $search . "%");
-                    }
-                }
-            ])
-            ->groupBy('clientes.id')
-            ->orderBy('total_ventas', 'desc');
-
-        //UNO ES PARA EL TOTAL Y OTRA DEPENDE DEL STATUS DONDE SE ENCUENTRE
-        $totalVentas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)),0) as total')
-            ->join('montos', 'ventas.monto_id', '=', 'montos.id');
-        $totalVentasStatus = $totalVentas;
         if ($request->status_id != "") {
-            $totalVentasStatus->where("ventas.status_id", "=", $request->status_id);
+            $ventas->where("ventas.status_id", "=", $request->status_id);
         }
         if ($request->has("search")) {
-            $search = "%" . strtr($request->search, array("'" => "\\'", "%" => "\\%")) . "%";
-            $totalVentasStatus
-                ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
-                ->where("cecos.nombre", "like",  $search);
+            $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
+            $ventas->where("cecos.nombre", "like", "%" . $search . "%");
         }
 
-        return Inertia::render('Finanzas/VentasIndex', [
-            'clientes' =>  fn () =>  $clientes->get(),
-            // 'totalVentas' => fn () =>  $totalVentas->first(),
-            'totalVentasStatus' => fn () =>  $totalVentasStatus->first(),
-            'totalOcs' => fn () => $this->totalStatus(),
-            'filters' => $request->all(['search', 'status_id'])
+        return response()->json([
+            'ventas' =>  $ventas->paginate(10),
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.

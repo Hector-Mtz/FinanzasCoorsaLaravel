@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, reactive } from "vue";
 import { Inertia } from "@inertiajs/inertia";
-import { pickBy } from "lodash";
+import { pickBy, throttle } from "lodash";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
 import InputSearch from "@/Components/InputSearch.vue";
 import OcsModal from "./OcsModal.vue";
@@ -46,25 +46,20 @@ const changeTab = (status_id) => {
     }
 };
 const search = () => {
-    const params = pickBy(params);
-    Inertia.visit(route("ventas.index"), {
-        data: params,
+    const filters = pickBy(params);
+    console.log(filters)
+    Inertia.visit(route("finanzas.index"), {
+        replace: true,
+        data: filters,
         preserveState: true,
         preserveScroll: true,
         only: ["clientes", "totalVentasStatus"],
     });
 };
 
-let timeout;
-watch(params, () => {
-    if (timeout !== undefined) {
-        clearTimeout(timeout);
-    }
-    //Bounce de busqueda
-    timeout = setTimeout(() => {
-        search();
-    }, 300);
-});
+watch(params, throttle(function () {
+    search();
+}), 100);
 </script>
 <template>
     <div class="text-fuente-500 gap-4 flex flex-col border-b-[1px] border-gris-500 pb-2">
@@ -102,7 +97,7 @@ watch(params, () => {
             <!-- Lista de clientes -->
             <div class="pt-4 overflow-y-auto" style="max-height: 41.2vh">
                 <ItemCliente v-for="cliente in props.clientes" :key="cliente.id" :cliente="cliente"
-                    :total="cliente.ventas.length">
+                    :total="cliente.total_ventas">
                     <ItemObjectShow v-for="venta in cliente.ventas" :key="venta.id" :data="venta" @onShow="showOcs($event)">
                         {{ venta.ceco + "-" + venta.servicio }}
                         <br />
