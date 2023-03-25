@@ -40,11 +40,11 @@ const logout = () => {
 
         <JetBanner />
 
-        <div class="min-h-screen bg-fondo">
+    <div class="min-h-screen bg-fondo">
         <nav class="border-b border-[#707070] bg-fuente-500">
             <!-- Primary Navigation Menu -->
             <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 h-[6.5rem] grid items-center bg-fuente-500">
-                <div class="flex justify-between h-16">
+                    <div class="flex justify-between h-16">
                         <div class="flex justify-around gap-20">
                             <!-- Logo -->
                             <div class="flex items-center shrink-0 justify-self-start">
@@ -60,10 +60,9 @@ const logout = () => {
                                         Inicio
                                     </JetNavLink>
                                 </div>
-
                                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                    <JetNavLink :href="route('clientes.index')" :active="
-                                        route().current('clientes.index')
+                                    <JetNavLink :href="route('presupuestos.index')" :active="
+                                        route().current('presupuestos.index')
                                     ">
                                         Presupuestos
                                     </JetNavLink>
@@ -76,10 +75,10 @@ const logout = () => {
                                     </JetNavLink>
                                 </div>
                                 <!-- <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                    <JetNavLink :href="route('users.index')" :active="route().current('users.index')">
-                                        Usuarios
-                                    </JetNavLink>
-                                </div> -->
+                                            <JetNavLink :href="route('users.index')" :active="route().current('users.index')">
+                                                Usuarios
+                                            </JetNavLink>
+                                        </div> -->
                                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                     <JetNavLink :href="route('catalogos.index')" :active="
                                         route().current('catalogos.index')
@@ -194,10 +193,11 @@ const logout = () => {
                                             $page.props.jetstream
                                                 .managesProfilePhotos
                                         "
-                                            class="flex transition items-center gap-2 border-2 border-transparent rounded-full">
+                                            class="flex items-center gap-2 transition border-2 border-transparent rounded-full">
                                             <img class="object-cover w-10 h-10 rounded-full" :src="perfil"
                                                 :alt="$page.props.user.name" />
-                                            <h2 class="text-white text-xl capitalize font-bold">
+                                            <h2 class="text-xl font-bold text-white capitalize">
+
                                                 {{ $page.props.user.name }}
                                             </h2>
                                         </button>
@@ -283,8 +283,8 @@ const logout = () => {
                         <JetResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Inicio
                         </JetResponsiveNavLink>
-
-                        <JetResponsiveNavLink :href="route('clientes.index')" :active="route().current('clientes.index')">
+                        <JetResponsiveNavLink :href="route('presupuestos.index')"
+                            :active="route().current('presupuestos.index')">
                             Presupuestos
                         </JetResponsiveNavLink>
                         <JetResponsiveNavLink :href="route('finanzas.index')" :active="route().current('finanzas.index')">
