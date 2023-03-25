@@ -52,6 +52,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::get('finanzas', [FinanzaController::class, 'index'])->name('finanzas.index');
+    Route::get('finanzas/totales-globales', [FinanzaController::class, 'totalesStatus'])->name('finanzas.totales-globales');
     Route::apiResource('/ventas', VentaController::class)->except('show', 'update');
 
 

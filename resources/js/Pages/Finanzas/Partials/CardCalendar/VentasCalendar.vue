@@ -3,6 +3,7 @@ import { onBeforeMount, reactive, ref, watch } from "vue";
 
 import CalendarHeader from "@/Components/CalendarHeader.vue";
 import Calendar from "@/Components/Calendar.vue";
+import cal from "../../../../../img/elementos/calendario.png";
 import CalendarModal from "./CalendarModal.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
 import VentasDateModal from "./VentasDateModal.vue";
@@ -11,12 +12,16 @@ const emit = defineEmits(["changeDate"]);
 
 const props = defineProps({
     date: { month: Number, year: Number },
-    totalOcs: {
-        type: Object,
-        required: true,
-    },
 });
-const totalsVentas = ref({
+
+const totalsGlobalStatus = ref({
+    ventas: 0,
+    pc: 0,
+    pp: 0,
+    c: 0,
+});
+
+const totalsMesStatus = ref({
     ventas: 0,
     pc: 0,
     pp: 0,
@@ -51,13 +56,6 @@ const addStatus = (status) => {
 
 const isActive = (status) => {
     return showsStatus.includes(status);
-};
-
-const getVentasDays = async (date) => {
-    const resp = await axios.get(route("ventas.month"), {
-        params: date,
-    });
-    specialDays.value.push({ data: resp.data, color: "red" });
 };
 
 async function getDaysStatus() {
@@ -124,25 +122,36 @@ async function getDaysStatus() {
     specialDays.value = daysStatus;
 }
 
-async function getTotalsMonth() {
+async function getTotalsStatus() {
     const date = {
         month: props.date.month + 1,
         year: props.date.year,
     };
+    const respGlobal = axios.get(route("finanzas.totales-globales"), {
+        params: date,
+    });
+
     const respOcs = axios.get(route("ocs.totals-status"), {
         params: date,
     });
     const respVentas = axios.get(route("ventas.totals"), {
         params: date,
     });
-    const resp = await Promise.all([respOcs, respVentas]);
+    const resp = await Promise.all([respGlobal, respOcs, respVentas]);
     const auxResponse = {
-        ventas: formatoMoney(resp[1].data.total.toFixed(2)),
+        ventas: formatoMoney(resp[2].data.total.toFixed(2)),
+        c: formatoMoney(resp[1].data.c.toFixed(2)),
+        pc: formatoMoney(resp[1].data.pc.toFixed(2)),
+        pp: formatoMoney(resp[1].data.pp.toFixed(2)),
+    };
+    console.log(resp[0].data);
+    totalsGlobalStatus.value = {
+        ventas: formatoMoney(resp[0].data.ventas.toFixed(2)),
         c: formatoMoney(resp[0].data.c.toFixed(2)),
         pc: formatoMoney(resp[0].data.pc.toFixed(2)),
         pp: formatoMoney(resp[0].data.pp.toFixed(2)),
     };
-    totalsVentas.value = auxResponse;
+    totalsMesStatus.value = auxResponse;
     await getDaysStatus();
 }
 
@@ -165,96 +174,207 @@ watch(showsStatus, async () => {
 });
 
 onBeforeMount(() => {
-    getTotalsMonth();
+    getTotalsStatus();
 });
 
 //Change totals months
 watch(props, () => {
-    getTotalsMonth();
+    getTotalsStatus();
 });
 </script>
 <template>
-    <div class="max-h-screen mx-2 overflow-x-auto">
-        <!-- Interacion -->
-        <div class="py-4">
-            <table class="w-full">
-                <thead>
-                    <tr class="flex justify-around gap-16 px-4 text-center">
-                        <td class="hover:cursor-pointer hover:bg-ventas/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
-                            :class="{
-                                'bg-ventas text-white': isActive('ventas'),
-                            }" @click="addStatus('ventas')">
-                            <span> VENTAS </span>
-                        </td>
-                        <td @click="addStatus('pc')"
-                            class="hover:cursor-pointer hover:bg-pc/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
-                            :class="{ 'bg-pc text-white': isActive('pc') }">
-                            <span> PC </span>
-                        </td>
-                        <td @click="addStatus('pp')"
-                            class="hover:cursor-pointer hover:bg-pp/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
-                            :class="{ 'bg-pp text-white': isActive('pp') }">
-                            <span> PP </span>
-                        </td>
-                        <td @click="addStatus('c')"
-                            class="hover:cursor-pointer hover:bg-cobrado/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
-                            :class="{
-                                'bg-cobrado text-white': isActive('c'),
-                            }">
-                            <span> C </span>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="flex gap-2 py-4 text-center">
-                        <td class="w-3/12 px-4 py-1 text-white shadow-md bg-ventas rounded-xl shadow-gray-400">
-                            <div class="flex flex-col">
-                                <span class="text-[13px] uppercase font-normal">
-                                    VENTAS
-                                </span>
-                                <span class="font-bold text-[16px]">${{ totalsVentas.ventas }}</span>
-                            </div>
-                        </td>
-                        <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pc rounded-xl shadow-gray-400">
-                            <div class="flex flex-col">
-                                <span class="text-[13px] uppercase font-normal">
-                                    Por Cobrar
-                                </span>
-                                <span class="font-bold text-[16px]">${{ totalsVentas.pc }}</span>
-                            </div>
-                        </td>
-                        <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pp rounded-xl shadow-gray-400">
-                            <div class="flex flex-col">
-                                <span class="text-[13px] uppercase font-normal">
-                                    Por Pagar
-                                </span>
-                                <span class="font-bold text-[16px]">${{ totalsVentas.pp }}</span>
-                            </div>
-                        </td>
-                        <td class="w-3/12 px-4 py-1 text-white shadow-md bg-cobrado rounded-xl shadow-gray-400">
-                            <div class="flex flex-col">
-                                <span class="text-[13px] uppercase font-normal">
-                                    Cobrado
-                                </span>
-                                <span class="font-bold text-[16px]">${{ totalsVentas.c }}</span>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- End Interacion -->
-        <div class="px-4 py-2 mt-4 bg-gris-500 rounded-xl">
-            <CalendarHeader class="text-fuente-500 border-b-[1px] border-b-gris-900 mb-4" :month="props.date.month"
-                :year="props.date.year" @change-date="emit('changeDate', $event)" />
-            <Calendar :month="props.date.month" :special-days="specialDays" :year="props.date.year"
-                @on-special-days="showCalendarModal($event)" class="text-fuente-500">
-            </Calendar>
-        </div>
-        <!--Modals-->
+    <div>
+        <table class="w-full mx-2 mb-4">
+            <thead>
+                <tr>
+                    <td class="flex justify-between py-4">
+                        <span class="text-fuente-500 text-[26px] font-semibold">Reporte Anual</span>
+                        <!-- 
+                                                                                        <ButtonCalendar
+                                                                                            :year="date.year"
+                                                                                            :month="date.month"
+                                                                                            @change-date="changeDate($event)"
+                                                                                        >
+                                                                                            <template #a>
+                                                                                                <button
+                                                                                                    @click="
+                                                                                                        changeIndexMes(year - 1)
+                                                                                                    "
+                                                                                                    class="hover:opacity-40"
+                                                                                                >
+                                                                                                    <svg
+                                                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                                                        class="w-5 h-5 text-gray-900"
+                                                                                                        fill="none"
+                                                                                                        viewBox="0 0 24 24"
+                                                                                                        stroke="#1D96F1"
+                                                                                                        stroke-width="2"
+                                                                                                    >
+                                                                                                        <path
+                                                                                                            stroke-linecap="round"
+                                                                                                            stroke-linejoin="round"
+                                                                                                            d="M15 19l-7-7 7-7"
+                                                                                                        />
+                                                                                                    </svg>
+                                                                                                </button>
+                                                                                            </template>
+                                                                                            <template #b>
+                                                                                                <button
+                                                                                                    @click="
+                                                                                                        changeIndexMes(year + 1)
+                                                                                                    "
+                                                                                                    class="hover:opacity-40"
+                                                                                                >
+                                                                                                    <svg
+                                                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                                                        class="w-5 h-5 text-gray-900"
+                                                                                                        fill="none"
+                                                                                                        viewBox="0 0 24 24"
+                                                                                                        stroke="#1D96F1"
+                                                                                                        stroke-width="2"
+                                                                                                    >
+                                                                                                        <path
+                                                                                                            stroke-linecap="round"
+                                                                                                            stroke-linejoin="round"
+                                                                                                            d="M9 5l7 7-7 7"
+                                                                                                        />
+                                                                                                    </svg>
+                                                                                                </button>
+                                                                                            </template>
+                                                                                        </ButtonCalendar>
+                                                                                    -->
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="flex gap-2 py-4 text-center">
+                    <td class="w-3/12 px-4 py-1 text-white shadow-md bg-ventas rounded-xl shadow-gray-400">
+                        <div class="flex flex-col">
+                            <span class="text-[13px] uppercase font-normal">
+                                VENTAS
+                            </span>
+                            <span class="font-bold text-[16px]">${{ totalsGlobalStatus.ventas }}</span>
+                        </div>
+                    </td>
+                    <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pc rounded-xl shadow-gray-400">
+                        <div class="flex flex-col">
+                            <span class="text-[13px] uppercase font-normal">
+                                Por Cobrar
+                            </span>
+                            <span class="font-bold text-[16px]">${{ totalsGlobalStatus.pc }}</span>
+                        </div>
+                    </td>
+                    <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pp rounded-xl shadow-gray-400">
+                        <div class="flex flex-col">
+                            <span class="text-[13px] uppercase font-normal">
+                                Por Pagar
+                            </span>
+                            <span class="font-bold text-[16px]">${{ totalsGlobalStatus.pp }}</span>
+                        </div>
+                    </td>
+                    <td class="w-3/12 px-4 py-1 text-white shadow-md bg-cobrado rounded-xl shadow-gray-400">
+                        <div class="flex flex-col">
+                            <span class="text-[13px] uppercase font-normal">
+                                Cobrado
+                            </span>
+                            <span class="font-bold text-[16px]">${{ totalsGlobalStatus.c }}</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="flex items-center justify-between">
+                        <span class="text-fuente-500 text-[26px] font-semibold">Calendario</span>
+                        <img :src="cal" alt="calendario" class="w-[26px] h-[26px]" />
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
 
-        <CalendarModal :data-calendar="dataCalendar" :show="showingModal" @close="showingModal = false" />
-        <VentasDateModal :data-calendar="dataCalendar" :show="showingVentasModal" @close="showingVentasModal = false" />
-        <!--End Modals-->
+        <div class="max-h-screen mx-2 overflow-x-auto">
+
+            <!-- Interacion -->
+            <div class="py-4">
+                <table class="w-full">
+                    <thead>
+                        <tr class="flex justify-around gap-16 px-4 text-center">
+                            <td class="hover:cursor-pointer hover:bg-ventas/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
+                                :class="{
+                                    'bg-ventas text-white': isActive('ventas'),
+                                }" @click="addStatus('ventas')">
+                                <span> VENTAS </span>
+                            </td>
+                            <td @click="addStatus('pc')"
+                                class="hover:cursor-pointer hover:bg-pc/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
+                                :class="{ 'bg-pc text-white': isActive('pc') }">
+                                <span> PC </span>
+                            </td>
+                            <td @click="addStatus('pp')"
+                                class="hover:cursor-pointer hover:bg-pp/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
+                                :class="{ 'bg-pp text-white': isActive('pp') }">
+                                <span> PP </span>
+                            </td>
+                            <td @click="addStatus('c')"
+                                class="hover:cursor-pointer hover:bg-cobrado/70 rounded-2xl bg-gris-500 shadow-md shadow-gray-400 text-[13px] font-bold w-full py-2"
+                                :class="{
+                                    'bg-cobrado text-white': isActive('c'),
+                                }">
+                                <span> C </span>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="flex gap-2 py-4 text-center">
+                            <td class="w-3/12 px-4 py-1 text-white shadow-md bg-ventas rounded-xl shadow-gray-400">
+                                <div class="flex flex-col">
+                                    <span class="text-[13px] uppercase font-normal">
+                                        VENTAS
+                                    </span>
+                                    <span class="font-bold text-[16px]">${{ totalsMesStatus.ventas }}</span>
+                                </div>
+                            </td>
+                            <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pc rounded-xl shadow-gray-400">
+                                <div class="flex flex-col">
+                                    <span class="text-[13px] uppercase font-normal">
+                                        Por Cobrar
+                                    </span>
+                                    <span class="font-bold text-[16px]">${{ totalsMesStatus.pc }}</span>
+                                </div>
+                            </td>
+                            <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pp rounded-xl shadow-gray-400">
+                                <div class="flex flex-col">
+                                    <span class="text-[13px] uppercase font-normal">
+                                        Por Pagar
+                                    </span>
+                                    <span class="font-bold text-[16px]">${{ totalsMesStatus.pp }}</span>
+                                </div>
+                            </td>
+                            <td class="w-3/12 px-4 py-1 text-white shadow-md bg-cobrado rounded-xl shadow-gray-400">
+                                <div class="flex flex-col">
+                                    <span class="text-[13px] uppercase font-normal">
+                                        Cobrado
+                                    </span>
+                                    <span class="font-bold text-[16px]">${{ totalsMesStatus.c }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- End Interacion -->
+            <div class="px-4 py-2 mt-4 bg-gris-500 rounded-xl">
+                <CalendarHeader class="text-fuente-500 border-b-[1px] border-b-gris-900 mb-4" :month="props.date.month"
+                    :year="props.date.year" @change-date="emit('changeDate', $event)" />
+                <Calendar :month="props.date.month" :special-days="specialDays" :year="props.date.year"
+                    @on-special-days="showCalendarModal($event)" class="text-fuente-500">
+                </Calendar>
+            </div>
+            <!--Modals-->
+
+            <CalendarModal :data-calendar="dataCalendar" :show="showingModal" @close="showingModal = false" />
+            <VentasDateModal :data-calendar="dataCalendar" :show="showingVentasModal" @close="showingVentasModal = false" />
+            <!--End Modals-->
+        </div>
     </div>
 </template>
