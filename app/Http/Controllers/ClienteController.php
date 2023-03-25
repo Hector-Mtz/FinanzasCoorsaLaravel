@@ -21,33 +21,81 @@ class ClienteController extends Controller
      */
     public function index(Request $request)
     {
+
+        $cliente_cecos = Cliente::select(
+            'clientes.*'
+        )->with('cecos')
+            ->get();
+
+        $grupoConcepto_conceptos = GrupoConcepto::select(
+            'grupo_conceptos.*'
+        )->with('conceptos')
+            ->get();
+
+        $soli_gastos = SoliMovimiento::select(
+            'soli_movimientos.*',
+            'clientes.id as clientes_id',
+            'cecos.id AS ceco_id',
+            'cecos.nombre AS ceco_name',
+            'grupo_conceptos.id as grupo_concepto_id',
+            'conceptos.id AS concepto_id',
+            'conceptos.nombre AS concepto_name',
+        )
+            ->with([
+                'productos' => function ($query) {
+                    $query->select(
+                        'productos.soli_movimiento_id',
+                        DB::raw('SUM(productos.cantidad) as total')
+                    )
+                        ->groupBy('productos.soli_movimiento_id')
+                        ->get();
+                }
+            ])
+            ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', 'ceco_conceptos.id')
+            ->join('cecos', 'ceco_conceptos.ceco_id', 'cecos.id')
+            ->join('conceptos', 'ceco_conceptos.concepto_id', 'conceptos.id')
+            ->join('clientes', 'cecos.cliente_id', 'clientes.id')
+            ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', 'grupo_conceptos.id');
+
+        if ($request->has('movimiento')) {
+            $soli_gastos->where('soli_movimientos.tipo_movimiento_id', '=', $request['movimiento']);
+        } else {
+            $soli_gastos->where('soli_movimientos.tipo_movimiento_id', '=', 3);
+        }
+        /*
         $request->validate(
             [
                 'grupoType' => ['in:clientes'], //valida el grupo si viene contenga clientes
                 'grupoType2' => ['in:grupo_conceptos']
             ]
-        ); //validamos la data que viene 
+        );//validamos la data que viene 
 
         //Si el request trae el tipo de grupo cliente hace la sig consulta
-        if ($request->has('grupoType')) {
-            $clientes = Cliente::selectRaw('CONCAT(clientes.nombre,cecos.nombre) AS nombre,
+        if($request->has('grupoType'))
+        { 
+          $clientes = Cliente::selectRaw('CONCAT(clientes.nombre,cecos.nombre) AS nombre,
           cecos.nombre AS ceco,
           clientes.nombre AS grupoCliente')
-                ->join('cecos', 'clientes.id', '=', 'cecos.cliente_id');
-        } else {
+          ->join('cecos', 'clientes.id', '=', 'cecos.cliente_id');
+        }
+        else
+        {
             $clientes = Cliente::selectRaw('clientes.*');
         }
 
         //Si el request trae el tipo de grupo grupoConcepto hace la sig consulta
-        if ($request->has('grupoType2')) {
+        if($request->has('grupoType2'))
+        {
             $grupo_conceptos = GrupoConcepto::selectRaw('CONCAT(grupo_conceptos.nombre,conceptos.nombre) AS nombre,
             conceptos.nombre AS concepto,
-            grupo_conceptos.nombre AS grupoConcepto')
-                ->join('conceptos', 'grupo_conceptos.id', '=', 'conceptos.grupo_concepto_id');
-        } else {
+            grupo_conceptos.nombre AS grupoConcepto' )
+            ->join('conceptos', 'grupo_conceptos.id','=','conceptos.grupo_concepto_id');
+        }
+        else
+        {
             $grupo_conceptos = GrupoConcepto::selectRaw('grupo_conceptos.*');
         }
-
+        
         $movimientos = TipoMovimiento::all();
         $solicitudes = SoliMovimiento::all();
         $cantidades = DB::table(DB::raw('soli_movimientos'))
@@ -64,52 +112,56 @@ class ClienteController extends Controller
             ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')
             ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
             ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', '=', 'grupo_conceptos.id')
-            ->groupBy([
-                'grupo_conceptos.nombre', 'conceptos.nombre',
-                'clientes.nombre',
-                'cecos.nombre',
-                'tipo_movimientos.nombre',
-                'grupo_conceptos.id',
-                'clientes.id',
-                'cecos.id',
-                'conceptos.id'
-            ])->orderBy('Cliente', 'DESC')
-            ->orderBy('GrupoConcepto', 'DESC');
+            ->groupBy(['grupo_conceptos.nombre', 'conceptos.nombre',
+            'clientes.nombre',
+            'cecos.nombre',
+            'tipo_movimientos.nombre',
+            'grupo_conceptos.id',
+            'clientes.id',
+            'cecos.id',
+            'conceptos.id'
+            ])->orderBy('Cliente', 'DESC' )
+            ->orderBy('GrupoConcepto', 'DESC' );
 
 
-        if ($request->has('grupoType')) {
+         if($request->has('grupoType')){
             $cantidades->selectRaw('CONCAT(clientes.nombre,cecos.nombre) AS Cliente,
             clientes.id AS clientes_id,
             conceptos.id AS concepto_id');
-        } else {
+         }else{
             $cantidades->selectRaw('clientes.nombre AS Cliente,
             clientes.id AS clientes_id,
             conceptos.id AS concepto_id');
-        }
+         }   
 
-        if ($request->has('grupoType2')) {
+         if($request->has('grupoType2')){
             $cantidades->selectRaw('CONCAT(grupo_conceptos.nombre,conceptos.nombre) AS GrupoConcepto,
             grupo_conceptos.id AS grupoConcepto_id,
              clientes.id AS clientes_id,
              cecos.id AS ceco_id');
-        } else {
+         }else{
             $cantidades->selectRaw('grupo_conceptos.nombre AS 
             GrupoConcepto,grupo_conceptos.id AS grupoConcepto_id, 
             clientes.id AS clientes_id,
             cecos.id AS ceco_id');
-        }
+         }  
 
-        //return response()->json($cantidades);
-
+       //return response()->json($cantidades);
+*/
         return Inertia::render(
             'Presupuestos/PresupuestosIndex',
             [
-                'filtros' => $request->all(['grupoType', 'grupoType2']), //parametro que filtrara para saber como esta agrupado
-                'clientes' => fn () => $clientes->get(),
-                'grupo_conceptos' => fn () => $grupo_conceptos->get(),
-                'cantidades' => fn () => $cantidades->get(),
-                'movimientos' => $movimientos,
-                'solicitudes' => $solicitudes
+                'clientes_cecos' => $cliente_cecos,
+                'grupoConceptos_conceptos' => $grupoConcepto_conceptos,
+                'soli_gastos' => fn () => $soli_gastos->get()
+                /*
+            'filtros' => $request->all(['grupoType','grupoType2']), //parametro que filtrara para saber como esta agrupado
+            'clientes' => fn() => $clientes->get(),
+            'grupo_conceptos' => fn() => $grupo_conceptos->get(),
+            'cantidades' => fn() => $cantidades->get(),
+            'movimientos' => $movimientos,
+            'solicitudes' => $solicitudes
+            */
             ]
         );
     }
@@ -161,6 +213,7 @@ class ClienteController extends Controller
 
         return response()->json($ventas->paginate(5));
     }
+
 
 
 
