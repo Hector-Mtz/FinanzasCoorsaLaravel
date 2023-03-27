@@ -104,10 +104,5 @@ Route::middleware([
 
 Route::apiResource('/presupuestos', ClienteController::class)->except('show');;
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);
-<<<<<<< HEAD
 /*Peticiones Axios*/ 
 Route::get('consulta1/{cliente}/{grupoConcepto}',[ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
-=======
-/*Peticiones Axios*/
-Route::get('/clienteGrupoCon/{cliente}/{grupoConcepto}', [ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
->>>>>>> b2f4f1d3ab33abf4727b84b4b9eeefb73b61824b
