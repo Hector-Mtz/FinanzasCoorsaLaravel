@@ -228,50 +228,6 @@ class OcController extends Controller
     }
 
 
-    /**
-     * Mostra la sumatoria de los totales de los status PC PP C
-     * Agrupados
-     */
-    public function totalesStatus(Request $request)
-    {
-        $validadData = $request->validate([
-            'month' => ['required', 'numeric', 'min:1', 'max:12'],
-            'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
-        ]);
-        $status = collect(['ventas' => 0, 'pc' => 0, 'pp' => 0, 'c' => 0]);
-
-        $ventas = Venta::selectRaw('sum(montos.cantidad * ventas.periodos * ventas.cantidad  +
-        if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)) as total')
-            ->join('montos', 'ventas.monto_id', '=', 'montos.id')
-            ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
-            ->whereYear('ventas.fechaInicial', '=', $validadData['year']);
-
-        $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
-            ->whereNull('ocs.factura_id')
-            ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
-            ->whereYear('ocs.fecha_alta', '=', $validadData['year']);
-
-        $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
-            // ->join('ocs', 'facturas.id', '=', 'ocs.factura_id')
-            ->whereNull('facturas.ingreso_id')
-            ->whereMonth('facturas.fechaDePago', '=', $validadData['month'])
-            ->whereYear('facturas.fechaDePago', '=', $validadData['year']);
-        $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
-            ->whereMonth('ingresos.created_at', '=', $validadData['month'])
-            ->whereYear('ingresos.created_at', '=', $validadData['year']);
-
-
-        $ventas =   $ventas->first();
-        if ($ventas->total !== null) {
-            $status['ventas'] =  $ventas->total;
-        }
-
-        $status['pc'] =  $ocs->first()->total;
-        $status['pp'] =  $facturas->first()->total;
-        $status['c'] = $ingreso->first()->total;
-
-        return response()->json($status);
-    }
 
 
     public function ocMonth(Request $request)

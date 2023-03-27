@@ -108,6 +108,10 @@ const searchVentas = async (page) => {
     }
 };
 
+const refreshVentas = () => {
+    searchVentas(ventas.value.current_page)
+}
+
 watchEffect(() => {
     if (props.show) {
         searchVentas();
@@ -174,8 +178,8 @@ const close = () => {
             </TableComponent>
             <PaginationAxios :pagination="ventas" @loadPage="searchVentas($event)" />
             <!-- MODALS -->
-            <FormVentaModal :show="showingFormVenta" :type-form="typeForm" :venta="venta"
-                @close="showingFormVenta = false" />
+            <FormVentaModal :show="showingFormVenta" :type-form="typeForm" :venta="venta" @close="showingFormVenta = false"
+                @refreshVentas="refreshVentas()" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

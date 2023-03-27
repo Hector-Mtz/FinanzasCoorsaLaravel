@@ -147,11 +147,14 @@ async function getTotalsStatus() {
         ...paramsFilter,
         month: paramsFilter.month + 1,
     });
+
+    let paramsGlobal = { ...params };
+    delete paramsGlobal.month;
     const respGlobal = axios.get(route("finanzas.totales-globales"), {
-        params,
+        params: paramsGlobal,
     });
 
-    const respOcs = axios.get(route("ocs.totals-status"), {
+    const respOcs = axios.get(route("finanzas.totales-globales"), {
         params,
     });
     const resp = await Promise.all([respGlobal, respOcs]);

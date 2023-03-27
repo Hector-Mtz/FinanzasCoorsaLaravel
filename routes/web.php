@@ -64,7 +64,6 @@ Route::middleware([
     Route::post('/ventas/{venta}', [VentaController::class, 'update'])->name('ventas.update');
     Route::apiResource('/ocs', OcController::class)->except('show', 'update');
     Route::get('/ocs/catalogos', [OcController::class, "catalogos"])->name("ocs.catalogos");
-    Route::get('/ocs/totals-status', [OcController::class, "totalesStatus"])->name("ocs.totals-status");
     Route::get('/ocs/months', [OcController::class, "ocMonth"])->name("ocs.month");
     Route::post('/ocs/{oc}', [OcController::class, 'update'])->name('ocs.update');
 
@@ -104,5 +103,5 @@ Route::middleware([
 
 Route::apiResource('/presupuestos', ClienteController::class);
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);
-/*Peticiones Axios*/ 
-Route::get('/clienteGrupoCon/{cliente}/{grupoConcepto}',[ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
+/*Peticiones Axios*/
+Route::get('/clienteGrupoCon/{cliente}/{grupoConcepto}', [ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');

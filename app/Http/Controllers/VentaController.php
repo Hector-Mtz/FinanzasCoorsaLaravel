@@ -72,7 +72,7 @@ class VentaController extends Controller
         ]);
 
         $urlContenido = null;
-        if ($request->has('documento')) {
+        if ($request->hasFile('documento')) {
             $contenido = $request['documento'];
             $nombreCont = $contenido->getClientOriginalName();
             $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');

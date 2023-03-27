@@ -17,7 +17,7 @@ import folder from "../../../../../img/elementos/agregar-documento.png";
 
 import DropZone from '@/Components/DropZone.vue';
 
-const emit = defineEmits(["close"])
+const emit = defineEmits(["close", "refreshVentas"])
 const props = defineProps({
     show: {
         type: Boolean,
@@ -116,8 +116,9 @@ const create = () => {
     form.post(route("ventas.store"), {
         preserveScroll: true,
         preserveState: true,
-        only: ["clientes", "totalVentas", "errors"],
+        only: ["clientes", "totalVentasStatus", "errors"],
         onSuccess: () => {
+            emit('refreshVentas');
             form.reset();
             close();
         },
@@ -127,8 +128,9 @@ const update = () => {
     form.post(route('ventas.update', props.venta.id), {
         preserveScroll: true,
         preserveState: true,
-        only: ["clientes", "totalVentas", "errors"],
+        only: ["clientes", "totalVentasStatus", "errors"],
         onSuccess: () => {
+            emit('refreshVentas');
             form.reset();
             close();
         },

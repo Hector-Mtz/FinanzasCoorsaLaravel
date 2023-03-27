@@ -98,16 +98,16 @@ watch(params, throttle(function () {
             <ButtonAdd class="h-7" @click="emit('showVentas')" />
         </div>
         <!--Form Search Filters-->
-        <div class="border rounded-md px-1">
+        <div class="px-1 border rounded-md">
 
             <JetLabel value="Rango de Fechas" class="inline" />
-            <button @click="clearRageDates()" class="text-aqua-500 hover:opacity-80 text-xs px-1">Limpiar Fechas</button>
-            <div class="grid grid-cols-2 gap-1 mb-2 text-gray-500 text-sm">
+            <button @click="clearRageDates()" class="px-1 text-xs text-aqua-500 hover:opacity-80">Limpiar Fechas</button>
+            <div class="grid grid-cols-2 gap-1 mb-2 text-sm text-gray-500">
                 <span>Incio:</span>
                 <span>Fin:</span>
-                <Input class="py-0 px-1" name="fecha_inicio" type="date" v-model="params.fecha_inicio" />
+                <Input class="px-1 py-0" name="fecha_inicio" type="date" v-model="params.fecha_inicio" />
 
-                <Input class="py-0 px-1" name="fecha_fin" type="date" v-model="params.fecha_fin"
+                <Input class="px-1 py-0" name="fecha_fin" type="date" v-model="params.fecha_fin"
                     :min="params.fecha_inicio" />
 
             </div>
