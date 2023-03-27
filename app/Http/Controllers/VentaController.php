@@ -8,6 +8,7 @@ use App\Models\Ingreso;
 use App\Models\Oc;
 use App\Models\Venta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -20,6 +21,9 @@ class VentaController extends Controller
      */
     public function index(Request $request)
     {
+        request()->validate([
+            'direction' => 'in:asc,desc'
+        ]);
 
         $ventas = Venta::select(
             "ventas.*",
@@ -30,8 +34,7 @@ class VentaController extends Controller
         )->selectRaw('(montos.cantidad  * ventas.periodos * ventas.cantidad) sub_total')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
-            ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
-            ->orderBy('ventas.fechaInicial');
+            ->join('servicios', 'montos.servicio_id', '=', 'servicios.id');
 
         if ($request->status_id != "") {
             $ventas->where("ventas.status_id", "=", $request->status_id);
@@ -39,6 +42,12 @@ class VentaController extends Controller
         if ($request->has("search")) {
             $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
             $ventas->where("cecos.nombre", "like", "%" . $search . "%");
+        }
+
+        if ($request->has('field')) {
+            $ventas->orderBy(DB::raw(request('field')), request('direction'));
+        } else {
+            $ventas->orderBy('ventas.fechaInicial', 'desc');
         }
 
 

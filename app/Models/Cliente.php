@@ -27,4 +27,9 @@ class Cliente extends Model
     {
         return $this->hasManyThrough(Venta::class, Ceco::class);
     }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class, 'cliente_id');
+    }
 }

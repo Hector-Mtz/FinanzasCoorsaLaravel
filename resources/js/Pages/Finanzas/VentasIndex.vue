@@ -107,7 +107,7 @@ const chageComponent = () => {
             </div>
         </div>
         <!-- Modals -->
-        <VentasModal :show="showingVentas" :filters="props.filters" @close="closeModalVentas" />
+        <VentasModal :show="showingVentas" @close="closeModalVentas" />
         <!-- END Modals -->
     </AppLayout>
 </template>

@@ -112,10 +112,8 @@ class FinanzaController extends Controller
             $ocs->join('ventas', 'ocs.venta_id', '=', 'ventas.id')
                 ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
             $ingreso
-                ->select('ingresos.id', 'cecos.lineas_negocio_id', 'facturas.cantidad as total')
+                ->select('ingresos.id', 'facturas.cantidad as total')
                 ->join('facturas', 'ingresos.id', '=', 'facturas.ingreso_id');
-
-
 
             //Encaso de tener linea de transporte
             if ($request->has('lineas_negocio_id')) {
