@@ -60,7 +60,6 @@ Route::middleware([
     Route::put('/ventas/{venta}/iva', [VentaController::class, 'activeIva'])->name('ventas.iva');
     Route::put('/ventas/{venta}/revisado', [VentaController::class, 'changeRevisado'])->name('ventas.revisado');
     Route::get('/ventas/{venta}/ocs', [VentaController::class, 'ocsIndex'])->name('ventas.ocs.index');
-    Route::get('/ventas/totals', [VentaController::class, 'totals'])->name('ventas.totals');
     Route::get('/ventas/months', [VentaController::class, 'ventasMonth'])->name('ventas.month');
     Route::post('/ventas/{venta}', [VentaController::class, 'update'])->name('ventas.update');
     Route::apiResource('/ocs', OcController::class)->except('show', 'update');

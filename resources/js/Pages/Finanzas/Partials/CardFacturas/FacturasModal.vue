@@ -51,7 +51,7 @@ const deleteFactura = (facturaSelected) => {
         .delete(route("facturas.destroy", facturaSelected.id))
         .then(() => {
             emit("addFactura");
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
@@ -85,36 +85,24 @@ watch(props, () => {
         <template #title>
             <div class="flex justify-between items-center py-6 max-w-[52rem]">
                 <div class="flex items-center justify-around gap-4 px-4 py-1">
-                    <span
-                        class="block font-semibold text-[28px] text-center text-fuente-500"
-                    >
+                    <span class="block font-semibold text-[28px] text-center text-fuente-500">
                         Facturas
                     </span>
 
-                    <ButtonAdd
-                        v-if="$page.props.can['facturas.create']"
-                        class="w-[35px] h-[25px]"
-                        @click="showFormFactura()"
-                    />
+                    <ButtonAdd v-if="$page.props.can['facturas.create']" class="w-[35px] h-[25px]"
+                        @click="showFormFactura()" />
                 </div>
                 <div>
-                    <InputSearch v-model="searchText" class="px-2 py-1" />
+                    <!-- <InputSearch v-model="searchText" class="px-2 py-1" /> -->
                 </div>
 
-                <img
-                    :src="cerrar"
-                    alt=""
-                    class="absolute left-[54rem] hover:cursor-pointer"
-                    @click="close()"
-                />
+                <img :src="cerrar" alt="" class="absolute left-[54rem] hover:cursor-pointer" @click="close()" />
             </div>
         </template>
         <template #content>
             <TableComponent>
                 <template #thead>
-                    <tr
-                        class="text-[15px] font-semibold border-b-2 border-aqua-500"
-                    >
+                    <tr class="text-[15px] font-semibold border-b-2 border-aqua-500">
                         <th class="pb-2">
                             <h3 class="mb-1">FACTURA</h3>
                         </th>
@@ -123,37 +111,19 @@ watch(props, () => {
                         <th class="pb-2">OCS</th>
                         <th class="pb-2">FECHA</th>
                         <th class="pb-2">DOCUMENTO</th>
-                        <th
-                            class="pb-2"
-                            v-if="$page.props.can['facturas.edit']"
-                        ></th>
-                        <th
-                            class="pb-2"
-                            v-if="$page.props.can['facturas.delete']"
-                        ></th>
+                        <th class="pb-2" v-if="$page.props.can['facturas.edit']"></th>
+                        <th class="pb-2" v-if="$page.props.can['facturas.delete']"></th>
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemFacturaDetails
-                        v-for="(factura, index) in props.facturas"
-                        :key="factura.id + '' + index"
-                        :factura="factura"
-                        :ocs="listOcs"
-                        @edit="showFormFactura($event)"
-                        @delete="deleteFactura($event)"
-                        @addOc="emit('addOc', $event)"
-                    />
+                    <ItemFacturaDetails v-for="(factura, index) in props.facturas" :key="factura.id + '' + index"
+                        :factura="factura" :ocs="listOcs" @edit="showFormFactura($event)" @delete="deleteFactura($event)"
+                        @addOc="emit('addOc', $event)" />
                 </template>
             </TableComponent>
             <!-- MODALS -->
-            <FormFacturaModal
-                :show="showingFormFactura"
-                :type-form="typeForm"
-                :factura="factura"
-                @add-factura="emit('addFactura')"
-                @edit-factura="emit('addFactura')"
-                @close="showingFormFactura = false"
-            />
+            <FormFacturaModal :show="showingFormFactura" :type-form="typeForm" :factura="factura"
+                @add-factura="emit('addFactura')" @edit-factura="emit('addFactura')" @close="showingFormFactura = false" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

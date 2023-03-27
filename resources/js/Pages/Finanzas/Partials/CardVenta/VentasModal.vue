@@ -46,7 +46,7 @@ const activeIva = (ventaId) => {
     axios
         .put(route("ventas.iva", ventaId))
         .then(() => {
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveScroll: true,
                 preserveState: true,
                 only: ["clientes", "totalVentas", "errors"],

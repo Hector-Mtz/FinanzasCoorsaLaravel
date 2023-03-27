@@ -226,26 +226,6 @@ class VentaController extends Controller
         return redirect()->back();
     }
 
-    public function totals(Request $request)
-    {
-        //monto.cantidad * venta.periodos * venta.cantidad
-        $validadData = $request->validate([
-            'month' => ['required', 'numeric', 'min:1', 'max:12'],
-            'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
-        ]);
-
-        $ventas = Venta::selectRaw('sum(montos.cantidad * ventas.periodos * ventas.cantidad  +
-            if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)) as total')
-            ->join('montos', 'ventas.monto_id', '=', 'montos.id')
-            ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
-            ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
-            ->first();
-        if ($ventas->total === null) {
-            $ventas->total = 0;
-        }
-        return response()->json($ventas);
-    }
-
 
     public function ventasMonth(Request $request)
     {

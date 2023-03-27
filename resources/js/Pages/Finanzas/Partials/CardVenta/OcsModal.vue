@@ -77,7 +77,7 @@ const deleteOc = (ocSelected) => {
         .delete(route("ocs.destroy", ocSelected.id))
         .then(() => {
             ocs.value.splice(ocIndex, 1);
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],

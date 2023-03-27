@@ -1,17 +1,24 @@
 <script setup>
 import { onBeforeMount, reactive, ref, watch } from "vue";
-
+import { pickBy, throttle } from "lodash";
 import CalendarHeader from "@/Components/CalendarHeader.vue";
+import JetLabel from "@/Jetstream/Label.vue";
+import SelectComponent from "@/Components/SelectComponent.vue";
 import Calendar from "@/Components/Calendar.vue";
+import ButtonCalendar from "@/Components/ButtonCalendar.vue";
 import cal from "../../../../../img/elementos/calendario.png";
 import CalendarModal from "./CalendarModal.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
 import VentasDateModal from "./VentasDateModal.vue";
 
-const emit = defineEmits(["changeDate"]);
-
 const props = defineProps({
-    date: { month: Number, year: Number },
+    listClientes: {
+        type: Object,
+    },
+    lineasNegocios: {
+        type: Object,
+    },
+
 });
 
 const totalsGlobalStatus = ref({
@@ -36,6 +43,19 @@ const dataCalendar = ref([]);
 
 // no es renderizable
 const colorsStatus = ["#44BFFC", "#697FEA", "#B66BF5", "#57D38C"];
+const dateNow = new Date();
+
+const paramsFilter = reactive({
+    month: dateNow.getMonth(),
+    year: dateNow.getFullYear(),
+    lineas_negocio_id: '',
+    cliente_id: '',
+});
+
+const changeDate = (newDate) => {
+    paramsFilter.month = newDate.month;
+    paramsFilter.year = newDate.year;
+};
 
 const addStatus = (status) => {
     if (showsStatus.length >= 1) {
@@ -60,8 +80,8 @@ const isActive = (status) => {
 
 async function getDaysStatus() {
     const date = {
-        month: props.date.month + 1,
-        year: props.date.year,
+        month: paramsFilter.month + 1,
+        year: paramsFilter.year,
     };
     const axiosDaysStatus = [];
     // colores
@@ -123,34 +143,33 @@ async function getDaysStatus() {
 }
 
 async function getTotalsStatus() {
-    const date = {
-        month: props.date.month + 1,
-        year: props.date.year,
-    };
+    const params = pickBy({
+        ...paramsFilter,
+        month: paramsFilter.month + 1,
+    });
     const respGlobal = axios.get(route("finanzas.totales-globales"), {
-        params: date,
+        params,
     });
 
     const respOcs = axios.get(route("ocs.totals-status"), {
-        params: date,
+        params,
     });
-    const respVentas = axios.get(route("ventas.totals"), {
-        params: date,
-    });
-    const resp = await Promise.all([respGlobal, respOcs, respVentas]);
-    const auxResponse = {
-        ventas: formatoMoney(resp[2].data.total.toFixed(2)),
-        c: formatoMoney(resp[1].data.c.toFixed(2)),
-        pc: formatoMoney(resp[1].data.pc.toFixed(2)),
-        pp: formatoMoney(resp[1].data.pp.toFixed(2)),
-    };
-    // console.log(resp[0].data);
+    const resp = await Promise.all([respGlobal, respOcs]);
+
     totalsGlobalStatus.value = {
         ventas: formatoMoney(resp[0].data.ventas.toFixed(2)),
         c: formatoMoney(resp[0].data.c.toFixed(2)),
         pc: formatoMoney(resp[0].data.pc.toFixed(2)),
         pp: formatoMoney(resp[0].data.pp.toFixed(2)),
     };
+    const auxResponse = {
+        ventas: formatoMoney(resp[1].data.ventas.toFixed(2)),
+        c: formatoMoney(resp[1].data.c.toFixed(2)),
+        pc: formatoMoney(resp[1].data.pc.toFixed(2)),
+        pp: formatoMoney(resp[1].data.pp.toFixed(2)),
+    };
+    // console.log(resp[0].data);
+
     totalsMesStatus.value = auxResponse;
     await getDaysStatus();
 }
@@ -174,13 +193,14 @@ watch(showsStatus, async () => {
 });
 
 onBeforeMount(() => {
+
     getTotalsStatus();
 });
 
 //Change totals months
-watch(props, () => {
+watch(paramsFilter, throttle(() => {
     getTotalsStatus();
-});
+}), 100);
 </script>
 <template>
     <div>
@@ -189,60 +209,32 @@ watch(props, () => {
                 <tr>
                     <td class="flex justify-between py-4">
                         <span class="text-fuente-500 text-[26px] font-semibold">Reporte Anual</span>
-                        <!-- 
-                                                                                            <ButtonCalendar
-                                                                                                :year="date.year"
-                                                                                                :month="date.month"
-                                                                                                @change-date="changeDate($event)"
-                                                                                            >
-                                                                                                <template #a>
-                                                                                                    <button
-                                                                                                        @click="
-                                                                                                            changeIndexMes(year - 1)
-                                                                                                        "
-                                                                                                        class="hover:opacity-40"
-                                                                                                    >
-                                                                                                        <svg
-                                                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                                                            class="w-5 h-5 text-gray-900"
-                                                                                                            fill="none"
-                                                                                                            viewBox="0 0 24 24"
-                                                                                                            stroke="#1D96F1"
-                                                                                                            stroke-width="2"
-                                                                                                        >
-                                                                                                            <path
-                                                                                                                stroke-linecap="round"
-                                                                                                                stroke-linejoin="round"
-                                                                                                                d="M15 19l-7-7 7-7"
-                                                                                                            />
-                                                                                                        </svg>
-                                                                                                    </button>
-                                                                                                </template>
-                                                                                                <template #b>
-                                                                                                    <button
-                                                                                                        @click="
-                                                                                                            changeIndexMes(year + 1)
-                                                                                                        "
-                                                                                                        class="hover:opacity-40"
-                                                                                                    >
-                                                                                                        <svg
-                                                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                                                            class="w-5 h-5 text-gray-900"
-                                                                                                            fill="none"
-                                                                                                            viewBox="0 0 24 24"
-                                                                                                            stroke="#1D96F1"
-                                                                                                            stroke-width="2"
-                                                                                                        >
-                                                                                                            <path
-                                                                                                                stroke-linecap="round"
-                                                                                                                stroke-linejoin="round"
-                                                                                                                d="M9 5l7 7-7 7"
-                                                                                                            />
-                                                                                                        </svg>
-                                                                                                    </button>
-                                                                                                </template>
-                                                                                            </ButtonCalendar>
-                                                                                        -->
+                        <ButtonCalendar :year="paramsFilter.year" :month="paramsFilter.month"
+                            @change-date="changeDate($event)" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="flex justify-between py-4">
+                        <div>
+                            <JetLabel value="Lineas de negocios" />
+                            <SelectComponent name="lineas_negocio_id" v-model="paramsFilter.lineas_negocio_id">
+                                <option value="" class="font-semibold">--TODAS--</option>
+                                <option v-for="lineasNegocio in props.lineasNegocios" :key="lineasNegocio.name"
+                                    :value="lineasNegocio.id">
+                                    {{ lineasNegocio.name }}
+                                </option>
+                            </SelectComponent>
+                        </div>
+                        <div>
+                            <JetLabel value="Cliente" />
+                            <SelectComponent name="cliente_id" v-model="paramsFilter.cliente_id">
+                                <option value="" class="font-semibold">--TODOS--</option>
+                                <option v-for="cliente in props.listClientes" :key="'c' + cliente.id" :value="cliente.id">
+                                    {{ cliente.nombre }}
+                                </option>
+                            </SelectComponent>
+                        </div>
+
                     </td>
                 </tr>
             </thead>
@@ -292,7 +284,7 @@ watch(props, () => {
             </tfoot>
         </table>
 
-        <div class="max-h-screen mx-2 overflow-x-auto">
+        <div class="mx-2 overflow-x-auto">
 
             <!-- Interacion -->
             <div class="py-4">
@@ -364,9 +356,9 @@ watch(props, () => {
             </div>
             <!-- End Interacion -->
             <div class="px-4 py-2 mt-4 bg-gris-500 rounded-xl">
-                <CalendarHeader class="text-fuente-500 border-b-[1px] border-b-gris-900 mb-4" :month="props.date.month"
-                    :year="props.date.year" @change-date="emit('changeDate', $event)" />
-                <Calendar :month="props.date.month" :special-days="specialDays" :year="props.date.year"
+                <CalendarHeader class="text-fuente-500 border-b-[1px] border-b-gris-900 mb-4" :month="paramsFilter.month"
+                    :year="paramsFilter.year" @change-date="changeDate($event)" />
+                <Calendar :month="paramsFilter.month" :special-days="specialDays" :year="paramsFilter.year"
                     @on-special-days="showCalendarModal($event)" class="text-fuente-500">
                 </Calendar>
             </div>

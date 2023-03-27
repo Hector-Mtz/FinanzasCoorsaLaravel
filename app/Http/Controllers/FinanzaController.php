@@ -65,7 +65,8 @@ class FinanzaController extends Controller
             'clientes' =>  fn () =>  $clientes->get(),
             // 'totalVentas' => fn () =>  $totalVentas->first(),
             'totalVentasStatus' => fn () =>  $totalVentasStatus->first(),
-            'lineasNegocios' => fn () => LineasNegocio::select('id', 'name')->get(),
+            'lineasNegocios' => fn () => LineasNegocio::select('id', 'name')->orderBy('name')->get(),
+            'listClientes' => fn () => Cliente::select('id', 'nombre')->orderBy('nombre')->get(),
             'filters' => $request->all(['search', 'status_id', 'lineas_negocio_id', 'fecha_inicio', 'fecha_fin'])
         ]);
     }
@@ -78,36 +79,50 @@ class FinanzaController extends Controller
      */
     public function totalesStatus(Request $request)
     {
-        $request->validate([
-            'fecha' => ['nullable', 'date'],
+        $validadData = $request->validate([
+            'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
+            'lineas_negocio_id' => ['nullable', 'exists:lineas_negocios,id'],
+            'cliente_id' => ['nullable', 'exists:clientes,id'],
         ]);
-
-
-        $fecha_Actual =  date("Y");
 
         $status = collect(['ventas' => 0, 'pc' => 0, 'pp' => 0, 'c' => 0]);
 
         $ventas = Venta::selectRaw('ifnull(sum(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0)),0) as total')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
-            ->where('ventas.fechaInicial', 'LIKE', '%' . $fecha_Actual . '%')
-            ->first();
+            ->whereYear('ventas.fechaInicial', '=', $validadData['year']);
 
         $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
             ->whereNull('ocs.factura_id')
-            ->where('ocs.fecha_alta', 'LIKE', '%' . $fecha_Actual . '%')
-            ->first();
+            ->whereYear('ocs.fecha_alta', '=', $validadData['year']);
         $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
             ->whereNull('facturas.ingreso_id')
-            ->where('facturas.fechaDePago', 'LIKE', '%' . $fecha_Actual . '%')
-            ->first();
+            ->whereYear('facturas.fechaDePago', '=', $validadData['year']);
         $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
-            ->where('ingresos.created_at', 'LIKE', '%' . $fecha_Actual . '%')
-            ->first();
+            ->whereYear('ingresos.created_at', '=', $validadData['year']);
 
-        $status['ventas'] = $ventas->total;
-        $status['pc'] = $ocs->total;
-        $status['pp'] =  $facturas->total;
-        $status['c'] = $ingreso->total;
+        //Intento evitar join cuando no tiene filtros
+        if ($request->has('lineas_negocio_id') || $request->has('cliente_id')) {
+            $ventas->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
+            $ocs->join('ventas', 'ocs.venta_id', '=', 'ventas.id')
+                ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
+            //Encaso de tener linea de transporte
+            if ($request->has('lineas_negocio_id')) {
+                $ventas->where('cecos.lineas_negocio_id', '=', $validadData['lineas_negocio_id']);
+                $ocs->where('cecos.lineas_negocio_id', '=', $validadData['lineas_negocio_id']);
+            }
+
+            if ($request->has('cliente_id')) {
+                $ventas->where('cecos.cliente_id', '=', $validadData['cliente_id']);
+                $ocs->where('cecos.cliente_id', '=', $validadData['cliente_id']);
+                $facturas->where('facturas.cliente_id', '=', $validadData['cliente_id']);
+            }
+        }
+
+
+        $status['ventas'] = $ventas->first()->total;
+        $status['pc'] = $ocs->first()->total;
+        $status['pp'] =  $facturas->first()->total;
+        $status['c'] = $ingreso->first()->total;
         return response()->json($status);
     }
 }

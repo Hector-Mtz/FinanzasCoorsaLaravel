@@ -47,7 +47,7 @@ const deleteOc = (indexOc) => {
                 props.factura.total_ocs - cantidadRest
             ).toFixed(2);
             props.factura.ocs.splice(indexOc, 1);
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
@@ -127,7 +127,7 @@ watch(textOcs, throttle(function () {
             <div class="flex flex-col mb-4">
                 <h3 class="text-[15px] font-semibold uppercase">Agregar OC</h3>
                 <div v-if="$page.props.can['facturas.oc.create']" class="flex">
-                    <ListDataInputOCS class="w-50" v-model="ocIdAdd" :value="textOcs" @value="textOcs = $event"
+                    <ListDataInputOCS class="w-50" v-model="ocIdAdd" :valueText="textOcs" @value="textOcs = $event"
                         list="ocs-catalogo" :options="listOcs" />
                     <ButtonAdd class="ml-1 h-7" @click="addOc()" />
                 </div>
