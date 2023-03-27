@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+/*
 Route::get('/ceco_concepto/{x}/{y}', [CECOConceptoController::class, 'byCecoConcepto'])->name('ceco_concepto');
 
 Route::get('/cliente_concepto/{x}/{y}', [CECOConceptoController::class, 'byClienteConcepto'])->name('cliente_concepto');
@@ -37,7 +38,7 @@ Route::get('/consulta_ceco_concepto/{x}/{y}', [CECOConceptoController::class, 'c
 Route::get('/ceco_grupo_concepto/{x}/{y}', [CECOConceptoController::class, 'ceco_grupo_concepto'])->name('ceco_grupo_concepto');
 
 Route::get('/concepto_clientes/{x}/{y}', [CECOConceptoController::class, 'concepto_clientes'])->name('concepto_clientes');
-
+*/
 
 Route::get('artisan', function () {
     Artisan::call('migrate', [

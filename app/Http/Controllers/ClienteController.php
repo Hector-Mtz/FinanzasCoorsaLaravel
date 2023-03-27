@@ -32,36 +32,6 @@ class ClienteController extends Controller
         )->with('conceptos')
             ->get();
 
-        $soli_gastos = SoliMovimiento::select(
-            'soli_movimientos.*',
-            'clientes.id as clientes_id',
-            'cecos.id AS ceco_id',
-            'cecos.nombre AS ceco_name',
-            'grupo_conceptos.id as grupo_concepto_id',
-            'conceptos.id AS concepto_id',
-            'conceptos.nombre AS concepto_name',
-        )
-            ->with([
-                'productos' => function ($query) {
-                    $query->select(
-                        'productos.soli_movimiento_id',
-                        DB::raw('SUM(productos.cantidad) as total')
-                    )
-                        ->groupBy('productos.soli_movimiento_id')
-                        ->get();
-                }
-            ])
-            ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', 'ceco_conceptos.id')
-            ->join('cecos', 'ceco_conceptos.ceco_id', 'cecos.id')
-            ->join('conceptos', 'ceco_conceptos.concepto_id', 'conceptos.id')
-            ->join('clientes', 'cecos.cliente_id', 'clientes.id')
-            ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', 'grupo_conceptos.id');
-
-        if ($request->has('movimiento')) {
-            $soli_gastos->where('soli_movimientos.tipo_movimiento_id', '=', $request['movimiento']);
-        } else {
-            $soli_gastos->where('soli_movimientos.tipo_movimiento_id', '=', 3);
-        }
         /*
         $request->validate(
             [
@@ -153,7 +123,7 @@ class ClienteController extends Controller
             [
                 'clientes_cecos' => $cliente_cecos,
                 'grupoConceptos_conceptos' => $grupoConcepto_conceptos,
-                'soli_gastos' => fn () => $soli_gastos->get()
+
                 /*
             'filtros' => $request->all(['grupoType','grupoType2']), //parametro que filtrara para saber como esta agrupado
             'clientes' => fn() => $clientes->get(),
@@ -212,59 +182,6 @@ class ClienteController extends Controller
 
 
         return response()->json($ventas->paginate(5));
-    }
-
-
-
-
-    public function tablaPresupuestos(Request $request)
-    {
-        $fechaActual = date('Y-m'); //obtenemos el año y fecha actual
-        if ($request->has('fecha')) {
-            $ceco_concepto = DB::table(DB::raw('soli_movimientos'))
-                ->selectRaw(
-                    'cecos.nombre AS CECO,
-                 conceptos.nombre AS Concepto,
-                 tipo_movimientos.nombre AS Movimiento,
-                 SUM(productos.cantidad)  AS Cantidad'
-                )
-                ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', '=', 'ceco_conceptos.id')
-                ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
-                ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
-                ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
-                ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
-                ->groupBy('cecos.nombre', 'conceptos.nombre', 'tipo_movimientos.nombre')
-                ->where('soli_movimientos.created_at', 'LIKE', '%' . $request['fecha'] . '%');
-        } else {
-            $ceco_concepto = DB::table(DB::raw('soli_movimientos'))
-                ->selectRaw(
-                    'cecos.nombre AS CECO,
-                 conceptos.nombre AS Concepto,
-                 tipo_movimientos.nombre AS Movimiento,
-                 tipo_movimientos.id AS IDMovimiento,
-                 SUM(productos.cantidad)  AS Cantidad
-                 '
-                )
-                ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', '=', 'ceco_conceptos.id')
-                ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
-                ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
-                ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
-                ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
-                ->groupBy('cecos.nombre', 'conceptos.nombre', 'tipo_movimientos.nombre', 'tipo_movimientos.id')
-                ->where('soli_movimientos.created_at', 'LIKE', '%' . $fechaActual . '%');
-        }
-
-        $cecos = Ceco::all();
-        $conceptos = Concepto::all();
-
-        return Inertia::render(
-            'Presupuestos/TablaPresupuestosIndex',
-            [
-                'ceco_concepto' => fn () => $ceco_concepto->get(),
-                'conceptos' => $conceptos,
-                'cecos' => $cecos
-            ]
-        );
     }
 
     public function listado()
