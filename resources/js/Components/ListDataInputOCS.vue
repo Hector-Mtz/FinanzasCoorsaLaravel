@@ -24,7 +24,7 @@ const props = defineProps({
         type: String,
         default: "nombre",
     },
-    value: {
+    valueText: {
         default: "",
     },
     cantidad: {
@@ -33,17 +33,16 @@ const props = defineProps({
     },
 });
 
-const valueText = ref("");
 
 const changeText = (text) => {
-    valueText.value = text;
+    emit('value', text);
 };
 
 const error = computed(() => {
-    if (valueText.value !== "" || props.modelValue != "") {
-        if (valueText.value !== "") {
+    if (props.valueText !== "" || props.modelValue != "") {
+        if (props.valueText !== "") {
             const selectOpcion = props.options.find((opcion) => {
-                return opcion[props.nameOption] == valueText.value;
+                return opcion[props.nameOption] == props.valueText;
             });
             if (selectOpcion !== undefined) {
                 emit("update:modelValue", selectOpcion[props.keyOption]);
@@ -56,7 +55,7 @@ const error = computed(() => {
                 return opcion[props.keyOption] == props.modelValue;
             });
             if (selectOpcion !== undefined) {
-                valueText.value = selectOpcion[props.nameOption];
+                props.valueText = selectOpcion[props.nameOption];
             }
         }
     } else {
@@ -68,7 +67,7 @@ const error = computed(() => {
 const inputlist = ref(null);
 
 watch(props, () => {
-    valueText.value = props.value;
+    props.valueText = props.value;
 });
 
 onMounted(() => {
@@ -81,23 +80,12 @@ defineExpose({ focus: () => inputlist.value.focus() });
 </script>
 <template>
     <div class="">
-        <input
-            type="text"
-            :list="list"
-            class="w-full py-1 text-sm text-fuente-500 border-aqua-500 rounded-md shadow-sm focus:border-aqua-500 focus:ring focus:ring-aqua-500/20 focus:ring-opacity-50 disabled:bg-aqua-500/50"
-            :class="{ 'border-red-400': error, 'text-red-400': error }"
-            :value="valueText"
-            @keyup="emit('value', valueText)"
-            @input="changeText($event.target.value)"
-            ref="inputlist"
-            :disabled="disabled"
-        />
+        <input type="text" :list="list"
+            class="w-full py-1 text-sm rounded-md shadow-sm text-fuente-500 border-aqua-500 focus:border-aqua-500 focus:ring focus:ring-aqua-500/20 focus:ring-opacity-50 disabled:bg-aqua-500/50"
+            :class="{ 'border-red-400': error, 'text-red-400': error }" :value="valueText"
+            @input="changeText($event.target.value)" ref="inputlist" :disabled="disabled" />
         <datalist :id="list">
-            <option
-                v-for="opcion in props.options"
-                :key="opcion[props.keyOption]"
-                :value="opcion[props.nameOption]"
-            >
+            <option v-for="opcion in props.options" :key="opcion[props.keyOption]" :value="opcion[props.nameOption]">
                 {{ opcion[props.nameOption] + "-" + opcion.cantidad }}
             </option>
         </datalist>

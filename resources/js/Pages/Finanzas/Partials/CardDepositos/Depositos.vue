@@ -38,7 +38,7 @@ const addFacturaToDeposito = (form) => {
         .post(route("ingresos.facturas.store", form.deposito_id), form)
         .then(() => {
             search(searchText.value);
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
@@ -115,56 +115,37 @@ watch(searchText, (newSearch) => {
 });
 </script>
 <template>
-    <div class="text-fuente-500 flex flex-col gap-4 pb-2">
-        <div class="flex justify-around items-center">
+    <div class="flex flex-col gap-4 pb-2 text-fuente-500">
+        <div class="flex items-center justify-around">
             <InputSearch v-model="searchText" class="px-2" />
             <ButtonAdd class="h-7" @click="showingDepositos = true" />
         </div>
         <div class="w-full">
             <!-- Header Tabs -->
             <div
-                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center"
-            >
-                <Tab
-                    :class="{
-                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                            tab === '1',
-                    }"
-                    class="tab"
-                    @click="changeTab('1')"
-                >
+                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center">
+                <Tab :class="{
+                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
+                        tab === '1',
+                }" class="tab" @click="changeTab('1')">
                     ABIERTAS
                 </Tab>
-                <Tab
-                    :class="{
-                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                            tab === '2',
-                    }"
-                    class="tab"
-                    @click="changeTab('2')"
-                >
+                <Tab :class="{
+                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
+                        tab === '2',
+                }" class="tab" @click="changeTab('2')">
                     CERRADAS
                 </Tab>
             </div>
             <!-- Lista de clientes -->
-            <div
-                class="-mx-2 overflow-hidden overflow-y-auto"
-                style="max-height: 41.1vh"
-            >
-                <ItemCliente
-                    v-for="cliente in clientes"
-                    :key="cliente.id"
-                    :cliente="cliente"
-                    :total="cliente.ingresos.length"
-                >
+            <div class="-mx-2 overflow-hidden overflow-y-auto" style="max-height: 41.1vh">
+                <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente"
+                    :total="cliente.ingresos.length">
                     <div
-                        class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden overflow-x-auto bg-gris-500 shadow-xl sm:rounded-lg"
-                    >
+                        class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden overflow-x-auto shadow-xl bg-gris-500 sm:rounded-lg">
                         <table class="overflow-hidden mr-[.5rem] w-full">
                             <thead>
-                                <tr
-                                    class="text-[9px] font-bold px-2 border-b-[1px] border-aqua-500"
-                                >
+                                <tr class="text-[9px] font-bold px-2 border-b-[1px] border-aqua-500">
                                     <th class="pb-1 px-[0.5rem]">
                                         Núm. Deposito
                                     </th>
@@ -173,18 +154,14 @@ watch(searchText, (newSearch) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <ItemIngresoC
-                                    v-for="(ingreso, index) in cliente.ingresos"
-                                    :key="ingreso.id + '-' + index"
-                                    :ingreso="ingreso"
-                                    @on-show="showFacturas($event)"
-                                />
+                                <ItemIngresoC v-for="(ingreso, index) in cliente.ingresos" :key="ingreso.id + '-' + index"
+                                    :ingreso="ingreso" @on-show="showFacturas($event)" />
                             </tbody>
                         </table>
                     </div>
                 </ItemCliente>
             </div>
-            <div class="px-4 py-1 flex flex-col">
+            <div class="flex flex-col px-4 py-1">
                 <span class="text-[12px] font-medium uppercase">Total</span>
                 <span class="text-[28px] font-bold text-fuente-500">
                     $ {{ formatoMoney(totalIngresos.total.toFixed(2)) }}
@@ -192,21 +169,11 @@ watch(searchText, (newSearch) => {
             </div>
         </div>
         <!--Modals -->
-        <DepositosModal
-            :show="showingDepositos"
-            :depositos="depositos"
-            @update-depositos="updateDepositos($event)"
-            @delete-deposito="updateDepositos()"
-            @add-factura="addFacturaToDeposito($event)"
-            @close="showingDepositos = false"
-        />
-        <FacturasDepositoModal
-            :show="showingFacturas"
-            :deposito="deposito"
-            @add-factura="addFacturaToDeposito($event)"
-            @update-depositos="updateDepositos()"
-            @close="closeFacturasDeposito"
-        />
+        <DepositosModal :show="showingDepositos" :depositos="depositos" @update-depositos="updateDepositos($event)"
+            @delete-deposito="updateDepositos()" @add-factura="addFacturaToDeposito($event)"
+            @close="showingDepositos = false" />
+        <FacturasDepositoModal :show="showingFacturas" :deposito="deposito" @add-factura="addFacturaToDeposito($event)"
+            @update-depositos="updateDepositos()" @close="closeFacturasDeposito" />
         <!--Ends Modals-->
     </div>
 </template>

@@ -228,41 +228,6 @@ class OcController extends Controller
     }
 
 
-    /**
-     * Mostra la sumatoria de los totales de los status PC PP C
-     * Agrupados
-     */
-    public function totalesStatus(Request $request)
-    {
-        $validadData = $request->validate([
-            'month' => ['required', 'numeric', 'min:1', 'max:12'],
-            'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
-        ]);
-        $status = collect(['pc' => 0, 'pp' => 0, 'c' => 0]);
-
-        $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
-            ->whereNull('ocs.factura_id')
-            ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
-            ->whereYear('ocs.fecha_alta', '=', $validadData['year'])
-            ->first();
-
-        $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
-            // ->join('ocs', 'facturas.id', '=', 'ocs.factura_id')
-            ->whereNull('facturas.ingreso_id')
-            ->whereMonth('facturas.fechaDePago', '=', $validadData['month'])
-            ->whereYear('facturas.fechaDePago', '=', $validadData['year'])
-            ->first();
-        $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
-            ->whereMonth('ingresos.created_at', '=', $validadData['month'])
-            ->whereYear('ingresos.created_at', '=', $validadData['year'])
-            ->first();
-
-        $status['pc'] =  $ocs->total;
-        $status['pp'] =  $facturas->total;
-        $status['c'] = $ingreso->total;
-
-        return response()->json($status);
-    }
 
 
     public function ocMonth(Request $request)

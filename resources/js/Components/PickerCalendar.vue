@@ -43,7 +43,7 @@ onMounted(() => {
     const x =
         divSlot.value.offsetLeft -
         pickerCalendar.value.clientWidth / 2 +
-        divSlot.value.clientWidth / 2;
+        divSlot.value.clientWidth;
     const y = divSlot.value.offsetTop + 45;
     pickerCalendar.value.style.top = `${y}px`;
     pickerCalendar.value.style.left = `${x}px`;
@@ -77,67 +77,32 @@ const changeYear = (newYear) => {
         </div>
         <!-- Full Screen Dropdown Overlay -->
         <div v-show="open" class="fixed inset-0 z-40" @click="open = false" />
-        <teleport to="footer">
-            <div
-                id="pickerCalendar"
-                ref="pickerCalendar"
-                class="bg-gris-500 rounded-xl text-fuente-500 absolute z-[1000] w-[20em] shadow-md shadow-gray-400"
-            >
+        <teleport to="body">
+            <div ref="pickerCalendar"
+                class="bg-gris-500 rounded-xl text-fuente-500 absolute z-[1000] w-[20em] shadow-md shadow-gray-400">
                 <transition leave-active-class="duration-200">
-                    <div
-                        v-show="open"
-                        class="absolute top-[14rem] left-[12.1rem] bg-gris-500 rounded-xl text-fuente-500 shadow-md w-[20em] shadow-gray-400"
-                    >
-                        <div
-                            class="flex justify-center items-center p-[5px] my-[10px] border-b-2 border-aqua-500"
-                        >
-                            <svg
-                                @click="changeYear(props.year - 1)"
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-4 hover:cursor-pointer hover:opacity-40"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="#44BFFC"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M15 19l-7-7 7-7"
-                                />
+                    <div v-show="open"
+                        class="absolute top-[14rem] left-[12.1rem] bg-gris-500 rounded-xl text-fuente-500 shadow-md w-[20em] shadow-gray-400">
+                        <div class="flex justify-center items-center p-[5px] my-[10px] border-b-2 border-aqua-500">
+                            <svg @click="changeYear(props.year - 1)" xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-4 hover:cursor-pointer hover:opacity-40" fill="none" viewBox="0 0 24 24"
+                                stroke="#44BFFC" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                             </svg>
-                            <span
-                                class="text-sm bg-aqua-500 text-white px-2 py-1 rounded-lg hover:cursor-pointer"
-                            >
+                            <span class="px-2 py-1 text-sm text-white rounded-lg bg-aqua-500 hover:cursor-pointer">
                                 {{ props.year }}
                             </span>
-                            <svg
-                                @click="changeYear(props.year + 1)"
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-4 hover:cursor-pointer hover:opacity-40"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="#44BFFC"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M9 5l7 7-7 7"
-                                />
+                            <svg @click="changeYear(props.year + 1)" xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-4 hover:cursor-pointer hover:opacity-40" fill="none" viewBox="0 0 24 24"
+                                stroke="#44BFFC" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
                         <div class="w-full px-[10px] py-[2px]">
                             <div class="grid grid-cols-3 gap-[5px]">
-                                <ItemMonth
-                                    v-for="(mText, index) in monthText"
-                                    :key="mText"
-                                    @click="
-                                        changeIndexMes(index), (open = !open)
-                                    "
-                                    :current-month="props.month"
-                                    :month="index"
-                                >
+                                <ItemMonth v-for="(mText, index) in monthText" :key="mText" @click="
+                                    changeIndexMes(index), (open = !open)
+                                " :current-month="props.month" :month="index">
                                     {{ mText }}
                                 </ItemMonth>
                             </div>

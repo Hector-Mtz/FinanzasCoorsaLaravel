@@ -43,7 +43,7 @@ const addOc = (form) => {
         .post(route("facturas.ocs.store", form.factura_id), form)
         .then(() => {
             search(searchText.value);
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
@@ -111,7 +111,7 @@ watch(searchText, (newSearch) => {
 });
 </script>
 <template>
-    <div class="text-fuente-500 flex flex-col gap-4 pb-2">
+    <div class="flex flex-col gap-4 pb-2 text-fuente-500">
         <div class="flex justify-around">
             <InputSearch v-model="searchText" class="px-2 py-1" />
             <ButtonAdd class="h-7" @click="showingFacturas = true" />
@@ -119,68 +119,41 @@ watch(searchText, (newSearch) => {
         <div class="w-full">
             <!-- Header Tabs -->
             <div
-                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center"
-            >
-                <Tab
-                    :class="{
-                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                            tab === '',
-                    }"
-                    class="tab flex items-center"
-                    @click="changeTab('')"
-                >
+                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center">
+                <Tab :class="{
+                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
+                        tab === '',
+                }" class="flex items-center tab" @click="changeTab('')">
                     TODAS
                 </Tab>
-                <Tab
-                    :class="{
-                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                            tab === '1',
-                    }"
-                    class="tab flex items-center"
-                    @click="changeTab('1')"
-                >
+                <Tab :class="{
+                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
+                        tab === '1',
+                }" class="flex items-center tab" @click="changeTab('1')">
                     ABIERTAS
                 </Tab>
-                <Tab
-                    :class="{
-                        'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                            tab === '2',
-                    }"
-                    class="tab flex items-center"
-                    @click="changeTab('2')"
-                >
+                <Tab :class="{
+                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
+                        tab === '2',
+                }" class="flex items-center tab" @click="changeTab('2')">
                     CERRADAS
                 </Tab>
             </div>
             <!-- Lista de clientes -->
 
-            <div
-                class="overflow-y-auto pt-4 border-b-[1px] border-gris-500"
-                style="max-height: 41.1vh"
-            >
-                <SkeletonLoader
-                    v-if="clientes.length === 0"
-                    style="height: 41.1vh"
-                />
+            <div class="overflow-y-auto pt-4 border-b-[1px] border-gris-500" style="max-height: 41.1vh">
+                <SkeletonLoader v-if="clientes.length === 0" style="height: 41.1vh" />
                 <div v-else>
-                    <ItemCliente
-                        v-for="cliente in clientes"
-                        :key="cliente.id"
-                        :cliente="cliente"
-                        :total="cliente.facturas.length"
-                    >
-                        <ItemObjectShow
-                            v-for="factura in cliente.facturas"
-                            :key="factura.id"
-                            :data="factura"
-                            @onShow="showOcsFactura($event)"
-                        >
+                    <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente"
+                        :total="cliente.facturas.length">
+                        <ItemObjectShow v-for="factura in cliente.facturas" :key="factura.id" :data="factura"
+                            @onShow="showOcsFactura($event)">
                             #{{ factura.referencia }}
                         </ItemObjectShow>
                     </ItemCliente>
                 </div>
             </div>
-            <div class="px-4 py-2 mt-4 flex flex-col font-bold text-fuente-500">
+            <div class="flex flex-col px-4 py-2 mt-4 font-bold text-fuente-500">
                 <span class="text-[12px] uppercase font-medium"> Total </span>
                 <span class="text-[28px]">
                     $ {{ formatoMoney(totalFacturas.total.toFixed(2)) }}
@@ -188,19 +161,9 @@ watch(searchText, (newSearch) => {
             </div>
         </div>
         <!--Modals -->
-        <FacturasModal
-            :show="showingFacturas"
-            :facturas="facturas"
-            @add-factura="addFactura($event)"
-            @add-oc="addOc($event)"
-            @close="showingFacturas = false"
-        />
-        <OcsFacturaModal
-            :show="showingOcs"
-            :factura="facturaSelect"
-            @add-oc="addOc($event)"
-            @close="closeOcsFactura"
-        />
+        <FacturasModal :show="showingFacturas" :facturas="facturas" @add-factura="addFactura($event)"
+            @add-oc="addOc($event)" @close="showingFacturas = false" />
+        <OcsFacturaModal :show="showingOcs" :factura="facturaSelect" @add-oc="addOc($event)" @close="closeOcsFactura" />
         <!--Ends Modals-->
     </div>
 </template>

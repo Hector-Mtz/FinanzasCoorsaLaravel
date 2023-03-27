@@ -46,7 +46,7 @@ const activeIva = (ventaId) => {
     axios
         .put(route("ventas.iva", ventaId))
         .then(() => {
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveScroll: true,
                 preserveState: true,
                 only: ["clientes", "totalVentas", "errors"],
@@ -107,6 +107,10 @@ const searchVentas = async (page) => {
         }
     }
 };
+
+const refreshVentas = () => {
+    searchVentas(ventas.value.current_page)
+}
 
 watchEffect(() => {
     if (props.show) {
@@ -174,8 +178,8 @@ const close = () => {
             </TableComponent>
             <PaginationAxios :pagination="ventas" @loadPage="searchVentas($event)" />
             <!-- MODALS -->
-            <FormVentaModal :show="showingFormVenta" :type-form="typeForm" :venta="venta"
-                @close="showingFormVenta = false" />
+            <FormVentaModal :show="showingFormVenta" :type-form="typeForm" :venta="venta" @close="showingFormVenta = false"
+                @refreshVentas="refreshVentas()" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>

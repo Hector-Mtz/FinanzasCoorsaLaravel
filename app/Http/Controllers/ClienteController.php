@@ -178,7 +178,7 @@ class ClienteController extends Controller
 
         if ($request->has("fecha_inicio")) {
             $ventas->where("ventas.fechaInicial", ">=",  $request->input("fecha_inicio"))
-                ->where("ventas.fechaFinal", '<=', $request->input("fecha_fin"));
+                ->where("ventas.fechaInicial", '<=', $request->input("fecha_fin"));
         }
 
 

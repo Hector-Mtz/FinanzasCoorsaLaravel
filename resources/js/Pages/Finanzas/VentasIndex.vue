@@ -10,12 +10,8 @@ import Depositos from "./Partials/CardDepositos/Depositos.vue";
 import VentasCalendar from "./Partials/CardCalendar/VentasCalendar.vue";
 import { formatoMoney } from "../../utils/conversiones";
 
-const dateNow = new Date();
+
 const showingVentas = ref(false);
-const date = ref({
-    month: dateNow.getMonth(),
-    year: dateNow.getFullYear(),
-});
 
 const componentFactDep = reactive({
     component: "Facturas",
@@ -35,28 +31,18 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    listClientes: {
+        type: Object,
+        required: true,
+    },
     filters: {
         type: Object,
         required: true,
     },
 });
 
-// const ventas = computed(() => {
-//     let auxVentas = [];
-//     props.clientes.forEach((cliente) => {
-//         let ventas = cliente.ventas;
-//         ventas = ventas.map((venta) => {
-//             venta.sub_total = venta.monto * venta.periodos * venta.cantidad;
-//             return venta;
-//         });
-//         auxVentas = auxVentas.concat(ventas);
-//     });
-//     return auxVentas;
-// });
 
-const changeDate = (newDate) => {
-    date.value = newDate;
-};
+
 // FUNCIONES MODAL
 const closeModalVentas = () => {
     showingVentas.value = false;
@@ -102,8 +88,7 @@ const chageComponent = () => {
                     </div>
                 </Card>
                 <div class="grid col-span-2 px-4 py-4 bg-white text-fuente-500 rounded-2xl">
-
-                    <VentasCalendar :date="date" @change-date="changeDate($event)" />
+                    <VentasCalendar :lineas-negocios="props.lineasNegocios" :list-clientes="props.listClientes" />
                 </div>
                 <Card>
                     <div class="flex items-center justify-between my-1 mb-4 text-fuente-500">

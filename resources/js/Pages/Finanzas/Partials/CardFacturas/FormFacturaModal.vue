@@ -84,17 +84,17 @@ const createOrUpdate = () => {
 
 const create = () => {
     form.post(route('facturas.store'),
-    {
-        preserveScroll:true,
-        preserveState:true,
-        onSuccess:() => restForm(),
-        onFinish: () =>  Inertia.visit(route("ventas.index"),
         {
-           preserveScroll:true,
-           preserveState:true,
-           only:["totalOcs"]
-        })
-    });
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => restForm(),
+            onFinish: () => Inertia.visit(route("finanzas.index"),
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    only: ["totalOcs"]
+                })
+        });
     /*
     axios
         .post(route("facturas.store"), form, {
@@ -106,7 +106,7 @@ const create = () => {
             emit("addFactura");
             form.recentlySuccessful = true;
             restForm();
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
@@ -134,7 +134,7 @@ const create = () => {
         .then(() => {
             // always
             form.processing = false;
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
@@ -147,17 +147,17 @@ const create = () => {
 };
 const update = () => {
     form.post(route("facturas.update", props.factura.id),
-    {
-        onSuccess:() => restForm(),
-        onFinish: () =>  Inertia.visit(route("ventas.index"),
         {
-           preserveScroll:true,
-           preserveState:true,
-           only:["totalOcs"]
-        }),
-        preserveScroll:true,
-        preserveState:true
-    });
+            onSuccess: () => restForm(),
+            onFinish: () => Inertia.visit(route("finanzas.index"),
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    only: ["totalOcs"]
+                }),
+            preserveScroll: true,
+            preserveState: true
+        });
     /*
     axios
         .put(route("facturas.update", props.factura.id), form, {
@@ -169,7 +169,7 @@ const update = () => {
             emit("editFactura", resp.data);
             form.recentlySuccessful = true;
             restForm();
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
@@ -215,66 +215,30 @@ const update = () => {
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
                 </div>
-                <img
-                    :src="cerrar"
-                    alt=""
-                    class="absolute left-[30rem] top-[1rem] hover:cursor-pointer"
-                    @click="close()"
-                />
+                <img :src="cerrar" alt="" class="absolute left-[30rem] top-[1rem] hover:cursor-pointer" @click="close()" />
             </div>
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
                 <div class="flex flex-col px-4 py-2 mb-8 gap-x-2 gap-y-6">
                     <div>
-                        <JetLabel for="referencia" value="Referencia"/>
-                        <Input
-                            placeholder="Referencia"
-                            id="referencia"
-                            name="referencia"
-                            type="text"
-                            v-model="form.referencia"
-                            required
-                            class="text-[14px] font-light uppercase"
-                            maxlength="30"
-                        />
-                        <JetInputError
-                            :message="form.errors.referencia"
-                            class="mt-2"
-                        />
+                        <JetLabel for="referencia" value="Referencia" />
+                        <Input placeholder="Referencia" id="referencia" name="referencia" type="text"
+                            v-model="form.referencia" required class="text-[14px] font-light uppercase" maxlength="30" />
+                        <JetInputError :message="form.errors.referencia" class="mt-2" />
                     </div>
                     <div>
-                        <JetLabel for="fechaDePago" value="Fecha de pago"/>
-                        <Input
-                            placeholder="Fecha de Pago"
-                            id="fechaDePago"
-                            name="fecha_final"
-                            type="date"
-                            v-model="form.fechaDePago"
-                            required
-                            :min="form.fechaInicial"
-                            class="text-[14px] font-light uppercase"
-                        />
-                        <JetInputError
-                            :message="form.errors.fechaDePago"
-                            class="mt-2"
-                        />
+                        <JetLabel for="fechaDePago" value="Fecha de pago" />
+                        <Input placeholder="Fecha de Pago" id="fechaDePago" name="fecha_final" type="date"
+                            v-model="form.fechaDePago" required :min="form.fechaInicial"
+                            class="text-[14px] font-light uppercase" />
+                        <JetInputError :message="form.errors.fechaDePago" class="mt-2" />
                     </div>
                     <div>
-                        <JetLabel for="cantidad" value="Cantidad"/>
-                        <Input
-                            placeholder="Cantidad"
-                            name="cantidad"
-                            type="number"
-                            v-model="form.cantidad"
-                            required
-                            :min="form.cantidad"
-                            class="text-[14px] font-light uppercase"
-                        />
-                        <JetInputError
-                            :message="form.errors.fechaDePago"
-                            class="mt-2"
-                        />
+                        <JetLabel for="cantidad" value="Cantidad" />
+                        <Input placeholder="Cantidad" name="cantidad" type="number" v-model="form.cantidad" required
+                            :min="form.cantidad" class="text-[14px] font-light uppercase" />
+                        <JetInputError :message="form.errors.fechaDePago" class="mt-2" />
                     </div>
                     <div>
                         <JetLabel for="documento" value="Documento" />

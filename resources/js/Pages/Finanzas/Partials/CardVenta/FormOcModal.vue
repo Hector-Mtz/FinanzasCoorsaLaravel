@@ -15,7 +15,7 @@ import { Fancybox } from '@fancyapps/ui/dist/fancybox/fancybox.esm.js';
 import '@fancyapps/ui/dist/fancybox/fancybox.css';
 
 Fancybox.bind("[data-fancybox]", {
-  // Your custom options
+    // Your custom options
 });
 
 const emit = defineEmits(["close", "addOc", "editOc"]);
@@ -58,7 +58,7 @@ const form = useForm({
     error: "",
     recentlySuccessful: false,
     processing: false,
-    documento:null
+    documento: null
 });
 
 const titleModal = computed(() => {
@@ -106,15 +106,15 @@ const createOrUpdate = () => {
 };
 
 const create = () => {
-    form.post(route('ocs.store'),{
-       preserveScroll:true,
-       preserveState:true,
-       onFinish:()=>  Inertia.visit(route("ventas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            }),
-        onSuccess:() => {close(), form.reset()} ,
+    form.post(route('ocs.store'), {
+        preserveScroll: true,
+        preserveState: true,
+        onFinish: () => Inertia.visit(route("finanzas.index"), {
+            preserveState: true,
+            preserveScroll: true,
+            only: ["totalOcs"],
+        }),
+        onSuccess: () => { close(), form.reset() },
     });
     /*
     axios
@@ -127,7 +127,7 @@ const create = () => {
             emit("addOc", resp.data);
             form.recentlySuccessful = true;
             restForm();
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("vfinanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
@@ -163,17 +163,17 @@ const create = () => {
 };
 const update = () => {
     form.post(route("ocs.update", props.oc.id),
-    {
-        preserveScroll:true,
-        preserveState:true,
-        onFinish:() =>  Inertia.visit(route("ventas.index"), {
+        {
+            preserveScroll: true,
+            preserveState: true,
+            onFinish: () => Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
             }),
-        onSuccess:() => {emit("editOc", props.oc), close()}
-    });
-    
+            onSuccess: () => { emit("editOc", props.oc), close() }
+        });
+
     /*
     axios
         .put(route("ocs.update", props.oc.id), form, {
@@ -185,7 +185,7 @@ const update = () => {
             emit("editOc", resp.data);
             form.recentlySuccessful = true;
             restForm();
-            Inertia.visit(route("ventas.index"), {
+            Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
                 only: ["totalOcs"],
@@ -230,10 +230,7 @@ const update = () => {
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
                 </div>
-                <div
-                    class="absolute left-[94%] top-[5%] hover:cursor-pointer"
-                    @click="close"
-                >
+                <div class="absolute left-[94%] top-[5%] hover:cursor-pointer" @click="close">
                     <img :src="cerrar" alt="" />
                 </div>
             </div>
@@ -242,54 +239,23 @@ const update = () => {
             <form @submit.prevent="createOrUpdate()">
                 <div class="grid px-4 mt-4 mb-12 gap-x-2 gap-y-6">
                     <div>
-                        <Input
-                            id="nombre"
-                            name="nombre"
-                            type="text"
-                            placeholder="NOMBRE"
-                            v-model="form.nombre"
-                            required
-                            maxlength="30"
-                        />
-                        <JetInputError
-                            :message="form.errors.nombre"
-                            class="mt-2"
-                        />
+                        <Input id="nombre" name="nombre" type="text" placeholder="NOMBRE" v-model="form.nombre" required
+                            maxlength="30" />
+                        <JetInputError :message="form.errors.nombre" class="mt-2" />
                     </div>
                     <div>
-                        <Input
-                            id="fecha_alta"
-                            name="fecha_alta"
-                            type="date"
-                            placeholder="FECHA INICIAL"
-                            min="2000-01-02"
-                            v-model="form.fecha_alta"
-                            required
-                        />
-                        <JetInputError
-                            :message="form.errors.fecha_alta"
-                            class="mt-2"
-                        />
+                        <Input id="fecha_alta" name="fecha_alta" type="date" placeholder="FECHA INICIAL" min="2000-01-02"
+                            v-model="form.fecha_alta" required />
+                        <JetInputError :message="form.errors.fecha_alta" class="mt-2" />
                     </div>
                     <div class="flex justify-between">
                         <div>
-                            <Input
-                                id="cantidad"
-                                name="cantidad"
-                                type="text"
-                                pattern="^\d*(\.\d{0,2})?$"
-                                placeholder="CANTIDAD"
-                                v-model="form.cantidad"
-                                required
-                                maxlength="30"
-                            />
-                            <JetInputError
-                                :message="form.errors.cantidad"
-                                class="mt-2"
-                            />
+                            <Input id="cantidad" name="cantidad" type="text" pattern="^\d*(\.\d{0,2})?$"
+                                placeholder="CANTIDAD" v-model="form.cantidad" required maxlength="30" />
+                            <JetInputError :message="form.errors.cantidad" class="mt-2" />
                         </div>
                         <div>
-                           <DropZone v-model="form.documento" />
+                            <DropZone v-model="form.documento" />
                         </div>
                     </div>
                 </div>

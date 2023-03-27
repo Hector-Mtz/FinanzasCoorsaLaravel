@@ -60,12 +60,10 @@ Route::middleware([
     Route::put('/ventas/{venta}/iva', [VentaController::class, 'activeIva'])->name('ventas.iva');
     Route::put('/ventas/{venta}/revisado', [VentaController::class, 'changeRevisado'])->name('ventas.revisado');
     Route::get('/ventas/{venta}/ocs', [VentaController::class, 'ocsIndex'])->name('ventas.ocs.index');
-    Route::get('/ventas/totals', [VentaController::class, 'totals'])->name('ventas.totals');
     Route::get('/ventas/months', [VentaController::class, 'ventasMonth'])->name('ventas.month');
     Route::post('/ventas/{venta}', [VentaController::class, 'update'])->name('ventas.update');
     Route::apiResource('/ocs', OcController::class)->except('show', 'update');
     Route::get('/ocs/catalogos', [OcController::class, "catalogos"])->name("ocs.catalogos");
-    Route::get('/ocs/totals-status', [OcController::class, "totalesStatus"])->name("ocs.totals-status");
     Route::get('/ocs/months', [OcController::class, "ocMonth"])->name("ocs.month");
     Route::post('/ocs/{oc}', [OcController::class, 'update'])->name('ocs.update');
 
@@ -106,5 +104,10 @@ Route::middleware([
 
 Route::apiResource('/presupuestos', ClienteController::class)->except('show');;
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);
+<<<<<<< HEAD
 /*Peticiones Axios*/ 
 Route::get('consulta1/{cliente}/{grupoConcepto}',[ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
+=======
+/*Peticiones Axios*/
+Route::get('/clienteGrupoCon/{cliente}/{grupoConcepto}', [ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
+>>>>>>> b2f4f1d3ab33abf4727b84b4b9eeefb73b61824b
