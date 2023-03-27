@@ -41,6 +41,7 @@ let arregloGrupoConcepto = ref([]);
      {
         const grupo = props.grupoConceptos_conceptos[index2];
         let newObj = {
+         tipo_arreglo:"cliente_grupoConcepto",
          cliente_id:null,
          x:null,
          grupo_id:null,
@@ -78,6 +79,7 @@ const setFor = (tipoAcomodo) =>
                         {
                             const grupoCon = props.grupoConceptos_conceptos[index3];
                             let newObj = {
+                             tipo_arreglo:"ceco_grupoConcepto",
                              ceco_id:null,
                              x:null,
                              grupo_id:null,
@@ -115,6 +117,7 @@ const setFor = (tipoAcomodo) =>
                         const concepto = grupoCon.conceptos[index3];
                         //console.log(concepto)
                         let newObj = {
+                             tipo_arreglo:"cliente_concepto",
                              cliente_id:null,
                              x:null,
                              concepto_id:null,
@@ -154,6 +157,7 @@ const reAcomodar = () =>
        {
           const grupo = props.grupoConceptos_conceptos[index2];
           let newObj = {
+          tipo_arreglo:"cliente_grupoConcepto",
            cliente_id:null,
            x:null,
            grupo_id:null,

@@ -100,10 +100,11 @@ Route::middleware([
     Route::get('/cecos/catalogo', [CecoController::class, 'catalogo'])->name('cecos.catalogo');
     Route::get('/servicios/catalogo', [ServicioController::class, 'catalogo'])->name('servicios.catalogo');
     Route::get('/tipos/catalogo', [TipoController::class, 'catalogo'])->name('tipos.catalogo');
+    
 });
 
 
-Route::apiResource('/presupuestos', ClienteController::class);
+Route::apiResource('/presupuestos', ClienteController::class)->except('show');;
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);
 /*Peticiones Axios*/ 
-Route::get('/clienteGrupoCon/{cliente}/{grupoConcepto}',[ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
+Route::get('consulta1/{cliente}/{grupoConcepto}',[ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
