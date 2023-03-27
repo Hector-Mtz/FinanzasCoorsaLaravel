@@ -222,9 +222,20 @@ onMounted(() =>
     series.columns.template.events.on("hit", function(ev)  //primer click para zoom
     {
        click1.value = 1;
+
        //hay que recuperar los nombres de ejex y ejey
-       console.log(ev.target.dataItem.categories); //tenemos ambas categorias
-       
+       //console.log(ev.target.dataItem); //tenemos ambas categorias
+       let categorias =  ev.target.dataItem.categories;
+       let tipoAcomodo = ev.target.dataItem.dataContext.tipo_arreglo;
+
+       switch (tipoAcomodo) {
+        case "cliente_grupoConcepto":
+              axios.get(route('cliente.grupoCon', {cliente: categorias.categoryY, grupoConcepto:categorias.categoryX}))
+               .then((resp) => {
+                  console.log(resp);
+                });
+            break;
+       }
      
     }, this);
    

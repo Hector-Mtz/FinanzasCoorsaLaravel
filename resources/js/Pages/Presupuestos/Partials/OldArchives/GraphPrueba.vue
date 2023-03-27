@@ -8,9 +8,9 @@ import { reactive } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import axios from 'axios';
-import ButtonPres from '../../Components/ButtonPres.vue';
-import ModalSalidaMovimiento from './Components/ModalSalidaMovimiento.vue';
-import ButtonReturn from '../../Components/ButtonReturn.vue';
+import ButtonPres from '@/Components/ButtonPres.vue';
+import ModalSalidaMovimiento from '../../Components/ModalSalidaMovimiento.vue';
+import ButtonReturn from '@/Components/ButtonReturn.vue';
 
 
 //variables GLOBALES

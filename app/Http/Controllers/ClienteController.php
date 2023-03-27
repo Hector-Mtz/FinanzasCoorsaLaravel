@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ceco;
+use App\Models\CecoConcepto;
 use App\Models\Cliente;
 use App\Models\Concepto;
 use App\Models\GrupoConcepto;
@@ -246,5 +247,23 @@ class ClienteController extends Controller
     public function destroy(Cliente $cliente)
     {
         //
+    }
+
+    public function clienteGrupoCon($cliente, $grupoConcepto)
+    {
+         //consulta para construiro loshijos de ambos
+     return  CecoConcepto::select(
+           'cecos.id AS ceco_id',
+           'cecos.nombre AS ceco_nombre',
+           'conceptos.id AS concepto_id',
+           'conceptos.nombre AS concepto_nombre'
+         )
+         ->join('cecos','ceco_conceptos.ceco_id','cecos.id')
+         ->join('clientes','cecos.cliente_id','clientes.id')
+         ->join('conceptos', 'ceco_conceptos.concepto_id','conceptos.id')
+         ->join('grupo_conceptos','conceptos.grupo_concepto_id', 'grupo_conceptos.id')
+         ->where('clientes.nombre','=',$cliente)
+         ->where('grupo_conceptos.nombre','=',$grupoConcepto)
+         ->get();
     }
 }

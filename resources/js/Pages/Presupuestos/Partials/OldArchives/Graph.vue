@@ -8,9 +8,9 @@ import { reactive } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import axios from 'axios';
-import ButtonPres from '../../Components/ButtonPres.vue';
+import ButtonPres from '@/Components/ButtonPres.vue';
 import moment from 'moment';
-import ModalSalidaMovimiento from './Components/ModalSalidaMovimiento.vue';
+import ModalSalidaMovimiento from '../../Components/ModalSalidaMovimiento.vue';
 
 //comentariooo
 
