@@ -1,16 +1,12 @@
 <script setup>
-import { computed, reactive, ref } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { reactive, ref } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import cal from "../../../img/elementos/calendario.png";
+
 import Card from "../../Components/Card.vue";
-import Calendar from "../../Components/Calendar.vue";
-import CalendarHeader from "../../Components/CalendarHeader.vue";
 import Ventas from "./Partials/CardVenta/Ventas.vue";
 import VentasModal from "./Partials/CardVenta/VentasModal.vue";
 import Facturas from "./Partials/CardFacturas/Facturas.vue";
 import Depositos from "./Partials/CardDepositos/Depositos.vue";
-import ButtonCalendar from "../../Components/ButtonCalendar.vue";
 import VentasCalendar from "./Partials/CardCalendar/VentasCalendar.vue";
 import { formatoMoney } from "../../utils/conversiones";
 
@@ -32,10 +28,6 @@ const props = defineProps({
         required: true,
     },
     totalVentasStatus: {
-        type: Object,
-        required: true,
-    },
-    totalOcs: {
         type: Object,
         required: true,
     },
@@ -84,7 +76,7 @@ const chageComponent = () => {
 
 <template>
     <AppLayout title="Finanzas">
-    <template #header>
+        <template #header>
             <div class="flex items-center">
                 <h2 class="text-4xl font-bold leading-tight text-fuente-500">
                     Finanzas
@@ -110,130 +102,8 @@ const chageComponent = () => {
                     </div>
                 </Card>
                 <div class="grid col-span-2 px-4 py-4 bg-white text-fuente-500 rounded-2xl">
-                    <table class="mx-2 mb-4">
-                        <thead>
-                            <tr>
-                                <td class="flex justify-between py-4">
-                                    <span class="text-fuente-500 text-[26px] font-semibold">Reporte Anual</span>
-                                    <!-- 
-                                                                    <ButtonCalendar
-                                                                        :year="date.year"
-                                                                        :month="date.month"
-                                                                        @change-date="changeDate($event)"
-                                                                    >
-                                                                        <template #a>
-                                                                            <button
-                                                                                @click="
-                                                                                    changeIndexMes(year - 1)
-                                                                                "
-                                                                                class="hover:opacity-40"
-                                                                            >
-                                                                                <svg
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    class="w-5 h-5 text-gray-900"
-                                                                                    fill="none"
-                                                                                    viewBox="0 0 24 24"
-                                                                                    stroke="#1D96F1"
-                                                                                    stroke-width="2"
-                                                                                >
-                                                                                    <path
-                                                                                        stroke-linecap="round"
-                                                                                        stroke-linejoin="round"
-                                                                                        d="M15 19l-7-7 7-7"
-                                                                                    />
-                                                                                </svg>
-                                                                            </button>
-                                                                        </template>
-                                                                        <template #b>
-                                                                            <button
-                                                                                @click="
-                                                                                    changeIndexMes(year + 1)
-                                                                                "
-                                                                                class="hover:opacity-40"
-                                                                            >
-                                                                                <svg
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    class="w-5 h-5 text-gray-900"
-                                                                                    fill="none"
-                                                                                    viewBox="0 0 24 24"
-                                                                                    stroke="#1D96F1"
-                                                                                    stroke-width="2"
-                                                                                >
-                                                                                    <path
-                                                                                        stroke-linecap="round"
-                                                                                        stroke-linejoin="round"
-                                                                                        d="M9 5l7 7-7 7"
-                                                                                    />
-                                                                                </svg>
-                                                                            </button>
-                                                                        </template>
-                                                                    </ButtonCalendar>
-                                                        -->
-                                </td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="flex gap-2 py-4 text-center">
-                                <td class="w-3/12 px-4 py-1 text-white shadow-md bg-ventas rounded-xl shadow-gray-400">
-                                    <div class="flex flex-col">
-                                        <span class="text-[13px] uppercase font-normal">
-                                            VENTAS
-                                        </span>
-                                        <span class="font-bold text-[16px]">${{
-                                            formatoMoney(
-                                                0
-                                            )
-                                        }}</span>
-                                    </div>
-                                </td>
-                                <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pc rounded-xl shadow-gray-400">
-                                    <div class="flex flex-col">
-                                        <span class="text-[13px] uppercase font-normal">
-                                            Por Cobrar
-                                        </span>
-                                        <span class="font-bold text-[16px]">${{
-                                            formatoMoney(
-                                                props.totalOcs.pc.toFixed(2)
-                                            )
-                                        }}</span>
-                                    </div>
-                                </td>
-                                <td class="w-3/12 px-4 py-1 text-white shadow-md bg-pp rounded-xl shadow-gray-400">
-                                    <div class="flex flex-col">
-                                        <span class="text-[13px] uppercase font-normal">
-                                            Por Pagar
-                                        </span>
-                                        <span class="font-bold text-[16px]">${{
-                                            formatoMoney(
-                                                props.totalOcs.pp.toFixed(2)
-                                            )
-                                        }}</span>
-                                    </div>
-                                </td>
-                                <td class="w-3/12 px-4 py-1 text-white shadow-md bg-cobrado rounded-xl shadow-gray-400">
-                                    <div class="flex flex-col">
-                                        <span class="text-[13px] uppercase font-normal">
-                                            Cobrado
-                                        </span>
-                                        <span class="font-bold text-[16px]">${{
-                                            formatoMoney(
-                                                props.totalOcs.c.toFixed(2)
-                                            )
-                                        }}</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="4" class="flex items-center justify-between">
-                                    <span class="text-fuente-500 text-[26px] font-semibold">Calendario</span>
-                                    <img :src="cal" alt="calendario" class="w-[26px] h-[26px]" />
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                    <VentasCalendar :date="date" @change-date="changeDate($event)" :totalOcs="props.totalOcs" />
+
+                    <VentasCalendar :date="date" @change-date="changeDate($event)" />
                 </div>
                 <Card>
                     <div class="flex items-center justify-between my-1 mb-4 text-fuente-500">
