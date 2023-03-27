@@ -102,9 +102,7 @@ Route::middleware([
 });
 
 
-
 Route::apiResource('/presupuestos', ClienteController::class);
-
-Route::get('/tablaPresupuestos', [ClienteController::class, 'tablaPresupuestos'])->name('tabla.presupuestos');;
-
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);
+/*Peticiones Axios*/ 
+Route::get('/clienteGrupoCon/{cliente}/{grupoConcepto}',[ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
