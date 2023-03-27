@@ -144,7 +144,7 @@ async function getTotalsStatus() {
         pc: formatoMoney(resp[1].data.pc.toFixed(2)),
         pp: formatoMoney(resp[1].data.pp.toFixed(2)),
     };
-    console.log(resp[0].data);
+    // console.log(resp[0].data);
     totalsGlobalStatus.value = {
         ventas: formatoMoney(resp[0].data.ventas.toFixed(2)),
         c: formatoMoney(resp[0].data.c.toFixed(2)),
@@ -190,59 +190,59 @@ watch(props, () => {
                     <td class="flex justify-between py-4">
                         <span class="text-fuente-500 text-[26px] font-semibold">Reporte Anual</span>
                         <!-- 
-                                                                                        <ButtonCalendar
-                                                                                            :year="date.year"
-                                                                                            :month="date.month"
-                                                                                            @change-date="changeDate($event)"
-                                                                                        >
-                                                                                            <template #a>
-                                                                                                <button
-                                                                                                    @click="
-                                                                                                        changeIndexMes(year - 1)
-                                                                                                    "
-                                                                                                    class="hover:opacity-40"
-                                                                                                >
-                                                                                                    <svg
-                                                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                                                        class="w-5 h-5 text-gray-900"
-                                                                                                        fill="none"
-                                                                                                        viewBox="0 0 24 24"
-                                                                                                        stroke="#1D96F1"
-                                                                                                        stroke-width="2"
+                                                                                            <ButtonCalendar
+                                                                                                :year="date.year"
+                                                                                                :month="date.month"
+                                                                                                @change-date="changeDate($event)"
+                                                                                            >
+                                                                                                <template #a>
+                                                                                                    <button
+                                                                                                        @click="
+                                                                                                            changeIndexMes(year - 1)
+                                                                                                        "
+                                                                                                        class="hover:opacity-40"
                                                                                                     >
-                                                                                                        <path
-                                                                                                            stroke-linecap="round"
-                                                                                                            stroke-linejoin="round"
-                                                                                                            d="M15 19l-7-7 7-7"
-                                                                                                        />
-                                                                                                    </svg>
-                                                                                                </button>
-                                                                                            </template>
-                                                                                            <template #b>
-                                                                                                <button
-                                                                                                    @click="
-                                                                                                        changeIndexMes(year + 1)
-                                                                                                    "
-                                                                                                    class="hover:opacity-40"
-                                                                                                >
-                                                                                                    <svg
-                                                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                                                        class="w-5 h-5 text-gray-900"
-                                                                                                        fill="none"
-                                                                                                        viewBox="0 0 24 24"
-                                                                                                        stroke="#1D96F1"
-                                                                                                        stroke-width="2"
+                                                                                                        <svg
+                                                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                                                            class="w-5 h-5 text-gray-900"
+                                                                                                            fill="none"
+                                                                                                            viewBox="0 0 24 24"
+                                                                                                            stroke="#1D96F1"
+                                                                                                            stroke-width="2"
+                                                                                                        >
+                                                                                                            <path
+                                                                                                                stroke-linecap="round"
+                                                                                                                stroke-linejoin="round"
+                                                                                                                d="M15 19l-7-7 7-7"
+                                                                                                            />
+                                                                                                        </svg>
+                                                                                                    </button>
+                                                                                                </template>
+                                                                                                <template #b>
+                                                                                                    <button
+                                                                                                        @click="
+                                                                                                            changeIndexMes(year + 1)
+                                                                                                        "
+                                                                                                        class="hover:opacity-40"
                                                                                                     >
-                                                                                                        <path
-                                                                                                            stroke-linecap="round"
-                                                                                                            stroke-linejoin="round"
-                                                                                                            d="M9 5l7 7-7 7"
-                                                                                                        />
-                                                                                                    </svg>
-                                                                                                </button>
-                                                                                            </template>
-                                                                                        </ButtonCalendar>
-                                                                                    -->
+                                                                                                        <svg
+                                                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                                                            class="w-5 h-5 text-gray-900"
+                                                                                                            fill="none"
+                                                                                                            viewBox="0 0 24 24"
+                                                                                                            stroke="#1D96F1"
+                                                                                                            stroke-width="2"
+                                                                                                        >
+                                                                                                            <path
+                                                                                                                stroke-linecap="round"
+                                                                                                                stroke-linejoin="round"
+                                                                                                                d="M9 5l7 7-7 7"
+                                                                                                            />
+                                                                                                        </svg>
+                                                                                                    </button>
+                                                                                                </template>
+                                                                                            </ButtonCalendar>
+                                                                                        -->
                     </td>
                 </tr>
             </thead>

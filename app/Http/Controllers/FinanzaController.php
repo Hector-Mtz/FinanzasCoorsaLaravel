@@ -50,14 +50,14 @@ class FinanzaController extends Controller
 
         if ($request->has("lineas_negocio_id")) {
             $clientes->where("cecos.lineas_negocio_id", "=",  $request->input("lineas_negocio_id"));
-            $totalVentasStatus->where("cecos.nombre", "like",  $request->input("lineas_negocio_id"));
+            $totalVentasStatus->where("cecos.lineas_negocio_id", "=",  $request->input("lineas_negocio_id"));
         }
 
         if ($request->has("fecha_inicio")) {
             $clientes->where("ventas.fechaInicial", ">=",  $request->input("fecha_inicio"))
-                ->where("ventas.fechaFinal", '<=', $request->input("fecha_fin"));
+                ->where("ventas.fechaInicial", '<=', $request->input("fecha_fin"));
             $totalVentasStatus->where("ventas.fechaInicial", ">=",  $request->input("fecha_inicio"))
-                ->where("ventas.fechaFinal", '<=', $request->input("fecha_fin"));
+                ->where("ventas.fechaInicial", '<=', $request->input("fecha_fin"));
         }
 
 

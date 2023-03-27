@@ -99,6 +99,13 @@ const close = () => {
     emit("close");
 };
 
+const montosVenta = computed(() => {
+    if (props.venta.iva) {
+        return { iva: formatoMoney(Math.round(props.venta.monto * 0.16)), total: formatoMoney(props.venta.monto + props.venta.monto * 0.16) }
+    }
+    return { iva: 0, total: formatoMoney(props.venta.monto) }
+});
+
 watch(props, () => {
     if (props.show == true) {
         getOcs();
@@ -110,19 +117,14 @@ watch(props, () => {
         <template #title>
             <div class="flex flex-row gap-8 py-4">
                 <div class="px-4 py-1 basis-1/3">
-                    <span
-                        class="block text-3xl font-bold text-center text-fuente-500"
-                    >
+                    <span class="block text-3xl font-bold text-center text-fuente-500">
                         {{ title }}
                     </span>
                 </div>
                 <div class="px-2 py-1">
                     <div
-                        class="flex justify-center items-center gap-4 border-[2px] border-aqua-500 w-fit px-8 rounded-xl py-1"
-                    >
-                        <span
-                            class="block text-sm font-light text-center text-fuente-500"
-                        >
+                        class="flex justify-center items-center gap-4 border-[2px] border-aqua-500 w-fit px-8 rounded-xl py-1">
+                        <span class="block text-sm font-light text-center text-fuente-500">
                             Fecha Incial
                         </span>
                         <span class="text-[28px] font-semibold">
@@ -130,41 +132,26 @@ watch(props, () => {
                         </span>
                     </div>
                 </div>
-                <div
-                    class="absolute left-[95.5%] top-[5%] hover:cursor-pointer"
-                    @click="close"
-                >
+                <div class="absolute left-[95.5%] top-[5%] hover:cursor-pointer" @click="close">
                     <img :src="cerrar" alt="" />
                 </div>
             </div>
-            <div
-                class="flex flex-row justify-between gap-4 px-4 mt-4 text-center text-fuente-500"
-            >
+            <div class="flex flex-row justify-between gap-4 px-4 mt-4 text-center text-fuente-500">
                 <div class="py-1 px-2 border-[2px] border-aqua-500 rounded-xl">
                     <span class="block text-xs text-start px-[2.6rem]">
                         Subtotal
                     </span>
-                    <span class="text-3xl font-bold"
-                        >${{ formatoMoney(venta.monto) }}</span
-                    >
+                    <span class="text-3xl font-bold">${{ formatoMoney(venta.monto) }}</span>
                 </div>
                 <div class="py-1 px-2 border-[2px] border-aqua-500 rounded-xl">
                     <span lass="block font-bold text-center tetx-black">
-                        <p v-if="venta.iva == true" class="flex flex-col">
-                            <span class="text-xs text-start px-[2.6rem]"
-                                >IVA</span
-                            >
+                        <p class="flex flex-col">
+                            <span class="text-xs text-start px-[2.6rem]">
+                                IVA
+                            </span>
                             <span class="px-4 text-3xl font-bold">
-                                ${{
-                                    formatoMoney(Math.round(venta.monto * 0.16))
-                                }}</span
-                            >
-                        </p>
-                        <p class="tetx-black" v-if="venta.iva == false">
-                            <span class="text-xs text-start px-[2.6rem]"
-                                >IVA</span
-                            >
-                            <span class="text-3xl font-bold"> ${{ 0 }}</span>
+                                ${{ montosVenta.iva }}
+                            </span>
                         </p>
                     </span>
                 </div>
@@ -173,7 +160,7 @@ watch(props, () => {
                         Total
                     </span>
                     <span class="text-3xl font-bold">
-                        ${{ formatoMoney(venta.monto + venta.monto * 0.16) }}
+                        ${{ montosVenta.total }}
                     </span>
                 </div>
             </div>
@@ -184,11 +171,8 @@ watch(props, () => {
                     <tr class="border-b-[2px] border-aqua-500 text-fuente-500">
                         <th class="flex items-center text-lg justify-evenly">
                             <h3 class="mb-1">OC</h3>
-                            <ButtonAdd
-                                v-if="$page.props.can['ocs.create']"
-                                class="h-6 shadow-md shadow-gray-300"
-                                @click="showFormOc()"
-                            />
+                            <ButtonAdd v-if="$page.props.can['ocs.create']" class="h-6 shadow-md shadow-gray-300"
+                                @click="showFormOc()" />
                         </th>
                         <th class="text-lg">CANTIDAD</th>
                         <th class="text-lg">FECHA</th>
@@ -198,25 +182,12 @@ watch(props, () => {
                     </tr>
                 </template>
                 <template #tbody>
-                    <ItemOc
-                        v-for="oc in ocs"
-                        :key="oc.id"
-                        :oc="oc"
-                        @edit="showFormOc($event)"
-                        @delete="deleteOc($event)"
-                    />
+                    <ItemOc v-for="oc in ocs" :key="oc.id" :oc="oc" @edit="showFormOc($event)" @delete="deleteOc($event)" />
                 </template>
             </TableComponent>
             <!--Modals-->
-            <FormOcModal
-                :show="showingFormOc"
-                :type-form="typeForm"
-                :venta="props.venta"
-                :oc="oc"
-                @add-oc="addOc($event)"
-                @edit-oc="editOc($event)"
-                @close="showingFormOc = false"
-            />
+            <FormOcModal :show="showingFormOc" :type-form="typeForm" :venta="props.venta" :oc="oc" @add-oc="addOc($event)"
+                @edit-oc="editOc($event)" @close="showingFormOc = false" />
             <!-- Ends Mondals -->
         </template>
     </DialogModal>
