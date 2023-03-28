@@ -76,6 +76,9 @@ Route::middleware([
     Route::get('/facturas/{factura}/ocs', [FacturaController::class, "ocsIndex"])->name("facturas.ocs.index");
     Route::post('/facturas/{factura}', [FacturaController::class, 'update'])->name('facturas.update');
 
+    Route::get('/ingresos-total/clientes', [IngresoController::class, 'totalIngresosCliente'])->name('ingresos-total.clientes.index');
+    Route::get('/ingresos-by-cliente/{cliente?}', [IngresoController::class, 'indexByCliente'])->name('ingresos-by-cliente.index');
+
     Route::apiResource('/ingresos', IngresoController::class)->except('show', 'update');
     Route::put('/ingresos/{ingreso}/status', [IngresoController::class, 'changeStatus'])->name('ingresos.status');
     Route::get('/ingresos/{ingreso}/facturas', [IngresoController::class, "facturasIndex"])->name("ingresos.facturas.index");

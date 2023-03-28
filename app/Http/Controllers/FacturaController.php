@@ -40,7 +40,7 @@ class FacturaController extends Controller
             );
 
         if ($request->has("search")) {
-            $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
+            $search = '%' . strtr($request->search, array("'" => "\\'", "%" => "\\%")) . '%';
             $facturas->where('facturas.referencia', 'like',  $search);
         }
 
@@ -135,7 +135,7 @@ class FacturaController extends Controller
         }
         if ($request->has("search")) {
             $search = "%" . strtr($request->search, array("'" => "\\'", "%" => "\\%")) . "%";
-            $facturas->where('facturas.referencia', 'like', '%' . $search . '%');
+            $facturas->where('facturas.referencia', 'like', $search);
         }
 
         return response()->json($facturas->paginate(5));

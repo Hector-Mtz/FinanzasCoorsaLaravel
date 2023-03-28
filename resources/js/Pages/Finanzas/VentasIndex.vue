@@ -107,7 +107,7 @@ const chageComponent = () => {
                         </svg>
                     </div>
                     <Facturas v-if="componentFactDep.component === 'Facturas'" @updateCalendar="updateCalendar()" />
-                    <Depositos v-else />
+                    <Depositos v-else @updateCalendar="updateCalendar()" />
                 </Card>
             </div>
         </div>

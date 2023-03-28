@@ -69,7 +69,8 @@ function restForm() {
     form.banco_id = "";
     form.hasErrors = false;
     form.errors = [];
-    (form.error = ""), (form.created_at = "");
+    form.error = "";
+    form.created_at = "";
 }
 
 const close = () => {

@@ -1,6 +1,5 @@
 <script setup>
-import { ref, reactive, watch, onBeforeMount, computed } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { ref, reactive, watch, onBeforeMount } from "vue";
 import { pickBy } from "lodash";
 import Tab from "../../../../Components/Tab.vue";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
@@ -11,6 +10,7 @@ import OcsFacturaModal from "./OcsFacturaModal.vue";
 import ItemClientePaginate from "../ItemClientePaginate.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
 import SkeletonLoader from "../../../../Components/SkeletonLoader.vue";
+import HeaderTab from "../../../../Components/HeaderTab.vue";
 
 const emit = defineEmits(["updateCalendar"]);
 
@@ -97,27 +97,17 @@ watch(paramsFacturas, () => {
         </div>
         <div class="w-full">
             <!-- Header Tabs -->
-            <div
-                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center">
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                        paramsFacturas.status_id === '',
-                }" class="flex items-center tab" @click="changeTab('')">
+            <HeaderTab>
+                <Tab :active="paramsFacturas.status_id === ''" @click="changeTab('')">
                     TODAS
                 </Tab>
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                        paramsFacturas.status_id === '1',
-                }" class="flex items-center tab" @click="changeTab('1')">
+                <Tab :active="paramsFacturas.status_id === '1'" @click="changeTab('1')">
                     ABIERTAS
                 </Tab>
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                        paramsFacturas.status_id === '2',
-                }" class="flex items-center tab" @click="changeTab('2')">
+                <Tab :active="paramsFacturas.status_id === '2'" @click="changeTab('2')">
                     CERRADAS
                 </Tab>
-            </div>
+            </HeaderTab>
             <!-- Lista de clientes -->
 
             <div class="overflow-y-auto pt-4 border-b-[1px] border-gris-500" style="max-height: 41.1vh">

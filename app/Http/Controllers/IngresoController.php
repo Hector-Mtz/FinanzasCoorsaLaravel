@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
-use function GuzzleHttp\Promise\queue;
-
 class IngresoController extends Controller
 {
     /**
@@ -21,19 +19,122 @@ class IngresoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $clientes = Cliente::select('clientes.id', 'clientes.nombre')->orderBy('id')->get();
-        $numClientes = $clientes->count();
+        $request->validate([
+            'direction' => 'in:asc,desc'
+        ]);
+        $ingresos = Ingreso::select('ingresos.*', 'bancos.nombre as banco')
+            ->join('bancos', 'ingresos.banco_id', '=', 'bancos.id')
+            ->leftJoin(
+                'facturas',
+                'facturas.id',
+                '=',
+                DB::raw("(SELECT id FROM facturas as fact_join WHERE fact_join.ingreso_id = ingresos.id LIMIT 1)")
+            )
+            ->leftJoin('clientes', 'facturas.cliente_id', '=', 'clientes.id')
+            ->with('facturas:id,referencia,ingreso_id,cantidad,fechaDePago')
+            ->withCasts([
+                'created_at' => 'datetime:Y-m-d H:m'
+            ]);
 
-        $hasStatus = request('status_id') != "";
 
-        if (request()->has('search')) {
-            $search = strtr(request('search'), array("'" => "\\'", "%" => "\\%"));
+        if ($request->has("search")) {
+            $search = '%' . strtr($request->search, array("'" => "\\'", "%" => "\\%")) . '%';
+            $ingresos->where('ingresos.nombre', 'like',  $search);
         }
 
-        for ($i = 0; $i < $numClientes; $i++) {
-            $ingresos = Ingreso::select('ingresos.*', 'bancos.nombre as banco')
+        if ($request->has('field')) {
+            $ingresos->orderBy(request('field'), request('direction'));
+        } else {
+            $ingresos->orderBy('ingresos.created_at', 'desc');
+        }
+
+        return response()->json([
+            'ingresos' => $ingresos->paginate(5),
+        ]);
+    }
+
+
+
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function totalIngresosCliente()
+    {
+
+
+        $clientesIngresos = Ingreso::selectRaw("clientes.id,ifnull(clientes.nombre,'SIN CLIENTE') as nombre,
+            count(ingresos.id) as total_ingresos")
+            ->leftJoin(
+                'facturas',
+                'facturas.id',
+                '=',
+                DB::raw("(SELECT id FROM facturas as fact_join WHERE fact_join.ingreso_id = ingresos.id LIMIT 1)")
+            )
+            ->leftJoin('clientes', 'facturas.cliente_id', '=', 'clientes.id')
+            ->groupBy(['clientes.id'])
+            ->orderBy('total_ingresos', 'desc');
+
+
+
+        $totalIngresos = Ingreso::selectRaw("ifnull(sum(ingresos.cantidad),0) total");
+
+
+        if (request()->has('status_id')) {
+            $clientesIngresos->where("ingresos.status_id", "=", request('status_id'));
+            $totalIngresos->where("ingresos.status_id", "=", request('status_id'));
+        }
+
+
+        if (request()->has('search')) {
+            $search = '%' . strtr(request('search'), array("'" => "\\'", "%" => "\\%")) . '%';
+            $clientesIngresos->where('ingresos.nombre', 'like', '%' . $search . '%');
+            $$totalIngresos->where('ingresos.nombre', 'like', '%' . $search . '%');
+        }
+
+
+        return response()->json([
+            'clientesIngresos' => $clientesIngresos->get(),
+            'totalIngresos' => $totalIngresos->first(),
+        ]);
+    }
+
+
+    /**
+     * Display a listing of Facturas by cliente.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Cliente  $cliente
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function indexByCliente(Request $request, int $cliente = null)
+    {
+
+        if ($cliente === null) {
+            $ingresos =  Ingreso::select(
+                'ingresos.*',
+                'bancos.nombre as banco'
+            )
+                ->join('bancos', 'ingresos.banco_id', '=', 'bancos.id')
+                ->with(['facturas' => function ($query) {
+                    $query->select('id', 'referencia', 'referencia', 'cantidad', 'fechaDePago');
+                }])
+                ->leftJoin(
+                    'facturas',
+                    'facturas.id',
+                    '=',
+                    DB::raw("(SELECT id FROM facturas as fact_join WHERE fact_join.ingreso_id = ingresos.id LIMIT 1)")
+                )
+                ->leftJoin('clientes', 'facturas.cliente_id', '=', 'clientes.id')
+                ->whereNull('clientes.id');
+        } else {
+            $finCliente = Cliente::find($cliente);
+            $ingresos =   Ingreso::select('ingresos.*', 'bancos.nombre as banco')
                 ->join('bancos', 'ingresos.banco_id', '=', 'bancos.id')
                 ->join(
                     'facturas',
@@ -42,52 +143,25 @@ class IngresoController extends Controller
                     DB::raw("(SELECT id FROM facturas as fact_join WHERE fact_join.ingreso_id = ingresos.id LIMIT 1)")
                 )
                 ->join('clientes', 'facturas.cliente_id', '=', 'clientes.id')
-                ->with('facturas:id,referencia,ingreso_id,cantidad,fechaDePago')
-                ->where('clientes.id', '=', $clientes[$i]->id);
-            if ($hasStatus) {
-                $ingresos->where("ingresos.status_id", "=", request('status_id'));
-            }
-            if (isset($search)) {
-                $ingresos->where('ingresos.nombre', 'like', '%' . $search . '%');
-            }
-
-
-            $clientes[$i]->ingresos = $ingresos->orderBy('id')->get();
+                ->with(['facturas' => function ($query) {
+                    $query->select('id', 'referencia', 'referencia', 'cantidad', 'fechaDePago');
+                }])
+                ->where('clientes.id', '=', $finCliente->id);
         }
-        //SIN CLIENTE
-        $clientes->prepend(new Collection([
-            'id' => -1,
-            'nombre' => 'SIN CLIENTE',
-            'ingresos' => []
-        ]));
 
-        $ingresos = Ingreso::select(
-            'ingresos.*',
-            'bancos.nombre as banco'
-        )
-            ->join('bancos', 'ingresos.banco_id', '=', 'bancos.id')
-            ->leftJoin('facturas', 'ingresos.id', '=', 'facturas.ingreso_id')
-            ->with('facturas:id,referencia,ingreso_id,cantidad,fechaDePago');
-        /*->whereNull('facturas.referencia');*/
-        if ($hasStatus) {
+        $ingresos->orderBy('ingresos.created_at', 'desc');
+
+        if ($request->has('status_id')) {
             $ingresos->where("ingresos.status_id", "=", request('status_id'));
         }
-        if (isset($search)) {
-            $ingresos->where('ingresos.nombre', 'like', '%' . $search . '%');
+        if ($request->has("search")) {
+            $search = "%" . strtr($request->search, array("'" => "\\'", "%" => "\\%")) . "%";
+            $ingresos->where('ingresos.nombre', 'like', $search);
         }
 
-        $clientes[0]['ingresos'] = $ingresos->orderBy('id')->get();
-        $totalIngresos = Ingreso::selectRaw("ifnull(sum(ingresos.cantidad),0) total");
-        if ($hasStatus) {
-            $totalIngresos->where("ingresos.status_id", "=", request('status_id'));
-        }
-
-
-        return response()->json([
-            'clientesIngresos' => $clientes,
-            'totalIngresos' => $totalIngresos->first(),
-        ]);
+        return response()->json($ingresos->paginate(5));
     }
+
 
 
     /**
@@ -109,47 +183,45 @@ class IngresoController extends Controller
 
         $urlContenido = null;
         $ingreso = null;
-        if($request->has('documento'))
-        {
-           if($request['documento'] !== null)
-           {
-            $contenido = $request['documento'];  
-            $nombreCont = $contenido->getClientOriginalName();
-            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
-            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
+        if ($request->has('documento')) {
+            if ($request['documento'] !== null) {
+                $contenido = $request['documento'];
+                $nombreCont = $contenido->getClientOriginalName();
+                $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+                $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
+                $ingreso = Ingreso::create(
+                    [
+                        'nombre' => $request['nombre'],
+                        'cantidad' => $request['cantidad'],
+                        'banco_id' => $request['banco_id'],
+                        'created_at' => $request['created_at'],
+                        'documento' => $urlContenido
+                    ]
+                );
+            } else {
+                $ingreso = Ingreso::create(
+                    [
+                        'nombre' => $request['nombre'],
+                        'cantidad' => $request['cantidad'],
+                        'banco_id' => $request['banco_id'],
+                        'created_at' => $request['created_at'],
+                    ]
+                );
+            }
+        } else {
             $ingreso = Ingreso::create(
-                ['nombre' =>$request['nombre'],
-                 'cantidad' => $request['cantidad'],
-                 'banco_id' => $request['banco_id'],
-                 'created_at' => $request['created_at'],
-                 'documento' => $urlContenido
-                ]
-            );
-           }
-           else
-           {
-            $ingreso = Ingreso::create(
-                ['nombre' =>$request['nombre'],
-                 'cantidad' => $request['cantidad'],
-                 'banco_id' => $request['banco_id'],
-                 'created_at' => $request['created_at'],
-                ]
-            );
-           }
-        }
-        else{
-            $ingreso = Ingreso::create(
-                ['nombre' =>$request['nombre'],
-                 'cantidad' => $request['cantidad'],
-                 'banco_id' => $request['banco_id'],
-                 'created_at' => $request['created_at'],
+                [
+                    'nombre' => $request['nombre'],
+                    'cantidad' => $request['cantidad'],
+                    'banco_id' => $request['banco_id'],
+                    'created_at' => $request['created_at'],
                 ]
             );
         }
 
         return redirect()->back();
-       // return response()->json($ingreso);
+        // return response()->json($ingreso);
     }
 
 
@@ -180,37 +252,34 @@ class IngresoController extends Controller
             ]);
             return;
         }
-        
+
         $urlContenido = null;
-        if($request->has('documento'))
-        {
-            $contenido = $request['documento'];  
+        if ($request->has('documento')) {
+            $contenido = $request['documento'];
             $nombreCont = $contenido->getClientOriginalName();
             $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
             $urlContenido = Storage::disk('gcs')->url($ruta_documento);
 
-            Ingreso::where('ingresos.id','=', $ingreso->id)
-            ->update([
-                'nombre' =>$request['nombre'],
-                'cantidad' => $request['cantidad'],
-                'banco_id' => $request['banco_id'],
-                'created_at' => $request['created_at'],
-                'documento' => $urlContenido
-            ]);
-        }
-        else
-        {
-            Ingreso::where('ingresos.id','=', $ingreso->id)
-            ->udpate([
-                'nombre' =>$request['nombre'],
-                'cantidad' => $request['cantidad'],
-                'banco_id' => $request['banco_id'],
-                'created_at' => $request['created_at']
-            ]);
+            Ingreso::where('ingresos.id', '=', $ingreso->id)
+                ->update([
+                    'nombre' => $request['nombre'],
+                    'cantidad' => $request['cantidad'],
+                    'banco_id' => $request['banco_id'],
+                    'created_at' => $request['created_at'],
+                    'documento' => $urlContenido
+                ]);
+        } else {
+            Ingreso::where('ingresos.id', '=', $ingreso->id)
+                ->udpate([
+                    'nombre' => $request['nombre'],
+                    'cantidad' => $request['cantidad'],
+                    'banco_id' => $request['banco_id'],
+                    'created_at' => $request['created_at']
+                ]);
         }
 
         return redirect()->back();
-      /*
+        /*
         return response()->json([
             'message' => 'Actualizado.'
         ]);
