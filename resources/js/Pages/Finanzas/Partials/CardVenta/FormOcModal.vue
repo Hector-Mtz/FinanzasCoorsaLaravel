@@ -4,13 +4,11 @@ import axios from "axios";
 import JetButton from "@/Jetstream/Button.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
 import cerrar from "../../../../../img/elementos/cerrar.png";
-import folder from "../../../../../img/elementos/agregar-documento.png";
 import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
 import { Inertia } from "@inertiajs/inertia";
 import DropZone from '@/Components/DropZone.vue';
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import { Fancybox } from '@fancyapps/ui/dist/fancybox/fancybox.esm.js';
 import '@fancyapps/ui/dist/fancybox/fancybox.css';
 
@@ -47,7 +45,7 @@ const props = defineProps({
     },
 });
 
-const form = useForm({
+const form = reactive({
     nombre: "",
     cantidad: "",
     fecha_alta: nowDate,
@@ -106,17 +104,6 @@ const createOrUpdate = () => {
 };
 
 const create = () => {
-    form.post(route('ocs.store'), {
-        preserveScroll: true,
-        preserveState: true,
-        onFinish: () => Inertia.visit(route("finanzas.index"), {
-            preserveState: true,
-            preserveScroll: true,
-            only: ["totalOcs"],
-        }),
-        onSuccess: () => { close(), form.reset() },
-    });
-    /*
     axios
         .post(route("ocs.store"), form, {
             onUploadProgress: () => {
@@ -124,17 +111,10 @@ const create = () => {
             },
         })
         .then((resp) => {
-            emit("addOc", resp.data);
             form.recentlySuccessful = true;
+            emit("addOc", resp.data);
             restForm();
-            Inertia.visit(route("vfinanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
-            setTimeout(() => {
-                close();
-            }, 500);
+            close();
         })
         .catch((error) => {
             form.hasErrors = true;
@@ -159,22 +139,9 @@ const create = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
-        */
 };
 const update = () => {
-    form.post(route("ocs.update", props.oc.id),
-        {
-            preserveScroll: true,
-            preserveState: true,
-            onFinish: () => Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            }),
-            onSuccess: () => { emit("editOc", props.oc), close() }
-        });
 
-    /*
     axios
         .put(route("ocs.update", props.oc.id), form, {
             onUploadProgress: () => {
@@ -182,17 +149,10 @@ const update = () => {
             },
         })
         .then((resp) => {
-            emit("editOc", resp.data);
             form.recentlySuccessful = true;
+            emit("editOc", resp.data);
             restForm();
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
-            setTimeout(() => {
-                close();
-            }, 500);
+            close();
         })
         .catch((error) => {
             form.hasErrors = true;
@@ -217,7 +177,7 @@ const update = () => {
                 form.recentlySuccessful = false;
             }, 500);
         });
-        */
+
 };
 </script>
 <template>

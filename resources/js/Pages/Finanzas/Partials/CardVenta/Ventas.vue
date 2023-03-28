@@ -13,7 +13,7 @@ import monedas from "../../../../../img/elementos/monedas-de-un-dolar.png";
 import ItemClientePaginate from "../ItemClientePaginate.vue";
 import Input from "../../../../Jetstream/Input.vue";
 
-const emit = defineEmits(["showVentas"]);
+const emit = defineEmits(["showVentas", "updateCalendar"]);
 
 const props = defineProps({
     clientes: {
@@ -162,7 +162,7 @@ watch(params, throttle(function () {
             </div>
         </div>
         <!--Modals -->
-        <OcsModal :show="showingOcs" :venta="ventaSelect" @close="closeOcs" />
+        <OcsModal :show="showingOcs" :venta="ventaSelect" @close="closeOcs" @updateCalendar="emit('updateCalendar')" />
 
         <!--Ends Modals-->
     </div>

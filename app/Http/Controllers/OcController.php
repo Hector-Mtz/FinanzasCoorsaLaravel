@@ -94,7 +94,7 @@ class OcController extends Controller
                 $venta->save();
             }
 
-            return redirect()->back();
+            return response()->json($newOc);
         } catch (QueryException $e) {
             @throw ValidationException::withMessages([
                 'nombre' => $e->getMessage()
@@ -137,7 +137,6 @@ class OcController extends Controller
                 @throw ValidationException::withMessages([
                     'cantidad' => "La cantidad supera a la factura"
                 ]);
-                return redirect()->back();
             }
         }
 
@@ -175,8 +174,7 @@ class OcController extends Controller
                     'venta_id' => $request['venta_id']
                 ]);
         }
-        return redirect()->back();
-        //return response()->json($oc);
+        return response()->json($oc);
     }
     /**
      * Update the specified resource in storage.

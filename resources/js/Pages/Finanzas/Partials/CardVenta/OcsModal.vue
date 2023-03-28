@@ -8,7 +8,7 @@ import FormOcModal from "./FormOcModal.vue";
 import ItemOc from "./ItemOc.vue";
 import cerrar from "../../../../../img/elementos/cerrar.png";
 
-const emit = defineEmits(["close", "showAddVenta"]);
+const emit = defineEmits(["close", "updateCalendar"]);
 const props = defineProps({
     show: {
         type: Boolean,
@@ -57,16 +57,17 @@ const showFormOc = (ocSelected) => {
 
 const addOc = (newOc) => {
     ocs.value.unshift(newOc);
+    emit('updateCalendar');
 };
 
 const editOc = (newOc) => {
-    close();
     const findIndex = ocs.value.findIndex((ocFind) => {
         return newOc.id == ocFind.id;
     });
     if (findIndex !== -1) {
         ocs.value[findIndex] = newOc;
     }
+    emit('updateCalendar');
 };
 
 const deleteOc = (ocSelected) => {
@@ -77,11 +78,7 @@ const deleteOc = (ocSelected) => {
         .delete(route("ocs.destroy", ocSelected.id))
         .then(() => {
             ocs.value.splice(ocIndex, 1);
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
+            emit('updateCalendar');
         })
         .catch((error) => {
             if (error.response.data.hasOwnProperty("message")) {

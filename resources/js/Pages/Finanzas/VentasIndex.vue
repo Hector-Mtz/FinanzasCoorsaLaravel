@@ -77,7 +77,8 @@ const chageComponent = () => {
             <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <Card>
                     <Ventas :clientes="props.clientes" :filters="props.filters" @show-ventas="showingVentas = true"
-                        class="border-b-[1px] border-white" :lineas-negocios="props.lineasNegocios" />
+                        @updateCalendar="updateCalendar()" class="border-b-[1px] border-white"
+                        :lineas-negocios="props.lineasNegocios" />
                     <div class="flex flex-col px-4 py-2 mt-4 font-bold text-fuente-500">
                         <span class="text-[12px] uppercase font-medium">
                             Total
@@ -111,7 +112,7 @@ const chageComponent = () => {
             </div>
         </div>
         <!-- Modals -->
-        <VentasModal :show="showingVentas" @close="closeModalVentas" />
+        <VentasModal :show="showingVentas" @close="closeModalVentas" @updateCalendar="updateCalendar()" />
         <!-- END Modals -->
     </AppLayout>
 </template>
