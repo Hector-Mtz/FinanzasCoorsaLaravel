@@ -12,6 +12,7 @@ import { formatoMoney } from "../../utils/conversiones";
 
 
 const showingVentas = ref(false);
+const ventasCalendar = ref(null);
 
 const componentFactDep = reactive({
     component: "Facturas",
@@ -41,7 +42,9 @@ const props = defineProps({
     },
 });
 
-
+const updateCalendar = () => {
+    ventasCalendar.value.update();
+}
 
 // FUNCIONES MODAL
 const closeModalVentas = () => {
@@ -88,7 +91,8 @@ const chageComponent = () => {
                     </div>
                 </Card>
                 <div class="grid col-span-2 px-4 py-4 bg-white text-fuente-500 rounded-2xl">
-                    <VentasCalendar :lineas-negocios="props.lineasNegocios" :list-clientes="props.listClientes" />
+                    <VentasCalendar ref="ventasCalendar" :lineas-negocios="props.lineasNegocios"
+                        :list-clientes="props.listClientes" />
                 </div>
                 <Card>
                     <div class="flex items-center justify-between my-1 mb-4 text-fuente-500">
@@ -101,7 +105,7 @@ const chageComponent = () => {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
                     </div>
-                    <Facturas v-if="componentFactDep.component === 'Facturas'" />
+                    <Facturas v-if="componentFactDep.component === 'Facturas'" @updateCalendar="updateCalendar()" />
                     <Depositos v-else />
                 </Card>
             </div>

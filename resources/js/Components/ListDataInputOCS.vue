@@ -55,7 +55,7 @@ const error = computed(() => {
                 return opcion[props.keyOption] == props.modelValue;
             });
             if (selectOpcion !== undefined) {
-                props.valueText = selectOpcion[props.nameOption];
+                emit('value', selectOpcion[props.nameOption]);
             }
         }
     } else {

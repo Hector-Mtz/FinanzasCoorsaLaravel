@@ -196,7 +196,6 @@ watch(showsStatus, async () => {
 });
 
 onBeforeMount(() => {
-
     getTotalsStatus();
 });
 
@@ -204,6 +203,9 @@ onBeforeMount(() => {
 watch(paramsFilter, throttle(() => {
     getTotalsStatus();
 }), 100);
+
+defineExpose({ update: () => { getTotalsStatus() } });
+
 </script>
 <template>
     <div>

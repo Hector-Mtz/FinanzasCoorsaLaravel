@@ -11,7 +11,7 @@ import { Inertia } from "@inertiajs/inertia";
 import ListDataInputOCS from "../../../../Components/ListDataInputOCS.vue";
 import cerrar from "../../../../../img/elementos/cerrar.png";
 
-const emit = defineEmits(["close", "addOc"]);
+const emit = defineEmits(["close", "addOc", "updateFacturas"]);
 const props = defineProps({
     show: {
         type: Boolean,
@@ -47,11 +47,7 @@ const deleteOc = (indexOc) => {
                 props.factura.total_ocs - cantidadRest
             ).toFixed(2);
             props.factura.ocs.splice(indexOc, 1);
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
+            emit('updateFacturas');
         })
         .catch((error) => {
             if (

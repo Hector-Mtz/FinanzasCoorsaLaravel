@@ -38,7 +38,8 @@ const updateFacturas = () => {
 };
 const addOc = (form) => {
     axios.post(route("facturas.ocs.store", form.factura_id), form)
-        .then(() => {
+        .then((resp) => {
+            facturaSelect.value = resp.data;
             search();
             emit('updateCalendar');
         })
@@ -144,7 +145,8 @@ watch(paramsFacturas, () => {
         <!--Modals -->
         <FacturasModal :show="showingFacturas" @update-facturas="updateFacturas($event)" @add-oc="addOc($event)"
             @close="showingFacturas = false" />
-        <OcsFacturaModal :show="showingOcs" :factura="facturaSelect" @add-oc="addOc($event)" @close="closeOcsFactura" />
+        <OcsFacturaModal :show="showingOcs" :factura="facturaSelect" @add-oc="addOc($event)"
+            @update-facturas="updateFacturas($event)" @close="closeOcsFactura" />
         <!--Ends Modals-->
     </div>
 </template>
