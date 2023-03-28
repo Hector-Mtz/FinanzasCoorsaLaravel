@@ -12,7 +12,7 @@ import ItemClientePaginate from "../ItemClientePaginate.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
 import SkeletonLoader from "../../../../Components/SkeletonLoader.vue";
 
-const emit = defineEmits([""]);
+const emit = defineEmits(["updateCalendar"]);
 
 const clientes = ref([]);
 const totalFacturas = ref({ total: 0 });
@@ -25,7 +25,6 @@ const facturaSelect = ref({ id: -1 });
 // Modal Methods
 
 const showOcsFactura = (factura) => {
-    console.log(factura);
     facturaSelect.value = factura;
     showingOcs.value = true;
 };
@@ -33,7 +32,7 @@ const closeOcsFactura = () => {
     showingOcs.value = false;
     facturaSelect.value = { id: -1 };
 };
-const addFactura = () => {
+const updateFacturas = () => {
     search();
 };
 const addOc = (form) => {
@@ -87,6 +86,7 @@ const search = async () => {
 
 onBeforeMount(() => {
     search();
+    emit("updateCalendar");
 });
 
 let timeout;
@@ -154,7 +154,7 @@ watch(paramsFacturas, () => {
             </div>
         </div>
         <!--Modals -->
-        <FacturasModal :show="showingFacturas" @add-factura="addFactura($event)" @add-oc="addOc($event)"
+        <FacturasModal :show="showingFacturas" @update-facturas="updateFacturas($event)" @add-oc="addOc($event)"
             @close="showingFacturas = false" />
         <OcsFacturaModal :show="showingOcs" :factura="facturaSelect" @add-oc="addOc($event)" @close="closeOcsFactura" />
         <!--Ends Modals-->

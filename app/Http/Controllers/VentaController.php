@@ -49,9 +49,6 @@ class VentaController extends Controller
         } else {
             $ventas->orderBy('ventas.fechaInicial', 'desc');
         }
-
-
-
         return response()->json([
             'ventas' =>  $ventas->paginate(10),
         ]);

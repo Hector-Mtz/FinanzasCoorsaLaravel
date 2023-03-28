@@ -113,6 +113,7 @@ class FacturaController extends Controller
                 );
         }
 
+        $facturas->orderBy('facturas.fechaDePago', 'desc');
 
         if ($request->has('status_id')) {
             $facturas->where("facturas.status_id", "=", request('status_id'));

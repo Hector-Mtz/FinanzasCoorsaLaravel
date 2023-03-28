@@ -10,7 +10,7 @@ import ItemFacturaDetails from "./ItemFacturaDetails.vue";
 import FormFacturaModal from "./FormFacturaModal.vue";
 import cerrar from "../../../../../img/elementos/cerrar.png";
 
-const emit = defineEmits(["close", "addFactura", "addOc"]);
+const emit = defineEmits(["close", "updateFacturas", "addOc"]);
 const props = defineProps({
     show: {
         type: Boolean,
@@ -68,6 +68,7 @@ const showFormFactura = (facturaSelect) => {
         typeForm.value = "update";
         factura.value = facturaSelect;
     }
+    console.log("Deberia abrir formulario");
     showingFormFactura.value = true;
 };
 
@@ -85,7 +86,7 @@ const deleteFactura = (facturaSelected) => {
     axios
         .delete(route("facturas.destroy", facturaSelected.id))
         .then(() => {
-            emit("addFactura");
+            emit("updateFacturas");
             Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
@@ -110,7 +111,8 @@ const close = () => {
 };
 
 const refreshFacturas = () => {
-    searchFacturas(facturas.value.current_page)
+    searchFacturas(facturas.value.current_page);
+    emit('updateFacturas')
 }
 
 watchEffect(() => {
@@ -224,7 +226,7 @@ watch(params, throttle(function () {
             <PaginationAxios :pagination="facturas" @loadPage="searchFacturas($event)" />
             <!-- MODALS -->
             <FormFacturaModal :show="showingFormFactura" :type-form="typeForm" :factura="factura"
-                @add-factura="emit('addFactura')" @edit-factura="emit('addFactura')" @close="showingFormFactura = false" />
+                @update-facturas="refreshFacturas()" @close="showingFormFactura = false" />
             <!-- ENDS MODALS -->
         </template>
     </DialogModal>
