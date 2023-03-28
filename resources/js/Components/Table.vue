@@ -1,12 +1,8 @@
 <template>
     <div class="">
         <div class="inline-block min-w-full align-middle bg-white">
-            <div
-                class="overflow-hidden overflow-x-auto overflow-y-auto text-black"
-            >
-                <table
-                    class="min-w-full divide-y divide-aqua-500 table-fixed custome-table"
-                >
+            <div class="overflow-hidden overflow-x-auto overflow-y-auto text-black">
+                <table class="min-w-full divide-y table-fixed divide-aqua-500 custome-table">
                     <thead class="text-sm">
                         <slot name="thead" />
                     </thead>
@@ -21,6 +17,7 @@
 <style lang="css">
 .custome-table thead tr th {
     padding-left: 0.2rem 0.2rem;
+    cursor: pointer;
 }
 
 .custome-table tbody tr td {

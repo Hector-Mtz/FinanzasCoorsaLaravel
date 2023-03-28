@@ -5,7 +5,6 @@ import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import axios from "axios";
 
 import { Inertia } from "@inertiajs/inertia";
-import folder from "../../../../../img/elementos/agregar-documento.png";
 import JetButton from "@/Jetstream/Button.vue";
 import JetLabel from "@/Jetstream/Label.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
@@ -15,7 +14,7 @@ import Input from "@/Components/Input.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
 import DropZone from "@/Components/DropZone.vue";
 
-const emit = defineEmits(["close", "addFactura", "editFactura"]);
+const emit = defineEmits(["close", "updateFacturas"]);
 const props = defineProps({
     show: {
         type: Boolean,
@@ -60,14 +59,6 @@ function restForm() {
     form.referencia = "";
     form.fechaDePago = "";
     form.documento = "";
-
-    if (props.typeForm === "create") {
-        close();
-        emit("addFactura");
-    } else {
-        close();
-        emit("editFactura")
-    }
 }
 
 const close = () => {
@@ -75,6 +66,7 @@ const close = () => {
 };
 
 const createOrUpdate = () => {
+    console.log("Entra aqui");
     if (props.typeForm === "create") {
         create();
     } else {
@@ -87,7 +79,11 @@ const create = () => {
         {
             preserveScroll: true,
             preserveState: true,
-            onSuccess: () => restForm(),
+            onSuccess: () => {
+                restForm();
+                emit("updateFacturas");
+                close();
+            },
             onFinish: () => Inertia.visit(route("finanzas.index"),
                 {
                     preserveScroll: true,
@@ -95,60 +91,15 @@ const create = () => {
                     only: ["totalOcs"]
                 })
         });
-    /*
-    axios
-        .post(route("facturas.store"), form, {
-            onUploadProgress: () => {
-                form.processing = true;
-            },
-        })
-        .then(() => {
-            emit("addFactura");
-            form.recentlySuccessful = true;
-            restForm();
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
-            setTimeout(() => {
-                close();
-            }, 500);
-        })
-        .catch((error) => {
-            form.hasErrors = true;
-            if (error.response.data.hasOwnProperty("errors")) {
-                const errors = error.response.data.errors;
-                for (let error in errors) {
-                    form.errors[error] = errors[error][0];
-                }
-                form.error = error.response.data.message;
-            } else {
-                if (error.response.data.hasOwnProperty("message")) {
-                    form.error = error.response.data.message;
-                } else {
-                    form.error = "Error CREATE FACTURA";
-                }
-            }
-        })
-        .then(() => {
-            // always
-            form.processing = false;
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
-            setTimeout(() => {
-                form.recentlySuccessful = false;
-            }, 500);
-        });
-        */
 };
 const update = () => {
     form.post(route("facturas.update", props.factura.id),
         {
-            onSuccess: () => restForm(),
+            onSuccess: () => {
+                restForm();
+                emit("updateFacturas");
+                close();
+            },
             onFinish: () => Inertia.visit(route("finanzas.index"),
                 {
                     preserveScroll: true,
@@ -158,51 +109,6 @@ const update = () => {
             preserveScroll: true,
             preserveState: true
         });
-    /*
-    axios
-        .put(route("facturas.update", props.factura.id), form, {
-            onUploadProgress: () => {
-                form.processing = true;
-            },
-        })
-        .then((resp) => {
-            emit("editFactura", resp.data);
-            form.recentlySuccessful = true;
-            restForm();
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
-            setTimeout(() => {
-                close();
-            }, 500);
-        })
-        .catch((error) => {
-            form.hasErrors = true;
-            console.log(error);
-            if (error.response.data.hasOwnProperty("errors")) {
-                const errors = error.response.data.errors;
-                for (let error in errors) {
-                    form.errors[error] = errors[error][0];
-                }
-                form.error = error.response.data.message;
-            } else {
-                if (error.response.data.hasOwnProperty("message")) {
-                    form.error = error.response.data.message;
-                } else {
-                    form.error = "ERROR UPDATE FACTURA";
-                }
-            }
-        })
-        .then(() => {
-            // always
-            form.processing = false;
-            setTimeout(() => {
-                form.recentlySuccessful = false;
-            }, 500);
-        });
-        */
 };
 </script>
 <template>

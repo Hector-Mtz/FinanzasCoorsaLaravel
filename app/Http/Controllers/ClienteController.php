@@ -162,7 +162,7 @@ class ClienteController extends Controller
         )
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
-            ->orderBy('ventas.fechaInicial');
+            ->orderBy('ventas.fechaInicial', 'desc');
 
         if ($request->status_id != "") {
             $ventas->where("ventas.status_id", "=", $request->status_id);

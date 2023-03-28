@@ -17,18 +17,23 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-    filters: {
-        type: Object,
-        required: true,
-    },
 });
 const paramsVentas = reactive({
-    ...props.filters,
+    search: '', field: '',
+    direction: ''
 });
 const showingFormVenta = ref(false);
 const ventas = ref({ data: [] });
 const venta = ref({});
 const typeForm = ref("create");
+
+
+
+const sort = (field) => {
+    paramsVentas.field = field;
+    paramsVentas.direction = paramsVentas.direction === "asc" ? "desc" : "asc";
+};
+
 
 // MODALS FUNCITON
 const showFormVentas = (ventaSelect) => {
@@ -154,15 +159,122 @@ const close = () => {
             <TableComponent>
                 <template #thead>
                     <tr class="text-fuente-500 text-md border-b-[2px] border-aqua-500">
-                        <th>CLIENTE</th>
-                        <th>COMENTARIO</th>
-                        <th>IVA</th>
-                        <th>SUBTOTAL</th>
-                        <th>TOTAL IVA</th>
-                        <th>TOTAL</th>
-                        <th>FECHA INICIAL</th>
+                        <th @click="sort('ceco')">CLIENTE
+                            <template v-if="paramsVentas.field === 'ceco'">
+                                <svg v-if="paramsVentas.direction === 'asc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z" />
+                                </svg>
+                                <svg v-if="paramsVentas.direction === 'desc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+                                </svg>
+                            </template>
+                        </th>
+                        <th @click="sort('comentario')">COMENTARIO
+                            <template v-if="paramsVentas.field === 'comentario'">
+                                <svg v-if="paramsVentas.direction === 'asc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z" />
+                                </svg>
+                                <svg v-if="paramsVentas.direction === 'desc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+                                </svg>
+                            </template>
+                        </th>
+                        <th @click="sort('ventas.iva')">IVA
+                            <template v-if="paramsVentas.field === 'ventas.iva'">
+                                <svg v-if="paramsVentas.direction === 'asc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z" />
+                                </svg>
+                                <svg v-if="paramsVentas.direction === 'desc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+                                </svg>
+                            </template>
+                        </th>
+                        <th @click="sort('sub_total')">SUBTOTAL
+                            <template v-if="paramsVentas.field === 'sub_total'">
+                                <svg v-if="paramsVentas.direction === 'asc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z" />
+                                </svg>
+                                <svg v-if="paramsVentas.direction === 'desc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+                                </svg>
+                            </template>
+                        </th>
+                        <th @click="sort('iva ' + (paramsVentas.direction === 'asc' ? 'desc' : 'asc') + ', sub_total')">
+                            TOTAL IVA
+
+                            <template v-if="paramsVentas.field.endsWith(', sub_total')">
+                                <svg v-if="paramsVentas.direction === 'asc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z" />
+                                </svg>
+                                <svg v-if="paramsVentas.direction === 'desc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+                                </svg>
+                            </template>
+                        </th>
+                        <th @click="sort('sub_total ' + (paramsVentas.direction === 'asc' ? 'desc' : 'asc') + ', iva')">
+                            TOTAL
+                            <template v-if="paramsVentas.field.endsWith(', iva')">
+                                <svg v-if="paramsVentas.direction === 'asc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z" />
+                                </svg>
+                                <svg v-if="paramsVentas.direction === 'desc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+                                </svg>
+                            </template>
+                        </th>
+                        <th @click="sort('ventas.fechaInicial')">FECHA INICIAL
+                            <template v-if="paramsVentas.field === 'ventas.fechaInicial'">
+                                <svg v-if="paramsVentas.direction === 'asc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z" />
+                                </svg>
+                                <svg v-if="paramsVentas.direction === 'desc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+                                </svg>
+                            </template>
+                        </th>
                         <th>DOCUMENTO</th>
-                        <th v-if="$page.props.can['ventas.edit']">REVISADO</th>
+                        <th v-if="$page.props.can['ventas.edit']" @click="sort('ventas.revisado')">REVISADO
+                            <template v-if="paramsVentas.field === 'ventas.revisado'">
+                                <svg v-if="paramsVentas.direction === 'asc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z" />
+                                </svg>
+                                <svg v-if="paramsVentas.direction === 'desc'" xmlns="http://www.w3.org/2000/svg"
+                                    class="inline w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
+                                </svg>
+                            </template>
+                        </th>
                         <th v-if="$page.props.can['ventas.delete']">
                         </th>
                     </tr>

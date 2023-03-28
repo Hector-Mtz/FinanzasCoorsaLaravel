@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onBeforeMount, computed } from "vue";
+import { ref, reactive, watch, onBeforeMount, computed } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 import { pickBy } from "lodash";
 import Tab from "../../../../Components/Tab.vue";
@@ -8,16 +8,16 @@ import InputSearch from "@/Components/InputSearch.vue";
 import ItemObjectShow from "@/Components/ItemObjectShow.vue";
 import FacturasModal from "./FacturasModal.vue";
 import OcsFacturaModal from "./OcsFacturaModal.vue";
-import ItemCliente from "../ItemCliente.vue";
+import ItemClientePaginate from "../ItemClientePaginate.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
 import SkeletonLoader from "../../../../Components/SkeletonLoader.vue";
 
-const emit = defineEmits([""]);
+const emit = defineEmits(["updateCalendar"]);
 
 const clientes = ref([]);
 const totalFacturas = ref({ total: 0 });
-const tab = ref(""); // Referencia al id
-const searchText = ref("");
+const paramsFacturas = reactive({ search: '', status_id: '' });
+const loading = ref(true);
 const showingFacturas = ref(false);
 const showingOcs = ref(false);
 const facturaSelect = ref({ id: -1 });
@@ -32,8 +32,8 @@ const closeOcsFactura = () => {
     showingOcs.value = false;
     facturaSelect.value = { id: -1 };
 };
-const addFactura = () => {
-    search(searchText.value);
+const updateFacturas = () => {
+    search();
 };
 const addOc = (form) => {
     const finIndexFactura = facturas.value.findIndex((fact) => {
@@ -42,7 +42,7 @@ const addOc = (form) => {
     axios
         .post(route("facturas.ocs.store", form.factura_id), form)
         .then(() => {
-            search(searchText.value);
+            search();
             Inertia.visit(route("finanzas.index"), {
                 preserveState: true,
                 preserveScroll: true,
@@ -65,55 +65,45 @@ const addOc = (form) => {
 // End Methos Modal
 
 const changeTab = (status_id) => {
-    tab.value = status_id;
-    if (searchText.value !== "") {
-        searchText.value = "";
-        search();
-    } else {
-        search(searchText.value);
+    paramsFacturas.status_id = status_id;
+    if (paramsFacturas.search !== "") {
+        paramsFacturas.search = "";
+
     }
+
 };
-const search = async (newSearch) => {
-    const params = pickBy({ status_id: tab.value, search: newSearch });
-    const resp = await axios.get(route("facturas.index"), { params });
+const search = async () => {
+
+    loading.value = true;
+    const params = pickBy({ ...paramsFacturas });
+    const resp = await axios.get(route("facturas-total.clientes.index"), { params });
     clientes.value = resp.data.clientesFacturas;
     totalFacturas.value = resp.data.totalFacturas;
+    loading.value = false;
 };
 
-const facturas = computed(() => {
-    let auxFacturas = [];
-    clientes.value.forEach((cliente) => {
-        auxFacturas = auxFacturas.concat(cliente.facturas);
-    });
-    // DEBIDO A QUE NO ACTUALIZA LAS FACTURAS DENTRO DEL MODAL
-    if (showingOcs.value) {
-        const findedIndex = auxFacturas.findIndex((fact) => {
-            return fact.id == facturaSelect.value.id;
-        });
-        facturaSelect.value = auxFacturas[findedIndex];
-    }
-    return auxFacturas;
-});
+
 
 onBeforeMount(() => {
     search();
+    emit("updateCalendar");
 });
 
 let timeout;
-watch(searchText, (newSearch) => {
+watch(paramsFacturas, () => {
     if (timeout !== undefined) {
         clearTimeout(timeout);
     }
     //Bounce de busqueda
     timeout = setTimeout(() => {
-        search(newSearch);
+        search();
     }, 300);
 });
 </script>
 <template>
     <div class="flex flex-col gap-4 pb-2 text-fuente-500">
         <div class="flex justify-around">
-            <InputSearch v-model="searchText" class="px-2 py-1" />
+            <InputSearch v-model="paramsFacturas.search" class="px-2 py-1" />
             <ButtonAdd class="h-7" @click="showingFacturas = true" />
         </div>
         <div class="w-full">
@@ -122,19 +112,19 @@ watch(searchText, (newSearch) => {
                 class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center">
                 <Tab :class="{
                     'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                        tab === '',
+                        paramsFacturas.status_id === '',
                 }" class="flex items-center tab" @click="changeTab('')">
                     TODAS
                 </Tab>
                 <Tab :class="{
                     'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                        tab === '1',
+                        paramsFacturas.status_id === '1',
                 }" class="flex items-center tab" @click="changeTab('1')">
                     ABIERTAS
                 </Tab>
                 <Tab :class="{
                     'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                        tab === '2',
+                        paramsFacturas.status_id === '2',
                 }" class="flex items-center tab" @click="changeTab('2')">
                     CERRADAS
                 </Tab>
@@ -142,15 +132,18 @@ watch(searchText, (newSearch) => {
             <!-- Lista de clientes -->
 
             <div class="overflow-y-auto pt-4 border-b-[1px] border-gris-500" style="max-height: 41.1vh">
-                <SkeletonLoader v-if="clientes.length === 0" style="height: 41.1vh" />
-                <div v-else>
-                    <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente"
-                        :total="cliente.facturas.length">
-                        <ItemObjectShow v-for="factura in cliente.facturas" :key="factura.id" :data="factura"
-                            @onShow="showOcsFactura($event)">
-                            #{{ factura.referencia }}
-                        </ItemObjectShow>
-                    </ItemCliente>
+                <SkeletonLoader v-show="loading" style="height: 41.1vh" />
+                <div>
+                    <ItemClientePaginate v-for="cliente in clientes" :key="'cf' + cliente.id" :cliente="cliente"
+                        :total="cliente.total_facturas" :filters="paramsFacturas"
+                        :ruta="route('facturas-by-cliente.index', { cliente: cliente.id })">
+                        <template #default="{ data }">
+                            <ItemObjectShow v-for="factura in data" :key="factura.id" :data="factura"
+                                @onShow="showOcsFactura($event)">
+                                #{{ factura.referencia }}
+                            </ItemObjectShow>
+                        </template>
+                    </ItemClientePaginate>
                 </div>
             </div>
             <div class="flex flex-col px-4 py-2 mt-4 font-bold text-fuente-500">
@@ -161,8 +154,8 @@ watch(searchText, (newSearch) => {
             </div>
         </div>
         <!--Modals -->
-        <FacturasModal :show="showingFacturas" :facturas="facturas" @add-factura="addFactura($event)"
-            @add-oc="addOc($event)" @close="showingFacturas = false" />
+        <FacturasModal :show="showingFacturas" @update-facturas="updateFacturas($event)" @add-oc="addOc($event)"
+            @close="showingFacturas = false" />
         <OcsFacturaModal :show="showingOcs" :factura="facturaSelect" @add-oc="addOc($event)" @close="closeOcsFactura" />
         <!--Ends Modals-->
     </div>
