@@ -78,6 +78,7 @@ Route::middleware([
 
     Route::apiResource('/ingresos', IngresoController::class)->except('show', 'update');
     Route::put('/ingresos/{ingreso}/status', [IngresoController::class, 'changeStatus'])->name('ingresos.status');
+    Route::get('/ingresos/{ingreso}/facturas', [IngresoController::class, "facturasIndex"])->name("ingresos.facturas.index");
     Route::post('/ingresos/{ingreso}/facturas', [IngresoController::class, "storeFactura"])->name("ingresos.facturas.store");
     Route::delete('/ingresos/{ingreso}/facturas', [IngresoController::class, "destroyFactura"])->name("ingresos.facturas.destroy");
     Route::post('/ingresos/{ingreso}', [IngresoController::class, "update"])->name("ingresos.update");
@@ -99,13 +100,12 @@ Route::middleware([
     Route::get('/cecos/catalogo', [CecoController::class, 'catalogo'])->name('cecos.catalogo');
     Route::get('/servicios/catalogo', [ServicioController::class, 'catalogo'])->name('servicios.catalogo');
     Route::get('/tipos/catalogo', [TipoController::class, 'catalogo'])->name('tipos.catalogo');
-    
 });
 
 
 Route::apiResource('/presupuestos', ClienteController::class)->except('show');;
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);
-/*Peticiones Axios*/ 
-Route::get('consulta1/{cliente}/{grupoConcepto}',[ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
+/*Peticiones Axios*/
+Route::get('consulta1/{cliente}/{grupoConcepto}', [ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
 Route::get('consulta2/{grupoConcepto}', [ClienteController::class, 'ceco_grupoConcepto'])->name('ceco.grupoCon');
 Route::get('consulta3/{cliente}', [ClienteController::class, 'cliente_concepto'])->name('cliente.concepto');

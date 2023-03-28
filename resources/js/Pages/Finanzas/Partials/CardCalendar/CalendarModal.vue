@@ -24,7 +24,7 @@ const subModal = reactive({
 
 const showSubModal = (obj) => {
     let ruta = "";
-    console.log(props.dataCalendar.serie);
+    // console.log(props.dataCalendar.serie);
     switch (props.dataCalendar.serie) {
         case "ventas":
             ruta = "ventas.ocs.index";
