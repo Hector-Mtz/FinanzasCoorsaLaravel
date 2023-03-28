@@ -4,6 +4,8 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import axios from "axios";
+/*Components*/
+import ModalWatchSoliGastos from '../Partials/Modals/ModalWatchSoliGastos.vue';
 
 var props = defineProps({
     arregloValores:Object,
@@ -17,6 +19,19 @@ watch(() => props.arregloValores,(nuevosValores) => { //el whatcher observa el c
      });
 
 let click1 = ref(0);
+let concepto = ref(null);
+let ceco = ref(null);
+const modalSoliGastos = ref(false);
+const openModalSoliGastos = () => 
+{
+    modalSoliGastos.value = true;
+}
+
+const closeModalSoliGastos = () => 
+{
+    modalSoliGastos.value = false;
+}
+
 onMounted(() => 
 {
        am4core.useTheme(am4themes_animated);
@@ -221,22 +236,114 @@ onMounted(() =>
    
     series.columns.template.events.on("hit", function(ev)  //primer click para zoom
     {
-       click1.value = 1;
-
-       //hay que recuperar los nombres de ejex y ejey
-       //console.log(ev.target.dataItem); //tenemos ambas categorias
-       let categorias =  ev.target.dataItem.categories;
-       let tipoAcomodo = ev.target.dataItem.dataContext.tipo_arreglo;
-
-       switch (tipoAcomodo) {
-        case "cliente_grupoConcepto":
-              axios.get(route('cliente.grupoCon', {cliente: categorias.categoryY, grupoConcepto:categorias.categoryX}))
-               .then((resp) => {
-                  console.log(resp);
-                });
-            break;
+       if(click1.value == 0)
+       {
+           click1.value = 1;
+           //hay que recuperar los nombres de ejex y ejey
+           //console.log(ev.target.dataItem); //tenemos ambas categorias
+           let categorias =  ev.target.dataItem.categories;
+           let tipoAcomodo = ev.target.dataItem.dataContext.tipo_arreglo;
+    
+           switch (tipoAcomodo) 
+           {
+            case "cliente_grupoConcepto":
+                  axios.get(route('cliente.grupoCon', {cliente: categorias.categoryY, grupoConcepto:categorias.categoryX}))
+                   .then((resp) => 
+                    {
+                      //console.log(resp.data);
+                      let arregloAux = [];
+                      let conceptos = resp.data[1];
+                      let cecos = resp.data[0];
+                      for (let index = 0; index < cecos.length; index++)
+                       {
+                          const ceco = cecos[index];
+                          //console.log(ceco);
+                          for (let index2 = 0; index2 < conceptos.length; index2++) 
+                          {
+                             const concepto = conceptos[index2];
+                             let newObj = {
+                                ceco_id:null,
+                                x:null,
+                                concepto_id:null,
+                                y:null,
+                                valor:0
+                             }
+                             newObj.ceco_id = ceco.id;
+                             newObj.y = ceco.nombre;
+                             newObj.concepto_id = concepto.id;
+                             newObj.x = concepto.nombre;
+                             arregloAux.push(newObj);
+                          }
+                       }
+                       //console.log(arregloAux);
+                       chart.data = arregloAux;
+                    });
+                break;
+            case "ceco_grupoConcepto": //solo debe mandar el grupoconcepto para desplegar los conceptos y conserva el ceco
+                //console.log("ceco_grupoConcepto")
+                axios.get(route('ceco.grupoCon', {grupoConcepto:categorias.categoryX}))
+                   .then((resp) => 
+                    {
+                        let arregloAux = [];
+                        //console.log(resp);
+                        for (let index = 0; index < resp.data.length; index++) 
+                        {
+                            const concepto = resp.data[index];
+                            let newObj = {
+                                ceco_id:null,
+                                x:null,
+                                concepto_id:null,
+                                y:null,
+                                valor:0
+                             }
+                            // console.log(categorias);
+                             newObj.ceco_id = null;
+                             newObj.y = categorias.categoryY;
+                             newObj.concepto_id = concepto.id;
+                             newObj.x = concepto.nombre;
+                             arregloAux.push(newObj);
+                        }
+                        chart.data = arregloAux;
+                    });
+              break;
+            
+            case "cliente_concepto": //solo debe mandar el cliente para desplegar los cecos y conserva el concepto
+                console.log("cliente_concepto")
+                axios.get(route('cliente.concepto', {cliente:categorias.categoryY}))
+                   .then((resp) => 
+                    {
+                        let arregloAux = [];
+                        //console.log(resp);
+                        for (let index = 0; index < resp.data.length; index++) 
+                        {
+                            const ceco = resp.data[index];
+                            let newObj = {
+                                ceco_id:null,
+                                x:null,
+                                concepto_id:null,
+                                y:null,
+                                valor:0
+                             }
+                            // console.log(categorias);
+                             newObj.ceco_id = ceco.id;
+                             newObj.y = ceco.nombre;
+                             newObj.concepto_id = null;
+                             newObj.x = categorias.categoryX;
+                             arregloAux.push(newObj);
+                        }
+                        chart.data = arregloAux;
+                    });
+                break;
+           }
        }
-     
+       else
+       {
+         let categorias =  ev.target.dataItem.categories;
+         modalSoliGastos.value = true
+         ceco.value = categorias.categoryY;
+         concepto.value = categorias.categoryX
+       }
+       
     }, this);
    
    var baseWidth = Math.min(chart.plotContainer.maxWidth, chart.plotContainer.maxHeight);
@@ -252,11 +359,13 @@ onMounted(() =>
    });
 
 });
+
 </script>
 <template>
-    {{ click1 }}
     <div class="hello" ref="chartdiv" id="chartdiv">
     </div>
+    <!--Modales-->
+    <ModalWatchSoliGastos :ceco="ceco" :concepto="concepto" :show="modalSoliGastos" @close="closeModalSoliGastos" />
 </template>
 <style>
 #chartdiv {
