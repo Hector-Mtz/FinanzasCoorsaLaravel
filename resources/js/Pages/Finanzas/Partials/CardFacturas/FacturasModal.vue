@@ -87,11 +87,6 @@ const deleteFactura = (facturaSelected) => {
         .delete(route("facturas.destroy", facturaSelected.id))
         .then(() => {
             emit("updateFacturas");
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
         })
         .catch((error) => {
             console.log(error);

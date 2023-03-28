@@ -252,8 +252,7 @@ class OcController extends Controller
                     ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
                     ->whereYear('ocs.fecha_alta', '=', $validadData['year']);
                 if ($request->has('lineas_negocio_id') || $request->has('cliente_id')) {
-                    $daysStatus->join('ventas', 'ocs.venta_id', '=', 'ventas.id')
-                        ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
+                    $daysStatus->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
                     //Encaso de tener linea de transporte
                     if ($request->has('lineas_negocio_id')) {
                         $daysStatus->where('cecos.lineas_negocio_id', '=', $validadData['lineas_negocio_id']);

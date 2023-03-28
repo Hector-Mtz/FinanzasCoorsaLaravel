@@ -34,43 +34,32 @@ const closeOcsFactura = () => {
 };
 const updateFacturas = () => {
     search();
+    emit("updateCalendar");
 };
 const addOc = (form) => {
-    const finIndexFactura = facturas.value.findIndex((fact) => {
-        return fact.id == form.factura_id;
-    });
-    axios
-        .post(route("facturas.ocs.store", form.factura_id), form)
+    axios.post(route("facturas.ocs.store", form.factura_id), form)
         .then(() => {
             search();
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
+            emit('updateCalendar');
         })
         .catch((error) => {
             if (
                 error.hasOwnProperty("response") &&
                 error.response.data.hasOwnProperty("message")
             ) {
-                facturas.value[finIndexFactura].error =
-                    error.response.data.message;
+                facturaSelect.value.error = error.response.data.message;
             } else {
-                facturas.value[finIndexFactura].error = "Error add OC";
+                facturaSelect.value.error = "Error add OC";
             }
         });
 };
 
 // End Methos Modal
-
 const changeTab = (status_id) => {
     paramsFacturas.status_id = status_id;
     if (paramsFacturas.search !== "") {
         paramsFacturas.search = "";
-
     }
-
 };
 const search = async () => {
 
@@ -86,7 +75,6 @@ const search = async () => {
 
 onBeforeMount(() => {
     search();
-    emit("updateCalendar");
 });
 
 let timeout;
