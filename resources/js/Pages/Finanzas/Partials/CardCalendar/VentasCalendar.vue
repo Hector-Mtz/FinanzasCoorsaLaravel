@@ -79,10 +79,10 @@ const isActive = (status) => {
 };
 
 async function getDaysStatus() {
-    const date = {
+    const params = pickBy({
+        ...paramsFilter,
         month: paramsFilter.month + 1,
-        year: paramsFilter.year,
-    };
+    });
     const axiosDaysStatus = [];
     // colores
     let series = [];
@@ -91,13 +91,13 @@ async function getDaysStatus() {
         series.push(st);
         if (st === "ventas") {
             const respVentas = axios.get(route("ventas.month"), {
-                params: date,
+                params,
             });
             axiosDaysStatus.push(respVentas);
             colors.push(colorsStatus[0]);
         } else {
             const respVentas = axios.get(route("ocs.month"), {
-                params: { ...date, status: st },
+                params: { ...params, status: st },
             });
             axiosDaysStatus.push(respVentas);
             //logica para establecer el color

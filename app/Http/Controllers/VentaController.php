@@ -239,6 +239,8 @@ class VentaController extends Controller
         $validadData = $request->validate([
             'month' => ['required', 'numeric', 'min:1', 'max:12'],
             'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
+            'lineas_negocio_id' => ['nullable', 'exists:lineas_negocios,id'],
+            'cliente_id' => ['nullable', 'exists:clientes,id'],
         ]);
 
         $ventas = Venta::select('ventas.id', 'ventas.revisado')
@@ -257,37 +259,48 @@ class VentaController extends Controller
                 'montos.cantidad',
             )
             ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
-            ->whereYear('ventas.fechaInicial', '=', $validadData['year'])
-            ->get();
-        $ventas = $ventas->groupBy('day');
+            ->whereYear('ventas.fechaInicial', '=', $validadData['year']);
+
+        //Intento evitar join cuando no tiene filtros
+        if ($request->has('lineas_negocio_id') || $request->has('cliente_id')) {
+            //Encaso de tener linea de transporte
+            if ($request->has('lineas_negocio_id')) {
+                $ventas->where('cecos.lineas_negocio_id', '=', $validadData['lineas_negocio_id']);
+            }
+
+            if ($request->has('cliente_id')) {
+                $ventas->where('cecos.cliente_id', '=', $validadData['cliente_id']);
+            }
+        }
+        $ventas = $ventas->get()->groupBy('day');
         return response()->json($ventas);
     }
 
 
-    public function totalStatus()
-    {
+    // public function totalStatus()
+    // {
 
-        $fecha_Actual =  date("Y");
+    //     $fecha_Actual =  date("Y");
 
-        $status = collect(['pc' => 0, 'pp' => 0, 'c' => 0]);
+    //     $status = collect(['pc' => 0, 'pp' => 0, 'c' => 0]);
 
-        $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
-            ->whereNull('ocs.factura_id')
-            ->where('ocs.fecha_alta', 'LIKE', '%' . $fecha_Actual . '%')
-            ->first();
-        $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
-            ->whereNull('facturas.ingreso_id')
-            ->where('facturas.fechaDePago', 'LIKE', '%' . $fecha_Actual . '%')
-            ->first();
-        $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
-            ->where('ingresos.created_at', 'LIKE', '%' . $fecha_Actual . '%')
-            ->first();
+    //     $ocs = Oc::selectRaw('ifnull(sum(ocs.cantidad),0) as total')
+    //         ->whereNull('ocs.factura_id')
+    //         ->where('ocs.fecha_alta', 'LIKE', '%' . $fecha_Actual . '%')
+    //         ->first();
+    //     $facturas = Factura::selectRaw('ifnull(sum(facturas.cantidad),0) as total')
+    //         ->whereNull('facturas.ingreso_id')
+    //         ->where('facturas.fechaDePago', 'LIKE', '%' . $fecha_Actual . '%')
+    //         ->first();
+    //     $ingreso = Ingreso::selectRaw('ifnull(sum(ingresos.cantidad),0) as total')
+    //         ->where('ingresos.created_at', 'LIKE', '%' . $fecha_Actual . '%')
+    //         ->first();
 
-        $status['pc'] = $ocs->total;
-        $status['pp'] =  $facturas->total;
-        $status['c'] = $ingreso->total;
-        return $status;
-    }
+    //     $status['pc'] = $ocs->total;
+    //     $status['pp'] =  $facturas->total;
+    //     $status['c'] = $ingreso->total;
+    //     return $status;
+    // }
 
     /**
      * Get ocs by Venta

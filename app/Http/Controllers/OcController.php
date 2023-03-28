@@ -235,7 +235,9 @@ class OcController extends Controller
         $validadData = $request->validate([
             'month' => ['required', 'numeric', 'min:1', 'max:12'],
             'year' => ['required', 'numeric', 'min:2000', 'max:2050'],
-            'status' => ['required', 'in:pc,pp,c']
+            'status' => ['required', 'in:pc,pp,c'],
+            'lineas_negocio_id' => ['nullable', 'exists:lineas_negocios,id'],
+            'cliente_id' => ['nullable', 'exists:clientes,id'],
         ]);
         switch ($validadData['status']) {
             case "pc":
@@ -244,13 +246,23 @@ class OcController extends Controller
                     'ocs.nombre',
                     'ocs.cantidad as total',
                     'ventas.nombre as  venta'
-                )
-                    ->selectRaw('day(ocs.fecha_alta) as day')
+                )->selectRaw('day(ocs.fecha_alta) as day')
                     ->join('ventas', 'ocs.venta_id', 'ventas.id')
                     ->whereNull('ocs.factura_id')
                     ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
-                    ->whereYear('ocs.fecha_alta', '=', $validadData['year'])
-                    ->get();
+                    ->whereYear('ocs.fecha_alta', '=', $validadData['year']);
+                if ($request->has('lineas_negocio_id') || $request->has('cliente_id')) {
+                    $daysStatus->join('ventas', 'ocs.venta_id', '=', 'ventas.id')
+                        ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
+                    //Encaso de tener linea de transporte
+                    if ($request->has('lineas_negocio_id')) {
+                        $daysStatus->where('cecos.lineas_negocio_id', '=', $validadData['lineas_negocio_id']);
+                    }
+                    //Caso de tener cliente
+                    if ($request->has('cliente_id')) {
+                        $daysStatus->where('cecos.cliente_id', '=', $validadData['cliente_id']);
+                    }
+                }
                 break;
             case "pp":
                 $daysStatus =  Factura::select(
@@ -260,8 +272,23 @@ class OcController extends Controller
                 )->selectRaw('day(facturas.fechaDePago) as day')
                     ->whereNull('facturas.ingreso_id')
                     ->whereMonth('facturas.fechaDePago', '=', $validadData['month'])
-                    ->whereYear('facturas.fechaDePago', '=', $validadData['year'])
-                    ->get();
+                    ->whereYear('facturas.fechaDePago', '=', $validadData['year']);
+
+                if ($request->has('lineas_negocio_id') || $request->has('cliente_id')) {
+                    $daysStatus->join('ocs', 'facturas.id', '=', 'ocs.factura_id')
+                        ->join('ventas', 'ocs.venta_id', '=', 'ventas.id')
+                        ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
+                        ->distinct();
+                    //Encaso de tener linea de transporte
+                    if ($request->has('lineas_negocio_id')) {
+                        $daysStatus->where('cecos.lineas_negocio_id', '=', $validadData['lineas_negocio_id']);
+                    }
+                    //Caso de tener cliente
+                    if ($request->has('cliente_id')) {
+                        $daysStatus->where('cecos.lineas_negocio_id', '=', $validadData['lineas_negocio_id']);
+                    }
+                }
+
                 break;
             case "c":
                 $daysStatus =  Ingreso::select(
@@ -271,10 +298,26 @@ class OcController extends Controller
                 )
                     ->selectRaw('day(ingresos.created_at) as day')
                     ->whereMonth('ingresos.created_at', '=', $validadData['month'])
-                    ->whereYear('ingresos.created_at', '=', $validadData['year'])
-                    ->get();
+                    ->whereYear('ingresos.created_at', '=', $validadData['year']);
+
+                if ($request->has('lineas_negocio_id') || $request->has('cliente_id')) {
+                    $daysStatus->join('facturas', 'ingresos.id', '=', 'facturas.ingreso_id')
+                        ->distinct();
+                    //Encaso de tener linea de transporte
+                    if ($request->has('lineas_negocio_id')) {
+                        $daysStatus->join('ocs', 'facturas.id', '=', 'ocs.factura_id')
+                            ->join('ventas', 'ocs.venta_id', '=', 'ventas.id')
+                            ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
+                            ->where('cecos.lineas_negocio_id', '=', $validadData['lineas_negocio_id']);
+                    }
+                    //Caso de tener cliente
+                    if ($request->has('cliente_id')) {
+                        $daysStatus->where('facturas.cliente_id', '=', $validadData['cliente_id']);
+                    }
+                }
+
                 break;
         }
-        return response()->json($daysStatus->groupBy('day'));
+        return response()->json($daysStatus->get()->groupBy('day'));
     }
 }
