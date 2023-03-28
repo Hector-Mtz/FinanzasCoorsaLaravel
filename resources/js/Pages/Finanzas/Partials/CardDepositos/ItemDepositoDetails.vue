@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from "vue";
-
+import { reactive, watch } from "vue";
+import { throttle } from 'lodash';
 import ListDataInput from "@/Components/ListDataInput.vue";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
@@ -15,9 +15,9 @@ Fancybox.bind("[data-fancybox]", {
     // Your custom options
 });
 
-const emit = defineEmits(["addFactura", "edit", "delete", "changeStatus"]);
+const emit = defineEmits(["addFactura", "edit", "delete", "changeStatus", 'getFacturas']);
+const inputParamFactura = reactive({ factura_id: '', text: '' })
 
-const facturaIdAdd = ref("");
 const props = defineProps({
     deposito: {
         type: Object,
@@ -30,17 +30,26 @@ const props = defineProps({
 });
 
 const addFactura = () => {
-    if (facturaIdAdd.value !== "") {
+    if (inputParamFactura.factura_id !== "") {
         props.deposito.error = "";
         const form = {
-            factura_id: facturaIdAdd.value,
+            factura_id: inputParamFactura.factura_id,
             deposito_id: props.deposito.id,
         };
-        emit("addFactura", form);
+        inputParamFactura.text = "";
+        emit("addFactura", form, props.deposito);
     } else {
         props.deposito.error = "FACTURA INVALIDA";
     }
 };
+
+watch(inputParamFactura, throttle(function () {
+    const anyList = props.facturas.some((factura) => factura.referencia.toLowerCase().includes(inputParamFactura.text.toLowerCase()));
+    if (!anyList) {
+        emit('getFacturas')
+    }
+}, 250));
+
 </script>
 <template>
     <tr>
@@ -51,7 +60,9 @@ const addFactura = () => {
                 #{{ factura.referencia }}
             </span>
             <div v-if="$page.props.can['deposito.factura.create']" class="flex flex-row justify-center">
-                <ListDataInput class="w-50" v-model="facturaIdAdd" list="facturas-catalogo" name-option="referencia"
+
+                <ListDataInput class="w-50" v-model="inputParamFactura.factura_id" :valueText="inputParamFactura.text"
+                    @value="inputParamFactura.text = $event" list="facturas-catalogo" name-option="referencia"
                     :options="props.facturas" />
                 <ButtonAdd class="ml-1 h-7" @click="addFactura()" />
             </div>

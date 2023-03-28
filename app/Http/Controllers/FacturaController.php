@@ -386,11 +386,18 @@ class FacturaController extends Controller
     /**
      *
      */
-    public function catalogos(Request $request)
+    public function catalogos()
     {
+
         $facturas = Factura::select('facturas.id', 'facturas.referencia')
-            ->whereNull('facturas.ingreso_id')->get();
-        return response()->json($facturas);
+            ->whereNull('facturas.ingreso_id');
+
+        if (request()->has("search")) {
+            $search = strtr(request("search"), array("'" => "\\'", "%" => "\\%"));
+            $facturas->where("facturas.referencia", "like", "%" . $search . "%");
+        }
+
+        return response()->json($facturas->limit(20)->get());
     }
 
 

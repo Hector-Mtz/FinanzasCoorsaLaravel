@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, reactive } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 import { pickBy, throttle } from 'lodash'
 import ButtonAdd from "@/Components/ButtonAdd.vue";
@@ -23,12 +23,11 @@ const props = defineProps({
 });
 
 const listFacturas = ref([]);
-const textFactura = ref("");
-const facturaIdAdd = ref("");
+const inputParamFactura = reactive({ factura_id: '', text: '' })
 
 // ocs del catalogo disponible
-const getFacturas = async (search = '') => {
-    const params = pickBy({ search })
+const getFacturas = async () => {
+    const params = pickBy({ search: inputParamFactura.text })
     const resp = await axios.get(route("facturas.catalogos"), { params });
     listFacturas.value = resp.data; //ocs del catalogo disponible
 };
@@ -42,11 +41,6 @@ const deleteFactura = (indexFactura) => {
         .then(() => {
             props.deposito.error = "";
             props.deposito.facturas.splice(indexFactura, 1);
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
             emit("updateDepositos");
         })
         .catch((error) => {
@@ -62,13 +56,13 @@ const deleteFactura = (indexFactura) => {
 };
 
 const addFactura = () => {
-    if (facturaIdAdd.value !== "") {
+    if (inputParamFactura.factura_id !== "") {
         props.deposito.error = "";
         const form = {
-            factura_id: facturaIdAdd.value,
+            factura_id: inputParamFactura.factura_id,
             deposito_id: props.deposito.id,
         };
-        textFactura.value = "";
+        inputParamFactura.text = "";
         emit("addFactura", form);
     } else {
         props.deposito.error = "FACTURA INVALIDA";
@@ -87,7 +81,8 @@ const totalFacturas = computed(() => {
 const close = () => {
     listFacturas.value = [];
     props.deposito.error = "";
-    facturaIdAdd.value = "";
+    inputParamFactura.factura_id = "";
+    inputParamFactura.text = "";
     emit("close");
 };
 
@@ -97,12 +92,12 @@ watch(props, () => {
     }
 });
 
-watch(textFactura, throttle(function () {
-    const anyList = listFacturas.value.some((factura) => factura.referencia.toLowerCase().includes(textFactura.value.toLowerCase()));
+watch(inputParamFactura, throttle(function () {
+    const anyList = listFacturas.value.some((factura) => factura.referencia.toLowerCase().includes(inputParamFactura.text.toLowerCase()));
     if (!anyList) {
-        getFacturas(textFactura.value)
+        getFacturas()
     }
-}, 150));
+}, 250));
 
 </script>
 <template>
@@ -128,9 +123,9 @@ watch(textFactura, throttle(function () {
                 </h3>
                 <div v-if="$page.props.can['deposito.factura.create']" class="flex items-center gap-4">
                     <div class="grid">
-                        <ListDataInput class="w-50" v-model="facturaIdAdd" :value="textFactura"
-                            @value="textFactura = $event" list="facturas-catalogo" name-option="referencia"
-                            :options="listFacturas" />
+                        <ListDataInput class="w-50" v-model="inputParamFactura.factura_id"
+                            :valueText="inputParamFactura.text" @value="inputParamFactura.text = $event"
+                            list="facturas-catalogo" name-option="referencia" :options="listFacturas" />
 
                         <JetInputError :message="props.deposito.error" class="mt-2" />
                     </div>
@@ -139,6 +134,7 @@ watch(textFactura, throttle(function () {
             </div>
         </template>
         <template #content>
+
             <TableComponent>
                 <template #thead>
                     <tr class="text-[15px] font-semibold uppercase border-b-[1px] border-aqua-500">

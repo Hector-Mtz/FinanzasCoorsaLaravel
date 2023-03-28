@@ -29,30 +29,26 @@ const updateDepositos = () => {
     search();
     emit("updateCalendar");
 };
-const addFacturaToDeposito = (form) => {
-    // esto es para el error
-    const findedIndex = depositos.value.findIndex((dep) => {
-        return dep.id == form.deposito_id;
-    });
-    axios
-        .post(route("ingresos.facturas.store", form.deposito_id), form)
-        .then(() => {
-            search(searchText.value);
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
+const addFacturaToDeposito = (form, dep = false) => {
+    axios.post(route("ingresos.facturas.store", form.deposito_id), form)
+        .then((resp) => {
+            deposito.value = resp.data;
+            search();
+            emit('updateCalendar');
         })
         .catch((error) => {
+            let message = 'Error SET FACTURA';
             if (
                 error.hasOwnProperty("response") &&
                 error.response.data.hasOwnProperty("message")
             ) {
-                depositos.value[findedIndex].error =
-                    error.response.data.message;
+                console.log(error.response.data.message);
+                message = error.response.data.message;
+            }
+            if (dep) {
+                dep.error = message;
             } else {
-                depositos.value[findedIndex].error = "Error SET FACTURA";
+                deposito.value.error = message;
             }
         });
 };
@@ -164,7 +160,7 @@ watch(params, throttle((newSearch) => {
         </div>
         <!--Modals -->
         <DepositosModal :show="showingDepositos" @update-depositos="updateDepositos($event)"
-            @delete-deposito="updateDepositos()" @add-factura="addFacturaToDeposito($event)"
+            @delete-deposito="updateDepositos()" @add-factura="($event, dep) => addFacturaToDeposito($event, dep)"
             @close="showingDepositos = false" />
         <FacturasDepositoModal :show="showingFacturas" :deposito="deposito" @add-factura="addFacturaToDeposito($event)"
             @update-depositos="updateDepositos()" @close="closeFacturasDeposito" />

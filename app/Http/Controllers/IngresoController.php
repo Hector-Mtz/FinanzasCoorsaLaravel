@@ -121,9 +121,7 @@ class IngresoController extends Controller
                 'bancos.nombre as banco'
             )
                 ->join('bancos', 'ingresos.banco_id', '=', 'bancos.id')
-                ->with(['facturas' => function ($query) {
-                    $query->select('id', 'referencia', 'referencia', 'cantidad', 'fechaDePago');
-                }])
+                ->with('facturas:id,referencia,ingreso_id,cantidad,fechaDePago')
                 ->leftJoin(
                     'facturas',
                     'facturas.id',
@@ -143,9 +141,7 @@ class IngresoController extends Controller
                     DB::raw("(SELECT id FROM facturas as fact_join WHERE fact_join.ingreso_id = ingresos.id LIMIT 1)")
                 )
                 ->join('clientes', 'facturas.cliente_id', '=', 'clientes.id')
-                ->with(['facturas' => function ($query) {
-                    $query->select('id', 'referencia', 'referencia', 'cantidad', 'fechaDePago');
-                }])
+                ->with('facturas:id,referencia,ingreso_id,cantidad,fechaDePago')
                 ->where('clientes.id', '=', $finCliente->id);
         }
 
@@ -366,9 +362,8 @@ class IngresoController extends Controller
                 }
 
                 DB::commit();
-                return response()->json([
-                    'message' => 'Guardado.'
-                ]);
+                $ingreso->load('facturas:id,referencia,ingreso_id,cantidad,fechaDePago');
+                return response()->json($ingreso);
             } catch (QueryException $e) {
                 @throw ValidationException::withMessages([
                     'message' => $e->getMessage(),
@@ -385,9 +380,9 @@ class IngresoController extends Controller
     {
         $this->authorize('deposito.factura.delete');
         $request->validate([
-            'factura_id' => ["required", "exists:ocs,id"],
+            'factura_id' => ["required", "exists:facturas,id"],
         ]);
-        $factura = Factura::find($request->factura_id);
+        $factura = $ingreso->facturas()->find($request->factura_id);
         $factura->ingreso_id = NULL;
         $factura->save();
 

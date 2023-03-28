@@ -8,13 +8,11 @@ import JetLabel from "@/Jetstream/Label.vue";
 import JetButton from "@/Jetstream/Button.vue";
 import JetInputError from "@/Jetstream/InputError.vue";
 import cerrar from "../../../../../img/elementos/cerrar.png";
-import folder from "../../../../../img/elementos/agregar-documento.png";
 import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
 import SelectComponent from "@/Components/SelectComponent.vue";
 
-import ListDataInput from '@/Components/ListDataInput.vue';
 
 
 import DropZone from '@/Components/DropZone.vue';

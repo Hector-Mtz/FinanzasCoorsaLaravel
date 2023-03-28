@@ -11,9 +11,7 @@ import JetInputError from "@/Jetstream/InputError.vue";
 
 import DialogModal from "@/Components/DialogModal.vue";
 import Input from "@/Components/Input.vue";
-import ListDataInput from "@/Components/ListDataInput.vue";
 import SpinProgress from "@/Components/SpinProgress.vue";
-import SelectComponent from "@/Components/SelectComponent.vue";
 import cerrar from "../../../../img/elementos/cerrar.png";
 
 const emit = defineEmits(["close", "add", "edit"]);
@@ -156,40 +154,23 @@ const update = () => {
 <template>
     <DialogModal :show="show" @close="close()">
         <template #title>
-            <div class="px-4 py-1 flex items-center justify-between my-6">
+            <div class="flex items-center justify-between px-4 py-1 my-6">
                 <div>
                     <span class="font-semibold text-[32px] text-fuente-500">
                         {{ titleModal }}
                     </span>
                     <JetInputError :message="form.error" class="mt-2" />
                 </div>
-                <img
-                    :src="cerrar"
-                    alt=""
-                    class="absolute left-[95.5%] top-[5%] hover:cursor-pointer"
-                    @click="close"
-                />
+                <img :src="cerrar" alt="" class="absolute left-[95.5%] top-[5%] hover:cursor-pointer" @click="close" />
             </div>
         </template>
         <template #content>
             <form @submit.prevent="createOrUpdate()">
-                <div
-                    class="grid gap-x-2 gap-y-6 px-4 py-2 text-[14px] font-light my-6"
-                >
+                <div class="grid gap-x-2 gap-y-6 px-4 py-2 text-[14px] font-light my-6">
                     <div>
-                        <Input
-                            placeholder="Nombre"
-                            id="nombre"
-                            name="referencia"
-                            type="text"
-                            v-model="form.nombre"
-                            required
-                            maxlength="30"
-                        />
-                        <JetInputError
-                            :message="form.errors.nombre"
-                            class="mt-2"
-                        />
+                        <Input placeholder="Nombre" id="nombre" name="referencia" type="text" v-model="form.nombre" required
+                            maxlength="30" />
+                        <JetInputError :message="form.errors.nombre" class="mt-2" />
                     </div>
                 </div>
                 <div class="flex justify-end px-10 py-2">

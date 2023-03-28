@@ -236,7 +236,8 @@ watch(params, throttle(function () {
                 <template #tbody>
                     <ItemDepositoDetails v-for="deposito in depositos.data" :key="deposito.nombre" :deposito="deposito"
                         :facturas="listFacturas" @edit="showFormDeposito($event)" @delete="deleteDeposito($event)"
-                        @add-factura="emit('addFactura')" @change-status="changeStatus($event)" />
+                        @add-factura="($event, depo) => emit('addFactura', $event, depo)"
+                        @change-status="changeStatus($event)" @getFacturas="getFacturas()" />
                 </template>
             </TableComponent>
             <PaginationAxios :pagination="depositos" @loadPage="searchDepositos($event)" />
