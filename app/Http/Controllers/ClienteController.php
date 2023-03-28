@@ -251,19 +251,41 @@ class ClienteController extends Controller
 
     public function clienteGrupoCon($cliente, $grupoConcepto)
     {
-         //consulta para construiro loshijos de ambos
-     return  CecoConcepto::select(
-           'cecos.id AS ceco_id',
-           'cecos.nombre AS ceco_nombre',
-           'conceptos.id AS concepto_id',
-           'conceptos.nombre AS concepto_nombre'
+         //consulta todos los cecos y conceptos de ese cliente y grupoConcept
+         $cecos = Ceco::select(
+            'cecos.*'
          )
-         ->join('cecos','ceco_conceptos.ceco_id','cecos.id')
          ->join('clientes','cecos.cliente_id','clientes.id')
-         ->join('conceptos', 'ceco_conceptos.concepto_id','conceptos.id')
-         ->join('grupo_conceptos','conceptos.grupo_concepto_id', 'grupo_conceptos.id')
          ->where('clientes.nombre','=',$cliente)
+         ->get();
+
+         $conceptos = Concepto::select(
+            'conceptos.*'
+         )
+         ->join('grupo_conceptos','conceptos.grupo_concepto_id','grupo_conceptos.id')
          ->where('grupo_conceptos.nombre','=',$grupoConcepto)
+         ->get();
+
+         return [$cecos, $conceptos];
+    }
+
+    public function ceco_grupoConcepto($grupoConcepto)
+    {
+       return Concepto::select(
+        'conceptos.*'
+     )
+     ->join('grupo_conceptos','conceptos.grupo_concepto_id','grupo_conceptos.id')
+     ->where('grupo_conceptos.nombre','=',$grupoConcepto)
+     ->get();
+    }
+
+    public function cliente_concepto($cliente)
+    {
+       return Ceco::select(
+            'cecos.*'
+         )
+         ->join('clientes','cecos.cliente_id','clientes.id')
+         ->where('clientes.nombre','=',$cliente)
          ->get();
     }
 }
