@@ -16,13 +16,13 @@ let chart = null;
 
 watch(() => props.arregloValores,(nuevosValores) => 
     { //el whatcher observa el cambio de la data
-        console.log(nuevosValores);  //lo imprime
+        //console.log(nuevosValores);  //lo imprime
         chart.data = nuevosValores  
      });
 
 watch(() => props.movimiento,(newMov) => 
     { //el whatcher observa el cambio de la data
-        console.log(newMov);  //lo imprime
+        //console.log(newMov);  //lo imprime
         restructuraMov(newMov);
      });
 
@@ -30,6 +30,7 @@ let click1 = ref(0);
 let concepto = ref(null);
 let ceco = ref(null);
 const modalSoliGastos = ref(false);
+const solicitudes = ref([]);
 const openModalSoliGastos = () => 
 {
     modalSoliGastos.value = true;
@@ -98,15 +99,6 @@ onMounted(() =>
    bullet2.zIndex = 1;
    bullet2.fontSize = 15;
    bullet2.interactionsEnabled = false;
-   
-   // define colors
-   var colors = {
-       "critical": "#ca0101",
-       "bad": "#e17a2d",
-       "medium": "#e1d92d",
-       "good": "#5dbe24",
-       "verygood": "#0b7d03"
-   };
    
    chart.data = props.arregloValores; 
    series.columns.template.events.on("hit", function(ev)  //primer click para zoom
@@ -217,13 +209,20 @@ onMounted(() =>
          ceco.value = categorias.categoryY;
          concepto.value = categorias.categoryX;
          click1.value = 0;
+
+         axios.get(route('soli.gastos', {ceco: ceco.value, concepto: concepto.value}))
+                   .then((resp) => 
+                    {
+                        console.log(resp.data);
+                        solicitudes.value = resp.data;
+                    });
        }
        
     }, this);
    
    var baseWidth = Math.min(chart.plotContainer.maxWidth, chart.plotContainer.maxHeight);
    var maxRadius = baseWidth / Math.sqrt(chart.data.length) / 2 - 2; // 2 is jast a margin
-   series.heatRules.push({ min: 10, max: maxRadius, property: "radius", target: bullet1.circle });
+   series.heatRules.push({ min: 20, max: maxRadius, property: "radius", target: bullet1.circle });
    
    
    chart.plotContainer.events.on("maxsizechanged", function() {
@@ -233,6 +232,11 @@ onMounted(() =>
        })
    });
 
+   /*Scrollbar*/
+   chart.scrollbarX = new am4core.Scrollbar();
+   chart.scrollbarX.parent = chart.bottomAxesContainer;
+   chart.scrollbarY = new am4core.Scrollbar();
+   chart.scrollbarY.parent = chart.leftAxesContainer;
 });
 
 const restructuraMov = (movimiento) => 
@@ -261,7 +265,7 @@ const restructuraMov = (movimiento) =>
     <div class="hello" ref="chartdiv" id="chartdiv">
     </div>
     <!--Modales-->
-    <ModalWatchSoliGastos :ceco="ceco" :concepto="concepto" :show="modalSoliGastos" @close="closeModalSoliGastos" />
+    <ModalWatchSoliGastos :ceco="ceco" :concepto="concepto" :show="modalSoliGastos" @close="closeModalSoliGastos" :solicitudes ="solicitudes" />
 </template>
 <style>
 #chartdiv {

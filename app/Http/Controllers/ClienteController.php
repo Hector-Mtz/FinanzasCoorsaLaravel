@@ -317,4 +317,22 @@ class ClienteController extends Controller
          ->where('clientes.nombre','=',$cliente)
          ->get();
     }
+
+    public function solicitudes_gastos($ceco, $concepto)
+    {
+        
+     return  SoliMovimiento::select(
+            'soli_movimientos.*',
+             DB::raw("SUM(productos.cantidad) as cantidad"),
+        )
+        ->with('productos')
+        ->join('ceco_conceptos','soli_movimientos.ceco_concepto_id','ceco_conceptos.id')
+        ->join('cecos', 'ceco_conceptos.ceco_id','cecos.id')
+        ->join('conceptos','ceco_conceptos.concepto_id', 'conceptos.id')
+        ->join('productos','productos.soli_movimiento_id','soli_movimientos.id')
+        ->where('cecos.nombre','=', $ceco)
+        ->where('conceptos.nombre','=',$concepto)
+        ->groupBy('soli_movimientos.id')
+        ->get();
+    }
 }
