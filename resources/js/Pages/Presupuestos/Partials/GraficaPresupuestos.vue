@@ -9,13 +9,21 @@ import ModalWatchSoliGastos from '../Partials/Modals/ModalWatchSoliGastos.vue';
 
 var props = defineProps({
     arregloValores:Object,
+    movimiento:String
 });
 
 let chart = null;
 
-watch(() => props.arregloValores,(nuevosValores) => { //el whatcher observa el cambio de la data
-       //console.log(nuevosValores);  //lo imprime
+watch(() => props.arregloValores,(nuevosValores) => 
+    { //el whatcher observa el cambio de la data
+        console.log(nuevosValores);  //lo imprime
         chart.data = nuevosValores  
+     });
+
+watch(() => props.movimiento,(newMov) => 
+    { //el whatcher observa el cambio de la data
+        console.log(newMov);  //lo imprime
+        restructuraMov(newMov);
      });
 
 let click1 = ref(0);
@@ -34,7 +42,7 @@ const closeModalSoliGastos = () =>
 
 onMounted(() => 
 {
-       am4core.useTheme(am4themes_animated);
+   am4core.useTheme(am4themes_animated);
    // Themes end
    
    chart = am4core.create("chartdiv", am4charts.XYChart);
@@ -56,13 +64,15 @@ onMounted(() =>
    yAxis.renderer.inversed = true;
    yAxis.renderer.minGridDistance = 30;
    
+   //Series
    var series = chart.series.push(new am4charts.ColumnSeries());
    series.dataFields.categoryX = "x";
    series.dataFields.categoryY = "y";
    series.dataFields.value = "valor";
    series.sequencedInterpolation = true;
-   series.defaultState.transitionDuration = 3000;
-   
+   series.defaultState.transitionDuration = 2000;
+
+
    // Set up column appearance
    var column = series.columns.template;
    column.strokeWidth = 2;
@@ -86,7 +96,7 @@ onMounted(() =>
    bullet2.label.text = "{valor}";
    bullet2.label.fill = am4core.color("#fff");
    bullet2.zIndex = 1;
-   bullet2.fontSize = 11;
+   bullet2.fontSize = 15;
    bullet2.interactionsEnabled = false;
    
    // define colors
@@ -98,143 +108,8 @@ onMounted(() =>
        "verygood": "#0b7d03"
    };
    
-   chart.data = props.arregloValores /*[{
-       "y": "Critical",
-       "x": "Very good",
-       "color": colors.medium,
-       "value": 20
-   }, {
-       "y": "Bad",
-       "x": "Very good",
-       "color": colors.good,
-       "value": 15
-   }, {
-       "y": "Medium",
-       "x": "Very good",
-       "color": colors.verygood,
-       "value": 25
-   }, {
-       "y": "Good",
-       "x": "Very good",
-       "color": colors.verygood,
-       "value": 15
-   }, {
-       "y": "Very good",
-       "x": "Very good",
-       "color": colors.verygood,
-       "value": 12
-   },
-   
-   {
-       "y": "Critical",
-       "x": "Good",
-       "color": colors.bad,
-       "value": 30
-   }, {
-       "y": "Bad",
-       "x": "Good",
-       "color": colors.medium,
-       "value": 24
-   }, {
-       "y": "Medium",
-       "x": "Good",
-       "color": colors.good,
-       "value": 25
-   }, {
-       "y": "Good",
-       "x": "Good",
-       "color": colors.verygood,
-       "value": 15
-   }, {
-       "y": "Very good",
-       "x": "Good",
-       "color": colors.verygood,
-       "value": 25
-   },
-   
-   {
-       "y": "Critical",
-       "x": "Medium",
-       "color": colors.bad,
-       "value": 33
-   }, {
-       "y": "Bad",
-       "x": "Medium",
-       "color": colors.bad,
-       "value": 14
-   }, {
-       "y": "Medium",
-       "x": "Medium",
-       "color": colors.medium,
-       "value": 20
-   }, {
-       "y": "Good",
-       "x": "Medium",
-       "color": colors.good,
-       "value": 19
-   }, {
-       "y": "Very good",
-       "x": "Medium",
-       "color": colors.good,
-       "value": 25
-   },
-   
-   {
-       "y": "Critical",
-       "x": "Bad",
-       "color": colors.critical,
-       "value": 31
-   }, {
-       "y": "Bad",
-       "x": "Bad",
-       "color": colors.critical,
-       "value": 24
-   }, {
-       "y": "Medium",
-       "x": "Bad",
-       "color": colors.bad,
-       "value": 25
-   }, {
-       "y": "Good",
-       "x": "Bad",
-       "color": colors.medium,
-       "value": 15
-   }, {
-       "y": "Very good",
-       "x": "Bad",
-       "color": colors.good,
-       "value": 15
-   },
-   
-   {
-       "y": "Critical",
-       "x": "Critical",
-       "color": colors.critical,
-       "value": 12
-   }, {
-       "y": "Bad",
-       "x": "Critical",
-       "color": colors.critical,
-       "value": 14
-   }, {
-       "y": "Medium",
-       "x": "Critical",
-       "color": colors.critical,
-       "value": 15
-   }, {
-       "y": "Good",
-       "x": "Critical",
-       "color": colors.bad,
-       "value": 25
-   }, {
-       "y": "Very good",
-       "x": "Critical",
-       "color": colors.medium,
-       "value": 19
-   }
-   ];*/
-   
-    series.columns.template.events.on("hit", function(ev)  //primer click para zoom
+   chart.data = props.arregloValores; 
+   series.columns.template.events.on("hit", function(ev)  //primer click para zoom
     {
        if(click1.value == 0)
        {
@@ -243,7 +118,6 @@ onMounted(() =>
            //console.log(ev.target.dataItem); //tenemos ambas categorias
            let categorias =  ev.target.dataItem.categories;
            let tipoAcomodo = ev.target.dataItem.dataContext.tipo_arreglo;
-    
            switch (tipoAcomodo) 
            {
             case "cliente_grupoConcepto":
@@ -341,7 +215,8 @@ onMounted(() =>
          let categorias =  ev.target.dataItem.categories;
          modalSoliGastos.value = true
          ceco.value = categorias.categoryY;
-         concepto.value = categorias.categoryX
+         concepto.value = categorias.categoryX;
+         click1.value = 0;
        }
        
     }, this);
@@ -359,6 +234,27 @@ onMounted(() =>
    });
 
 });
+
+const restructuraMov = (movimiento) => 
+{
+   let arrayAux = chart.data;
+   //console.log(chart.data); //imprimiemos la data actual independientemente de como este estructurada
+   for (let index = 0; index < arrayAux.length; index++) 
+   {
+     const item = arrayAux[index];
+     //console.log(item);
+     for(let clave in item.tipos_movimientos)
+     {
+        if(clave == movimiento)
+        {
+           item.valor = item.tipos_movimientos[clave];
+        }
+     }
+   }
+   
+  chart.data = [];
+  chart.data = arrayAux;
+}
 
 </script>
 <template>

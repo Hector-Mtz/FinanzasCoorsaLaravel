@@ -33,6 +33,35 @@ class ClienteController extends Controller
         )->with('conceptos')
             ->get();
 
+        $cantidades = DB::table(DB::raw('soli_movimientos'))
+            ->selectRaw(
+                '
+                soli_movimientos.id as soli_id,
+                soli_movimientos.nombre as soli_name,
+                tipo_movimientos.id as tipo_mov_id,
+                tipo_movimientos.nombre as tipo_mov_name,
+                SUM(productos.cantidad) as cantidad,
+                ceco_conceptos.id as ceco_conceptos_id,
+                conceptos.id as concepto_id,
+                conceptos.nombre as concepto_name,
+                cecos.id as ceco_id,
+                cecos.nombre as ceco_name,
+                clientes.id as cliente_id,
+                clientes.nombre as cliente_name,
+                grupo_conceptos.id as grupo_conceptos_id,
+                grupo_conceptos.nombre as grupo_conceptos_name'
+            )
+            ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
+            ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
+            ->join('ceco_conceptos', 'soli_movimientos.ceco_concepto_id', '=', 'ceco_conceptos.id')
+            ->join('cecos', 'ceco_conceptos.ceco_id', '=', 'cecos.id')
+            ->join('clientes', 'cecos.cliente_id', '=', 'clientes.id')
+            ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
+            ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', '=', 'grupo_conceptos.id')
+            ->groupBy('soli_movimientos.ceco_concepto_id')
+            ->groupBy('tipo_movimientos.id')
+            ->get();
+
         /*
         $request->validate(
             [
@@ -124,7 +153,7 @@ class ClienteController extends Controller
             [
                 'clientes_cecos' => $cliente_cecos,
                 'grupoConceptos_conceptos' => $grupoConcepto_conceptos,
-
+                'cantidades' => $cantidades
                 /*
             'filtros' => $request->all(['grupoType','grupoType2']), //parametro que filtrara para saber como esta agrupado
             'clientes' => fn() => $clientes->get(),

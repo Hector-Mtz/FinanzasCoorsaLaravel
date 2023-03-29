@@ -1,4 +1,7 @@
 <script setup>
+var props = defineProps({
+   tipoMovimientos:Object
+});
 
 const emit = defineEmits(['seleccion','setFor'])
 
@@ -36,11 +39,7 @@ const setForConcepto = () =>
               <span class="text-white uppercase">$</span>
             </button>
             <div id="myDropdown" class="dropdown-content">
-                      <button id="PRESUPUESTO" @click="cambiar('PRESUPUESTO')">Presupuesto</button>
-                      <button id="SUPLEMENTO" @click="cambiar('SUPLEMENTO')">Suplemento</button>
-                      <button id="TOTAL" @click="cambiar('TOTAL')">Total</button>
-                      <button id="GASTO" @click="cambiar('GASTO')">Gasto</button>
-                      <button id="DISPONIBLE" @click="cambiar('DISPONIBLE')">Disponible</button>     
+               <button v-for="(movimiento, index) in tipoMovimientos"  :key="index" :id="movimiento" @click="cambiar(movimiento)">{{ movimiento }}</button>           
             </div>
         </div>
      </div>

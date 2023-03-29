@@ -24,14 +24,17 @@ var colors = {
 var props = defineProps({
    clientes_cecos:Object,
    grupoConceptos_conceptos:Object,
+   cantidades:Object
 });
 
-
+let tipoMovimientos = ref(["PRESUPUESTO", "SUPLEMENTO", "TOTAL", "GASTO", "DISPONIBLE"])
+let movimientoReactive = ref("PRESUPUESTO");
 const setMovimiento = (movimiento) =>
 {
-   
+   movimientoReactive.value = movimiento;
 }
 
+//Primer arreglo de la data
 let arregloGrupoConcepto = ref([]);
   for (let index = 0; index < props.clientes_cecos.length; index++) 
   {
@@ -46,9 +49,15 @@ let arregloGrupoConcepto = ref([]);
          x:null,
          grupo_id:null,
          y:null,
-         valor:0
+         valor:0,
+         tipos_movimientos:{
+            PRESUPUESTO:0,
+            SUPLEMENTO:0,
+            TOTAL:0,
+            GASTO:0,
+            DISPONIBLE:0
+         }
         };
- 
         //los clientes/cecos deben ser ejey 
         newObj.cliente_id = cliente.id;
         newObj.y = cliente.nombre;
@@ -60,7 +69,31 @@ let arregloGrupoConcepto = ref([]);
      }
     
   }
-  // define colors
+  //colocacion de valores
+  for (let index3 = 0; index3 < arregloGrupoConcepto.value.length; index3++) 
+  {
+     const interseccion = arregloGrupoConcepto.value[index3];
+     for (let index4 = 0; index4 < props.cantidades.length; index4++)
+     {
+        const cantidad = props.cantidades[index4];
+        //console.log(cantidad);
+        for (let clave in interseccion.tipos_movimientos)
+        {
+            if(cantidad.cliente_id == interseccion.cliente_id && cantidad.grupo_conceptos_id == interseccion.grupo_id)
+            {
+                if(cantidad.tipo_mov_name == clave)
+                {
+                  interseccion.tipos_movimientos[clave] = cantidad.cantidad;
+                  if(clave == "PRESUPUESTO")
+                  {
+                     interseccion.valor = cantidad.cantidad
+                  }
+                } 
+            }
+        }
+     }
+  } 
+ 
 let exitAcomodo = ref(false);
 const setFor = (tipoAcomodo) => 
 {
@@ -196,7 +229,7 @@ const cambioButton = () =>
         </template>
         <div class="grid grid-cols-6 grid-rows-2">
            <div>
-              <ButtonsGroup @seleccion="setMovimiento" @setFor="setFor" class="justify-center col-start-1 row-start-1 row-end-3"/>
+              <ButtonsGroup @seleccion="setMovimiento" :tipoMovimientos="tipoMovimientos"  @setFor="setFor" class="justify-center col-start-1 row-start-1 row-end-3"/>
            </div>
             <div class="flex flex-col">
               <div>
@@ -218,7 +251,7 @@ const cambioButton = () =>
         </div>
         <div class="py-12 -mt-24" v-if="!cambio">
             <!--Grafica-->
-            <GraficaPresupuestos :arregloValores = "arregloGrupoConcepto" />
+            <GraficaPresupuestos :arregloValores = "arregloGrupoConcepto" :movimiento = "movimientoReactive" />
         </div>
         <div class="ml-16 mr-16 -mt-8" v-if="cambio">
             <div class="grid grid-cols-2 grid-rows-1 gap-10">
