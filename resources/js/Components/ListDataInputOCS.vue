@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const emit = defineEmits(["update:modelValue", "value"]);
 
@@ -55,7 +55,7 @@ const error = computed(() => {
                 return opcion[props.keyOption] == props.modelValue;
             });
             if (selectOpcion !== undefined) {
-                props.valueText = selectOpcion[props.nameOption];
+                emit('value', selectOpcion[props.nameOption]);
             }
         }
     } else {
@@ -65,10 +65,6 @@ const error = computed(() => {
 });
 
 const inputlist = ref(null);
-
-watch(props, () => {
-    props.valueText = props.value;
-});
 
 onMounted(() => {
     if (inputlist.value.hasAttribute("autofocus")) {

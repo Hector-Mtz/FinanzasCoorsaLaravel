@@ -12,8 +12,9 @@ import Tab from "../../../../Components/Tab.vue";
 import monedas from "../../../../../img/elementos/monedas-de-un-dolar.png";
 import ItemClientePaginate from "../ItemClientePaginate.vue";
 import Input from "../../../../Jetstream/Input.vue";
+import HeaderTab from "../../../../Components/HeaderTab.vue";
 
-const emit = defineEmits(["showVentas"]);
+const emit = defineEmits(["showVentas", "updateCalendar"]);
 
 const props = defineProps({
     clientes: {
@@ -122,28 +123,17 @@ watch(params, throttle(function () {
         <div class="w-full h-">
 
             <!-- Header Tabs -->
-            <div
-                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center">
-
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                        params.status_id === null,
-                }" class="flex items-center tab" @click="changeTab(null)">
+            <HeaderTab>
+                <Tab :active="params.status_id === null" @click="changeTab(null)">
                     TODAS
                 </Tab>
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                        params.status_id === '1',
-                }" class="flex items-center tab" @click="changeTab('1')">
+                <Tab :active="params.status_id === '1'" @click="changeTab('1')">
                     ABIERTAS
                 </Tab>
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                        params.status_id === '2',
-                }" class="flex items-center tab" @click="changeTab('2')">
+                <Tab :active="params.status_id === '2'" @click="changeTab('2')">
                     CERRADAS
                 </Tab>
-            </div>
+            </HeaderTab>
 
             <!-- Lista de clientes -->
             <div class="pt-4 overflow-y-auto" style="max-height: 50vh">
@@ -162,7 +152,7 @@ watch(params, throttle(function () {
             </div>
         </div>
         <!--Modals -->
-        <OcsModal :show="showingOcs" :venta="ventaSelect" @close="closeOcs" />
+        <OcsModal :show="showingOcs" :venta="ventaSelect" @close="closeOcs" @updateCalendar="emit('updateCalendar')" />
 
         <!--Ends Modals-->
     </div>

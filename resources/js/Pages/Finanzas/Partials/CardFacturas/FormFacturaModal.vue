@@ -66,7 +66,6 @@ const close = () => {
 };
 
 const createOrUpdate = () => {
-    console.log("Entra aqui");
     if (props.typeForm === "create") {
         create();
     } else {

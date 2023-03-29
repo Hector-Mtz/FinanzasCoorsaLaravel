@@ -11,7 +11,7 @@ import PaginationAxios from "@/Components/PaginationAxios.vue";
 import { Inertia } from "@inertiajs/inertia";
 import cerrar from "../../../../../img/elementos/cerrar.png";
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "updateCalendar"]);
 const props = defineProps({
     show: {
         type: Boolean,
@@ -114,7 +114,8 @@ const searchVentas = async (page) => {
 };
 
 const refreshVentas = () => {
-    searchVentas(ventas.value.current_page)
+    searchVentas(ventas.value.current_page);
+    emit('updateCalendar');
 }
 
 watchEffect(() => {

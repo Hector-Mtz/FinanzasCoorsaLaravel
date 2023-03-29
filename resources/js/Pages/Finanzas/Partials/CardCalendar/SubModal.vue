@@ -55,7 +55,6 @@ const close = () => {
 };
 
 watch(props, () => {
-
     if (props.show) {
         getData();
     }

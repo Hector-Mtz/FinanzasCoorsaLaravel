@@ -1,6 +1,5 @@
 <script setup>
-import { ref, reactive, watch, onBeforeMount, computed } from "vue";
-import { Inertia } from "@inertiajs/inertia";
+import { ref, reactive, watch, onBeforeMount } from "vue";
 import { pickBy } from "lodash";
 import Tab from "../../../../Components/Tab.vue";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
@@ -11,6 +10,7 @@ import OcsFacturaModal from "./OcsFacturaModal.vue";
 import ItemClientePaginate from "../ItemClientePaginate.vue";
 import { formatoMoney } from "../../../../utils/conversiones";
 import SkeletonLoader from "../../../../Components/SkeletonLoader.vue";
+import HeaderTab from "../../../../Components/HeaderTab.vue";
 
 const emit = defineEmits(["updateCalendar"]);
 
@@ -34,43 +34,33 @@ const closeOcsFactura = () => {
 };
 const updateFacturas = () => {
     search();
+    emit("updateCalendar");
 };
 const addOc = (form) => {
-    const finIndexFactura = facturas.value.findIndex((fact) => {
-        return fact.id == form.factura_id;
-    });
-    axios
-        .post(route("facturas.ocs.store", form.factura_id), form)
-        .then(() => {
+    axios.post(route("facturas.ocs.store", form.factura_id), form)
+        .then((resp) => {
+            facturaSelect.value = resp.data;
             search();
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
+            emit('updateCalendar');
         })
         .catch((error) => {
             if (
                 error.hasOwnProperty("response") &&
                 error.response.data.hasOwnProperty("message")
             ) {
-                facturas.value[finIndexFactura].error =
-                    error.response.data.message;
+                facturaSelect.value.error = error.response.data.message;
             } else {
-                facturas.value[finIndexFactura].error = "Error add OC";
+                facturaSelect.value.error = "Error add OC";
             }
         });
 };
 
 // End Methos Modal
-
 const changeTab = (status_id) => {
     paramsFacturas.status_id = status_id;
     if (paramsFacturas.search !== "") {
         paramsFacturas.search = "";
-
     }
-
 };
 const search = async () => {
 
@@ -86,7 +76,6 @@ const search = async () => {
 
 onBeforeMount(() => {
     search();
-    emit("updateCalendar");
 });
 
 let timeout;
@@ -108,27 +97,17 @@ watch(paramsFacturas, () => {
         </div>
         <div class="w-full">
             <!-- Header Tabs -->
-            <div
-                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center">
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                        paramsFacturas.status_id === '',
-                }" class="flex items-center tab" @click="changeTab('')">
+            <HeaderTab>
+                <Tab :active="paramsFacturas.status_id === ''" @click="changeTab('')">
                     TODAS
                 </Tab>
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                        paramsFacturas.status_id === '1',
-                }" class="flex items-center tab" @click="changeTab('1')">
+                <Tab :active="paramsFacturas.status_id === '1'" @click="changeTab('1')">
                     ABIERTAS
                 </Tab>
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 h-[32px]':
-                        paramsFacturas.status_id === '2',
-                }" class="flex items-center tab" @click="changeTab('2')">
+                <Tab :active="paramsFacturas.status_id === '2'" @click="changeTab('2')">
                     CERRADAS
                 </Tab>
-            </div>
+            </HeaderTab>
             <!-- Lista de clientes -->
 
             <div class="overflow-y-auto pt-4 border-b-[1px] border-gris-500" style="max-height: 41.1vh">
@@ -156,7 +135,8 @@ watch(paramsFacturas, () => {
         <!--Modals -->
         <FacturasModal :show="showingFacturas" @update-facturas="updateFacturas($event)" @add-oc="addOc($event)"
             @close="showingFacturas = false" />
-        <OcsFacturaModal :show="showingOcs" :factura="facturaSelect" @add-oc="addOc($event)" @close="closeOcsFactura" />
+        <OcsFacturaModal :show="showingOcs" :factura="facturaSelect" @add-oc="addOc($event)"
+            @update-facturas="updateFacturas($event)" @close="closeOcsFactura" />
         <!--Ends Modals-->
     </div>
 </template>

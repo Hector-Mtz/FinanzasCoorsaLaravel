@@ -12,6 +12,7 @@ import { formatoMoney } from "../../utils/conversiones";
 
 
 const showingVentas = ref(false);
+const ventasCalendar = ref(null);
 
 const componentFactDep = reactive({
     component: "Facturas",
@@ -41,7 +42,9 @@ const props = defineProps({
     },
 });
 
-
+const updateCalendar = () => {
+    ventasCalendar.value.update();
+}
 
 // FUNCIONES MODAL
 const closeModalVentas = () => {
@@ -74,7 +77,8 @@ const chageComponent = () => {
             <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <Card>
                     <Ventas :clientes="props.clientes" :filters="props.filters" @show-ventas="showingVentas = true"
-                        class="border-b-[1px] border-white" :lineas-negocios="props.lineasNegocios" />
+                        @updateCalendar="updateCalendar()" class="border-b-[1px] border-white"
+                        :lineas-negocios="props.lineasNegocios" />
                     <div class="flex flex-col px-4 py-2 mt-4 font-bold text-fuente-500">
                         <span class="text-[12px] uppercase font-medium">
                             Total
@@ -88,7 +92,8 @@ const chageComponent = () => {
                     </div>
                 </Card>
                 <div class="grid col-span-2 px-4 py-4 bg-white text-fuente-500 rounded-2xl">
-                    <VentasCalendar :lineas-negocios="props.lineasNegocios" :list-clientes="props.listClientes" />
+                    <VentasCalendar ref="ventasCalendar" :lineas-negocios="props.lineasNegocios"
+                        :list-clientes="props.listClientes" />
                 </div>
                 <Card>
                     <div class="flex items-center justify-between my-1 mb-4 text-fuente-500">
@@ -101,13 +106,13 @@ const chageComponent = () => {
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
                     </div>
-                    <Facturas v-if="componentFactDep.component === 'Facturas'" />
-                    <Depositos v-else />
+                    <Facturas v-if="componentFactDep.component === 'Facturas'" @updateCalendar="updateCalendar()" />
+                    <Depositos v-else @updateCalendar="updateCalendar()" />
                 </Card>
             </div>
         </div>
         <!-- Modals -->
-        <VentasModal :show="showingVentas" @close="closeModalVentas" />
+        <VentasModal :show="showingVentas" @close="closeModalVentas" @updateCalendar="updateCalendar()" />
         <!-- END Modals -->
     </AppLayout>
 </template>

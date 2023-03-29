@@ -94,7 +94,7 @@ class OcController extends Controller
                 $venta->save();
             }
 
-            return redirect()->back();
+            return response()->json($newOc);
         } catch (QueryException $e) {
             @throw ValidationException::withMessages([
                 'nombre' => $e->getMessage()
@@ -137,7 +137,6 @@ class OcController extends Controller
                 @throw ValidationException::withMessages([
                     'cantidad' => "La cantidad supera a la factura"
                 ]);
-                return redirect()->back();
             }
         }
 
@@ -175,8 +174,7 @@ class OcController extends Controller
                     'venta_id' => $request['venta_id']
                 ]);
         }
-        return redirect()->back();
-        //return response()->json($oc);
+        return response()->json($oc);
     }
     /**
      * Update the specified resource in storage.
@@ -252,8 +250,7 @@ class OcController extends Controller
                     ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
                     ->whereYear('ocs.fecha_alta', '=', $validadData['year']);
                 if ($request->has('lineas_negocio_id') || $request->has('cliente_id')) {
-                    $daysStatus->join('ventas', 'ocs.venta_id', '=', 'ventas.id')
-                        ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
+                    $daysStatus->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
                     //Encaso de tener linea de transporte
                     if ($request->has('lineas_negocio_id')) {
                         $daysStatus->where('cecos.lineas_negocio_id', '=', $validadData['lineas_negocio_id']);

@@ -27,7 +27,12 @@ class FacturaController extends Controller
 
         $facturas =  Factura::select("facturas.*")
             ->selectRaw("ifnull(clientes.nombre,'SIN CLIENTE') as cliente, ifnull(sum(ocs.cantidad),0) total_ocs")
-            ->with('ocs:id,nombre,cantidad,factura_id,created_at')
+            ->with(['ocs' => function ($query) {
+                $query->select('id', 'nombre', 'cantidad', 'factura_id', 'created_at')
+                    ->withCasts([
+                        'created_at' => 'datetime:Y-m-d'
+                    ]);
+            }])
             ->leftJoin('clientes', 'facturas.cliente_id', "=", "clientes.id")
             ->leftJoin('ocs', 'facturas.id', "=", "ocs.factura_id")
             ->groupBy(
@@ -35,7 +40,7 @@ class FacturaController extends Controller
             );
 
         if ($request->has("search")) {
-            $search = strtr($request->search, array("'" => "\\'", "%" => "\\%"));
+            $search = '%' . strtr($request->search, array("'" => "\\'", "%" => "\\%")) . '%';
             $facturas->where('facturas.referencia', 'like',  $search);
         }
 
@@ -97,7 +102,12 @@ class FacturaController extends Controller
         if ($cliente === null) {
             $facturas = Factura::select("facturas.*")
                 ->selectRaw("ifnull(sum(ocs.cantidad),0) total_ocs")
-                ->with('ocs:id,nombre,cantidad,factura_id,created_at')
+                ->with(['ocs' => function ($query) {
+                    $query->select('id', 'nombre', 'cantidad', 'factura_id', 'created_at')
+                        ->withCasts([
+                            'created_at' => 'datetime:Y-m-d'
+                        ]);
+                }])
                 ->leftJoin('ocs', 'facturas.id', "=", "ocs.factura_id")
                 ->groupBy(
                     "facturas.id",
@@ -106,7 +116,12 @@ class FacturaController extends Controller
             $finCliente = Cliente::find($cliente);
             $facturas =  $finCliente->facturas()->select("facturas.*")
                 ->selectRaw("ifnull(sum(ocs.cantidad),0) total_ocs")
-                ->with('ocs:id,nombre,cantidad,factura_id,created_at')
+                ->with(['ocs' => function ($query) {
+                    $query->select('id', 'nombre', 'cantidad', 'factura_id', 'created_at')
+                        ->withCasts([
+                            'created_at' => 'datetime:Y-m-d'
+                        ]);
+                }])
                 ->leftJoin('ocs', 'facturas.id', "=", "ocs.factura_id")
                 ->groupBy(
                     "facturas.id",
@@ -120,7 +135,7 @@ class FacturaController extends Controller
         }
         if ($request->has("search")) {
             $search = "%" . strtr($request->search, array("'" => "\\'", "%" => "\\%")) . "%";
-            $facturas->where('facturas.referencia', 'like', '%' . $search . '%');
+            $facturas->where('facturas.referencia', 'like', $search);
         }
 
         return response()->json($facturas->paginate(5));
@@ -317,6 +332,12 @@ class FacturaController extends Controller
 
                 DB::commit();
                 $facturaFind->total_ocs = $nuevaCantidad; // no es un valor a almacenar
+                $facturaFind->load(['ocs' => function ($query) {
+                    $query->select('id', 'nombre', 'cantidad', 'factura_id', 'created_at')
+                        ->withCasts([
+                            'created_at' => 'datetime:Y-m-d'
+                        ]);
+                }]);
                 return response()->json($facturaFind);
             } catch (QueryException $e) {
                 DB::rollBack();
@@ -365,11 +386,18 @@ class FacturaController extends Controller
     /**
      *
      */
-    public function catalogos(Request $request)
+    public function catalogos()
     {
+
         $facturas = Factura::select('facturas.id', 'facturas.referencia')
-            ->whereNull('facturas.ingreso_id')->get();
-        return response()->json($facturas);
+            ->whereNull('facturas.ingreso_id');
+
+        if (request()->has("search")) {
+            $search = strtr(request("search"), array("'" => "\\'", "%" => "\\%"));
+            $facturas->where("facturas.referencia", "like", "%" . $search . "%");
+        }
+
+        return response()->json($facturas->limit(20)->get());
     }
 
 

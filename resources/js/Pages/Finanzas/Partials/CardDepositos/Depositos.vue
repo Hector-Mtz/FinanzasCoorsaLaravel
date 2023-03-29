@@ -1,25 +1,24 @@
 <script setup>
-import { computed, onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref, watch, reactive } from "vue";
 
 import { Inertia } from "@inertiajs/inertia";
-import { pickBy } from "lodash";
+import { pickBy, throttle } from "lodash";
 import Tab from "../../../../Components/Tab.vue";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
 import InputSearch from "@/Components/InputSearch.vue";
-import ItemObjectShow from "@/Components/ItemObjectShow.vue";
 import DepositosModal from "./DepositosModal.vue";
-import ItemCliente from "../ItemCliente.vue";
 import ItemIngresoC from "./ItemIngresoC.vue";
 import FacturasDepositoModal from "./FacturasDepositoModal.vue";
 
 import { formatoMoney } from "../../../../utils/conversiones";
+import ItemClientePaginate from "../ItemClientePaginate.vue";
+import HeaderTab from "../../../../Components/HeaderTab.vue";
 
-const emit = defineEmits([""]);
+const emit = defineEmits(["updateCalendar"]);
 
 const clientes = ref([]);
 const totalIngresos = ref({ total: 0 });
-const tab = ref("1"); // Referencia al id
-const searchText = ref("");
+const params = reactive({ search: '', status_id: '1' });
 const showingDepositos = ref(false);
 const showingFacturas = ref(false);
 const deposito = ref({});
@@ -27,32 +26,29 @@ const deposito = ref({});
 // Modal Methods
 
 const updateDepositos = () => {
-    search(searchText.value);
+    search();
+    emit("updateCalendar");
 };
-const addFacturaToDeposito = (form) => {
-    // esto es para el error
-    const findedIndex = depositos.value.findIndex((dep) => {
-        return dep.id == form.deposito_id;
-    });
-    axios
-        .post(route("ingresos.facturas.store", form.deposito_id), form)
-        .then(() => {
-            search(searchText.value);
-            Inertia.visit(route("finanzas.index"), {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["totalOcs"],
-            });
+const addFacturaToDeposito = (form, dep = false) => {
+    axios.post(route("ingresos.facturas.store", form.deposito_id), form)
+        .then((resp) => {
+            deposito.value = resp.data;
+            search();
+            emit('updateCalendar');
         })
         .catch((error) => {
+            let message = 'Error SET FACTURA';
             if (
                 error.hasOwnProperty("response") &&
                 error.response.data.hasOwnProperty("message")
             ) {
-                depositos.value[findedIndex].error =
-                    error.response.data.message;
+                console.log(error.response.data.message);
+                message = error.response.data.message;
+            }
+            if (dep) {
+                dep.error = message;
             } else {
-                depositos.value[findedIndex].error = "Error SET FACTURA";
+                deposito.value.error = message;
             }
         });
 };
@@ -69,97 +65,91 @@ const closeFacturasDeposito = () => {
 // End Methos Modal
 
 const changeTab = (status_id) => {
-    tab.value = status_id;
-    if (searchText.value !== "") {
-        searchText.value = "";
-        search();
-    } else {
-        search(searchText.value);
+    params.status_id = status_id;
+    if (params.search !== "") {
+        params.search = "";
     }
 };
-const search = async (newSearch) => {
-    const params = pickBy({ status_id: tab.value, search: newSearch });
-    const resp = await axios.get(route("ingresos.index"), { params });
-    clientes.value = resp.data.clientesIngresos;
-    totalIngresos.value = resp.data.totalIngresos;
+
+
+const search = async () => {
+    const paramsAux = pickBy({ ...params });
+    try {
+
+        const resp = await axios.get(route("ingresos-total.clientes.index"), { params: paramsAux });
+        clientes.value = resp.data.clientesIngresos;
+        totalIngresos.value = resp.data.totalIngresos;
+    } catch (error) {
+        let message;
+        if (
+            error.hasOwnProperty("response") &&
+            error.response.data.hasOwnProperty("message")
+        ) {
+            message = error.response.data.message;
+        } else {
+            message = "Error GET DEPOSITOS";
+        }
+        alert(message);
+    }
+
 };
 
 onBeforeMount(() => {
     search();
 });
 
-const depositos = computed(() => {
-    let auxDepositos = [];
-    clientes.value.forEach((cliente) => {
-        auxDepositos = auxDepositos.concat(cliente.ingresos);
-    });
-    // DEBIDO A QUE NO ACTUALIZA LAS FACTURAS DENTRO DEL MODAL
-    if (showingFacturas.value) {
-        const findedIndex = auxDepositos.findIndex((dep) => {
-            return dep.id == deposito.value.id;
-        });
-        deposito.value = auxDepositos[findedIndex];
-    }
-    return auxDepositos;
-});
 
-let timeout;
-watch(searchText, (newSearch) => {
-    if (timeout !== undefined) {
-        clearTimeout(timeout);
-    }
-    //Bounce de busqueda
-    timeout = setTimeout(() => {
-        search(newSearch);
-    }, 500);
-});
+watch(params, throttle((newSearch) => {
+    search(newSearch);
+}), 100);
 </script>
 <template>
     <div class="flex flex-col gap-4 pb-2 text-fuente-500">
         <div class="flex items-center justify-around">
-            <InputSearch v-model="searchText" class="px-2" />
+            <InputSearch v-model="params.search" class="px-2" />
             <ButtonAdd class="h-7" @click="showingDepositos = true" />
         </div>
         <div class="w-full">
             <!-- Header Tabs -->
-            <div
-                class="flex justify-between rounded-3xl bg-gris-500 h-[32px] text-gris-900 mb-4 text-[10px] font-semibold items-center">
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                        tab === '1',
-                }" class="tab" @click="changeTab('1')">
-                    ABIERTAS
+            <HeaderTab>
+                <Tab :active="params.status_id === ''" @click="changeTab('')">
+                    TODOS
                 </Tab>
-                <Tab :class="{
-                    'bg-aqua-500 hover:bg-aqua-500/90 text-white shadow-md shadow-gray-400 font-extrabold h-[32px]':
-                        tab === '2',
-                }" class="tab" @click="changeTab('2')">
-                    CERRADAS
+                <Tab :active="params.status_id === '1'" @click="changeTab('1')">
+                    ABIERTOS
                 </Tab>
-            </div>
+                <Tab :active="params.status_id === '2'" @click="changeTab('2')">
+                    CERRAD0S
+                </Tab>
+            </HeaderTab>
             <!-- Lista de clientes -->
             <div class="-mx-2 overflow-hidden overflow-y-auto" style="max-height: 41.1vh">
-                <ItemCliente v-for="cliente in clientes" :key="cliente.id" :cliente="cliente"
-                    :total="cliente.ingresos.length">
-                    <div
-                        class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden overflow-x-auto shadow-xl bg-gris-500 sm:rounded-lg">
-                        <table class="overflow-hidden mr-[.5rem] w-full">
-                            <thead>
-                                <tr class="text-[9px] font-bold px-2 border-b-[1px] border-aqua-500">
-                                    <th class="pb-1 px-[0.5rem]">
-                                        Núm. Deposito
-                                    </th>
-                                    <th class="pb-1 px-[0.5rem]">Cantidad</th>
-                                    <th class="pb-1 px-[0.5rem]">Factura</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <ItemIngresoC v-for="(ingreso, index) in cliente.ingresos" :key="ingreso.id + '-' + index"
-                                    :ingreso="ingreso" @on-show="showFacturas($event)" />
-                            </tbody>
-                        </table>
-                    </div>
-                </ItemCliente>
+
+                <ItemClientePaginate v-for="cliente in clientes" :key="'cd' + cliente.id" :cliente="cliente"
+                    :total="cliente.total_ingresos" :filters="params"
+                    :ruta="route('ingresos-by-cliente.index', { cliente: cliente.id })">
+                    <template #default="{ data }">
+                        <div
+                            class="flex items-center justify-between p-2 m-1 mx-auto overflow-hidden overflow-x-auto shadow-xl bg-gris-500 sm:rounded-lg">
+                            <table class="overflow-hidden mr-[.5rem] w-full">
+                                <thead>
+                                    <tr class="text-[9px] font-bold px-2 border-b-[1px] border-aqua-500">
+                                        <th class="pb-1 px-[0.5rem]">
+                                            Núm. Deposito
+                                        </th>
+                                        <th class="pb-1 px-[0.5rem]">Cantidad</th>
+                                        <th class="pb-1 px-[0.5rem]">Factura</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ItemIngresoC v-for="(ingreso, index) in data" :key="ingreso.id + '-' + index"
+                                        :ingreso="ingreso" @on-show="showFacturas($event)" />
+                                </tbody>
+                            </table>
+                        </div>
+                    </template>
+
+                </ItemClientePaginate>
             </div>
             <div class="flex flex-col px-4 py-1">
                 <span class="text-[12px] font-medium uppercase">Total</span>
@@ -169,8 +159,8 @@ watch(searchText, (newSearch) => {
             </div>
         </div>
         <!--Modals -->
-        <DepositosModal :show="showingDepositos" :depositos="depositos" @update-depositos="updateDepositos($event)"
-            @delete-deposito="updateDepositos()" @add-factura="addFacturaToDeposito($event)"
+        <DepositosModal :show="showingDepositos" @update-depositos="updateDepositos($event)"
+            @delete-deposito="updateDepositos()" @add-factura="($event, dep) => addFacturaToDeposito($event, dep)"
             @close="showingDepositos = false" />
         <FacturasDepositoModal :show="showingFacturas" :deposito="deposito" @add-factura="addFacturaToDeposito($event)"
             @update-depositos="updateDepositos()" @close="closeFacturasDeposito" />

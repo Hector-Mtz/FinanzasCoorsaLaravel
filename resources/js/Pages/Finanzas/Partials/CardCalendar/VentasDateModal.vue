@@ -59,10 +59,10 @@ const close = () => {
                     </div>
                 </div>
                 <!-- <div>
-                                                                                                                                        <InputSearch v-model="searchText" class="flex items-center p-4 w-80" />
-                                                                                                                                    </div>
-                                                                                                                                    <img :src="cerrar" alt="" class="absolute left-[87.5rem] w-[17px] h-[17px] hover:cursor-pointer"
-                                                                                                                                        @click="close()" /> -->
+                                                                                                                                            <InputSearch v-model="searchText" class="flex items-center p-4 w-80" />
+                                                                                                                                        </div>
+                                                                                                                                        <img :src="cerrar" alt="" class="absolute left-[87.5rem] w-[17px] h-[17px] hover:cursor-pointer"
+                                                                                                                                            @click="close()" /> -->
             </div>
         </template>
         <template #content>
@@ -100,7 +100,7 @@ const close = () => {
                 </template>
             </TableComponent>
             <!-- Modal -->
-            <SubModal :show="ocsModal.showing" :ruta="ocsModal.ruta" :title="ocsModal.title" @close="closeOcs()" />
+            <SubModal :show="ocsModal.showing" :ruta="ocsModal.ruta" @close="closeOcs()" />
         </template>
 
     </DialogModal>
