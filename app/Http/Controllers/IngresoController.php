@@ -93,8 +93,8 @@ class IngresoController extends Controller
 
         if (request()->has('search')) {
             $search = '%' . strtr(request('search'), array("'" => "\\'", "%" => "\\%")) . '%';
-            $clientesIngresos->where('ingresos.nombre', 'like', '%' . $search . '%');
-            $$totalIngresos->where('ingresos.nombre', 'like', '%' . $search . '%');
+            $clientesIngresos->where('ingresos.nombre', 'like',  $search);
+            $totalIngresos->where('ingresos.nombre', 'like',  $search);
         }
 
 
