@@ -446,7 +446,6 @@ const cambioButton = () =>
         </div>
         <div class="py-12 -mt-24" v-if="!cambio">
             <!--Grafica-->
-            {{arregloGrupoConcepto}}
             <GraficaPresupuestos :arregloValores = "arregloGrupoConcepto" :movimiento = "movimientoReactive" />
         </div>
         <div class="ml-16 mr-16 -mt-8" v-if="cambio">
