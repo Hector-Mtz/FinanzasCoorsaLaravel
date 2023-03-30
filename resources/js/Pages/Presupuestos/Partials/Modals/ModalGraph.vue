@@ -37,6 +37,7 @@ onUpdated(() =>
       data.push({date:date, value: value});
     }
     
+
     chart.data = data;
     
     // Create axes

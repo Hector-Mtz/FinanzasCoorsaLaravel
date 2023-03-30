@@ -80,9 +80,12 @@ const getOcs = async () => {
 };
 
 const deleteFactura = (facturaSelected) => {
-    const facturaIndex = props.facturas.findIndex((facturaFind) => {
+    console.log(facturaSelected);/*
+    const facturaIndex = props.facturas.findIndex((facturaFind) => 
+    {
         return facturaFind.id === facturaSelected.id;
     });
+    */
     axios
         .delete(route("facturas.destroy", facturaSelected.id))
         .then(() => {
@@ -214,7 +217,8 @@ watch(params, throttle(function () {
                 </template>
                 <template #tbody>
                     <ItemFacturaDetails v-for="(factura, index) in facturas.data" :key="factura.id + '' + index"
-                        :factura="factura" :ocs="listOcs" @edit="showFormFactura($event)" @delete="deleteFactura($event)"
+                        :factura="factura" :ocs="listOcs" @edit="showFormFactura($event)"
+                         @delete="deleteFactura($event)"
                         @addOc="emit('addOc', $event)" />
                 </template>
             </TableComponent>

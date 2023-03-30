@@ -223,23 +223,34 @@ class FacturaController extends Controller
             "cantidad" => ["required", "numeric"],
             "referencia" => ["required", "unique:facturas,referencia," . $factura->id . ",id"],
             "fechaDePago" => ["required", "date"],
-            "documento" => ["required"]
         ]);
 
         $urlContenido = null;
-        if ($request->has('documento')) {
-            $contenido = $request['documento'];
-            $nombreCont = $contenido->getClientOriginalName();
-            $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
-            $urlContenido = Storage::disk('gcs')->url($ruta_documento);
-
-            Factura::where('facturas.id', '=', $factura->id)->update([
-                'cantidad' => $request['cantidad'],
-                'referencia' => $request['referencia'],
-                'fechaDePago' => $request['fechaDePago'],
-                'documento' => $urlContenido,
-            ]);
+        if ($request->has('documento')) 
+        {
+            if ($request['documento'] !== null) 
+            {
+                $contenido = $request['documento'];
+                $nombreCont = $contenido->getClientOriginalName();
+                $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
+                $urlContenido = Storage::disk('gcs')->url($ruta_documento);
+    
+                Factura::where('facturas.id', '=', $factura->id)->update([
+                    'cantidad' => $request['cantidad'],
+                    'referencia' => $request['referencia'],
+                    'fechaDePago' => $request['fechaDePago'],
+                    'documento' => $urlContenido,
+                ]);
+            }
+            else{
+                Factura::where('facturas.id', '=', $factura->id)->update([
+                    'cantidad' => $request['cantidad'],
+                    'referencia' => $request['referencia'],
+                    'fechaDePago' => $request['fechaDePago'],
+                ]);
+            }
         } else {
+           
             Factura::where('facturas.id', '=', $factura->id)->update([
                 'cantidad' => $request['cantidad'],
                 'referencia' => $request['referencia'],
