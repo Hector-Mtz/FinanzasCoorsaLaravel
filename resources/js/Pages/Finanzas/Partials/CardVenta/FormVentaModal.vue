@@ -176,7 +176,8 @@ watch(props, () => {
                     </div>
                     <div>
                         <ListDataInput v-model="form.monto_id" list="montos" name-option="cantidad" :options="listMontos"
-                            :disabled="form.servicio_id == ''" :placeholder="'Monto'" />
+                             :placeholder="'Monto'" />
+                             <!--:disabled="form.servicio_id == ''"-->
 
                         <JetInputError :message="form.errors.monto_id" class="mt-2" />
                     </div>
