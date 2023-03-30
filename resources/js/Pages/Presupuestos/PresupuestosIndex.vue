@@ -145,17 +145,17 @@ const setFor = (tipoAcomodo) =>
         case "CECO":
               //console.log("Set for CECO");
               arregloGrupoConcepto.value = [];
-              for (let index = 0; index < props.clientes_cecos.length; index++) 
+               for (let index = 0; index < props.grupoConceptos_conceptos.length; index++)
+               {
+                 const grupoConcepto = props.grupoConceptos_conceptos[index];
+                 for (let index2 = 0; index2 < props.clientes_cecos.length; index2++) 
                  {
-                    const cliente = props.clientes_cecos[index];
-                    for (let index2 = 0; index2 < cliente.cecos.length; index2++) 
+                    const cliente = props.clientes_cecos[index2];
+                    for (let index3 = 0; index3 < cliente.cecos.length; index3++) 
                     {
-                        const ceco = cliente.cecos[index];
-                        
-                        for (let index3 = 0; index3 < props.grupoConceptos_conceptos.length; index3++)
-                        {
-                            const grupoCon = props.grupoConceptos_conceptos[index3];
-                            let newObj = {
+                        const ceco = cliente.cecos[index3];
+                        console.log(ceco);
+                        let newObj = {
                              tipo_arreglo:"ceco_grupoConcepto",
                              ceco_id:null,
                              x:null,
@@ -171,88 +171,87 @@ const setFor = (tipoAcomodo) =>
                               },
                             };
 
-                            newObj.ceco_id = ceco.id;
-                            newObj.y = ceco.nombre;
-                            newObj.grupo_id = grupoCon.id
-                            newObj.x = grupoCon.nombre,
-                            newObj.padre_id=cliente.id
-                            newObj.padre_name =cliente.nombre
-
-                            arregloGrupoConcepto.value.push(newObj);
-                        }
+                        newObj.ceco_id = ceco.id;
+                        newObj.y = ceco.nombre;
+                        newObj.grupo_id = grupoConcepto.id
+                        newObj.x = grupoConcepto.nombre,
+                        newObj.padre_id=cliente.id
+                        newObj.padre_name =cliente.nombre
+                        arregloGrupoConcepto.value.push(newObj);
                     }
                  }
+               }
 
-                  //colocacion de valores
-                  for (let index3 = 0; index3 < arregloGrupoConcepto.value.length; index3++) 
+               //colocacion de valores
+               for (let index3 = 0; index3 < arregloGrupoConcepto.value.length; index3++) 
+               {
+                  const interseccion = arregloGrupoConcepto.value[index3];
+                  for (let index4 = 0; index4 < props.cantidades.length; index4++)
+                  {
+                     const cantidad = props.cantidades[index4];
+                     //console.log(cantidad);
+                     for (let clave in interseccion.tipos_movimientos)
                      {
-                        const interseccion = arregloGrupoConcepto.value[index3];
-                        for (let index4 = 0; index4 < props.cantidades.length; index4++)
-                        {
-                           const cantidad = props.cantidades[index4];
-                           //console.log(cantidad);
-                           for (let clave in interseccion.tipos_movimientos)
-                           {
-                               if(cantidad.ceco_id == interseccion.ceco_id && cantidad.grupo_conceptos_id == interseccion.grupo_id)
+                         if(cantidad.ceco_id == interseccion.ceco_id && cantidad.grupo_conceptos_id == interseccion.grupo_id)
+                         {
+                             //Ponemos las cantidades
+                             if(cantidad.tipo_mov_name == clave)
+                             {
+                               interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                               if(clave == "PRESUPUESTO") //si existe este movimiento
                                {
-                                   //Ponemos las cantidades
-                                   if(cantidad.tipo_mov_name == clave)
-                                   {
-                                     interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
-                                     if(clave == "PRESUPUESTO") //si existe este movimiento
-                                     {
-                                        interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
-                                     }             
-                                   }
-                                   //Calculos
-                                   //colocacion de valores "calculados"
-                                   if(clave == "TOTAL")
-                                   {
-                                       let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
-                                       interseccion.tipos_movimientos[clave] = total;
-                                   }
-                   
-                                   if(clave == "DISPONIBLE")
-                                   {
-                                      let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
-                                      interseccion.tipos_movimientos[clave] = disponible;
-                                   }
-                   
-                                   let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
-                                   let gasto =  interseccion.tipos_movimientos.GASTO;
-                   
-                                   let porcentaje = (gasto /total) * 100;
-                                    if(porcentaje  <= 50)
-                                    {
-                                       interseccion.color = colors.verygood
-                                    }
-                                    if(porcentaje > 51 && porcentaje <= 60)
-                                    {
-                                      interseccion.color = colors.good;
-                                    }
-                                    if(porcentaje > 61 && porcentaje <= 70)
-                                    {
-                                      interseccion.color = colors.medium
-                                    }
-                                    if(porcentaje >71 && porcentaje <= 80)
-                                    {
-                                       interseccion.color = colors.bad
-                                    }
-                                    if(porcentaje >81 && porcentaje <= 90)
-                                    {
-                                       interseccion.color = colors.critical
-                                    }
-                                    if(porcentaje > 91)
-                                    {
-                                       interseccion.color = colors.supergood
-                                    }
-                                    
-                               }
-                           }
-                        }
-                     } 
+                                  interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                               }             
+                             }
+                             //Calculos
+                             //colocacion de valores "calculados"
+                             if(clave == "TOTAL")
+                             {
+                                 let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                                 interseccion.tipos_movimientos[clave] = total;
+                             }
+             
+                             if(clave == "DISPONIBLE")
+                             {
+                                let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
+                                interseccion.tipos_movimientos[clave] = disponible;
+                             }
+             
+                             let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                             let gasto =  interseccion.tipos_movimientos.GASTO;
+             
+                             let porcentaje = (gasto /total) * 100;
+                              if(porcentaje  <= 50)
+                              {
+                                 interseccion.color = colors.verygood
+                              }
+                              if(porcentaje > 51 && porcentaje <= 60)
+                              {
+                                interseccion.color = colors.good;
+                              }
+                              if(porcentaje > 61 && porcentaje <= 70)
+                              {
+                                interseccion.color = colors.medium
+                              }
+                              if(porcentaje >71 && porcentaje <= 80)
+                              {
+                                 interseccion.color = colors.bad
+                              }
+                              if(porcentaje >81 && porcentaje <= 90)
+                              {
+                                 interseccion.color = colors.critical
+                              }
+                              if(porcentaje > 91)
+                              {
+                                 interseccion.color = colors.supergood
+                              }
+                              
+                         }
+                     }
+                  }
+               } 
 
-                 exitAcomodo.value = true;
+               exitAcomodo.value = true;
               //return arregloAux;
             break;
         
