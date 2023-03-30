@@ -9,10 +9,20 @@ import ModalWatchSoliGastos from '../Partials/Modals/ModalWatchSoliGastos.vue';
 
 var props = defineProps({
     arregloValores:Object,
-    movimiento:String
+    movimiento:String,
+    cantidades:Object
 });
 
 let chart = null;
+
+var colors = {
+        "critical": "#ca0101",
+        "bad": "#e17a2d",
+        "medium": "#e1d92d",
+        "good": "#5dbe24",
+        "verygood": "#0b7d03",
+        "supergood": "#8C8C8C"
+    };
 
 watch(() => props.arregloValores,(nuevosValores) => 
     { //el whatcher observa el cambio de la data
@@ -132,7 +142,14 @@ onMounted(() =>
                                 x:null,
                                 concepto_id:null,
                                 y:null,
-                                valor:0
+                                valor:0,
+                                tipos_movimientos:{
+                                 PRESUPUESTO:0,
+                                 SUPLEMENTO:0,
+                                 TOTAL:0,
+                                 GASTO:0,
+                                 DISPONIBLE:0
+                              },
                              }
                              newObj.ceco_id = ceco.id;
                              newObj.y = ceco.nombre;
@@ -141,13 +158,83 @@ onMounted(() =>
                              arregloAux.push(newObj);
                           }
                        }
+
+                       //colocacion de valores
+                       for (let index3 = 0; index3 < arregloAux.length; index3++) 
+                          {
+                             const interseccion = arregloAux[index3];
+                             for (let index4 = 0; index4 < props.cantidades.length; index4++)
+                             {
+                                const cantidad = props.cantidades[index4];
+                                //console.log(cantidad);
+                                for (let clave in interseccion.tipos_movimientos)
+                                {
+                                    if(cantidad.ceco_id == interseccion.ceco_id && cantidad.concepto_id == interseccion.concepto_id)
+                                    {
+                                        //Ponemos las cantidades
+                                        if(cantidad.tipo_mov_name == clave)
+                                        {
+                                          interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                                          if(clave == "PRESUPUESTO") //si existe este movimiento
+                                          {
+                                             interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                                          }             
+                                        }
+                                        //Calculos
+                                        //colocacion de valores "calculados"
+                                        if(clave == "TOTAL")
+                                        {
+                                            let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                                            interseccion.tipos_movimientos[clave] = total;
+                                        }
+                        
+                                        if(clave == "DISPONIBLE")
+                                        {
+                                           let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
+                                           interseccion.tipos_movimientos[clave] = disponible;
+                                        }
+                        
+                                        let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                                        let gasto =  interseccion.tipos_movimientos.GASTO;
+                        
+                                        let porcentaje = (gasto /total) * 100;
+                                         if(porcentaje  <= 50)
+                                         {
+                                            interseccion.color = colors.verygood
+                                         }
+                                         if(porcentaje > 51 && porcentaje <= 60)
+                                         {
+                                           interseccion.color = colors.good;
+                                         }
+                                         if(porcentaje > 61 && porcentaje <= 70)
+                                         {
+                                           interseccion.color = colors.medium
+                                         }
+                                         if(porcentaje >71 && porcentaje <= 80)
+                                         {
+                                            interseccion.color = colors.bad
+                                         }
+                                         if(porcentaje >81 && porcentaje <= 90)
+                                         {
+                                            interseccion.color = colors.critical
+                                         }
+                                         if(porcentaje > 91)
+                                         {
+                                            interseccion.color = colors.supergood
+                                         }
+                                         
+                                    }
+                                }
+                             }
+                          }  
+
                        //console.log(arregloAux);
                        chart.data = arregloAux;
                     });
                 break;
             case "ceco_grupoConcepto": //solo debe mandar el grupoconcepto para desplegar los conceptos y conserva el ceco
                 //console.log("ceco_grupoConcepto")
-                axios.get(route('ceco.grupoCon', {grupoConcepto:categorias.categoryX}))
+                axios.get(route('ceco.grupoCon', {grupoConcepto:categorias.categoryX})) //traemos todos los coceptos de ese grupo
                    .then((resp) => 
                     {
                         let arregloAux = [];
@@ -160,21 +247,95 @@ onMounted(() =>
                                 x:null,
                                 concepto_id:null,
                                 y:null,
-                                valor:0
+                                valor:0,
+                                tipos_movimientos:{
+                                 PRESUPUESTO:0,
+                                 SUPLEMENTO:0,
+                                 TOTAL:0,
+                                 GASTO:0,
+                                 DISPONIBLE:0
+                              },
                              }
-                            // console.log(categorias);
                              newObj.ceco_id = null;
                              newObj.y = categorias.categoryY;
                              newObj.concepto_id = concepto.id;
                              newObj.x = concepto.nombre;
                              arregloAux.push(newObj);
                         }
+                       //colocacion de valores
+                       for (let index3 = 0; index3 < arregloAux.length; index3++) 
+                          {
+                             const interseccion = arregloAux[index3];
+                             for (let index4 = 0; index4 < props.cantidades.length; index4++)
+                             {
+                                const cantidad = props.cantidades[index4];
+                                //console.log(interseccion);
+                                for (let clave in interseccion.tipos_movimientos)
+                                {
+                                    if(cantidad.ceco_name == interseccion.y && cantidad.concepto_id == interseccion.concepto_id)
+                                    {
+                                        //Ponemos las cantidades
+                                        if(cantidad.tipo_mov_name == clave)
+                                        {
+                                          interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                                          if(clave == "PRESUPUESTO") //si existe este movimiento
+                                          {
+                                             interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                                          }             
+                                        }
+                                        //Calculos
+                                        //colocacion de valores "calculados"
+                                        if(clave == "TOTAL")
+                                        {
+                                            let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                                            interseccion.tipos_movimientos[clave] = total;
+                                        }
+                        
+                                        if(clave == "DISPONIBLE")
+                                        {
+                                           let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
+                                           interseccion.tipos_movimientos[clave] = disponible;
+                                        }
+                        
+                                        let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                                        let gasto =  interseccion.tipos_movimientos.GASTO;
+                        
+                                        let porcentaje = (gasto /total) * 100;
+                                         if(porcentaje  <= 50)
+                                         {
+                                            interseccion.color = colors.verygood
+                                         }
+                                         if(porcentaje > 51 && porcentaje <= 60)
+                                         {
+                                           interseccion.color = colors.good;
+                                         }
+                                         if(porcentaje > 61 && porcentaje <= 70)
+                                         {
+                                           interseccion.color = colors.medium
+                                         }
+                                         if(porcentaje >71 && porcentaje <= 80)
+                                         {
+                                            interseccion.color = colors.bad
+                                         }
+                                         if(porcentaje >81 && porcentaje <= 90)
+                                         {
+                                            interseccion.color = colors.critical
+                                         }
+                                         if(porcentaje > 91)
+                                         {
+                                            interseccion.color = colors.supergood
+                                         }
+                                         
+                                    }
+                                }
+                             }
+                          }  
+
                         chart.data = arregloAux;
                     });
-              break;
-            
+              break;           
             case "cliente_concepto": //solo debe mandar el cliente para desplegar los cecos y conserva el concepto
-                console.log("cliente_concepto")
+                //console.log("cliente_concepto")
                 axios.get(route('cliente.concepto', {cliente:categorias.categoryY}))
                    .then((resp) => 
                     {
@@ -188,7 +349,14 @@ onMounted(() =>
                                 x:null,
                                 concepto_id:null,
                                 y:null,
-                                valor:0
+                                valor:0,
+                                tipos_movimientos:{
+                                 PRESUPUESTO:0,
+                                 SUPLEMENTO:0,
+                                 TOTAL:0,
+                                 GASTO:0,
+                                 DISPONIBLE:0
+                              },
                              }
                             // console.log(categorias);
                              newObj.ceco_id = ceco.id;
@@ -197,6 +365,76 @@ onMounted(() =>
                              newObj.x = categorias.categoryX;
                              arregloAux.push(newObj);
                         }
+
+                      //colocacion de valores
+                      for (let index3 = 0; index3 < arregloAux.length; index3++) 
+                          {
+                             const interseccion = arregloAux[index3];
+                             for (let index4 = 0; index4 < props.cantidades.length; index4++)
+                             {
+                                const cantidad = props.cantidades[index4];
+                                //console.log(cantidad);
+                                for (let clave in interseccion.tipos_movimientos)
+                                {
+                                    if(cantidad.ceco_id == interseccion.ceco_id && cantidad.concepto_name == interseccion.x)
+                                    {
+                                        //Ponemos las cantidades
+                                        if(cantidad.tipo_mov_name == clave)
+                                        {
+                                          interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                                          if(clave == "PRESUPUESTO") //si existe este movimiento
+                                          {
+                                             interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                                          }             
+                                        }
+                                        //Calculos
+                                        //colocacion de valores "calculados"
+                                        if(clave == "TOTAL")
+                                        {
+                                            let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                                            interseccion.tipos_movimientos[clave] = total;
+                                        }
+                        
+                                        if(clave == "DISPONIBLE")
+                                        {
+                                           let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
+                                           interseccion.tipos_movimientos[clave] = disponible;
+                                        }
+                        
+                                        let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                                        let gasto =  interseccion.tipos_movimientos.GASTO;
+                        
+                                        let porcentaje = (gasto /total) * 100;
+                                         if(porcentaje  <= 50)
+                                         {
+                                            interseccion.color = colors.verygood
+                                         }
+                                         if(porcentaje > 51 && porcentaje <= 60)
+                                         {
+                                           interseccion.color = colors.good;
+                                         }
+                                         if(porcentaje > 61 && porcentaje <= 70)
+                                         {
+                                           interseccion.color = colors.medium
+                                         }
+                                         if(porcentaje >71 && porcentaje <= 80)
+                                         {
+                                            interseccion.color = colors.bad
+                                         }
+                                         if(porcentaje >81 && porcentaje <= 90)
+                                         {
+                                            interseccion.color = colors.critical
+                                         }
+                                         if(porcentaje > 91)
+                                         {
+                                            interseccion.color = colors.supergood
+                                         }
+                                         
+                                    }
+                                }
+                             }
+                          }  
+
                         chart.data = arregloAux;
                     });
                 break;
