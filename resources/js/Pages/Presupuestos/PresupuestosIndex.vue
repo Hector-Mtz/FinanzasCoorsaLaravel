@@ -11,6 +11,7 @@ import ButtonAdd from '@/Components/ButtonAdd.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import TableMovs from './Partials/TableMovs.vue';
 import GraficoMovimientos from "./Components/GraficoMovimientos.vue";
+import ButtonCalendar from '@/Components/ButtonCalendar.vue';
 /**/
 var props = defineProps({
    clientes_cecos:Object,
@@ -490,6 +491,27 @@ const cambioButton = () =>
     cambio.value = !cambio.value;
 }
 
+//Fechas
+let date = ref({
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+});
+
+const changeDate = (newDate) => {
+    date.value = newDate;
+    //
+};
+
+watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
+{ 
+    Inertia.visit(route('presupuestos.index'),{
+        data:{date:newDate},
+        preserveScroll:true,
+        preserveState:true,
+        only:['cantidades']
+    }); 
+});
+
 </script>
 <template>
     <AppLayout title="Presupuestos">
@@ -499,6 +521,7 @@ const cambioButton = () =>
                     Presupuestos
                 </h2>
             </div>
+ 
         </template>
         <div class="grid grid-cols-6 grid-rows-2">
            <div>
@@ -519,6 +542,11 @@ const cambioButton = () =>
                 <DangerButton @click="reAcomodar">
                    Regresar
                 </DangerButton>
+              </div>
+              <div>
+                   <ButtonCalendar class="mt-2" :month="date.month"
+                    :year="date.year"
+                    @change-date="changeDate($event)"/>
               </div>
             </div>
         </div>

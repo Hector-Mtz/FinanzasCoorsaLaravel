@@ -31,9 +31,15 @@
 <template>
  <DialogModal :show="show" @close="close()">
             <template #title>
-                <span class="block font-bold text-center ">
-                   Productos de {{ solicitud }}
-                </span>
+                <div class="flex text-fuente-500 gap-4 items-center justify-between px-8 mb-8 py-2 max-w-[69rem]">
+                 <div class="flex items-center gap-4 pl-8">
+                     <div class="">
+                         <span class="block text-3xl font-bold text-start">
+                             Productos de {{ solicitud }}
+                         </span>
+                     </div>
+                 </div>
+              </div>
             </template>
             <template #content>
                  <table class="w-full">

@@ -25,13 +25,16 @@ class ClienteController extends Controller
 
         $cliente_cecos = Cliente::select(
             'clientes.*'
-        )->with('cecos')
-            ->get();
+        )->with(['cecos' => function($query){
+            $query->select('cecos.*')
+            ->where('cecos.activo_finanzas','=',1);
+        }]) 
+        ->get();
 
         $grupoConcepto_conceptos = GrupoConcepto::select(
             'grupo_conceptos.*'
         )->with('conceptos')
-            ->get();
+        ->get();
 
         $cantidades = DB::table(DB::raw('soli_movimientos'))
             ->selectRaw(
@@ -59,8 +62,12 @@ class ClienteController extends Controller
             ->join('conceptos', 'ceco_conceptos.concepto_id', '=', 'conceptos.id')
             ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', '=', 'grupo_conceptos.id')
             ->groupBy('soli_movimientos.ceco_concepto_id')
-            ->groupBy('tipo_movimientos.id')
-            ->get();
+            ->groupBy('tipo_movimientos.id');
+
+            if($request->has('date'))
+            {
+               $cantidades->where('soli_movimientos.created_at','LIKE','%'.$request['date']['year'].'%');
+            }
 
         /*
         $request->validate(
@@ -153,7 +160,7 @@ class ClienteController extends Controller
             [
                 'clientes_cecos' => $cliente_cecos,
                 'grupoConceptos_conceptos' => $grupoConcepto_conceptos,
-                'cantidades' => $cantidades
+                'cantidades' => fn() => $cantidades->get()
                 /*
             'filtros' => $request->all(['grupoType','grupoType2']), //parametro que filtrara para saber como esta agrupado
             'clientes' => fn() => $clientes->get(),

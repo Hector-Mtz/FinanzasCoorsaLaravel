@@ -6,6 +6,7 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import axios from "axios";
 /*Components*/
 import ModalWatchSoliGastos from '../Partials/Modals/ModalWatchSoliGastos.vue';
+import ModalGraph from '../Partials/Modals/ModalGraph.vue';
 
 var props = defineProps({
     arregloValores:Object,
@@ -39,6 +40,7 @@ watch(() => props.movimiento,(newMov) =>
 let click1 = ref(0);
 let concepto = ref(null);
 let ceco = ref(null);
+//Modals
 const modalSoliGastos = ref(false);
 const solicitudes = ref([]);
 const openModalSoliGastos = () => 
@@ -51,6 +53,18 @@ const closeModalSoliGastos = () =>
     modalSoliGastos.value = false;
 }
 
+const modalGrafica = ref(false);
+const openModalGrafico = () => 
+{
+    modalGrafica.value = true;
+}
+
+const closeModalGrafico = () => 
+{
+    modalGrafica.value = false;
+}
+
+//mounted
 onMounted(() => 
 {
    am4core.useTheme(am4themes_animated);
@@ -109,6 +123,21 @@ onMounted(() =>
    bullet2.zIndex = 1;
    bullet2.fontSize = 15;
    bullet2.interactionsEnabled = false;
+
+   var bullet3 = series.bullets.push(new am4charts.Bullet());
+   var square = bullet3.createChild(am4core.Rectangle);
+   square.width = 15;
+   square.height = 15;
+   bullet3.zIndex = 3;
+   bullet3.locationY = 0.2;
+   bullet3.locationX = 0.9;
+   bullet3.fill = am4core.color("#fff");
+   bullet3.events.on("hit",function(ev)
+   {
+      //console.log(ev.target._dataItem._dataContext);
+      let dataInterna = ev.target._dataItem._dataContext;
+      openModalGrafico();
+   });
    
    chart.data = props.arregloValores; 
    series.columns.template.events.on("hit", function(ev)  //primer click para zoom
@@ -439,6 +468,7 @@ onMounted(() =>
                     });
                 break;
            }
+           click1.value = 1;
        }
        else
        {
@@ -460,7 +490,7 @@ onMounted(() =>
    
    var baseWidth = Math.min(chart.plotContainer.maxWidth, chart.plotContainer.maxHeight);
    var maxRadius = baseWidth / Math.sqrt(chart.data.length) / 2 - 2; // 2 is jast a margin
-   series.heatRules.push({ min: 20, max: maxRadius, property: "radius", target: bullet1.circle });
+   series.heatRules.push({ min: 1, max: maxRadius, property: "radius", target: bullet1.circle });
    
    
    chart.plotContainer.events.on("maxsizechanged", function() {
@@ -504,6 +534,7 @@ const restructuraMov = (movimiento) =>
     </div>
     <!--Modales-->
     <ModalWatchSoliGastos :ceco="ceco" :concepto="concepto" :show="modalSoliGastos" @close="closeModalSoliGastos" :solicitudes ="solicitudes" />
+    <ModalGraph :show="modalGrafica" @close="closeModalGrafico" />
 </template>
 <style>
 #chartdiv {
