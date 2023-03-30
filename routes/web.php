@@ -112,3 +112,4 @@ Route::apiResource('/soliMovimientos', SoliMovimientoController::class);
 Route::get('consulta1/{cliente}/{grupoConcepto}', [ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
 Route::get('consulta2/{grupoConcepto}', [ClienteController::class, 'ceco_grupoConcepto'])->name('ceco.grupoCon');
 Route::get('consulta3/{cliente}', [ClienteController::class, 'cliente_concepto'])->name('cliente.concepto');
+Route::get('consulta4/{ceco}/{concepto}',[ClienteController::class, 'solicitudes_gastos'])->name('soli.gastos');

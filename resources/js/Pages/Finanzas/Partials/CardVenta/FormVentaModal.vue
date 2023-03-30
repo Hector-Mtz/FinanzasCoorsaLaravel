@@ -242,4 +242,5 @@ watch(props, () => {
                 </div>
             </form>
         </template>
-    </DialogModal></template>
+    </DialogModal>
+</template>
