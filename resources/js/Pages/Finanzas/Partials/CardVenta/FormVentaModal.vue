@@ -35,6 +35,7 @@ const props = defineProps({
 
 const form = useForm({
     "monto_id": "",
+    "textMonto": "",
     "nombre": "",
     "comentario": "",
     "fechaInicial": "",
@@ -43,7 +44,9 @@ const form = useForm({
     "tipo_id": "",
     "cantidad": "",
     "ceco_id": "",
+    "textCeco": "",
     "servicio_id": "",
+    "textServicio": "",
     "documento": ""
 })
 
@@ -166,17 +169,20 @@ watch(props, () => {
                     </div>
 
                     <div>
-                        <ListDataInput :placeholder="'CECO'" v-model="form.ceco_id" list="cecos" :options="listCecos" />
+                        <ListDataInput :placeholder="'CECO'" v-model="form.ceco_id" :valueText="form.textCeco"
+                            @value="form.textCeco = $event" list="cecos" :options="listCecos" />
 
                         <JetInputError :message="form.errors.ceco_id" class="mt-2" />
                     </div>
                     <div>
-                        <ListDataInput v-model="form.servicio_id" list="servicios" :options="listServicios"
+                        <ListDataInput v-model="form.servicio_id" :valueText="form.textServicio"
+                            @value="form.textServicio = $event" list="servicios" :options="listServicios"
                             :placeholder="'Servicios'" />
                     </div>
                     <div>
-                        <ListDataInput v-model="form.monto_id" list="montos" name-option="cantidad" :options="listMontos"
-                            :disabled="form.servicio_id == ''" :placeholder="'Monto'" />
+                        <ListDataInput v-model="form.monto_id" :valueText="form.textMonto" @value="form.textMonto = $event"
+                            list="montos" name-option="cantidad" :options="listMontos" :disabled="form.servicio_id == ''"
+                            :placeholder="'Monto'" />
 
                         <JetInputError :message="form.errors.monto_id" class="mt-2" />
                     </div>
@@ -236,5 +242,4 @@ watch(props, () => {
                 </div>
             </form>
         </template>
-    </DialogModal>
-</template>
+    </DialogModal></template>
