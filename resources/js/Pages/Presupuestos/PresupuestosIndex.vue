@@ -502,7 +502,7 @@ const cambioButton = () =>
         </template>
         <div class="grid grid-cols-6 grid-rows-2">
            <div>
-              <ButtonsGroup @seleccion="setMovimiento" :tipoMovimientos="tipoMovimientos"  @setFor="setFor" class="justify-center col-start-1 row-start-1 row-end-3"/>
+              <ButtonsGroup v-if="!cambio" @seleccion="setMovimiento" :tipoMovimientos="tipoMovimientos"  @setFor="setFor" class="justify-center col-start-1 row-start-1 row-end-3"/>
            </div>
             <div class="flex flex-col">
               <div>
@@ -526,7 +526,7 @@ const cambioButton = () =>
             <!--Grafica-->
             <GraficaPresupuestos :arregloValores = "arregloGrupoConcepto" :movimiento = "movimientoReactive" :cantidades ="cantidades" />
         </div>
-        <div class="ml-16 mr-16 -mt-8" v-if="cambio">
+        <div class="ml-16 mr-16 -mt-2" v-if="cambio">
             <div class="grid grid-cols-2 grid-rows-1 gap-10">
                <div class="border-2 rounded-xl drop-shadow-2xl"> <!--Card1-->
                    <TableMovs />

@@ -115,7 +115,6 @@ onMounted(() =>
     {
        if(click1.value == 0)
        {
-           click1.value = 1;
            //hay que recuperar los nombres de ejex y ejey
            //console.log(ev.target.dataItem); //tenemos ambas categorias
            let categorias =  ev.target.dataItem.categories;
@@ -229,6 +228,7 @@ onMounted(() =>
                           }  
 
                        //console.log(arregloAux);
+                       click1.value = 1;
                        chart.data = arregloAux;
                     });
                 break;
@@ -330,7 +330,7 @@ onMounted(() =>
                                 }
                              }
                           }  
-
+                        click1.value = 1;
                         chart.data = arregloAux;
                     });
               break;           
@@ -434,7 +434,7 @@ onMounted(() =>
                                 }
                              }
                           }  
-
+                        click1.value = 1;
                         chart.data = arregloAux;
                     });
                 break;
