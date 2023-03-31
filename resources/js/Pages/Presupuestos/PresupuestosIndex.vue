@@ -16,7 +16,7 @@ import ButtonCalendar from '@/Components/ButtonCalendar.vue';
 var props = defineProps({
    clientes_cecos:Object,
    grupoConceptos_conceptos:Object,
-   cantidades:Object
+   cantidades:Object,
 });
 
 let tipoMovimientos = ref(["PRESUPUESTO", "SUPLEMENTO", "TOTAL", "GASTO", "DISPONIBLE"])
@@ -37,6 +37,112 @@ var colors = {
 
  //Primer arreglo de la data
   let arregloGrupoConcepto = ref([]);
+  watch(() => props.cantidades,(nuevasCantidades) => 
+    { //el whatcher observa el cambio de la data
+       arregloGrupoConcepto.value = [];
+       for (let index = 0; index < props.clientes_cecos.length; index++) 
+       {
+          const cliente = props.clientes_cecos[index];
+          
+          for (let index2 = 0; index2 < props.grupoConceptos_conceptos.length; index2++) 
+          {
+             const grupo = props.grupoConceptos_conceptos[index2];
+             let newObj = {
+              tipo_arreglo:"cliente_grupoConcepto",
+              cliente_id:null,
+              x:null,
+              grupo_id:null,
+              y:null,
+              valor:0,
+              tipos_movimientos:{
+                 PRESUPUESTO:0,
+                 SUPLEMENTO:0,
+                 TOTAL:0,
+                 GASTO:0,
+                 DISPONIBLE:0
+              },
+             };
+             //los clientes/cecos deben ser ejey 
+             newObj.cliente_id = cliente.id;
+             newObj.y = cliente.nombre;
+             //los grupos/concepto deben ser ejex
+             newObj.grupo_id = grupo.id;
+             newObj.x = grupo.nombre;
+             arregloGrupoConcepto.value.push(newObj);   
+          }
+         
+       }
+       //colocacion de valores
+       for (let index3 = 0; index3 < arregloGrupoConcepto.value.length; index3++) 
+       {
+          const interseccion = arregloGrupoConcepto.value[index3];
+          for (let index4 = 0; index4 < nuevasCantidades.length; index4++)
+          {
+             const cantidad = nuevasCantidades[index4];
+             //console.log(cantidad);
+             for (let clave in interseccion.tipos_movimientos)
+             {
+                 if(cantidad.cliente_id == interseccion.cliente_id && cantidad.grupo_conceptos_id == interseccion.grupo_id)
+                 {
+                     //Ponemos las cantidades
+                     if(cantidad.tipo_mov_name == clave)
+                     {
+                       interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                       if(clave == "PRESUPUESTO") //si existe este movimiento
+                       {
+                          interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                       }             
+                     }
+                     //Calculos
+                     //colocacion de valores "calculados"
+                     if(clave == "TOTAL")
+                     {
+                         let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                         interseccion.tipos_movimientos[clave] = total;
+                     }
+      
+                     if(clave == "DISPONIBLE")
+                     {
+                        let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
+                        interseccion.tipos_movimientos[clave] = disponible;
+                     }
+      
+                     let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
+                     let gasto =  interseccion.tipos_movimientos.GASTO;
+      
+                     let porcentaje = (gasto /total) * 100;
+                      if(porcentaje  <= 50)
+                      {
+                         interseccion.color = colors.verygood
+                      }
+                      if(porcentaje > 51 && porcentaje <= 60)
+                      {
+                        interseccion.color = colors.good;
+                      }
+                      if(porcentaje > 61 && porcentaje <= 70)
+                      {
+                        interseccion.color = colors.medium
+                      }
+                      if(porcentaje >71 && porcentaje <= 80)
+                      {
+                         interseccion.color = colors.bad
+                      }
+                      if(porcentaje >81 && porcentaje <= 90)
+                      {
+                         interseccion.color = colors.critical
+                      }
+                      if(porcentaje > 91)
+                      {
+                         interseccion.color = colors.supergood
+                      }
+                      
+                 }
+             }
+          }
+       } 
+    });
+
+
   for (let index = 0; index < props.clientes_cecos.length; index++) 
   {
      const cliente = props.clientes_cecos[index];
@@ -504,8 +610,63 @@ const changeDate = (newDate) => {
 
 watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
 { 
+   let fecha = null;
+   switch (newDate.month) 
+   {
+      case 0:
+           //Es Enero
+           fecha =  newDate.year+'-'+newDate.month+1;
+         break;
+      case 1:
+         //Es Febrero
+         fecha =  newDate.year+'-'+'02';
+        break;
+      case 2:
+         //Es Marzo
+         fecha =  newDate.year+'-'+'03';
+        break;
+      case 3:
+         //Es Abril
+         fecha =  newDate.year+'-'+'04';
+        break;
+      case 4:
+         //Es Mayo
+         fecha =  newDate.year+'-'+'05';
+        break;
+      case 5:
+         //Es Junio
+         fecha =  newDate.year+'-'+'06';
+        break;
+      case 6:
+         //Es Julio
+         fecha =  newDate.year+'-'+'07';
+        break;
+      case 7:
+         //Es Agosto
+         fecha =  newDate.year+'-'+'08';
+        break;
+      case 8:
+         //Es Septiembre
+         fecha =  newDate.year+'-'+'09';
+        break;
+      case 9:
+         //Es Ocubre
+         fecha =  newDate.year+'-'+'10';
+        break;
+      case 10:
+         //Es Noviembre
+         fecha =  newDate.year+'-'+'11';
+        break;
+      case 11:
+         //Es Diciembre
+         fecha =  newDate.year+'-'+'12';
+        break;
+   
+      default:
+         break;
+   }
     Inertia.visit(route('presupuestos.index'),{
-        data:{date:newDate},
+        data:{date:fecha},
         preserveScroll:true,
         preserveState:true,
         only:['cantidades']
@@ -560,7 +721,7 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
                    <TableMovs />
                </div>
                <div class="border-2 rounded-xl drop-shadow-2xl"> <!--Card2-->
-                   <GraficoMovimientos />
+                   <GraficoMovimientos :movimientos="movimientos" />
                </div>
             </div>
         </div>

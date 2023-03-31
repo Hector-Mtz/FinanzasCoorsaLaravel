@@ -7,11 +7,12 @@ import axios from "axios";
 /*Components*/
 import ModalWatchSoliGastos from '../Partials/Modals/ModalWatchSoliGastos.vue';
 import ModalGraph from '../Partials/Modals/ModalGraph.vue';
+import moment from 'moment';
 
 var props = defineProps({
     arregloValores:Object,
     movimiento:String,
-    cantidades:Object
+    cantidades:Object,
 });
 
 let chart = null;
@@ -27,7 +28,7 @@ var colors = {
 
 watch(() => props.arregloValores,(nuevosValores) => 
     { //el whatcher observa el cambio de la data
-        //console.log(nuevosValores);  //lo imprime
+        console.log(nuevosValores);  //lo imprime
         chart.data = nuevosValores  
      });
 
@@ -54,6 +55,9 @@ const closeModalSoliGastos = () =>
 }
 
 const modalGrafica = ref(false);
+let x = ref(null);
+let y = ref(null);
+let dataInfo = ref([]);
 const openModalGrafico = () => 
 {
     modalGrafica.value = true;
@@ -136,6 +140,71 @@ onMounted(() =>
    {
       //console.log(ev.target._dataItem._dataContext);
       let dataInterna = ev.target._dataItem._dataContext;
+     // console.log(dataInterna)
+      axios.get(route('comportamiento', {ejex: dataInterna.x, ejey:dataInterna.y}))
+                   .then((resp) => 
+                    {
+                      console.log(resp.data);
+                      x.value = dataInterna.x;
+                      y.value = dataInterna.y;
+                     //console.log(resp.data);
+                      let data= resp.data;
+                      //console.log(data);
+                      let arregloAux = []; //declaramos arreglo vacio para la data
+                      //Tenemos que sacar la primer y ultima fecha pra construir un arreglo de fechas  
+                      let arregloFechasTotales = [];
+                      let first = data[0].created_at;
+                      let fechaInicio = moment(first);
+                      let last = _.last(data);
+                      let fechaFinal = moment(last.created_at).add(1,'month');
+                  
+                      while (fechaInicio.isSameOrBefore(fechaFinal))
+                       {
+                        let Obj = {
+                          date: fechaInicio.format('YYYY-MM'),
+                          presupuesto:0,
+                          suplemento:0,
+                          gasto:0
+                        }
+                      	arregloFechasTotales.push(Obj);
+                     		fechaInicio.add(1, 'months');
+                    	}
+                    //console.log(arregloFechasTotales);
+             
+
+                for (let index = 0; index < arregloFechasTotales.length; index++)
+                {
+                    const element = arregloFechasTotales[index]; //tenemos el arreglo
+                    for (let index = 0; index < data.length; index++) 
+                    {
+                        const elementData = data[index];
+                        //console.log(elementData)
+                        let fechaActual = moment(elementData.created_at);
+                        let fechaActualFormat =  fechaActual.format('YYYY-MM');
+                        //console.log(fechaActualFormat);
+                        if(element.date == fechaActualFormat)
+                        {
+                            switch (elementData.tipo_movimiento) 
+                            {
+                                case "PRESUPUESTO":
+                                       element.presupuesto = elementData.cantidad;
+                                    break;
+                                case "GASTO":
+                                       element.gasto = elementData.cantidad;
+                                    break;
+                                case "SUPLEMENTO":
+                                       element.suplemento = elementData.cantidad;
+                                    break;
+                            
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                
+                dataInfo.value = arregloFechasTotales;
+             });
       openModalGrafico();
    });
    
@@ -481,7 +550,7 @@ onMounted(() =>
          axios.get(route('soli.gastos', {ceco: ceco.value, concepto: concepto.value}))
                    .then((resp) => 
                     {
-                        console.log(resp.data);
+                        //console.log(resp.data);
                         solicitudes.value = resp.data;
                     });
        }
@@ -534,7 +603,7 @@ const restructuraMov = (movimiento) =>
     </div>
     <!--Modales-->
     <ModalWatchSoliGastos :ceco="ceco" :concepto="concepto" :show="modalSoliGastos" @close="closeModalSoliGastos" :solicitudes ="solicitudes" />
-    <ModalGraph :show="modalGrafica" @close="closeModalGrafico" />
+    <ModalGraph  :ejex = "x" :ejey="y" :data="dataInfo" :show="modalGrafica" @close="closeModalGrafico" />
 </template>
 <style>
 #chartdiv {
