@@ -247,10 +247,19 @@ class VentaController extends Controller
             ->selectRaw('concat(cecos.nombre,"-",servicios.nombre) as nombre,
             montos.cantidad * ventas.periodos * ventas.cantidad AS subtotal,
              ifnull(montos.cantidad * ventas.periodos * ventas.cantidad + if(ventas.iva = 1,(montos.cantidad * ventas.periodos * ventas.cantidad)*.16,0),0) as total')
-            ->selectRaw('day(ventas.fechaInicial) as day,ventas.comentario')
+            ->selectRaw('day(ventas.fechaInicial) as day,ventas.comentario, (ocs.id IS NOT NULL) as finalizado')
             ->join('montos', 'ventas.monto_id', '=', 'montos.id')
             ->join('servicios', 'montos.servicio_id', '=', 'servicios.id')
             ->join('cecos', 'ventas.ceco_id', '=', 'cecos.id')
+            ->leftJoin(
+                'ocs',
+                'ocs.id',
+                '=',
+                DB::raw("(SELECT ocs.id FROM ocs as ocs_join 
+                INNER JOIN facturas ON ocs_join.factura_id = facturas.id 
+                AND facturas.ingreso_id IS NOT NULL 
+                WHERE ocs_join.venta_id = ventas.id LIMIT 1)")
+            )
             ->groupBy(
                 'ventas.id',
                 'day',

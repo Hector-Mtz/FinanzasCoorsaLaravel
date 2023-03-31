@@ -120,24 +120,57 @@ async function getDaysStatus() {
     var total = 0;
     // Genera el titulo de la data
     const daysStatus = responses.map((resp, index) => {
-        // Se recorren los attributos
-
         // console.log(resp.data);
-        for (let d in resp.data) {
-            total = 0;
-            resp.data[d].forEach((obj) => {
-                total += obj.total;
-                // subtotal += obj.subtotal;
-                obj.total = "$" + formatoMoney(obj.total.toFixed(2));
-                if (obj.hasOwnProperty("subtotal")) {
+        if (series[index] === 'ventas') {//En caso de ser centas
+            for (let d in resp.data) {
+                total = 0;
+                //Recorre los dias
+                let allFinish = true;
+                resp.data[d].forEach((obj) => {
+                    //Total para el titulo
+                    total += obj.total;
+                    // formato total
+                    obj.total = "$" + formatoMoney(obj.total.toFixed(2));
                     obj.subtotal = "$" + formatoMoney(obj.subtotal.toFixed(2));
+                    allFinish = allFinish && 1 === obj.finalizado;
+
+                });
+                if (allFinish) {
+                    resp.data[d].titleHTML = `<div class="flex"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"  fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
+                    <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
+                    </svg>`
+                } else {
+                    resp.data[d].titleHTML = `<div class="flex"><svg xmlns="http://www.w3.org/2000/svg"  width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                    </svg>`
                 }
-            });
-            resp.data[d].data = resp.data[d];
-            resp.data[d].title = formatoMoney(total.toFixed(2));
+
+                resp.data[d].titleHTML += '<div class="overflow-hidden text-ellipsis">$' + formatoMoney(total.toFixed(2)) + '</div></div>';
+            }
+
+        } else {
+            // Se recorren los attributos en este caso los dias
+            for (let d in resp.data) {
+                total = 0;
+                //Recorre los dias
+                resp.data[d].forEach((obj) => {
+                    //Total para el titulo
+                    total += obj.total;
+                    // formato total
+                    obj.total = "$" + formatoMoney(obj.total.toFixed(2));
+                    if (obj.hasOwnProperty("subtotal")) {
+                        obj.subtotal = "$" + formatoMoney(obj.subtotal.toFixed(2));
+                    }
+                });
+
+                resp.data[d].titleHTML = '$' + formatoMoney(total.toFixed(2));
+            }
         }
+
         // total = formatoMoney(total);
         return { data: resp.data, color: colors[index], serie: series[index] };
+
     });
     specialDays.value = daysStatus;
 }

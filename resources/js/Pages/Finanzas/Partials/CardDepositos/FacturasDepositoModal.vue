@@ -63,6 +63,7 @@ const addFactura = () => {
             deposito_id: props.deposito.id,
         };
         inputParamFactura.text = "";
+        inputParamFactura.factura_id = "";
         emit("addFactura", form);
     } else {
         props.deposito.error = "FACTURA INVALIDA";
