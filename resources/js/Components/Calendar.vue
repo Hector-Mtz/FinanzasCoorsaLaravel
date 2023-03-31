@@ -35,26 +35,17 @@ const weeks = computed(() => {
             // esto es para recorrer los dias (unicamente lo deberia realizar la primvera vez)
             start = semanaDay + 1; // ya que empieza en 0
         }
-        let plusData = []; // data adicional a los dias
+        let plusData = []; // data adicional a los dias de cada serie
+        //Sin multiples series  specialDays
         props.specialDays.forEach((specialDay) => {
             if (specialDay.data[day] !== undefined) {
                 plusData.push({
                     ...specialDay,
                     date: day + "/" + (props.month + 1) + "/" + props.year,
                     data: specialDay.data[day],
-                    title: specialDay.data[day].title,
+                    titleHTML: specialDay.data[day].titleHTML,
                 });
             }
-            // for (let i = 0; i < specialDay.data.length; i++) {
-            //     if (specialDay.data[i].day == day) {
-            //         // Unicamnte deberia agregar uno por especial
-            //         plusData.push({
-            //             object: day,
-            //             color: specialDay.color,
-            //         });
-            //         break;
-            //     }
-            // }
         });
 
         days.push({ dayText: day, plusData: plusData });
@@ -81,40 +72,26 @@ const weeks = computed(() => {
 
 <template>
     <div class="w-full calendar">
-        <div
-            class="grid grid-cols-7 gap-[5px] text-center text-gris-900 text-[13px] font-bold uppercase"
-        >
+        <div class="grid grid-cols-7 gap-[5px] text-center text-gris-900 text-[13px] font-bold uppercase">
             <div v-for="diaText in diasText" :key="diaText">
                 {{ diaText }}
             </div>
         </div>
         <div class="grid grid-rows-[7] gap-[5px]">
             <!-- Weeks -->
-            <div
-                class="grid grid-cols-7 gap-[5px] text-center text-[14px] font-normal text-[#1A1E3A]"
-                v-for="(week, indexWeek) in weeks"
-                :key="indexWeek"
-            >
+            <div class="grid grid-cols-7 gap-[5px] text-center text-[14px] font-normal text-[#1A1E3A]"
+                v-for="(week, indexWeek) in weeks" :key="indexWeek">
                 <!-- Days -->
-                <div
-                    v-for="(day, dayIndex) in week.days"
-                    :key="dayIndex"
-                    :class="{ ['col-start-' + week.start]: dayIndex == 0 }"
-                >
+                <div v-for="(day, dayIndex) in week.days" :key="dayIndex"
+                    :class="{ ['col-start-' + week.start]: dayIndex == 0 }">
                     {{ day.dayText }}
                     <!-- Special Days -->
-                    <div
-                        v-for="(data, indexData) in day.plusData"
-                        :key="dayIndex + '-' + indexData"
-                    >
-                        <div
-                            @click="$emit('onSpecialDays', data)"
-                            class="w-full my-1 px-1 py-1 rounded-lg text-white text-[13px] font-semibold text-ellipsis overflow-hidden"
-                            :style="{ 'background-color': data.color }"
-                        >
-                            <span class="py-1 cursor-pointer"
-                                >${{ data.title }}
-                            </span>
+                    <div v-for="(data, indexData) in day.plusData" :key="dayIndex + '-' + indexData">
+                        <div @click="$emit('onSpecialDays', data)"
+                            class="w-full my-1 px-1 py-1 rounded-lg text-white text-[13px] font-semibold  "
+                            :style="{ 'background-color': data.color }">
+                            <div class="overflow-hidden cursor-pointer text-ellipsis" v-html="data.titleHTML">
+                            </div>
                         </div>
                     </div>
                 </div>
