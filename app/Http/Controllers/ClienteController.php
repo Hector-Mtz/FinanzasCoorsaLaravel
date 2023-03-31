@@ -66,8 +66,9 @@ class ClienteController extends Controller
 
             if($request->has('date'))
             {
-               $cantidades->where('soli_movimientos.created_at','LIKE','%'.$request['date']['year'].'%');
+               $cantidades->where('soli_movimientos.created_at','LIKE','%'.$request['date'].'%');
             }
+
 
         /*
         $request->validate(
@@ -160,7 +161,7 @@ class ClienteController extends Controller
             [
                 'clientes_cecos' => $cliente_cecos,
                 'grupoConceptos_conceptos' => $grupoConcepto_conceptos,
-                'cantidades' => fn() => $cantidades->get()
+                'cantidades' => fn() => $cantidades->get(),
                 /*
             'filtros' => $request->all(['grupoType','grupoType2']), //parametro que filtrara para saber como esta agrupado
             'clientes' => fn() => $clientes->get(),
@@ -341,5 +342,34 @@ class ClienteController extends Controller
         ->where('conceptos.nombre','=',$concepto)
         ->groupBy('soli_movimientos.id')
         ->get();
+    }
+
+    public function consulta_comportamiento($ejex, $ejey)
+    {
+      return SoliMovimiento::select(
+         'soli_movimientos.*',
+         DB::raw("SUM(productos.cantidad) as cantidad"),
+         'tipo_movimientos.nombre as tipo_movimiento'
+      )
+      ->join('tipo_movimientos','soli_movimientos.tipo_movimiento_id','tipo_movimientos.id')
+      ->join('ceco_conceptos','soli_movimientos.ceco_concepto_id','ceco_conceptos.id')
+      ->join('cecos','ceco_conceptos.ceco_id','cecos.id')
+      ->join('clientes', 'cecos.cliente_id','clientes.id')
+      ->join('conceptos','ceco_conceptos.concepto_id','conceptos.id')
+      ->join('grupo_conceptos','conceptos.grupo_concepto_id','grupo_conceptos.id')
+      ->join('productos','productos.soli_movimiento_id','soli_movimientos.id')
+      ->where(function ($query) use ($ejey) //evaluamos el ejex si es cliente o ceco
+       {
+           $query->where('clientes.nombre','=',$ejey)
+           ->orWhere('cecos.nombre','=',$ejey);
+       })
+       ->where(function ($query) use ($ejex) //evaluamos el ejex si es grupoConcepto o concepto
+       {
+           $query->where('grupo_conceptos.nombre','=',$ejex)
+           ->orWhere('conceptos.nombre','=',$ejex);
+       })
+       ->groupBy('soli_movimientos.id')
+       ->orderBy('soli_movimientos.created_at', 'ASC')
+      ->get();
     }
 }
