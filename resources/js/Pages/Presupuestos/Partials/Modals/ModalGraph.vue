@@ -114,7 +114,6 @@ onUpdated(() =>
               </div>
             </template>
             <template #content>
-              {{ data }}
                 <div id="chartdiv2"></div>
             </template>
  </DialogModal>
