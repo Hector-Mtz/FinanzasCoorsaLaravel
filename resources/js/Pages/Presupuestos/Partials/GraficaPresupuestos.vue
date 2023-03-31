@@ -144,6 +144,7 @@ onMounted(() =>
       axios.get(route('comportamiento', {ejex: dataInterna.x, ejey:dataInterna.y}))
                    .then((resp) => 
                     {
+                      console.log(resp.data);
                       x.value = dataInterna.x;
                       y.value = dataInterna.y;
                      //console.log(resp.data);
@@ -155,7 +156,7 @@ onMounted(() =>
                       let first = data[0].created_at;
                       let fechaInicio = moment(first);
                       let last = _.last(data);
-                      let fechaFinal = moment(last.created_at);
+                      let fechaFinal = moment(last.created_at).add(1,'month');
                   
                       while (fechaInicio.isSameOrBefore(fechaFinal))
                        {
@@ -168,7 +169,9 @@ onMounted(() =>
                       	arregloFechasTotales.push(Obj);
                      		fechaInicio.add(1, 'months');
                     	}
-                  
+                    //console.log(arregloFechasTotales);
+             
+
                 for (let index = 0; index < arregloFechasTotales.length; index++)
                 {
                     const element = arregloFechasTotales[index]; //tenemos el arreglo
