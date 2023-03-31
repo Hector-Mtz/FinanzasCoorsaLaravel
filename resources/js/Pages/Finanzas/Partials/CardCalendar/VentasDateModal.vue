@@ -59,10 +59,10 @@ const close = () => {
                     </div>
                 </div>
                 <!-- <div>
-                                                                                                                                                                    <InputSearch v-model="searchText" class="flex items-center p-4 w-80" />
-                                                                                                                                                                </div>
-                                                                                                                                                                <img :src="cerrar" alt="" class="absolute left-[87.5rem] w-[17px] h-[17px] hover:cursor-pointer"
-                                                                                                                                                                    @click="close()" /> -->
+                                                                                                                                                                            <InputSearch v-model="searchText" class="flex items-center p-4 w-80" />
+                                                                                                                                                                        </div>
+                                                                                                                                                                        <img :src="cerrar" alt="" class="absolute left-[87.5rem] w-[17px] h-[17px] hover:cursor-pointer"
+                                                                                                                                                                            @click="close()" /> -->
             </div>
         </template>
         <template #content>
@@ -74,7 +74,7 @@ const close = () => {
                         <th class="">SUBTOTAL</th>
                         <th class="">TOTAL</th>
                         <th class="">COMENTARIO</th>
-                        <th class="">FINALIZADO</th>
+                        <th class="">PAGADO</th>
                     </tr>
                 </template>
                 <template #tbody>
@@ -98,7 +98,7 @@ const close = () => {
                         <td>{{ venta.total }}</td>
                         <td>{{ venta.comentario }}</td>
                         <td>
-                            <svg v-if="venta.finalizado" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            <svg v-if="venta.pagado" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                 fill="currentColor" class="mx-auto" viewBox="0 0 16 16">
                                 <path
                                     d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
