@@ -250,7 +250,7 @@ class IngresoController extends Controller
         }
 
         $urlContenido = null;
-        if ($request->has('documento')) {
+        if ($request->hasFile('documento')) {
             $contenido = $request['documento'];
             $nombreCont = $contenido->getClientOriginalName();
             $ruta_documento = $contenido->storeAs('documentos', $nombreCont, 'gcs');
@@ -266,7 +266,7 @@ class IngresoController extends Controller
                 ]);
         } else {
             Ingreso::where('ingresos.id', '=', $ingreso->id)
-                ->udpate([
+                ->update([
                     'nombre' => $request['nombre'],
                     'cantidad' => $request['cantidad'],
                     'banco_id' => $request['banco_id'],

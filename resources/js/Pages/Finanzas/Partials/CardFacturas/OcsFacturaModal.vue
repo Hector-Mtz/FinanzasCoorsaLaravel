@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, reactive } from "vue";
 import { pickBy, throttle } from 'lodash'
 import { formatoMoney } from "../../../../utils/conversiones";
 import ButtonAdd from "@/Components/ButtonAdd.vue";
@@ -24,12 +24,12 @@ const props = defineProps({
 });
 
 const listOcs = ref([]);
-const textOcs = ref("");
-const ocIdAdd = ref("");
+const inputParamOc = reactive({ oc_id: '', text: '' })
+
 
 // ocs del catalogo disponible
-const getOcs = async (search = '') => {
-    const params = pickBy({ search })
+const getOcs = async () => {
+    const params = pickBy({ search: inputParamOc.text })
     const resp = await axios.get(route("ocs.catalogos"), { params });
     listOcs.value = resp.data;
 };
@@ -62,13 +62,14 @@ const deleteOc = (indexOc) => {
 };
 
 const addOc = () => {
-    if (ocIdAdd.value !== "") {
+    if (inputParamOc.oc_id !== "") {
         props.factura.error = "";
         const form = {
-            oc_id: ocIdAdd.value,
+            oc_id: inputParamOc.oc_id,
             factura_id: props.factura.id,
         };
-        textOcs.value = "";
+        inputParamOc.text = "";
+        inputParamOc.oc_id = "";
         emit("addOc", form);
     } else {
         props.factura.error = "OC INVALIDO";
@@ -78,7 +79,8 @@ const addOc = () => {
 const close = () => {
     listOcs.value = [];
     props.factura.error = "";
-    ocIdAdd.value = "";
+    inputParamOc.text = "";
+    inputParamOc.oc_id = "";
     emit("close");
 };
 
@@ -88,10 +90,10 @@ watch(props, () => {
     }
 });
 
-watch(textOcs, throttle(function () {
-    const anyList = listOcs.value.some((oc) => oc.nombre.toLowerCase().includes(textOcs.value.toLowerCase()));
+watch(inputParamOc, throttle(function () {
+    const anyList = listOcs.value.some((oc) => oc.nombre.toLowerCase().includes(inputParamOc.text.toLowerCase()));
     if (!anyList) {
-        getOcs(textOcs.value)
+        getOcs()
     }
 }, 150));
 
@@ -123,8 +125,8 @@ watch(textOcs, throttle(function () {
             <div class="flex flex-col mb-4">
                 <h3 class="text-[15px] font-semibold uppercase">Agregar OC</h3>
                 <div v-if="$page.props.can['facturas.oc.create']" class="flex">
-                    <ListDataInputOCS class="w-50" v-model="ocIdAdd" :valueText="textOcs" @value="textOcs = $event"
-                        list="ocs-catalogo" :options="listOcs" />
+                    <ListDataInputOCS class="w-50" v-model="inputParamOc.oc_id" :valueText="inputParamOc.text"
+                        @value="inputParamOc.text = $event" list="ocs-catalogo" :options="listOcs" />
                     <ButtonAdd class="ml-1 h-7" @click="addOc()" />
                 </div>
                 <JetInputError :message="props.factura.error" class="mt-2" />

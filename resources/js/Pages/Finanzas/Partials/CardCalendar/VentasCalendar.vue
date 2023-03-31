@@ -120,9 +120,7 @@ async function getDaysStatus() {
     var total = 0;
     // Genera el titulo de la data
     const daysStatus = responses.map((resp, index) => {
-
-
-        console.log(resp.data);
+        // console.log(resp.data);
         if (series[index] === 'ventas') {//En caso de ser centas
             for (let d in resp.data) {
                 total = 0;

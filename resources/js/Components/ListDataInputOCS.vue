@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import { formatoMoney } from "../utils/conversiones";
 
 const emit = defineEmits(["update:modelValue", "value"]);
 
@@ -82,7 +83,7 @@ defineExpose({ focus: () => inputlist.value.focus() });
             @input="changeText($event.target.value)" ref="inputlist" :disabled="disabled" />
         <datalist :id="list">
             <option v-for="opcion in props.options" :key="opcion[props.keyOption]" :value="opcion[props.nameOption]">
-                {{ opcion[props.nameOption] + "-" + opcion.cantidad }}
+                {{ opcion[props.nameOption] + "-" + formatoMoney(opcion.cantidad) }}
             </option>
         </datalist>
     </div>
