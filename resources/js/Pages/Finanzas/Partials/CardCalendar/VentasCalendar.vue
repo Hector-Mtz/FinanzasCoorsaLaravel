@@ -132,7 +132,7 @@ async function getDaysStatus() {
                     // formato total
                     obj.total = "$" + formatoMoney(obj.total.toFixed(2));
                     obj.subtotal = "$" + formatoMoney(obj.subtotal.toFixed(2));
-                    allFinish = allFinish && 1 === obj.finalizado;
+                    allFinish = allFinish && 1 === obj.pagado;
 
                 });
                 if (allFinish) {
