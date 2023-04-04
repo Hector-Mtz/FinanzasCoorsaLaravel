@@ -28,7 +28,8 @@ class ClienteController extends Controller
         )->with(['cecos' => function($query){
             $query->select('cecos.*')
             ->where('cecos.activo_finanzas','=',1);
-        }]) 
+        }])
+        ->where('clientes.activo_finanzas','=',1) 
         ->get();
 
         $grupoConcepto_conceptos = GrupoConcepto::select(
