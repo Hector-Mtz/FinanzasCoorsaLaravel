@@ -5,6 +5,7 @@ use App\Http\Controllers\CatalogosController;
 use App\Http\Controllers\CecoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ConceptoController;
+use App\Http\Controllers\DiagramController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\FinanzaController;
 use App\Http\Controllers\GrupoConceptoController;
@@ -106,7 +107,7 @@ Route::middleware([
 });
 
 
-Route::apiResource('/presupuestos', ClienteController::class)->except('show');;
+Route::apiResource('/presupuestos', ClienteController::class)->except('show');
 Route::apiResource('/soliMovimientos', SoliMovimientoController::class);
 /*Peticiones Axios*/
 Route::get('consulta1/{cliente}/{grupoConcepto}', [ClienteController::class, 'clienteGrupoCon'])->name('cliente.grupoCon');
@@ -114,3 +115,9 @@ Route::get('consulta2/{grupoConcepto}', [ClienteController::class, 'ceco_grupoCo
 Route::get('consulta3/{cliente}', [ClienteController::class, 'cliente_concepto'])->name('cliente.concepto');
 Route::get('consulta4/{ceco}/{concepto}',[ClienteController::class, 'solicitudes_gastos'])->name('soli.gastos');
 Route::get('consulta/{ejex}/{ejey}',[ClienteController::class, 'consulta_comportamiento'])->name('comportamiento'); //pendiente
+
+
+/*Diagrams*/
+Route::apiResource('/diagrams', DiagramController::class)->except('show');
+Route::get('downloadExample',[DiagramController::class, 'getExample'])->name('getExample');
+Route::post('importPresupuesto', [DiagramController::class, 'importPresupuesto'])->name('importPresupuesto');

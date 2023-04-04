@@ -68,6 +68,13 @@ const logout = () => {
                                     </JetNavLink>
                                 </div>
                                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                    <JetNavLink :href="route('diagrams.index')" :active="
+                                        route().current('diagrams.index')
+                                    ">
+                                        Diagramas
+                                    </JetNavLink>
+                                </div>
+                                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                     <JetNavLink :href="route('finanzas.index')" :active="
                                         route().current('finanzas.index')
                                     ">
