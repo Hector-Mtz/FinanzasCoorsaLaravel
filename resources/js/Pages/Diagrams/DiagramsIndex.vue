@@ -20,7 +20,8 @@ const sendForm = () =>
     form.post(route('importPresupuesto'),{
        preserveScroll:true,
        preserveState:true,
-       onSuccess:()=> form.reset()
+       onSuccess:()=> form.reset(),
+       onFinish:() => form.reset()
     });
 }
 </script>
