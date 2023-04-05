@@ -41,7 +41,7 @@ class PresupuestoImport implements ToModel, WithHeadingRow
       ]);
 
       $productos = Producto::updateOrCreate([
-        'nombre' => 'P-'.$fechaActual,
+        'nombre' => 'P-'.$fechaActual.'-'.$ceco[0]->nombre.'-'.$concepto[0]->nombre,
         'cantidad' => $row['cantidad'],
         'soli_movimiento_id' => $soli_movimiento->id
       ]);
