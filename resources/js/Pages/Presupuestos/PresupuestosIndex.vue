@@ -157,6 +157,7 @@ var colors = {
          grupo_id:null,
          y:null,
          valor:0,
+         descripcion:"",
          tipos_movimientos:{
             PRESUPUESTO:0,
             SUPLEMENTO:0,
@@ -383,6 +384,7 @@ const setFor = (tipoAcomodo) =>
                              concepto_id:null,
                              y:null,
                              valor:0,
+                             descripcion:"",
                              tipos_movimientos:{
                                  PRESUPUESTO:0,
                                  SUPLEMENTO:0,
@@ -392,6 +394,7 @@ const setFor = (tipoAcomodo) =>
                               },
                         }
                     
+                        newObj.descripcion = concepto.descripcion
                         newObj.cliente_id = clientes.id;
                         newObj. y= clientes.nombre;
                         newObj.concepto_id = concepto.id;

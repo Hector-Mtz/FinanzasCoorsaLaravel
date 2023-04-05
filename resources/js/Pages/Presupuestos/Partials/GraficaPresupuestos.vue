@@ -100,14 +100,16 @@ onMounted(() =>
    series.dataFields.value = "valor";
    series.sequencedInterpolation = true;
    series.defaultState.transitionDuration = 2000;
+   series.dataFields.descripcion = "descripcion"
 
+   console.log(series.dataFields)
 
    // Set up column appearance
    var column = series.columns.template;
    column.strokeWidth = 2;
    column.strokeOpacity = 1;
    column.stroke = am4core.color("#ffffff");
-   column.tooltipText = "{x}, {y}: {value.workingValue.formatNumber('#.')}";
+   column.tooltipText = "{x}, {y}({descripcion}): {value}";
    column.width = am4core.percent(100);
    column.height = am4core.percent(100);
    column.column.cornerRadius(6, 6, 6, 6);
@@ -240,6 +242,7 @@ onMounted(() =>
                                 concepto_id:null,
                                 y:null,
                                 valor:0,
+                                descripcion:'',
                                 tipos_movimientos:{
                                  PRESUPUESTO:0,
                                  SUPLEMENTO:0,
@@ -248,6 +251,7 @@ onMounted(() =>
                                  DISPONIBLE:0
                               },
                              }
+                             newObj.descripcion = concepto.descripcion;
                              newObj.ceco_id = ceco.id;
                              newObj.y = ceco.nombre;
                              newObj.concepto_id = concepto.id;
@@ -448,6 +452,7 @@ onMounted(() =>
                                 concepto_id:null,
                                 y:null,
                                 valor:0,
+                                descripcion:'',
                                 tipos_movimientos:{
                                  PRESUPUESTO:0,
                                  SUPLEMENTO:0,
