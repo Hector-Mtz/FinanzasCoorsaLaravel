@@ -109,7 +109,7 @@ onMounted(() =>
    column.strokeWidth = 2;
    column.strokeOpacity = 1;
    column.stroke = am4core.color("#ffffff");
-   column.tooltipText = "{x}, {y}({descripcion}): {value}";
+   column.tooltipText = "{x}({descripcion}), {y}: {value}";
    column.width = am4core.percent(100);
    column.height = am4core.percent(100);
    column.column.cornerRadius(6, 6, 6, 6);
