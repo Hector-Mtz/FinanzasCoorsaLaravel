@@ -295,6 +295,7 @@ class ClienteController extends Controller
          )
          ->join('clientes','cecos.cliente_id','clientes.id')
          ->where('clientes.nombre','=',$cliente)
+         ->where('cecos.activo_finanzas','=',1)
          ->get();
 
          $conceptos = Concepto::select(
@@ -324,6 +325,7 @@ class ClienteController extends Controller
          )
          ->join('clientes','cecos.cliente_id','clientes.id')
          ->where('clientes.nombre','=',$cliente)
+         ->where('cecos.activo_finanzas','=',1)
          ->get();
     }
 
