@@ -747,7 +747,6 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
         </div>
         <div class="py-12 -mt-24" v-if="!cambio">
             <!--Grafica-->
-            {{ arregloGrupoConcepto }}
             <GraficaPresupuestos :arregloValores = "arregloGrupoConcepto" :movimiento = "movimientoReactive" :cantidades ="cantidades" />
         </div>
         <div class="ml-16 mr-16 -mt-2" v-if="cambio">
