@@ -9,6 +9,14 @@ var props = defineProps({
      tipoMovimientos:Object
   });
 
+let colors = ref({
+   presupuesto: "#FFAE3F",
+   suplemento:"#F176C4",
+   gasto:"#00B187",
+   total:"#26CAD3",
+   disponible:"#7D57C6"
+});
+
 const movimientosCantidades = computed(() => 
 {
     let movimientos = [];
@@ -21,6 +29,7 @@ const movimientosCantidades = computed(() =>
         newObj.movimiento = movimiento;
         newObj.valor = 0;
         movimientos.push(newObj);
+        newObj.color = "";
     }
     
     for (let index2 = 0; index2 < movimientos.length; index2++) 
@@ -54,22 +63,33 @@ const movimientosCantidades = computed(() =>
             {
                //console.log(movimiento[clave2]);
                presupuesto = movimiento[clave2];
+               movimiento.color = colors.value.presupuesto
             }
             if(clave2 == "GASTO")
             {
                //console.log(movimiento[clave2]);
                gasto = movimiento[clave2];
+               movimiento.color = colors.value.gasto;
             }
             if(clave2 == "SUPLEMENTO")
             {
                //console.log(movimiento[clave2]);
                suplemento = movimiento[clave2];
+               movimiento.color = colors.value.suplemento;
             }
 
             if(clave2 == "TOTAL")
             {
                //console.log(movimiento[clave2]);
-               movimiento[clave2] = presupuesto + suplemento;
+              let total = presupuesto + suplemento;
+              movimiento.color = colors.value.total
+            }
+
+            if(clave2 == "DISPONIBLE")
+            {
+               //console.log(movimiento[clave2]);
+              let total = presupuesto + suplemento;
+              movimiento.color = colors.value.disponible
             }
         }
     }
@@ -80,10 +100,12 @@ const movimientosCantidades = computed(() =>
 </script>
 <template>
     <div class="grid grid-cols-3 grid-rows-2">
-        <div class="w-full m-2 border-2 rounded-xl" v-for="(cantidad,index) in movimientosCantidades" :key="index">
+        <div  class="w-full m-2 text-white border-2 rounded-xl drop-shadow-2xl" 
+        v-for="(cantidad,index) in movimientosCantidades" :key="index"
+        :style="{ backgroundColor: cantidad.color}">
             <h1 class="text-center uppercase">{{cantidad.movimiento}}:
                 <br>
-                <span>
+                <span class="font-semibold">
                   $ {{ formatoMoney(cantidad.valor.toFixed(2)) }}
                </span>
            </h1>
