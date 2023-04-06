@@ -8,7 +8,7 @@
        <option selected disabled>
          Selecciona una linea de negocio.
        </option>
-       <option v-for="linea in lineas_negocio" :key="linea.id">
+       <option v-for="linea in lineas_negocio" :key="linea.id" :value="linea.id">
           {{ linea.name }}
        </option>
    </select>

@@ -145,7 +145,7 @@ var colors = {
        } 
     });
 
-
+  
   for (let index = 0; index < props.clientes_cecos.length; index++) 
   {
      const cliente = props.clientes_cecos[index];
@@ -179,8 +179,6 @@ var colors = {
      }
     
   }
-
- 
 
   //colocacion de valores
   for (let index3 = 0; index3 < arregloGrupoConcepto.value.length; index3++) 
@@ -250,6 +248,14 @@ var colors = {
         }
      }
   } 
+
+const resultado = arregloGrupoConcepto.value.filter(obj => {
+   return obj.valor !==0
+});
+
+arregloGrupoConcepto.value = resultado;
+
+console.log(resultado);
 
 let exitAcomodo = ref(false);
 const setFor = (tipoAcomodo) => 
@@ -598,6 +604,8 @@ const reAcomodar = () =>
         }
      }
   } 
+
+
 }
 
 let cambio = ref(false);
