@@ -186,15 +186,15 @@ var colors = {
      for (let index4 = 0; index4 < props.cantidades.length; index4++)
      {
         const cantidad = props.cantidades[index4];
-        //console.log(cantidad);
         for (let clave in interseccion.tipos_movimientos)
         {
             if(cantidad.cliente_id == interseccion.cliente_id && cantidad.grupo_conceptos_id == interseccion.grupo_id)
             {
+               //console.log(cantidad);
                 //Ponemos las cantidades
                 if(cantidad.tipo_mov_name == clave)
                 {
-                  interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                  interseccion.tipos_movimientos[clave] += cantidad.cantidad; //posicionamos valor por tipo de movimiento
                   if(clave == "PRESUPUESTO") //si existe este movimiento
                   {
                      interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
@@ -308,7 +308,7 @@ const setFor = (tipoAcomodo) =>
                              //Ponemos las cantidades
                              if(cantidad.tipo_mov_name == clave)
                              {
-                               interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                               interseccion.tipos_movimientos[clave] += cantidad.cantidad; //posicionamos valor por tipo de movimiento
                                if(clave == "PRESUPUESTO") //si existe este movimiento
                                {
                                   interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
@@ -425,7 +425,7 @@ const setFor = (tipoAcomodo) =>
                              //Ponemos las cantidades
                              if(cantidad.tipo_mov_name == clave)
                              {
-                               interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                               interseccion.tipos_movimientos[clave] += cantidad.cantidad; //posicionamos valor por tipo de movimiento
                                if(clave == "PRESUPUESTO") //si existe este movimiento
                                {
                                   interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto

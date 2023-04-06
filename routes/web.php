@@ -63,10 +63,10 @@ Route::middleware([
     Route::get('/ventas/{venta}/ocs', [VentaController::class, 'ocsIndex'])->name('ventas.ocs.index');
     Route::get('/ventas/months', [VentaController::class, 'ventasMonth'])->name('ventas.month');
     Route::post('/ventas/{venta}', [VentaController::class, 'update'])->name('ventas.update');
-    Route::apiResource('/ocs', OcController::class)->except('show', 'update');
+    Route::apiResource('/ocs', OcController::class)->except('show');
     Route::get('/ocs/catalogos', [OcController::class, "catalogos"])->name("ocs.catalogos");
     Route::get('/ocs/months', [OcController::class, "ocMonth"])->name("ocs.month");
-    Route::post('/ocs/{oc}', [OcController::class, 'update'])->name('ocs.update');
+    //Route::post('/ocs/{oc}', [OcController::class, 'update'])->name('ocs.update');
 
     Route::get('/facturas-total/clientes', [FacturaController::class, 'totalFacturasCliente'])->name('facturas-total.clientes.index');
     Route::get('/facturas-by-cliente/{cliente?}', [FacturaController::class, 'indexByCliente'])->name('facturas-by-cliente.index');

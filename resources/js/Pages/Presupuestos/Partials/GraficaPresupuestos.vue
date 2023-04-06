@@ -28,7 +28,7 @@ var colors = {
 
 watch(() => props.arregloValores,(nuevosValores) => 
     { //el whatcher observa el cambio de la data
-        console.log(nuevosValores);  //lo imprime
+        //console.log(nuevosValores);  //lo imprime
         chart.data = nuevosValores  
      });
 
@@ -102,7 +102,7 @@ onMounted(() =>
    series.defaultState.transitionDuration = 2000;
    series.dataFields.descripcion = "descripcion"
 
-   console.log(series.dataFields)
+   //console.log(series.dataFields)
 
    // Set up column appearance
    var column = series.columns.template;
@@ -146,7 +146,7 @@ onMounted(() =>
       axios.get(route('comportamiento', {ejex: dataInterna.x, ejey:dataInterna.y}))
                    .then((resp) => 
                     {
-                      console.log(resp.data);
+                      //console.log(resp.data);
                       x.value = dataInterna.x;
                       y.value = dataInterna.y;
                      //console.log(resp.data);
