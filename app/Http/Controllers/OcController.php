@@ -244,11 +244,11 @@ class OcController extends Controller
                     'ocs.nombre',
                     'ocs.cantidad as total',
                     'ventas.nombre as  venta'
-                )->selectRaw('day(ocs.fecha_alta) as day')
+                )->selectRaw('day(ventas.fechaInicial) as day')
                     ->join('ventas', 'ocs.venta_id', 'ventas.id')
                     ->whereNull('ocs.factura_id')
-                    ->whereMonth('ocs.fecha_alta', '=', $validadData['month'])
-                    ->whereYear('ocs.fecha_alta', '=', $validadData['year']);
+                    ->whereMonth('ventas.fechaInicial', '=', $validadData['month'])
+                    ->whereYear('ventas.fechaInicial', '=', $validadData['year']);
                 if ($request->has('lineas_negocio_id') || $request->has('cliente_id')) {
                     $daysStatus->join('cecos', 'ventas.ceco_id', '=', 'cecos.id');
                     //Encaso de tener linea de transporte

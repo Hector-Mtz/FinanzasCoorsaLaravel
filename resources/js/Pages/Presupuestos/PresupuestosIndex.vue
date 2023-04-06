@@ -176,6 +176,9 @@ var colors = {
      }
     
   }
+
+ 
+
   //colocacion de valores
   for (let index3 = 0; index3 < arregloGrupoConcepto.value.length; index3++) 
   {
@@ -244,7 +247,7 @@ var colors = {
         }
      }
   } 
- 
+
 let exitAcomodo = ref(false);
 const setFor = (tipoAcomodo) => 
 {
@@ -713,6 +716,9 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
                     @change-date="changeDate($event)"/>
               </div>
             </div>
+            <div>
+               Lineas de negocio
+            </div>   
         </div>
         <div class="py-12 -mt-24" v-if="!cambio">
             <!--Grafica-->
