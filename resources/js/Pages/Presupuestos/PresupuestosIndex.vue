@@ -90,10 +90,10 @@ var colors = {
                      //Ponemos las cantidades
                      if(cantidad.tipo_mov_name == clave)
                      {
-                       interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                       interseccion.tipos_movimientos[clave] += cantidad.cantidad; //posicionamos valor por tipo de movimiento
                        if(clave == "PRESUPUESTO") //si existe este movimiento
                        {
-                          interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                          interseccion.valor += cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
                        }             
                      }
                      //Calculos
@@ -101,13 +101,13 @@ var colors = {
                      if(clave == "TOTAL")
                      {
                          let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
-                         interseccion.tipos_movimientos[clave] = total;
+                         interseccion.tipos_movimientos[clave] += total;
                      }
       
                      if(clave == "DISPONIBLE")
                      {
                         let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
-                        interseccion.tipos_movimientos[clave] = disponible;
+                        interseccion.tipos_movimientos[clave] += disponible;
                      }
       
                      let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
