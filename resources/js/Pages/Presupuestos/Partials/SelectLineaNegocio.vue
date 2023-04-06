@@ -4,7 +4,7 @@
   });
 </script>
 <template>
-   <select class="w-full">
+   <select class="w-full rounded-2xl">
        <option selected disabled>
          Linea de negocio
        </option>
