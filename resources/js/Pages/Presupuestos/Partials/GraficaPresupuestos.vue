@@ -328,10 +328,14 @@ onMounted(() =>
                                 }
                              }
                           }  
-
+                        
+                      const resultado = arregloAux.filter(obj => {
+                            return obj.valor !==0
+                         });
+                     
                        //console.log(arregloAux);
                        click1.value = 1;
-                       chart.data = arregloAux;
+                       chart.data = resultado;
                     });
                 break;
             case "ceco_grupoConcepto": //solo debe mandar el grupoconcepto para desplegar los conceptos y conserva el ceco
@@ -432,8 +436,12 @@ onMounted(() =>
                                 }
                              }
                           }  
+                        
+                        const resultado = arregloAux.filter(obj => {
+                            return obj.valor !==0
+                         });
                         click1.value = 1;
-                        chart.data = arregloAux;
+                        chart.data = resultado;
                     });
               break;           
             case "cliente_concepto": //solo debe mandar el cliente para desplegar los cecos y conserva el concepto
@@ -537,8 +545,11 @@ onMounted(() =>
                                 }
                              }
                           }  
+                        const resultado = arregloAux.filter(obj => {
+                            return obj.valor !==0
+                         });
                         click1.value = 1;
-                        chart.data = arregloAux;
+                        chart.data = resultado;
                     });
                 break;
            }

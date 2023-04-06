@@ -255,11 +255,10 @@ const resultado = arregloGrupoConcepto.value.filter(obj => {
 
 arregloGrupoConcepto.value = resultado;
 
-console.log(resultado);
-
 let exitAcomodo = ref(false);
 const setFor = (tipoAcomodo) => 
 {
+    let resultado = null;
     switch (tipoAcomodo) //dependiendo el boton es como se acomodaran los datos y reestructurara la data
     {
         case "CECO":
@@ -371,6 +370,10 @@ const setFor = (tipoAcomodo) =>
                   }
                } 
 
+               resultado = arregloGrupoConcepto.value.filter(obj => {
+                       return obj.valor !==0
+                });
+                arregloGrupoConcepto.value = resultado;
                exitAcomodo.value = true;
               //return arregloAux;
             break;
@@ -488,6 +491,10 @@ const setFor = (tipoAcomodo) =>
                   }
                } 
 
+            resultado = arregloGrupoConcepto.value.filter(obj => {
+                       return obj.valor !==0
+                });
+                arregloGrupoConcepto.value = resultado;
              exitAcomodo.value = true;
            break;
     
