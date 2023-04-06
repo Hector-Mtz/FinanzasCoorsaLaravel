@@ -12,11 +12,14 @@ import DangerButton from '@/Components/DangerButton.vue';
 import TableMovs from './Partials/TableMovs.vue';
 import GraficoMovimientos from "./Components/GraficoMovimientos.vue";
 import ButtonCalendar from '@/Components/ButtonCalendar.vue';
+import SelectLineaNegocio from './Partials/SelectLineaNegocio.vue'
+import Totales from './Partials/Totales.vue';
 /**/
 var props = defineProps({
    clientes_cecos:Object,
    grupoConceptos_conceptos:Object,
    cantidades:Object,
+   lineas_negocio:Object
 });
 
 let tipoMovimientos = ref(["PRESUPUESTO", "SUPLEMENTO", "TOTAL", "GASTO", "DISPONIBLE"])
@@ -197,7 +200,7 @@ var colors = {
                   interseccion.tipos_movimientos[clave] += cantidad.cantidad; //posicionamos valor por tipo de movimiento
                   if(clave == "PRESUPUESTO") //si existe este movimiento
                   {
-                     interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                     interseccion.valor += cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
                   }             
                 }
                 //Calculos
@@ -205,13 +208,13 @@ var colors = {
                 if(clave == "TOTAL")
                 {
                     let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
-                    interseccion.tipos_movimientos[clave] = total;
+                    interseccion.tipos_movimientos[clave] += total;
                 }
 
                 if(clave == "DISPONIBLE")
                 {
                    let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
-                   interseccion.tipos_movimientos[clave] = disponible;
+                   interseccion.tipos_movimientos[clave] += disponible;
                 }
 
                 let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
@@ -542,10 +545,10 @@ const reAcomodar = () =>
                 //Ponemos las cantidades
                 if(cantidad.tipo_mov_name == clave)
                 {
-                  interseccion.tipos_movimientos[clave] = cantidad.cantidad; //posicionamos valor por tipo de movimiento
+                  interseccion.tipos_movimientos[clave] += cantidad.cantidad; //posicionamos valor por tipo de movimiento
                   if(clave == "PRESUPUESTO") //si existe este movimiento
                   {
-                     interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                     interseccion.valor += cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
                   }             
                 }
                 //Calculos
@@ -553,13 +556,13 @@ const reAcomodar = () =>
                 if(clave == "TOTAL")
                 {
                     let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
-                    interseccion.tipos_movimientos[clave] = total;
+                    interseccion.tipos_movimientos[clave] += total;
                 }
 
                 if(clave == "DISPONIBLE")
                 {
                    let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
-                   interseccion.tipos_movimientos[clave] = disponible;
+                   interseccion.tipos_movimientos[clave] += disponible;
                 }
 
                 let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
@@ -717,8 +720,11 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
               </div>
             </div>
             <div>
-               Lineas de negocio
+               <SelectLineaNegocio :lineas_negocio="lineas_negocio" />
             </div>   
+            <div>
+               <Totales />
+            </div>
         </div>
         <div class="py-12 -mt-24" v-if="!cambio">
             <!--Grafica-->

@@ -7,6 +7,7 @@ use App\Models\CecoConcepto;
 use App\Models\Cliente;
 use App\Models\Concepto;
 use App\Models\GrupoConcepto;
+use App\Models\LineasNegocio;
 use App\Models\Producto;
 use App\Models\TipoMovimiento;
 use App\Models\SoliMovimiento;
@@ -71,6 +72,7 @@ class ClienteController extends Controller
             }
 
 
+            $lineas_negocio = LineasNegocio::all();
         /*
         $request->validate(
             [
@@ -163,6 +165,7 @@ class ClienteController extends Controller
                 'clientes_cecos' => $cliente_cecos,
                 'grupoConceptos_conceptos' => $grupoConcepto_conceptos,
                 'cantidades' => fn() => $cantidades->get(),
+                'lineas_negocio' => $lineas_negocio
                 /*
             'filtros' => $request->all(['grupoType','grupoType2']), //parametro que filtrara para saber como esta agrupado
             'clientes' => fn() => $clientes->get(),
