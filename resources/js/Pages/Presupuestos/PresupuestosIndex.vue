@@ -202,7 +202,7 @@ var colors = {
                   interseccion.tipos_movimientos[clave] += cantidad.cantidad; //posicionamos valor por tipo de movimiento
                   if(clave == "PRESUPUESTO") //si existe este movimiento
                   {
-                     interseccion.valor += cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                     interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
                   }             
                 }
                 //Calculos
@@ -742,7 +742,7 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
                <SelectLineaNegocio :lineas_negocio="lineas_negocio" />
             </div>   
             <div class="items-center justify-center col-start-4 col-end-6">
-               <Totales :cantidades="cantidades" />
+               <Totales :cantidades="cantidades" :tipoMovimientos="tipoMovimientos" />
             </div>
         </div>
         <div class="py-12 -mt-24" v-if="!cambio">

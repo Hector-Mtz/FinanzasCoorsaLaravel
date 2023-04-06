@@ -4,9 +4,22 @@ import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import { onMounted, reactive, ref, watch, computed } from "vue";
 
 var props = defineProps({
-     cantidades:Object
+     cantidades:Object,
+     tipoMovimientos:Object
   });
 
+let arrayAux = [];
+for (let index = 0; index < props.tipoMovimientos.length; index++) 
+{
+    const movimiento = props.tipoMovimientos[index];
+    console.log(movimiento);    
+    let newObj ={};
+}
+
+const movimientosCantidades = computed(() => 
+{
+  
+});
 
 </script>
 <template>
