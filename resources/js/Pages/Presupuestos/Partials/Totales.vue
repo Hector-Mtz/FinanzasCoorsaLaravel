@@ -32,11 +32,16 @@ const movimientosCantidades = computed(() =>
            for (let index3 = 0; index3 < props.cantidades.length; index3++) 
            {
               let cantidad = props.cantidades[index3];
-              if(cantidad.tipo_mov_name == clave)
+              if(cantidad.tipo_mov_name == clave) //solo es para los valores de la bd
               {
                 movimiento[clave] += cantidad.cantidad;
                 movimiento.valor += cantidad.cantidad;
               }
+                
+              if(clave == "TOTAL")//valores calculados
+              {
+                 
+              } 
            }
         }
     }
@@ -48,7 +53,7 @@ const movimientosCantidades = computed(() =>
 <template>
     <div class="grid grid-cols-3 grid-rows-2">
         <div class="w-full m-2 border-2 rounded-xl" v-for="(cantidad,index) in movimientosCantidades" :key="index">
-            <h1 class="text-center uppercase">{{cantidad.movimiento}}: $ {{ formatoMoney(cantidad.valor) }}</h1>
+            <h1 class="text-center uppercase">{{cantidad.movimiento}}: $ {{ formatoMoney(cantidad.valor.toFixed(2)) }}</h1>
         </div>
     </div>
 </template>
