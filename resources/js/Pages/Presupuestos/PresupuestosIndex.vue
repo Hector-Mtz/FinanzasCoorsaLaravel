@@ -143,6 +143,10 @@ var colors = {
              }
           }
        } 
+       const resultado = arregloGrupoConcepto.value.filter(obj => {
+        return obj.valor !==0
+       });
+       arregloGrupoConcepto.value = resultado;
     });
 
   
@@ -734,11 +738,11 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
                     @change-date="changeDate($event)"/>
               </div>
             </div>
-            <div>
+            <div class="col-start-3 col-end-4">
                <SelectLineaNegocio :lineas_negocio="lineas_negocio" />
             </div>   
-            <div>
-               <Totales />
+            <div class="items-center justify-center col-start-4 col-end-6">
+               <Totales :cantidades="cantidades" />
             </div>
         </div>
         <div class="py-12 -mt-24" v-if="!cambio">

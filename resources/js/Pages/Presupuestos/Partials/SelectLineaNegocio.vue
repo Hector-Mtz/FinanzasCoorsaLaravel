@@ -4,9 +4,9 @@
   });
 </script>
 <template>
-   <select>
+   <select class="w-full">
        <option selected disabled>
-         Selecciona una linea de negocio.
+         Linea de negocio
        </option>
        <option v-for="linea in lineas_negocio" :key="linea.id" :value="linea.id">
           {{ linea.name }}
