@@ -717,7 +717,7 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
               <ButtonsGroup v-if="!cambio" @seleccion="setMovimiento" :tipoMovimientos="tipoMovimientos"  @setFor="setFor" class="justify-center col-start-1 row-start-1 row-end-3"/>
            </div>
             <div class="flex flex-col">
-              <div>
+              <div class="hidden"> <!--OCULTO LA TABLA DE DATOS-->
                 <DangerButton @click="cambioButton">
                   <span v-if="!cambio">
                       Tabla de datos
@@ -736,12 +736,10 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
                    <ButtonCalendar class="mt-2" :month="date.month"
                     :year="date.year"
                     @change-date="changeDate($event)"/>
+                    <SelectLineaNegocio :lineas_negocio="lineas_negocio" />
               </div>
             </div>
-            <div class="col-start-3 col-end-4">
-               <SelectLineaNegocio :lineas_negocio="lineas_negocio" />
-            </div>   
-            <div class="items-center justify-center col-start-4 col-end-6">
+            <div class="items-center justify-center col-start-3 col-end-6">
                <Totales :cantidades="cantidades" :tipoMovimientos="tipoMovimientos" />
             </div>
         </div>
