@@ -2,6 +2,7 @@
 import { Inertia } from "@inertiajs/inertia";
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import { onMounted, reactive, ref, watch, computed } from "vue";
+import { formatoMoney } from "../../../utils/conversiones.js";
 
 var props = defineProps({
      cantidades:Object,
@@ -47,7 +48,7 @@ const movimientosCantidades = computed(() =>
 <template>
     <div class="grid grid-cols-3 grid-rows-2">
         <div class="w-full m-2 border-2 rounded-xl" v-for="(cantidad,index) in movimientosCantidades" :key="index">
-            <h1 class="text-center uppercase">{{cantidad.movimiento}}: {{ cantidad.valor }}</h1>
+            <h1 class="text-center uppercase">{{cantidad.movimiento}}: $ {{ formatoMoney(cantidad.valor) }}</h1>
         </div>
     </div>
 </template>
