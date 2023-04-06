@@ -202,7 +202,7 @@ var colors = {
                   interseccion.tipos_movimientos[clave] += cantidad.cantidad; //posicionamos valor por tipo de movimiento
                   if(clave == "PRESUPUESTO") //si existe este movimiento
                   {
-                     interseccion.valor = cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
+                     interseccion.valor += cantidad.cantidad; //setea el valor de la grafica por default a presupuesto
                   }             
                 }
                 //Calculos
