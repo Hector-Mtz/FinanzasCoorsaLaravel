@@ -53,7 +53,12 @@ const movimientosCantidades = computed(() =>
 <template>
     <div class="grid grid-cols-3 grid-rows-2">
         <div class="w-full m-2 border-2 rounded-xl" v-for="(cantidad,index) in movimientosCantidades" :key="index">
-            <h1 class="text-center uppercase">{{cantidad.movimiento}}: $ {{ formatoMoney(cantidad.valor.toFixed(2)) }}</h1>
+            <h1 class="text-center uppercase">{{cantidad.movimiento}}:
+                <br>
+                <span>
+                  $ {{ formatoMoney(cantidad.valor.toFixed(2)) }}
+               </span>
+           </h1>
         </div>
     </div>
 </template>
