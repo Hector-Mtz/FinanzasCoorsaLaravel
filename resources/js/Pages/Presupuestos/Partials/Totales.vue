@@ -78,6 +78,7 @@ const movimientosCantidades = computed(() =>
                movimiento.color = colors.value.suplemento;
             }
 
+            //QUEDAN PENDIENTES Y HAY QUE CALCULARLOS
             if(clave2 == "TOTAL")
             {
                //console.log(movimiento[clave2]);

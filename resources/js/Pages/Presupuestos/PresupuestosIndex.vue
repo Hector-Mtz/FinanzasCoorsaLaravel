@@ -616,7 +616,11 @@ const reAcomodar = () =>
      }
   } 
 
+  const resultado = arregloGrupoConcepto.value.filter(obj => {
+   return obj.valor !==0
+  });
 
+   arregloGrupoConcepto.value = resultado;
 }
 
 let cambio = ref(false);
@@ -706,7 +710,7 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
     <AppLayout title="Presupuestos">
         <template #header>
             <div class="flex items-center">
-                <h2 class="text-4xl font-bold leading-tight text-fuente-500">
+                <h2 class="text-4xl font-bold leading-tight uppercase text-fuente-500">
                     Presupuestos
                 </h2>
             </div>

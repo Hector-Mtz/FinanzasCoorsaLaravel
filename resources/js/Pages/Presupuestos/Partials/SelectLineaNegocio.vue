@@ -4,7 +4,7 @@
   });
 </script>
 <template>
-   <select class="w-full bg-transparent border-blue-400 rounded-2xl">
+   <select class="w-full uppercase bg-transparent border-blue-400 rounded-2xl">
        <option selected disabled>
          Linea de negocio
        </option>
