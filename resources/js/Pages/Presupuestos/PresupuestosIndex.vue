@@ -30,12 +30,12 @@ const setMovimiento = (movimiento) =>
 }
 
 var colors = {
-        "critical": "#ca0101",
-        "bad": "#e17a2d",
-        "medium": "#e1d92d",
-        "good": "#5dbe24",
-        "verygood": "#0b7d03",
-        "supergood": "#8C8C8C"
+        "critical": "#C6C6C6",
+        "bad": "#FF6565",
+        "medium": "#FD8F61",
+        "good": "#FFC745",
+        "verygood": "#7AE3AA",
+        "supergood": "#39CDAD"
     };
 
  //Primer arreglo de la data

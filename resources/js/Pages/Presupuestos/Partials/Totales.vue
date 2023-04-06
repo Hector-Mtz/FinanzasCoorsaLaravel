@@ -37,12 +37,40 @@ const movimientosCantidades = computed(() =>
                 movimiento[clave] += cantidad.cantidad;
                 movimiento.valor += cantidad.cantidad;
               }
-                
-              if(clave == "TOTAL")//valores calculados
-              {
-                 
-              } 
            }
+        }
+    }
+
+
+    for (let index3 = 0; index3 < movimientos.length; index3++) 
+    {
+        const movimiento = movimientos[index3];
+        for(let clave2 in movimiento)
+        {
+            let presupuesto = 0;
+            let suplemento = 0;
+            let gasto = 0;
+            if(clave2 == "PRESUPUESTO")
+            {
+               //console.log(movimiento[clave2]);
+               presupuesto = movimiento[clave2];
+            }
+            if(clave2 == "GASTO")
+            {
+               //console.log(movimiento[clave2]);
+               gasto = movimiento[clave2];
+            }
+            if(clave2 == "SUPLEMENTO")
+            {
+               //console.log(movimiento[clave2]);
+               suplemento = movimiento[clave2];
+            }
+
+            if(clave2 == "TOTAL")
+            {
+               //console.log(movimiento[clave2]);
+               movimiento[clave2] = presupuesto + suplemento;
+            }
         }
     }
 

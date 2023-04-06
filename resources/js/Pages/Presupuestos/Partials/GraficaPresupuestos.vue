@@ -18,12 +18,12 @@ var props = defineProps({
 let chart = null;
 
 var colors = {
-        "critical": "#ca0101",
-        "bad": "#e17a2d",
-        "medium": "#e1d92d",
-        "good": "#5dbe24",
-        "verygood": "#0b7d03",
-        "supergood": "#8C8C8C"
+        "critical": "#C6C6C6",
+        "bad": "#FF6565",
+        "medium": "#FD8F61",
+        "good": "#FFC745",
+        "verygood": "#7AE3AA",
+        "supergood": "#39CDAD"
     };
 
 watch(() => props.arregloValores,(nuevosValores) => 
@@ -118,9 +118,9 @@ onMounted(() =>
    // Set up bullet appearance
    var bullet1 = series.bullets.push(new am4charts.CircleBullet());
    //bullet1.circle.propertyFields.radius = "value";
-   bullet1.circle.fill = am4core.color("#000");
+   bullet1.circle.fill = am4core.color("#909090");
    bullet1.circle.strokeWidth = 0;
-   bullet1.circle.fillOpacity = 0.7;
+   bullet1.circle.fillOpacity = 0.3;
    bullet1.interactionsEnabled = false;
    
    var bullet2 = series.bullets.push(new am4charts.LabelBullet());
@@ -135,7 +135,7 @@ onMounted(() =>
    square.width = 15;
    square.height = 15;
    bullet3.zIndex = 3;
-   bullet3.locationY = 0.2;
+   bullet3.locationY = 0.5;
    bullet3.locationX = 0.9;
    bullet3.fill = am4core.color("#fff");
    bullet3.events.on("hit",function(ev)
