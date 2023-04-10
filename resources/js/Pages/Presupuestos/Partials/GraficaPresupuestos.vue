@@ -88,11 +88,14 @@ onMounted(() =>
    xAxis.renderer.grid.template.disabled = true;
    xAxis.renderer.minGridDistance = 40;
    xAxis.renderer.opposite = true;
+
    
    yAxis.renderer.grid.template.disabled = true;
    yAxis.renderer.inversed = true;
    yAxis.renderer.minGridDistance = 30;
-   
+
+   xAxis.title.text = "CONCEPTOS";
+   yAxis.title.text = "CECOS";
    //Series
    var series = chart.series.push(new am4charts.ColumnSeries());
    series.dataFields.categoryX = "x";
@@ -590,7 +593,82 @@ onMounted(() =>
    chart.scrollbarX.parent = chart.bottomAxesContainer;
    chart.scrollbarY = new am4core.Scrollbar();
    chart.scrollbarY.parent = chart.leftAxesContainer;
+
+   // SUMMATORIAS
+   var axisTooltip = yAxis.tooltip;
+   axisTooltip.background.fill = am4core.color("#07BEB8");
+   axisTooltip.background.strokeWidth = 0;
+   axisTooltip.background.cornerRadius = 3;
+   // axisTooltip.background.pointerLength = 0;
+   axisTooltip.dy = 2;
+
+   var axisTooltip2 = xAxis.tooltip;
+   axisTooltip2.background.fill = am4core.color("#07BEB8");
+   axisTooltip2.background.strokeWidth = 0;
+   axisTooltip2.background.cornerRadius = 3;
+   // axisTooltip.background.pointerLength = 0;
+    axisTooltip2.dy = -2;
+    yAxis.adapter.add("getTooltipText", (text) => 
+    {
+      var totalValue = 0;
+      ///console.log(series._yAxis._value.tooltipDataItem.properties.category)
+      let categoria = series._yAxis._value.tooltipDataItem.properties.category;
+      //console.log(series._yAxis._value.dataItemsByCategory);
+      for(let clave in series._yAxis._value.dataItemsByCategory._dictionary)
+      {
+         if(clave == categoria)
+         {
+           let columna = series._yAxis._value.dataItemsByCategory._dictionary[clave];
+           for(let clave2 in columna.seriesDataItems)
+           {
+              for (let index = 0; index < columna.seriesDataItems[clave2].length; index++) 
+              {
+                const element = columna.seriesDataItems[clave2][index];
+                totalValue += element.values.value.value;
+              }
+           }
+         }
+      }
+
+      return "Total: " + chart.numberFormatter.format(totalValue);
+   });
+
+
+    xAxis.adapter.add("getTooltipText", (text) => 
+    {
+      var totalValue = 0;
+      ///console.log(series._yAxis._value.tooltipDataItem.properties.category)
+      let categoria = series._xAxis._value.tooltipDataItem.properties.category;
+      //console.log(series._yAxis._value.dataItemsByCategory);
+      for(let clave in series._xAxis._value.dataItemsByCategory._dictionary)
+      {
+         if(clave == categoria)
+         {
+           let columna = series._xAxis._value.dataItemsByCategory._dictionary[clave];
+           for(let clave2 in columna.seriesDataItems)
+           {
+              for (let index = 0; index < columna.seriesDataItems[clave2].length; index++) 
+              {
+                const element = columna.seriesDataItems[clave2][index];
+                totalValue += element.values.value.value;
+              }
+           }
+         }
+      }
+    /*
+    chart.series.each(function(series) 
+    {
+      //totalValue += series.tooltipDataItem.values.value.sum;
+      //console.log(series.tooltipDataItem.values.value.sum);
+    });
+    */
+    return "Total: " + chart.numberFormatter.format(totalValue);
+   });
+
+   chart.topAxesContainer.paddingTop = 20;
+   chart.cursor = new am4charts.XYCursor();
 });
+//fin mounted
 
 const restructuraMov = (movimiento) => 
 {
@@ -612,6 +690,7 @@ const restructuraMov = (movimiento) =>
   chart.data = [];
   chart.data = arrayAux;
 }
+
 
 </script>
 <template>
