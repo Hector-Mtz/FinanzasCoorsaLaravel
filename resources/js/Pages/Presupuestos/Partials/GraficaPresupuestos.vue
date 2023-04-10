@@ -15,6 +15,8 @@ var props = defineProps({
     cantidades:Object,
 });
 
+const emit = defineEmits(['reacomodar'])
+
 let chart = null;
 
 var colors = {
@@ -218,6 +220,7 @@ onMounted(() =>
     {
        if(click1.value == 0)
        {
+           emit("reacomodar");
            //hay que recuperar los nombres de ejex y ejey
            //console.log(ev.target.dataItem); //tenemos ambas categorias
            let categorias =  ev.target.dataItem.categories;
@@ -246,6 +249,7 @@ onMounted(() =>
                                 y:null,
                                 valor:0,
                                 descripcion:'',
+                                descripcion_ceco:"",
                                 tipos_movimientos:{
                                  PRESUPUESTO:0,
                                  SUPLEMENTO:0,
