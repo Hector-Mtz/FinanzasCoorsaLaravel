@@ -26,12 +26,19 @@ class ClienteController extends Controller
 
         $cliente_cecos = Cliente::select(
             'clientes.*'
-        )->with(['cecos' => function($query){
+        )->with(['cecos' => function($query) use ($request)
+        {
             $query->select('cecos.*')
             ->where('cecos.activo_finanzas','=',1);
+
+            if($request->has('linea'))
+            {
+               $query->where('cecos.lineas_negocio_id',"=", $request['linea']);
+            }
         }])
-        ->where('clientes.activo_finanzas','=',1) 
-        ->get();
+        ->where('clientes.activo_finanzas','=',1);
+
+
 
         $grupoConcepto_conceptos = GrupoConcepto::select(
             'grupo_conceptos.*'
@@ -161,7 +168,7 @@ class ClienteController extends Controller
         return Inertia::render(
             'Presupuestos/PresupuestosIndex',
             [
-                'clientes_cecos' => $cliente_cecos,
+                'clientes_cecos' => fn()  => $cliente_cecos->get(),
                 'grupoConceptos_conceptos' => $grupoConcepto_conceptos,
                 'cantidades' => fn() => $cantidades->get(),
                 'lineas_negocio' => $lineas_negocio

@@ -1,10 +1,20 @@
 <script setup>
+import { onMounted, reactive, ref, watch, computed } from "vue";
   var props = defineProps({
      lineas_negocio:Object
   });
+
+  const emit = defineEmits(['setLineaNegocio'])
+
+  let lineaReactiva = ref(null);
+
+  const emitirLinea = () =>
+  {
+     emit("setLineaNegocio", lineaReactiva.value);
+  }
 </script>
 <template>
-   <select class="w-full uppercase bg-transparent border-blue-400 rounded-2xl">
+   <select class="w-full uppercase bg-transparent border-blue-400 rounded-2xl" v-model="lineaReactiva" @change="emitirLinea">
        <option selected disabled>
          Linea de negocio
        </option>

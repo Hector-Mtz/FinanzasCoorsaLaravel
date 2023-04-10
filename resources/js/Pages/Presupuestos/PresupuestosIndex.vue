@@ -706,15 +706,17 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
     }); 
 });
 
-const setForLinea = () => 
+const setForLinea = (linea) => 
 {
-
+   //console.log(linea);
+   
    Inertia.visit(route('presupuestos.index'),{
-        data:{linea},
+        data:{linea:linea},
         preserveScroll:true,
         preserveState:true,
-        only:['cantidades']
+        only:['clientes_cecos']
     }); 
+    
 }
 
 
@@ -733,6 +735,7 @@ const emisionReacomodo = () =>
                 </h2>
             </div>
  
+
         </template>
         <div class="grid grid-cols-6 grid-rows-2">
            <div>
@@ -758,7 +761,7 @@ const emisionReacomodo = () =>
                    <ButtonCalendar class="mt-2" :month="date.month"
                     :year="date.year"
                     @change-date="changeDate($event)"/>
-                    <SelectLineaNegocio :lineas_negocio="lineas_negocio" @change="setForLinea" />
+                    <SelectLineaNegocio :lineas_negocio="lineas_negocio" @setLineaNegocio="setForLinea"/>
               </div>
             </div>
             <div class="items-center justify-center col-start-3 col-end-6">
