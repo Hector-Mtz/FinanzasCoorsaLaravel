@@ -574,13 +574,13 @@ const reAcomodar = () =>
                 if(clave == "TOTAL")
                 {
                     let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
-                    interseccion.tipos_movimientos[clave] += total;
+                    interseccion.tipos_movimientos[clave] = total;
                 }
 
                 if(clave == "DISPONIBLE")
                 {
                    let disponible = (interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO) - interseccion.tipos_movimientos.GASTO;
-                   interseccion.tipos_movimientos[clave] += disponible;
+                   interseccion.tipos_movimientos[clave] = disponible;
                 }
 
                 let total = interseccion.tipos_movimientos.PRESUPUESTO + interseccion.tipos_movimientos.SUPLEMENTO;
@@ -706,6 +706,17 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
     }); 
 });
 
+const setForLinea = () => 
+{
+
+   Inertia.visit(route('presupuestos.index'),{
+        data:{linea},
+        preserveScroll:true,
+        preserveState:true,
+        only:['cantidades']
+    }); 
+}
+
 </script>
 <template>
     <AppLayout title="Presupuestos">
@@ -741,7 +752,7 @@ watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
                    <ButtonCalendar class="mt-2" :month="date.month"
                     :year="date.year"
                     @change-date="changeDate($event)"/>
-                    <SelectLineaNegocio :lineas_negocio="lineas_negocio" />
+                    <SelectLineaNegocio :lineas_negocio="lineas_negocio" @change="setForLinea" />
               </div>
             </div>
             <div class="items-center justify-center col-start-3 col-end-6">
