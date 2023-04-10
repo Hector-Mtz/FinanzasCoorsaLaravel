@@ -258,7 +258,7 @@ const resultado = arregloGrupoConcepto.value.filter(obj => {
    return obj.valor !==0
 });
 
-//arregloGrupoConcepto.value = resultado;
+arregloGrupoConcepto.value = resultado;
 
 let exitAcomodo = ref(false);
 const setFor = (tipoAcomodo) => 
