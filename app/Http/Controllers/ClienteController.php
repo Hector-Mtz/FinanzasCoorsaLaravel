@@ -33,7 +33,10 @@ class ClienteController extends Controller
 
             if($request->has('linea'))
             {
-               $query->where('cecos.lineas_negocio_id',"=", $request['linea']);
+               if($request['linea'] !== 0)
+               {
+                $query->where('cecos.lineas_negocio_id',"=", $request['linea']);
+               }
             }
         }])
         ->where('clientes.activo_finanzas','=',1);
@@ -80,7 +83,10 @@ class ClienteController extends Controller
 
             if($request->has('linea'))
             {
-               $cantidades->where('cecos.lineas_negocio_id',"=", $request['linea']);
+              if($request['linea'] !== 0)
+              {
+                $cantidades->where('cecos.lineas_negocio_id',"=", $request['linea']);
+              }
             }
 
             $lineas_negocio = LineasNegocio::all();
