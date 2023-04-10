@@ -714,7 +714,7 @@ const setForLinea = (linea) =>
         data:{linea:linea},
         preserveScroll:true,
         preserveState:true,
-        only:['clientes_cecos']
+        only:['clientes_cecos','cantidades']
     }); 
     
 }

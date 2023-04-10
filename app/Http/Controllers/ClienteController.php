@@ -78,6 +78,11 @@ class ClienteController extends Controller
                $cantidades->where('soli_movimientos.created_at','LIKE','%'.$request['date'].'%');
             }
 
+            if($request->has('linea'))
+            {
+               $cantidades->where('cecos.lineas_negocio_id',"=", $request['linea']);
+            }
+
             $lineas_negocio = LineasNegocio::all();
         /*
         $request->validate(
