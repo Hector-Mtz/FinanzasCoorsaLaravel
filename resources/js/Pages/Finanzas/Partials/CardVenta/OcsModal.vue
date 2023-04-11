@@ -96,12 +96,18 @@ const close = () => {
     emit("close");
 };
 
-const montosVenta = computed(() => {
+const montosVenta = computed(() => 
+{
+    let total = 0;
     if (props.venta.iva) 
     {
-        return { iva: formatoMoney(Math.round(props.venta.monto * 0.16)), total: formatoMoney(props.venta.monto + props.venta.monto * 0.16) }
+        total = props.venta.monto + props.venta.monto * 0.16;
+        total.toFixed(2);
+        return { iva: formatoMoney(Math.round(props.venta.monto * 0.16)), total: formatoMoney(total) }
     }
-    return { iva: 0, total: formatoMoney(props.venta.monto) }
+    total = props.venta.monto;
+    total.toFixed(2);
+    return { iva: 0, total: formatoMoney(total) }
 });
 
 watch(props, () => {
