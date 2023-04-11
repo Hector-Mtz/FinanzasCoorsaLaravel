@@ -4,6 +4,7 @@ import { Inertia } from "@inertiajs/inertia";
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import { onMounted, reactive, ref, watch, computed } from "vue";
 import axios from "axios";
+import { pickBy, throttle } from "lodash";
 /*Importacion de componentes*/
 import ButtonsGroup from "./Partials/ButtonsGroup.vue";
 import GraficaPresupuestos from "./Partials/GraficaPresupuestos.vue";
@@ -12,14 +13,14 @@ import DangerButton from '@/Components/DangerButton.vue';
 import TableMovs from './Partials/TableMovs.vue';
 import GraficoMovimientos from "./Components/GraficoMovimientos.vue";
 import ButtonCalendar from '@/Components/ButtonCalendar.vue';
-import SelectLineaNegocio from './Partials/SelectLineaNegocio.vue'
 import Totales from './Partials/Totales.vue';
 /**/
 var props = defineProps({
    clientes_cecos:Object,
    grupoConceptos_conceptos:Object,
    cantidades:Object,
-   lineas_negocio:Object
+   lineas_negocio:Object,
+   filters:Object
 });
 
 let tipoMovimientos = ref(["PRESUPUESTO", "SUPLEMENTO", "TOTAL", "GASTO", "DISPONIBLE"])
@@ -163,7 +164,7 @@ var colors = {
          grupo_id:null,
          y:null,
          valor:0,
-         descripcion:"",
+         linea_negocio:"",
          tipos_movimientos:{
             PRESUPUESTO:0,
             SUPLEMENTO:0,
@@ -198,6 +199,7 @@ var colors = {
             {
                //console.log(cantidad);
                 //Ponemos las cantidades
+                interseccion.linea_negocio = cantidad.linea_negocio;
                 if(cantidad.tipo_mov_name == clave)
                 {
                   interseccion.tipos_movimientos[clave] += cantidad.cantidad; //posicionamos valor por tipo de movimiento
@@ -286,6 +288,7 @@ const setFor = (tipoAcomodo) =>
                              grupo_id:null,
                              y:null,
                              valor:0,
+                             linea_negocio:"",
                              tipos_movimientos:{
                                  PRESUPUESTO:0,
                                  SUPLEMENTO:0,
@@ -318,6 +321,7 @@ const setFor = (tipoAcomodo) =>
                      {
                          if(cantidad.ceco_id == interseccion.ceco_id && cantidad.grupo_conceptos_id == interseccion.grupo_id)
                          {
+                             interseccion.linea_negocio = cantidad.linea_negocio;
                              //Ponemos las cantidades
                              if(cantidad.tipo_mov_name == clave)
                              {
@@ -405,6 +409,7 @@ const setFor = (tipoAcomodo) =>
                              y:null,
                              valor:0,
                              descripcion:"",
+                             linea_negocio:"",
                              tipos_movimientos:{
                                  PRESUPUESTO:0,
                                  SUPLEMENTO:0,
@@ -439,6 +444,7 @@ const setFor = (tipoAcomodo) =>
                      {
                          if(cantidad.concepto_id == interseccion.concepto_id && cantidad.cliente_id == interseccion.cliente_id)
                          {
+                              interseccion.linea_negocio = cantidad.linea_negocio;
                              //Ponemos las cantidades
                              if(cantidad.tipo_mov_name == clave)
                              {
@@ -630,6 +636,12 @@ const cambioButton = () =>
     cambio.value = !cambio.value;
 }
 
+//Filtros
+const params = reactive({
+    lineas_negocio_id: null,
+    fecha:null,
+});
+
 //Fechas
 let date = ref({
     month: new Date().getMonth(),
@@ -638,87 +650,81 @@ let date = ref({
 
 const changeDate = (newDate) => {
     date.value = newDate;
-    //
+    let fecha = null;
+    //console.log(newDate.month)
+    switch (newDate.month) 
+    {
+      case 0: //Enero
+            fecha = newDate.year + '-' + "01";
+            params.fecha = fecha;
+         break;
+      case 1: //Febrero
+            fecha = newDate.year + '-' + "02";
+            params.fecha = fecha;
+         break;
+      case 2: //Marzo
+            fecha = newDate.year + '-' + "03";
+            params.fecha = fecha;
+         break;
+      case 3: //Abril
+            fecha = newDate.year + '-' + "04";
+            params.fecha = fecha;
+         break;
+      case 4: //Mayo
+            fecha = newDate.year + '-' + "05";
+            params.fecha = fecha;
+         break;
+      case 5: //Junio
+         fecha = newDate.year + '-' + "06";
+         params.fecha = fecha;
+      break;
+      case 6: //Julio
+         fecha = newDate.year + '-' + "07";
+         params.fecha = fecha;
+      break;
+      case 7: //Agosto
+         fecha = newDate.year + '-' + "08";
+         params.fecha = fecha;
+      break;
+      case 8: //Spetiembre
+         fecha = newDate.year + '-' + "09";
+         params.fecha = fecha;
+      break;
+      case 9: //Octubre
+         fecha = newDate.year + '-' + "10";
+         params.fecha = fecha;
+      break;
+      case 10: //Noviembre
+         fecha = newDate.year + '-' + "11";
+         params.fecha = fecha;
+      break;
+      case 11: //Diciembre
+         fecha = newDate.year + '-' + "12";
+         params.fecha = fecha;
+      break;
+    }
 };
 
-watch(() => date.value,(newDate) =>  //el whatcher observa el cambio de la fecha
-{ 
-   let fecha = null;
-   switch (newDate.month) 
-   {
-      case 0:
-           //Es Enero
-           fecha =  newDate.year+'-'+newDate.month+1;
-         break;
-      case 1:
-         //Es Febrero
-         fecha =  newDate.year+'-'+'02';
-        break;
-      case 2:
-         //Es Marzo
-         fecha =  newDate.year+'-'+'03';
-        break;
-      case 3:
-         //Es Abril
-         fecha =  newDate.year+'-'+'04';
-        break;
-      case 4:
-         //Es Mayo
-         fecha =  newDate.year+'-'+'05';
-        break;
-      case 5:
-         //Es Junio
-         fecha =  newDate.year+'-'+'06';
-        break;
-      case 6:
-         //Es Julio
-         fecha =  newDate.year+'-'+'07';
-        break;
-      case 7:
-         //Es Agosto
-         fecha =  newDate.year+'-'+'08';
-        break;
-      case 8:
-         //Es Septiembre
-         fecha =  newDate.year+'-'+'09';
-        break;
-      case 9:
-         //Es Ocubre
-         fecha =  newDate.year+'-'+'10';
-        break;
-      case 10:
-         //Es Noviembre
-         fecha =  newDate.year+'-'+'11';
-        break;
-      case 11:
-         //Es Diciembre
-         fecha =  newDate.year+'-'+'12';
-        break;
-   
-      default:
-         break;
-   }
-    Inertia.visit(route('presupuestos.index'),{
-        data:{date:fecha},
-        preserveScroll:true,
-        preserveState:true,
-        only:['cantidades']
-    }); 
-});
+//watcher para filtros
+watch(params, throttle(function () 
+  {
+    search();
+ }), 100);
 
-const setForLinea = (linea) => 
+
+const search = () => 
 {
-   //console.log(linea);
+   const filters = pickBy(params);
+   //console.log(params);
    
    Inertia.visit(route('presupuestos.index'),{
-        data:{linea:linea},
+        data:filters,
         preserveScroll:true,
         preserveState:true,
-        only:['clientes_cecos','cantidades']
+        only:['cantidades','clientes_cecos']
     }); 
-    
+   
 }
-
 
 const emisionReacomodo = () => 
 {
@@ -734,6 +740,7 @@ const emisionReacomodo = () =>
                     Presupuestos
                 </h2>
             </div>
+            {{ params }}
         </template>
         <div class="grid grid-cols-6 grid-rows-2">
            <div>
@@ -759,7 +766,11 @@ const emisionReacomodo = () =>
                    <ButtonCalendar class="mt-2" :month="date.month"
                     :year="date.year"
                     @change-date="changeDate($event)"/>
-                    <SelectLineaNegocio :lineas_negocio="lineas_negocio" @setLineaNegocio="setForLinea"/>
+                    <select class="w-full uppercase bg-transparent border-blue-400 rounded-2xl" v-model="params.lineas_negocio_id">
+                        <option v-for="linea in lineas_negocio" :key="linea.id" :value="linea.id">
+                           {{ linea.name }}
+                        </option>
+                    </select>
               </div>
             </div>
             <div class="items-center justify-center col-start-3 col-end-6">

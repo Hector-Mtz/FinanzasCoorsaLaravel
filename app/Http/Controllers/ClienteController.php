@@ -23,6 +23,10 @@ class ClienteController extends Controller
      */
     public function index(Request $request)
     {
+        $request->validate([
+            'lineas_negocio_id' => ['nullable', 'exists:lineas_negocios,id'],
+            'fecha' => ['nullable', 'date'],
+        ]);
 
         $cliente_cecos = Cliente::select(
             'clientes.*'
@@ -31,11 +35,11 @@ class ClienteController extends Controller
             $query->select('cecos.*')
             ->where('cecos.activo_finanzas','=',1);
 
-            if($request->has('linea'))
+            if($request->has('lineas_negocio_id'))
             {
-               if($request['linea'] !== 0)
+               if($request['lineas_negocio_id'] !== 0)
                {
-                $query->where('cecos.lineas_negocio_id',"=", $request['linea']);
+                $query->where('cecos.lineas_negocio_id',"=", $request['lineas_negocio_id']);
                }
             }
         }])
@@ -64,7 +68,8 @@ class ClienteController extends Controller
                 clientes.id as cliente_id,
                 clientes.nombre as cliente_name,
                 grupo_conceptos.id as grupo_conceptos_id,
-                grupo_conceptos.nombre as grupo_conceptos_name'
+                grupo_conceptos.nombre as grupo_conceptos_name,
+                cecos.lineas_negocio_id as linea_negocio'
             )
             ->join('productos', 'productos.soli_movimiento_id', '=', 'soli_movimientos.id')
             ->join('tipo_movimientos', 'soli_movimientos.tipo_movimiento_id', '=', 'tipo_movimientos.id')
@@ -76,16 +81,17 @@ class ClienteController extends Controller
             ->groupBy('soli_movimientos.ceco_concepto_id')
             ->groupBy('tipo_movimientos.id');
 
-            if($request->has('date'))
+            
+            if($request->has('fecha'))
             {
-               $cantidades->where('soli_movimientos.created_at','LIKE','%'.$request['date'].'%');
+               $cantidades->where('soli_movimientos.created_at','LIKE','%'.$request['fecha'].'%');
             }
-
-            if($request->has('linea'))
+            
+            if($request->has('lineas_negocio_id'))
             {
-              if($request['linea'] !== 0)
+              if($request['lineas_negocio_id'] !== 0)
               {
-                $cantidades->where('cecos.lineas_negocio_id',"=", $request['linea']);
+                $cantidades->where('cecos.lineas_negocio_id',"=", $request['lineas_negocio_id']);
               }
             }
 
@@ -182,7 +188,8 @@ class ClienteController extends Controller
                 'clientes_cecos' => fn()  => $cliente_cecos->get(),
                 'grupoConceptos_conceptos' => $grupoConcepto_conceptos,
                 'cantidades' => fn() => $cantidades->get(),
-                'lineas_negocio' => $lineas_negocio
+                'lineas_negocio' => $lineas_negocio,
+                'filters' => $request->all(['lineas_negocio_id', 'fecha'])
                 /*
             'filtros' => $request->all(['grupoType','grupoType2']), //parametro que filtrara para saber como esta agrupado
             'clientes' => fn() => $clientes->get(),
