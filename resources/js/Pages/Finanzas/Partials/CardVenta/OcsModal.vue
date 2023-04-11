@@ -99,7 +99,7 @@ const close = () => {
 const montosVenta = computed(() => {
     if (props.venta.iva) 
     {
-        return { iva: formatoMoney(Math.round(props.venta.monto * 0.16)), total: formatoMoney(props.venta.monto + props.venta.monto * 0.16) }
+        return { iva: formatoMoney(Math.round(props.venta.monto * 0.16)), total: formatoMoney(props.venta.monto + props.venta.monto * 0.16).toFixed(2) }
     }
     return { iva: 0, total: formatoMoney(props.venta.monto) }
 });
@@ -158,7 +158,7 @@ watch(props, () => {
                         Total
                     </span>
                     <span class="text-3xl font-bold">
-                        ${{ montosVenta.total }}
+                        ${{ montosVenta.total}}
                     </span>
                 </div>
             </div>
