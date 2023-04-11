@@ -740,7 +740,6 @@ const emisionReacomodo = () =>
                     Presupuestos
                 </h2>
             </div>
-            {{ params }}
         </template>
         <div class="grid grid-cols-6 grid-rows-2">
            <div>
