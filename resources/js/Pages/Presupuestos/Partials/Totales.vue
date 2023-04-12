@@ -50,15 +50,15 @@ const movimientosCantidades = computed(() =>
         }
     }
 
+     let presupuesto = 0;
+     let gasto = 0;
+     let suplemento = 0;
+     let total = 0;
+     let disponible = 0
     for (let index = 0; index < movimientos.length; index++) 
     {
         const element = movimientos[index];
         //console.log(element.movimiento);
-        let presupuesto = 0;
-        let gasto = 0;
-        let suplemento = 0;
-        let total = 0;
-        let disponible = 0
         switch (element.movimiento) 
         {
             case "PRESUPUESTO":
@@ -74,21 +74,25 @@ const movimientosCantidades = computed(() =>
                element.color = colors.value.gasto;
             break;
         }
-      total = presupuesto+suplemento
-      disponible = total - gasto;
-      if(element.movimiento == "TOTAL")
-      {
-        element.valor = total;
-        element.color = colors.value.total;
-      }
-      if(element.movimiento == "DISPONIBLE")
-      {
-        element.valor = disponible;
-        element.color = colors.value.disponible;
-      }
     }
-
-    //console.log(movimientos)
+    total = presupuesto +suplemento;
+    disponible = total - gasto;
+    for (let index = 0; index < movimientos.length; index++) 
+    {
+        const element = movimientos[index];
+        //console.log(element.movimiento);
+        switch (element.movimiento) 
+        {
+            case "TOTAL":
+                  element.valor = total;
+                   element.color = colors.value.total;
+                break;
+            case "DISPONIBLE":
+               element.valor = disponible
+               element.color = colors.value.disponible;
+            break;
+        }
+    }
 
     return movimientos;
 });
@@ -102,7 +106,7 @@ const movimientosCantidades = computed(() =>
             <h1 class="text-center uppercase">{{cantidad.movimiento}}:
                 <br>
                 <span class="font-semibold">
-                  $ {{ formatoMoney(cantidad.valor.toFixed(2)) }}
+                   $ {{ formatoMoney(cantidad.valor.toFixed(2)) }} 
                </span>
            </h1>
         </div>
