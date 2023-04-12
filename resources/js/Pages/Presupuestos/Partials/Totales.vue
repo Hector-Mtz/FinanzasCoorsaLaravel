@@ -50,50 +50,45 @@ const movimientosCantidades = computed(() =>
         }
     }
 
-
-    for (let index3 = 0; index3 < movimientos.length; index3++) 
+    for (let index = 0; index < movimientos.length; index++) 
     {
-        const movimiento = movimientos[index3];
-        for(let clave2 in movimiento)
+        const element = movimientos[index];
+        //console.log(element.movimiento);
+        let presupuesto = 0;
+        let gasto = 0;
+        let suplemento = 0;
+        let total = 0;
+        let disponible = 0
+        switch (element.movimiento) 
         {
-            let presupuesto = 0;
-            let suplemento = 0;
-            let gasto = 0;
-            if(clave2 == "PRESUPUESTO")
-            {
-               //console.log(movimiento[clave2]);
-               presupuesto = movimiento[clave2];
-               movimiento.color = colors.value.presupuesto
-            }
-            if(clave2 == "GASTO")
-            {
-               //console.log(movimiento[clave2]);
-               gasto = movimiento[clave2];
-               movimiento.color = colors.value.gasto;
-            }
-            if(clave2 == "SUPLEMENTO")
-            {
-               //console.log(movimiento[clave2]);
-               suplemento = movimiento[clave2];
-               movimiento.color = colors.value.suplemento;
-            }
-
-            //QUEDAN PENDIENTES Y HAY QUE CALCULARLOS
-            if(clave2 == "TOTAL")
-            {
-               //console.log(movimiento[clave2]);
-              let total = presupuesto + suplemento;
-              movimiento.color = colors.value.total
-            }
-
-            if(clave2 == "DISPONIBLE")
-            {
-               //console.log(movimiento[clave2]);
-              let total = presupuesto + suplemento;
-              movimiento.color = colors.value.disponible
-            }
+            case "PRESUPUESTO":
+                   presupuesto = element.valor;
+                   element.color = colors.value.presupuesto;
+                break;
+            case "SUPLEMENTO":
+               suplemento = element.valor;
+               element.color = colors.value.suplemento;
+            break;
+            case "GASTO":
+               gasto = element.valor;
+               element.color = colors.value.gasto;
+            break;
         }
+      total = presupuesto+suplemento
+      disponible = total - gasto;
+      if(element.movimiento == "TOTAL")
+      {
+        element.valor = total;
+        element.color = colors.value.total;
+      }
+      if(element.movimiento == "DISPONIBLE")
+      {
+        element.valor = disponible;
+        element.color = colors.value.disponible;
+      }
     }
+
+    //console.log(movimientos)
 
     return movimientos;
 });
