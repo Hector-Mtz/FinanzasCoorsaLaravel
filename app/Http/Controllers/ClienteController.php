@@ -52,6 +52,9 @@ class ClienteController extends Controller
         )->with('conceptos')
         ->get();
 
+
+        $fechaActual = date("Y-m");  
+
         $cantidades = DB::table(DB::raw('soli_movimientos'))
             ->selectRaw(
                 '
@@ -80,11 +83,15 @@ class ClienteController extends Controller
             ->join('grupo_conceptos', 'conceptos.grupo_concepto_id', '=', 'grupo_conceptos.id')
             ->groupBy('soli_movimientos.ceco_concepto_id')
             ->groupBy('tipo_movimientos.id');
+            
 
             
             if($request->has('fecha'))
             {
                $cantidades->where('soli_movimientos.created_at','LIKE','%'.$request['fecha'].'%');
+            }
+            else{
+                $cantidades->where('soli_movimientos.created_at','LIKE','%'.$fechaActual.'%');
             }
             
             if($request->has('lineas_negocio_id'))
